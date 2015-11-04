@@ -70,7 +70,7 @@ Datums interact with the model only by .get() and .set().  Datums do not directl
 
 ### For Display and Input
 
-In the example above, the comment field renders as an input and when the user enters a comment, `kittenModel.set('comment', userEnteredValue)` is called. Using the **Rd.Form** component, you can easily convert the above into a editable form with a save and cancel buttons:
+In the example above, the comment field, having the `inputMode="edit"` prop, renders as an input and when the user enters a comment, `kittenModel.set('comment', userEnteredValue)` is called. Using the **Rd.Form** component, you can easily convert the above into a editable form with a save and cancel buttons:
 
 ```javascript
 Rd = require('react-datum')
@@ -95,7 +95,7 @@ KittenCard = React.CreateClass({
   }
 })
 ```
-By wrapping the datums in the **Rd.Form** tag, they implicitedly recieve `inputMode='edit'` props that make them all render as inputs.  Almost all.  Some Datums, like **Rd.LazyPhoto**, only have a display mode, no editing.  If given an `inputMode='edit'` they will ignore any continue showing their display representation.  
+By wrapping the datums in the **Rd.Form** tag, they implicitedly recieve `inputMode='edit'` props that make them all render as inputs.  Almost all.  Some Datums, like **Rd.LazyPhoto**, only have a display mode, no editing.  If given an `inputMode='edit'` they will ignore, and continue showing their display ('readonly') representation.  
 
 ## Implied Context, Deterministic Props
 
