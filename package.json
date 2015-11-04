@@ -54,6 +54,7 @@
     "grunt-run": "~0.3.0",
     "grunt-webpack": "^1.0.11",
     "imports-loader": "^0.6.5",
+    "jest-cli": "^0.7.1",
     "jsx-loader": "^0.13.2",
     "load-grunt-tasks": "^3.3.0",
     "react": "^0.14.2",
