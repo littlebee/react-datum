@@ -2,7 +2,7 @@
 React = require('react')
 Inflection = require('inflection')
 
-require('css!/css/views/collectionStats.css')
+require('../css/collectionStats.css')
 
 ###
   **CollectionStats** provides information about the items in your collection.

@@ -2,7 +2,7 @@
 _ = require('underscore')
 $ = require('jquery')
 Backbone = require('backbone')
-require('../css/tilegrid.css')
+require('../../css/tilegrid.css')
 
 ###
   TileGrid
@@ -16,7 +16,7 @@ require('../css/tilegrid.css')
 
 ###
 module.exports = class Tilegrid
-  $tilegridTemplate: $("
+  $tilegridTemplate: $("""
     <div class="tilegrid">
         <div class="tilegrid-loading fade">
             <div class="placeholder">
@@ -25,7 +25,7 @@ module.exports = class Tilegrid
             </div>
         </div>
     </div>
-  ")
+  """)
 
   # data            - can be an array or a Collection child
   # tileTemplate    - can be a selector, jquery obj or html
