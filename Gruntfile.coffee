@@ -1,5 +1,11 @@
+###
 
+  webpack setup and external grunt tasks borrowed from:
+    https://github.com/felixhao28/using-coffee-react-for-frontend-dev-walkthrough
 
+  unusused tasks from zuKeeper.  TODO: remove them if not needed
+
+###
 module.exports = (grunt) ->
   # load plugins
   # this loads all of the grunt-... packages in package.json.  clever
@@ -20,6 +26,21 @@ module.exports = (grunt) ->
       distrib:
         ["dist/**/*"]
 
+      # all examples need to be .jsx or .csx
+      examples:
+        ["examples/**/*.js"]
+
+
+    react:
+      examples:
+        files: [
+          expand: true
+          cwd: 'examples'
+          src: [ '**/*.jsx' ]
+          dest: 'examples'
+          ext: '.js'
+        ]
+
     coffee:
       build:
         options:
@@ -39,6 +60,14 @@ module.exports = (grunt) ->
           cwd: 'src'
           src: ['**/*.cjsx']
           dest: 'build'
+          ext: '.js'
+        ]
+      examples:
+        files: [
+          expand: true
+          cwd: 'examples'
+          src: [ '**/*.cjsx' ]
+          dest:'examples'
           ext: '.js'
         ]
 
@@ -66,9 +95,6 @@ module.exports = (grunt) ->
 
   # tasks
   grunt.registerTask 'distrib', ['webpack:distrib']
-  grunt.registerTask 'build', ['distrib']
+  grunt.registerTask 'examples', ['react:examples', 'cjsx:examples']
+  grunt.registerTask 'build', ['examples', 'distrib'] # ['newer:cjsx:build', 'newer:coffee:build', 'distrib']
   grunt.registerTask 'default', ['build']
-
-  # webpack pretty much does everything
-  #grunt.registerTask 'build', ['newer:cjsx:build', 'newer:coffee:build', 'distrib']
-  #grunt.registerTask 'default', ['build']

@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+  <meta name="viewport" content="width=device-width">
+  <!--<link rel="icon" href="docs/images/favicon.ico" />-->
+
+  <title>Notjs - simple fullinput form example</title>
+</head>
+<body>
+  <div class='example'>
+    <pre>
+      Say you have this model:
+      ```javascript
+      var kittenModel = new Backbone.Model({
+        name: "Fluffy",
+        title: "His Royal Cuteness",
+        description: "He's a cuddler and a lover through and through",
+        forAdoption: true,
+        ageInMonths: 10,
+        createdAt: 1446520828,
+        imgUrl: "https://drpem3xzef3kf.cloudfront.net/photos/pets/32707403/1/?bust=1436666804&width=632&no_scale_up=1",
+        sponsorEmail: "kindoldcatlady@lotsofcats.com",
+        comment: ""
+      })
+      ```
+      to render a card for this model with react-datum:
+
+      ```javascript
+      Rd = require('react-datum')
+
+      Kitten = React.CreateClass({
+        render: function() {
+          return (
+            <div className='kitten-card'>
+              <Rd.Model model={kittenModel}>
+                <h3>Adopt <Rd.Text attr="name"/> Today!</h3>
+                <div><Rd.LazyPhoto attr="imgUrl"/></div>
+                <div><Rd.Text attr="name" label="Name"/> (<Rd.Text attr="title"/>)</div>
+                <div><Rd.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/></div>
+                <Rd.Text attr="description"/>
+                <h5>Leave a comment</h5>
+                <Rd.Text attr="comment" inputMode="edit"/>
+              </Rd.Model>
+            </div>
+          )
+        }
+      })
+    </pre>
+  </div>
+  <h5>Demo:</h5>
+  <div class="demo">
+
+  </div>
+
+  <script src="../../dist/bundle.js"></script>
+  <script src="model.js"></script>
+
+</body>
