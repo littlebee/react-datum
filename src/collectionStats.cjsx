@@ -1,6 +1,7 @@
 
 React = require('react')
 Inflection = require('inflection')
+Backbone = require('backbone')
 
 require('../css/collectionStats.css')
 

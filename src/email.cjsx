@@ -1,5 +1,7 @@
 
 React = require('react')
+_ = require('underscore')
+
 Datum = require('./datum')
 
 ###

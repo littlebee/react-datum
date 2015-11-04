@@ -1,6 +1,7 @@
 
 React = require('react')
 ReactDom = require('react-dom')
+$ = jQuery = require('react')
 
 Tilegrid = require('./tilegrid')
 Model = require('../model')

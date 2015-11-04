@@ -31,13 +31,13 @@ module.exports =
     "jquery": "jQuery"
     "backbone": "Backbone"
     "react": "React"
-    "react-dom": "ReactDom"
-    "react-bootstrap": "Rbs"
-  debug: false,
+    #   "react-bootstrap": "Rbs"
+  debug: true,
 
   resolve:
     extensions: ["", ".jsx", ".cjsx", ".coffee", ".js"]
     modulesDirectories: ["src", "node_modules"]
+
   module:
     loaders: [
       # required to write "require("./style.css")"
@@ -57,15 +57,15 @@ module.exports =
         test: /\.svg$/
         loader: "file-loader?prefix=font/"
       ,
-      #   test: require.resolve("jquery")
-      #   loader: "expose?$"
-      # ,
-      #   test: require.resolve("jquery")
-      #   loader: "expose?jQuery"
-      # ,
-      #   test: require.resolve("react")
-      #   loader: "expose?React"
-      # ,
+        test: require.resolve("jquery")
+        loader: "expose?$"
+      ,
+        test: require.resolve("jquery")
+        loader: "expose?jQuery"
+      ,
+        test: require.resolve("react")
+        loader: "expose?React"
+      ,
         test: /\.jsx$/
         loaders: ["react-hot", "jsx-loader?insertPragma=React.DOM"]
         include: path.join(__dirname, "src")
@@ -78,10 +78,17 @@ module.exports =
     new webpack.HotModuleReplacementPlugin()
     new webpack.NoErrorsPlugin()
     new webpack.IgnorePlugin(/vertx/) # https://github.com/webpack/webpack/issues/353
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin
-     compress:
-       warnings: false
-     mangle:
-       except: ['$super', '$', 'exports', 'require']
+    new webpack.ProvidePlugin
+      # Automatically detect jQuery and $ as free var in modules
+      # and inject the jquery library
+      # This is required by many jquery plugins
+      jQuery: "jquery"
+      $: "jquery"
+
+    # new webpack.optimize.DedupePlugin(),
+    # new webpack.optimize.UglifyJsPlugin
+    #  compress:
+    #    warnings: false
+    #  mangle:
+    #    except: ['$super', '$', 'exports', 'require']
   ]

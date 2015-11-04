@@ -1,5 +1,8 @@
 
 React = require('react')
+Backbone = require('backbone')
+_ = require('underscore')
+
 ContextualData = require('./contextualData')
 
 

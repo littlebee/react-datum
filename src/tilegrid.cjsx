@@ -1,7 +1,6 @@
 
-
-
 React = require('react')
+
 TilegridReact = require('./tilegrid/tilegridReact')
 SingleSelect = require('./tilegrid/singleSelect')
 MultiSelect = require('./tilegrid/multiSelect')

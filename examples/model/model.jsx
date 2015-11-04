@@ -1,4 +1,5 @@
 
+var Rd = ReactDatum
 
 var kittenModel = new Backbone.Model({
   name: "Fluffy",

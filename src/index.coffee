@@ -1,5 +1,5 @@
 
-module.exports =
+module.exports = 
   # contextual components
   ClickToEditForm: require './clickToEditForm'
   Collection: require './collection'

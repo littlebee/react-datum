@@ -1,5 +1,6 @@
 
-React = reaquire('react')
+React = require('react')
+Backbone = require('backbone') 
 
 ###
   This is an abstract base class for contextual data components like

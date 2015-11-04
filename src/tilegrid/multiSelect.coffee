@@ -1,5 +1,5 @@
 
-$ = require('jquery')
+$ = jQuery = require('jquery')
 _ = require('underscore')
 
 SingleSelect = require('./singleSelect')
