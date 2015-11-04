@@ -73,6 +73,10 @@ module.exports =
         test: /\.(cjsx|coffee)$/
         loaders: ["react-hot", "coffee", "cjsx"]
         include: path.join(__dirname, "src")
+      ,
+        test: /\.(png|jpg)$/
+        loader: 'url-loader?limit=8192' # inline base64 URLs for <=8k images, direct URLs for the rest
+
     ]
   plugins: [
     new webpack.HotModuleReplacementPlugin()

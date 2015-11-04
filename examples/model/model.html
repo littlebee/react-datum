@@ -10,9 +10,8 @@
 </head>
 <body>
   <div class='example'>
-    <pre>
-      Say you have this model:
-      ```javascript
+    <h4>Say you have this model:</h4>
+    <pre><code>
       var kittenModel = new Backbone.Model({
         name: "Fluffy",
         title: "His Royal Cuteness",
@@ -24,33 +23,33 @@
         sponsorEmail: "kindoldcatlady@lotsofcats.com",
         comment: ""
       })
-      ```
-      to render a card for this model with react-datum:
+    </code></pre>
 
-      ```javascript
+    <h4>to render a card for this model with react-datum:</h4>
+    <pre><code>
       Rd = require('react-datum')
 
       Kitten = React.CreateClass({
         render: function() {
           return (
-            <div className='kitten-card'>
-              <Rd.Model model={kittenModel}>
-                <h3>Adopt <Rd.Text attr="name"/> Today!</h3>
-                <div><Rd.LazyPhoto attr="imgUrl"/></div>
-                <div><Rd.Text attr="name" label="Name"/> (<Rd.Text attr="title"/>)</div>
-                <div><Rd.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/></div>
-                <Rd.Text attr="description"/>
-                <h5>Leave a comment</h5>
-                <Rd.Text attr="comment" inputMode="edit"/>
-              </Rd.Model>
-            </div>
+            &lt;div className='kitten-card'&gt;
+              &lt;Rd.Model model={kittenModel}&gt;
+                &lt;h3&gt;Adopt &lt;Rd.Text attr="name"/&gt; Today!&lt;/h3&gt;
+                &lt;div&gt;&lt;Rd.LazyPhoto attr="imgUrl"/&gt;&lt;/div&gt;
+                &lt;div&gt;&lt;Rd.Text attr="name" label="Name"/&gt; (&lt;Rd.Text attr="title"/&gt;)&lt;/div&gt;
+                &lt;div&gt;&lt;Rd.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/&gt;&lt;/div&gt;
+                &lt;Rd.Text attr="description"/&gt;
+                &lt;h5&gt;Leave a comment&lt;/h5&gt;
+                &lt;Rd.Text attr="comment" inputMode="edit"/&gt;
+              &lt;/Rd.Model&gt;
+            &lt;/div&gt;
           )
         }
       })
-    </pre>
+    </code></pre>
   </div>
-  <h5>Demo:</h5>
-  <div class="demo">
+  <h3>Demo:</h3>
+  <div id="demo">
 
   </div>
 

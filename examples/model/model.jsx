@@ -8,12 +8,12 @@ var kittenModel = new Backbone.Model({
   forAdoption: true,
   ageInMonths: 10,
   createdAt: 1446520828,
-  imgUrl: "https://drpem3xzef3kf.cloudfront.net/photos/pets/32707403/1/?bust=1436666804&width=632&no_scale_up=1",
+  imgUrl: "https://drpem3xzef3kf.cloudfront.net/photos/pets/32707403/1/?bust=1436666804&width=200&no_scale_up=1",
   sponsorEmail: "kindoldcatlady@lotsofcats.com",
   comment: ""
 });
 
-<div className='kitten-card'>
+var kittenCard = <div className='kitten-card'>
   <Rd.Model model={kittenModel}>
     <h3>Adopt <Rd.Text attr="name"/> Today!</h3>
     <div><Rd.LazyPhoto attr="imgUrl"/></div>
@@ -24,3 +24,5 @@ var kittenModel = new Backbone.Model({
     <Rd.Text attr="comment" inputMode="edit"/>
   </Rd.Model>
 </div>
+
+ReactDOM.render(kittenCard, $('#demo')[0])

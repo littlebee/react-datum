@@ -8,12 +8,12 @@ var kittenModel = new Backbone.Model({
   forAdoption: true,
   ageInMonths: 10,
   createdAt: 1446520828,
-  imgUrl: "https://drpem3xzef3kf.cloudfront.net/photos/pets/32707403/1/?bust=1436666804&width=632&no_scale_up=1",
+  imgUrl: "https://drpem3xzef3kf.cloudfront.net/photos/pets/32707403/1/?bust=1436666804&width=200&no_scale_up=1",
   sponsorEmail: "kindoldcatlady@lotsofcats.com",
   comment: ""
 });
 
-React.createElement("div", {className: "kitten-card"}, 
+var kittenCard = React.createElement("div", {className: "kitten-card"}, 
   React.createElement(Rd.Model, {model: kittenModel}, 
     React.createElement("h3", null, "Adopt ", React.createElement(Rd.Text, {attr: "name"}), " Today!"), 
     React.createElement("div", null, React.createElement(Rd.LazyPhoto, {attr: "imgUrl"})), 
@@ -24,3 +24,5 @@ React.createElement("div", {className: "kitten-card"},
     React.createElement(Rd.Text, {attr: "comment", inputMode: "edit"})
   )
 )
+
+ReactDOM.render(kittenCard, $('#demo')[0])
