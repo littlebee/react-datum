@@ -23,6 +23,7 @@
   "homepage": "https://github.com/zulily/react-datum",
   "dependencies": {
     "backbone": "^1.2.3",
+    "inflection": "^1.7.2",
     "jquery": "^2.1.4",
     "underscore": "^1.8.3"
   }

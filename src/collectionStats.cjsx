@@ -1,65 +1,73 @@
-App.namespace 'App.views.widgets.react', require: [
-  'react'
-  'react-dom'
 
-  'css!/css/views/collectionStats.css'
+React = require('react')
+Inflection = require('inflection')
 
-], (x, [React, ReactDom, loadedLibs...]) ->
+require('css!/css/views/collectionStats.css')
 
-  class x.CollectionStats extends React.Component
-    @displayName: "widgets.react.CollectionStats"
+###
+  **CollectionStats** provides information about the items in your collection.
 
-    @propTypes:
-      collection: React.PropTypes.instanceOf(Backbone.Collection)
-      itemDisplayName: React.PropTypes.string
+  Requires either a 'collection' context or prop.  And displays counts of
+  items found, selected (if SelectableCollection) and viewing.
+###
+class CollectionStats extends React.Component
+  @displayName: "widgets.react.CollectionStats"
 
-    @defaultProps:
-      itemDisplayName: "item"
+  @propTypes:
+    # a Backbone.Collection
+    collection: React.PropTypes.instanceOf(Backbone.Collection)
 
-    @contextTypes:
-      collection: React.PropTypes.instanceOf(Backbone.Collection)
+    # used as the display name for found items. ex.
+    #```javascript
+    #  <CollectionStats itemDisplayName="thing"/>
+    #```
+    # => "Found 1,230 things".
+    itemDisplayName: React.PropTypes.string
 
+  @defaultProps:
+    itemDisplayName: "item"
 
-    render: ->
-      @collection = @props.collection || @context.collection
-      unless @collection?
-        throw "#{@constructor.displayName} needs a collection prop or app.widgets.react.Collection context parent"
-
-      return (
-        <div className='collection-stats'>
-          {@_renderFound()}
-          {@_renderSelected()}
-          {@_renderViewing()}
-        </div>
-      )
+  @contextTypes:
+    collection: React.PropTypes.instanceOf(Backbone.Collection)
 
 
-    _renderFound: ->
-      total = @collection.getTotalRows()
-      if @collection.fetching
-        return <img className="loading-indicator fade in" src="/img/bar_loading.gif"/>
-      else
-        return (
-          <span className="found stats fade in">
-            Found {total} {@props.itemDisplayName.plural(total)}
-          </span>
-        )
+  render: ->
+    @collection = @props.collection || @context.collection
+    unless @collection?
+      throw "#{@constructor.displayName} needs a collection prop or app.widgets.react.Collection context parent"
+
+    return (
+      <div className='collection-stats'>
+        {@_renderFound()}
+        {@_renderSelected()}
+        {@_renderViewing()}
+      </div>
+    )
 
 
-    _renderSelected: ->
-      return null unless @collection.isSelectable
-      return(
-        <span className="selected stats fade in">
-          , {@collection.getSelectedModels().length} selected
-        </span>
-      )
+  _renderFound: ->
+    total = @collection.getTotalRows()
+    things = Inflection.inflect(@props.itemDisplayName, total)
+    return (
+      <span className="found stats fade in">
+        Found {total} {things}
+      </span>
+    )
 
 
-    _renderViewing: ->
-      statsModel = @collection.statsModel
-      return null unless statsModel?.topDisplayIndex?
-      return (
-        <span className="viewing stats fade in">
-          Viewing {statsModel.topDisplayIndex} - {statsModel.bottomDisplayIndex}
-        </span>
-      )
+  _renderSelected: ->
+    return null unless @collection.isSelectable
+    return(
+      <span className="selected stats fade in">
+        , {@collection.getSelectedModels().length} selected
+      </span>
+    )
+
+
+  _renderViewing: ->
+    return null unless @collection.topDisplayIndex? && @collection.bottomDisplayIndex
+    return (
+      <span className="viewing stats fade in">
+        Viewing {@collection.topDisplayIndex} - {@collection.bottomDisplayIndex}
+      </span>
+    )

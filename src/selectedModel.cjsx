@@ -1,86 +1,80 @@
-App.namespace 'App.views.widgets.react', require: [
-  'react'
-  'react-dom'
 
-  'views/widgets/react/contextualData'
+React = require('react')
+ContextualData = require('./contextualData')
 
-], (x, [React, ReactDom, loadedLibs...]) ->
+###
+  Contextual data component that accepts a collection as a prop or context arg, and
+  provides a context arg called 'model' to all children that is the first selected
+  model in the collection.
 
-  ###
-    Contextual data component that accepts a collection as a prop or context arg, and
-    provides a context arg called 'model' to all children that is the first selected
-    model in the collection.
+  Example
+  ```jsx
+    <Collection collection={KittensCollectionClass} fetch={true}>
+      <SelectedModel>
+        <Text label="Name of selected model" attr="name"/>
+      </SelectedModel>
+    <Collection>
+  ```
 
-    Ex.
-    ```jsx
+###
+class SelectedModel extends ContextualData
+  @displayName: "widgets.react.SelectedModel"
 
-      <Rz.Collection collection={App.models.user.Users} fetch={true}>
-        <Rz.SelectedModel>
-          <Rz.Text label="Name of selected model" attr="name"/>
-        </Rz.SelectedModel>
-      <Rz.Collection>
+  # this class also supplies a "model" context to it's children that is
+  # the selected model in the collection we recieve as a prop or context
+  dataType:  Backbone.Model
+  # this is the key in @context children should use to access thing
+  contextKey: 'model'
 
-    ```
+  # we don't need any of the base propTypes and our collection prop can also be
+  # given as a context arg
+  @proptypes:
+    collection: React.PropTypes.instanceOf(Backbone.Collection)
+    placeholder: React.PropTypes.node  # anything react can render
 
-  ###
-  class x.SelectedModel extends x.ContextualData
-    @displayName: "widgets.react.SelectedModel"
+  @contextTypes:
+    collection: React.PropTypes.instanceOf(Backbone.Collection)
 
-    # this class also supplies a "model" context to it's children that is
-    # the selected model in the collection we recieve as a prop or context
-    dataType:  Backbone.Model
-    # this is the key in @context children should use to access thing
-    contextKey: 'model'
-
-    # we don't need any of the base propTypes and our collection prop can also be
-    # given as a context arg
-    @proptypes:
-      collection: React.PropTypes.instanceOf(Backbone.Collection)
-      placeholder: React.PropTypes.node  # anything react can render
-
-    @contextTypes:
-      collection: React.PropTypes.instanceOf(Backbone.Collection)
-
-    @childContextTypes:
-      model: React.PropTypes.instanceOf(Backbone.Model)
+  @childContextTypes:
+    model: React.PropTypes.instanceOf(Backbone.Model)
 
 
-    # extends super: renders placeholder if provided or blank when
-    # there is no selected model
-    renderContent: ->
-      if @dataItem?
-        return super
+  # extends super: renders placeholder if provided or blank when
+  # there is no selected model
+  renderContent: ->
+    if @dataItem?
+      return super
 
-      return <div className="large-placeholder">{@props.placeholder}</div>
-
-
-    # extends - also need to consider our inbound context collection may have changed
-    _needsReinitializing: () ->
-      truth = super() || @context.collection != @_lastContextCollection
-      @_lastContextCollection = @context.collection
-      return truth;
+    return <div className="large-placeholder">{@props.placeholder}</div>
 
 
-    # override - @dataItem should be the selected model in the collection
-    _setDataItem: () ->
-      @collection = @props.collection || @context.collection
-      @dataItem = @collection.getSelectedModels?()[0]
+  # extends - also need to consider our inbound context collection may have changed
+  _needsReinitializing: () ->
+    truth = super() || @context.collection != @_lastContextCollection
+    @_lastContextCollection = @context.collection
+    return truth;
 
 
-    # extends - in addition to listening to our selected model events, listen for
-    # selections changed on collection
-    _bindEvents: (model) ->
-      super
-      @collection?.on "selectionsChanged", @_onSelectionsChanged
+  # override - @dataItem should be the selected model in the collection
+  _setDataItem: () ->
+    @collection = @props.collection || @context.collection
+    @dataItem = @collection.getSelectedModels?()[0]
 
 
-    _unbindEvents: () ->
-      super
-      @collection?.off "selectionsChanged", @_onSelectionsChanged
+  # extends - in addition to listening to our selected model events, listen for
+  # selections changed on collection
+  _bindEvents: (model) ->
+    super
+    @collection?.on "selectionsChanged", @_onSelectionsChanged
 
 
-    _onSelectionsChanged: =>
-      @_unbindEvents()
-      @_setDataItem()
-      @_bindEvents()
-      @forceUpdate()
+  _unbindEvents: () ->
+    super
+    @collection?.off "selectionsChanged", @_onSelectionsChanged
+
+
+  _onSelectionsChanged: =>
+    @_unbindEvents()
+    @_setDataItem()
+    @_bindEvents()
+    @forceUpdate()

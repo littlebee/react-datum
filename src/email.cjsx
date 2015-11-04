@@ -1,44 +1,40 @@
-App.namespace 'App.views.widgets.react', require: [
-  'react'
-  'react-dom'
 
-  'views/widgets/react/link'
+React = require('react')
+Datum = require('./datum')
 
-], (x, [React, ReactDom, loadedLibs...]) ->
+###
+  For rendering and input of email addresses mailto: links like <a href="mailto:">.
 
-  ###
-    For rendering and input of email addresses mailto: links like <a href="mailto:">.
+  *Props*
 
-    *Props*
+  attr  - attribute on model should return an email address from the model
+  displayLink - if true a mailto:// link is rendered for display
 
-    attr  - attribute on model should return an email address from the model
-    displayLink - if true a mailto:// link is rendered for display
+###
+class Email extends Datum
+  @displayName: "widgets.react.Email"
 
-  ###
-  class x.Email extends x.Datum
-    @displayName: "widgets.react.Email"
+  @propTypes: _.extend {}, x.Datum.propTypes,
+    displayLink: React.PropTypes.bool
 
-    @propTypes: _.extend {}, x.Datum.propTypes,
-      displayLink: React.PropTypes.bool
-
-    constructor: (props) ->
-      super
-      @addValidations @validateEmail
+  constructor: (props) ->
+    super
+    @addValidations @validateEmail
 
 
-    renderValue: ->
-      value = @getValueToRender()
-      value = @_ellipsize(value)
-      return if @props.displayLink
-        <a href={@getMailToHref(value)}>{value}</a>
-      else
-        value
+  renderValue: ->
+    value = @getValueToRender()
+    value = @_ellipsize(value)
+    return if @props.displayLink
+      <a href={@getMailToHref(value)}>{value}</a>
+    else
+      value
 
 
-    getMailToHref: (value) ->
-      return "mailto:#{value}"
+  getMailToHref: (value) ->
+    return "mailto:#{value}"
 
 
-    validateEmail: (value) =>
-      return true if value.match /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
-      return "Invalid email address.  Should be like 'bob@zulily.com'"
+  validateEmail: (value) =>
+    return true if value.match /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+    return "Invalid email address.  Should be like 'bob@zulily.com'"

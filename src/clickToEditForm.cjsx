@@ -1,49 +1,57 @@
-App.namespace 'App.views.widgets.react', require: [
-  'react'
-  'react-dom'
 
-  'views/widgets/react/form'
+React = require('react')
+ReactDom = require('react-dom')
+Form = require('./form')
 
-], (x, [React, ReactDom, loadedLibs...]) ->
+###
+  **ClickToEditForm** is an extension of **Form** that initially presents an
+  "Edit" button that the user can click to switch between display and input.
 
-  class x.ClickToEditForm extends x.Form
-    @displayName: "widgets.react.ClickToEditForm"
+  **Datum** children are initialized readonly, when the user clicks edit, the
+  'inputMode' context variable is set to 'edit' and all children are rerendered.
 
-    # override default for Form is all input, we start out readonly and then
-    # switch to 'edit' mode when the user clicks edit button
-    datumInputMode: 'readonly'
+  See react-datum **Form** component for more props.  All **Form&& properties are
+  supported by **ClickToEditForm**
 
-    constructor: (props) ->
-      super
-      @isEditing = false
+###
+module.exports = class ClickToEditForm extends Form
+  @displayName: "widgets.react.ClickToEditForm"
 
+  # override default for Form is all input, we start out readonly and then
+  # switch to 'edit' mode when the user clicks edit button
+  datumInputMode: 'readonly'
 
-    # override: only calls super if in edit mode, else renders single edit button
-    renderButtons: (options) ->
-      if @isEditing
-        return super
-      return <button className="btn-primary" onClick={@onEditClick}>Edit</button>
-
-
-    onEditClick: () =>
-      @isEditing = true
-      @datumInputMode = 'edit'
-      @forceUpdate()
-      _.defer => @focus()
+  constructor: (props) ->
+    super
+    @isEditing = false
 
 
-
-    onSaveSuccess: () =>
-      super
-      @stopEditing()
-
-
-    onCancelClick: () =>
-      @stopEditing()
-      super
+  # override: only calls super if in edit mode, else renders single edit button
+  renderButtons: (options) ->
+    if @isEditing
+      return super
+    return <button className="btn-primary" onClick={@onEditClick}>Edit</button>
 
 
-    stopEditing: () =>
-      @isEditing = false
-      @datumInputMode = 'readonly'
-      @forceUpdate()
+  onEditClick: () =>
+    @isEditing = true
+    @datumInputMode = 'edit'
+    @forceUpdate()
+    _.defer => @focus()
+
+
+
+  onSaveSuccess: () =>
+    super
+    @stopEditing()
+
+
+  onCancelClick: () =>
+    @stopEditing()
+    super
+
+
+  stopEditing: () =>
+    @isEditing = false
+    @datumInputMode = 'readonly'
+    @forceUpdate()

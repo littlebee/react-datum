@@ -1,15 +1,11 @@
-App.namespace 'App.views.widgets.react', require: [
-  'react'
-  'react-dom'
 
-  'views/widgets/react/number'
+React = require('react')
+Datum = require('./datum')
 
-], (x, [React, ReactDom, loadedLibs...]) ->
+###
+  For whole numbers (no decimal input allowed).
+###
+class WholeNumber extends Number
+  @displayName: "widgets.react.WholeNumber"
 
-  ###
-    For whole numbers (no decimal input allowed).
-  ###
-  class x.WholeNumber extends x.Number
-    @displayName: "widgets.react.WholeNumber"
-
-    charactersMustMatch: /^\-?[0-9]*$/
+  charactersMustMatch: /^\-?[0-9]*$/

@@ -68,7 +68,6 @@ module.exports = class MultiSelect extends SingleSelect
     firstTileIndex = if activeIndex > index then @tilegrid._findTopIndex() else activeIndex
     lastTileIndex = if activeIndex < index then @tilegrid._findBottomIndex() else index
     if _.isFunction(@collection.ensureRows)
-      App.debug "tilegrid.MultiSelect ensuring rows #{firstTileIndex} - #{lastTileIndex}"
       @collection.ensureRows firstTileIndex, lastTileIndex,
         complete: onEnsureComplete
     else

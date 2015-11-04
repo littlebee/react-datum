@@ -35,6 +35,11 @@ _ = require('underscore')
 module.exports = class SelectableCollection
 
   @mixInto: (collection) ->
+    # escape hatch if we or someone else has grabbed this reponsibility.   If you want to have
+    # you own compatible selectable collection functionality, you can set
+    # hasSelectableCollectionMixin to true in the class prototype definition and we will not mix in.
+
+    return if @hasSelectableCollectionMixin
     @warnIfReplacingMethods(collection)
     _.extend collection, @prototype
 
@@ -46,8 +51,9 @@ module.exports = class SelectableCollection
     console.error "Warning: using react-datum SelectableCollection mixin will replace the following methods: " +
       intersect.join(', ')
 
+
   # this provides an easy way for widgets, etc to see if the collection has this mixin
-  isSelectable: true
+  hasSelectableCollectionMixin: true
 
 
   # returns
