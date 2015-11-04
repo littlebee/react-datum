@@ -420,7 +420,7 @@ module.exports = class Tilegrid
     return false unless @$element.is(':visible') && @$loadingIndicator.is(':visible')
 
     if @$element.outerHeight() > 5000
-      App.error "dev error: the outer height of the .tilegrid element for #{@selector} is saying it's outer height " +
+      console.error "dev error: the outer height of the .tilegrid element for #{@selector} is saying it's outer height " +
           "is greater that 5000.  You need to set the height to something other than auto. "
       scrollHeight = 5000
     else
@@ -476,7 +476,7 @@ module.exports = class Tilegrid
       topAcceptable = topTileIndex # - Math.min(100, numInView)
       bottomAcceptable = bottomTileIndex # + Math.max(100, numInView)
       continue if index >= topAcceptable && index <= bottomAcceptable
-      # App.debug "Tilegrid: derendering outside tile. index: #{index}"
+
       @_derenderTile($tile)
 
 

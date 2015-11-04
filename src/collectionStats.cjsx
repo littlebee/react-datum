@@ -10,7 +10,7 @@ require('css!/css/views/collectionStats.css')
   Requires either a 'collection' context or prop.  And displays counts of
   items found, selected (if SelectableCollection) and viewing.
 ###
-class CollectionStats extends React.Component
+module.exports = class CollectionStats extends React.Component
   @displayName: "widgets.react.CollectionStats"
 
   @propTypes:
@@ -34,7 +34,7 @@ class CollectionStats extends React.Component
   render: ->
     @collection = @props.collection || @context.collection
     unless @collection?
-      throw "#{@constructor.displayName} needs a collection prop or app.widgets.react.Collection context parent"
+      throw "#{@constructor.displayName} needs a collection prop or react-datum Collection context parent"
 
     return (
       <div className='collection-stats'>

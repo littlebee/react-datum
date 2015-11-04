@@ -11,10 +11,10 @@ Datum = require('./datum')
   displayLink - if true a mailto:// link is rendered for display
 
 ###
-class Email extends Datum
+module.exports = class Email extends Datum
   @displayName: "widgets.react.Email"
 
-  @propTypes: _.extend {}, x.Datum.propTypes,
+  @propTypes: _.extend {}, Datum.propTypes,
     displayLink: React.PropTypes.bool
 
   constructor: (props) ->

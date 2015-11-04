@@ -6,7 +6,7 @@ ContextualData = require('./contextualData')
 ###
   Model react component provides a model context to all children
 ###
-class Model extends ContextualData
+module.exports = class Model extends ContextualData
   @displayName: "widgets.react.Model"
 
   # this is the class of thing being placed in the context.

@@ -20,7 +20,7 @@ Datum = require('./datum')
   url.  The image is only rendered if it's visible and in view. Otherwise the placeholder
   image is rendered.
 ###
-class LazyPhoto extends Datum
+module.exports = class LazyPhoto extends Datum
   @displayName: "widgets.react.LazyPhoto"
 
   # TODO : open source: need images?  make into props?

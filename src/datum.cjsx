@@ -27,7 +27,7 @@ OverlayTrigger = require('react-bootstrap').OverlayTrigger
     # the model triggers 'sync'
 
     return (
-      <Model model="App.models.User">
+      <Model model="UserModelClass">
         <Datum attr="firstName" label="FirstName"/>
         <Datum attr="firstName" label="LastName"/>
         <Datum attr="title"/>
@@ -56,7 +56,7 @@ OverlayTrigger = require('react-bootstrap').OverlayTrigger
 
 
 ###
-class x.Datum extends React.Component
+module.exports = class Datum extends React.Component
   @displayName: "widgets.react.Datum"
 
   @propTypes:

@@ -6,7 +6,7 @@ React = reaquire('react')
   widgets.react.Collection and widgets.react.Model that provide a
   single contextual data element
 ###
-class ContextualData extends React.Component
+module.exports = class ContextualData extends React.Component
   #  don't forget your display name so you get semi-intelligent errors from react
   #@displayName: "widgets.react.Model"
 
@@ -35,7 +35,7 @@ class ContextualData extends React.Component
 
   # you will also need to similarly extend this, like this:
   #```
-  #  @childContextTypes: _.extend {}, x.ContextualData.childContextTypes,
+  #  @childContextTypes: _.extend {}, ContextualData.childContextTypes,
   #    collection: React.PropTypes.instanceOf(Backbone.Collection)
   #```
   @childContextTypes: {}

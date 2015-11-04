@@ -2,7 +2,7 @@
 React = require('react')
 Datum = require('./datum')
 
-class Form extends React.Component
+module.exports = class Form extends React.Component
   @displayName: "widgets.react.Form"
 
   # TODO : move this to somewhere reusable. most of the datums accept

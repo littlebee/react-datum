@@ -23,7 +23,7 @@ ONE_THOUSAND = 1000
   Only allows /[0-9\-\.]/ on input
 
 ###
-class Number extends Datum
+module.exports = class Number extends Datum
   @displayName: "widgets.react.Number"
 
   @propTypes: _.extend {}, Datum.propTypes,

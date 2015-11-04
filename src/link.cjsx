@@ -11,7 +11,7 @@ Datum = require('./datum')
   Optionally, a 'nameAttr' prop can also be specified to display between the <a></a>
   tags.  If 'nameAttr' prop is not specified, the children of the link are rendered
 ###
-class Link extends Datum
+module.exports = class Link extends Datum
   @displayName: "widgets.react.Link"
 
   @propTypes: _.extend {}, Datum.propTypes,

@@ -7,7 +7,7 @@ SingleSelect = require('./tilegrid/singleSelect')
 MultiSelect = require('./tilegrid/multiSelect')
 
 
-class Tilegrid extends React.Component
+module.exports = class Tilegrid extends React.Component
   @displayName: "widgets.react.Tilegrid"
 
   @propTypes:
