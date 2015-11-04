@@ -28,9 +28,9 @@ var kittenModel = new Backbone.Model({
   description: "He's a cuddler and a lover through and through",
   forAdoption: true,
   ageInMonths: 10,
-  createdAt: 1446520828
-  imgUrl: "https://drpem3xzef3kf.cloudfront.net/photos/pets/32707403/1/?bust=1436666804&width=632&no_scale_up=1"
-  sponsorEmail: "kindoldcatlady@lotsofcats.com"
+  createdAt: 1446520828,
+  imgUrl: "https://drpem3xzef3kf.cloudfront.net/photos/pets/32707403/1/?bust=1436666804&width=632&no_scale_up=1",
+  sponsorEmail: "kindoldcatlady@lotsofcats.com",
   comment: ""
 })
 ```
@@ -48,7 +48,7 @@ Kitten = React.CreateClass({
           <div><Rd.LazyPhoto attr="imgUrl"/></div>
           <div><Rd.Text attr="name" label="Name"/> (<Rd.Text attr="title"/>)</div>
           <div><Rd.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/></div>
-          <Rd.Text attr="description">
+          <Rd.Text attr="description"/>
           <h5>Leave a comment</h5>
           <Rd.Text attr="comment" inputMode="edit"/>
         </Rd.Model>
@@ -99,7 +99,7 @@ By wrapping the datums in the **Rd.Form** tag, they implicitedly recieve `inputM
 
 ## Implied Context, Deterministic Props
 
-Any contextually provided properties like the 'model' that the datum is acting on, or the inputMode implied by being in a form, can be overriden by explict properties.  So, if in the example above, the comments were stored in another model, you could break out of context by adding:  
+Any contextually provided properties like the 'model' that the datum is acting on, or the 'inputMode' implied by being in a **Rd.Form**, can be overriden by explict properties.  So, if in the example above, the comments were stored in another model, you could break out of context by adding:  
 ```javascript
         <Rd.Text attr="comment", model={kittenCommentsModel}/>
 ```
@@ -107,7 +107,7 @@ You could also specify that a particular datum in this case is always inputMode=
 ```javascript
         <Rd.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink readonly/>
 ```
-Adding readonly on the **Rd.Form** component is also supported for programmatically making the whole form render all datums readonly except those that are provided explicity inputMode prop.  And, on the subject of forms and inputMode, checkout the **Rd.ClickToEditForm** for an extension of **Rd.Form** that provides an edit button that switches all datums seemlessly between readonly and edit modes.  One form for both display and editing!   
+Adding readonly on the **Rd.Form** component is also supported for programmatically making the whole form render all datums readonly except those that are provided explicity 'inputMode' prop.  And, on the subject of forms and 'inputMode', checkout the **Rd.ClickToEditForm** for an extension of **Rd.Form** that provides an edit button that switches all datums seemlessly between readonly and edit modes.  One form for both display and editing!   
 
 ## Validations
 

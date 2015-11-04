@@ -7,8 +7,8 @@ _ = require('underscore')
   event when the active model is set via setActiveModel() method.  Current version of this component does not
   support having active model that is not selected.  Calling setActiveModel on an unselected model, selects it.
 
-  example: ```javascript
-
+  example:
+  ```javascript
     kittensCollection = new Backbone.Collection()
     SelectableCollection.mixInto(kittensCollection)
     kittensCollection.onSelectionsChanged(function(){
@@ -16,9 +16,8 @@ _ = require('underscore')
     })
     ...
 
-    myCollection.selectModelByIndex(0)
+    kittensCollection.selectModelByIndex(0)
     ...
-
   ```
   When a collection is reset([]), or a selected model is removed from the collection it is no longer returned
   by any of the getSelected... methods.  Only models that exist in the collection can be selected.
