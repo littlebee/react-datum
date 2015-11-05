@@ -1,5 +1,6 @@
 react-datum
 ============
+
 A set of [React](https://facebook.github.io/react/) components for interacting with Backbone collections and models.
 
 ## Demo & Examples
@@ -118,3 +119,13 @@ Some validations are implicit.  For example, the **Rd.Date** input will validate
 All validations are instant and complete.  For example, if you have a whole number that is both required and has a minValue=10, erasing the input value will result in immediate error indicator with both errors displayed in the popover.
 
 **Rd.Form** will not save a form (will not call model.save()) if any of the Datums in it are invalid.  An error message is displayed requesting the user to correct the errors to continue.
+
+# Development
+
+## Test
+
+We write unit tests using [Jest](https://facebook.github.io/jest/) and CoffeeScript. 
+
+To run tests locally, do
+ 
+     npm test
