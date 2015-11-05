@@ -85,17 +85,17 @@ module.exports =
     new webpack.HotModuleReplacementPlugin()
     new webpack.NoErrorsPlugin()
     new webpack.IgnorePlugin(/vertx/) # https://github.com/webpack/webpack/issues/353
-    new webpack.ProvidePlugin
-      # Automatically detect jQuery and $ as free var in modules
-      # and inject the jquery library
-      # This is required by many jquery plugins
-      jQuery: "jquery"
-      $: "jquery"
+    # new webpack.ProvidePlugin
+    #   # Automatically detect jQuery and $ as free var in modules
+    #   # and inject the jquery library
+    #   # This is required by many jquery plugins
+    #   jQuery: "jquery"
+    #   $: "jquery"
 
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin
-     compress:
-       warnings: false
-     mangle:
-       except: ['$super', '$', 'exports', 'require']
+    # new webpack.optimize.DedupePlugin(),
+    # new webpack.optimize.UglifyJsPlugin
+    #  compress:
+    #    warnings: false
+    #  mangle:
+    #    except: ['$super', '$', 'exports', 'require']
   ]
