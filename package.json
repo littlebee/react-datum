@@ -4,7 +4,7 @@
   "description": " Code",
   "main": "index.js",
   "scripts": {
-    "test": "grunt newer:coffee && grunt newer:cjsx && jest"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -28,10 +28,22 @@
     "unmockedModulePathPatterns": [
       "node_modules/react"
     ],
-    "rootDir": "build",
+    "rootDir": "src",
     "scriptPreprocessor": "../preprocessor.js",
-    "testFileExtensions": ["coffee", "litcoffee", "coffee.md", "js"],
-    "moduleFileExtensions": ["coffee", "litcoffee", "coffee.md", "js"]
+    "testFileExtensions": [
+      "coffee",
+      "cjsx",
+      "litcoffee",
+      "coffee.md",
+      "js"
+    ],
+    "moduleFileExtensions": [
+      "coffee",
+      "cjsx",
+      "litcoffee",
+      "coffee.md",
+      "js"
+    ]
   },
   "homepage": "https://github.com/zulily/react-datum",
   "dependencies": {

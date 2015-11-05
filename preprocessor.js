@@ -1,7 +1,7 @@
 // Taken from:
 //
 //    https://facebook.github.io/jest/docs/tutorial-coffeescript.html#content
-var coffee = require('coffee-script');
+var coffee = require('coffee-react');
 
 module.exports = {
   process: function(src, path) {
