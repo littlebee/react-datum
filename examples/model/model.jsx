@@ -31,4 +31,4 @@ var kittenCard = React.createClass({
     )
   }
 })
-ReactDOM.render(React.createElement(kittenCard), $('#demo')[0])
+ReactDOM.render(React.createElement(kittenCard), document.getElementById('demo'))
