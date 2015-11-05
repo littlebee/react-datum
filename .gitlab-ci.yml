@@ -1,8 +1,8 @@
 before_script:
   - "npm i n"
-  - "n latest"
+  - "./node_modules/.bin/n latest"
 npm_test:
   script:
     - "npm i"
     - "npm test"
-    - "n prev"
+    - "./node_modules/.bin/n prev"
