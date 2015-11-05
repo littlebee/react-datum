@@ -1,3 +1,4 @@
+image: node:5.0.0
 npm_test:
   script:
     - "npm i"
