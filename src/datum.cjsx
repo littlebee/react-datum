@@ -1,9 +1,11 @@
 
 React = require('react')
-Popover = require('../node_modules/react-bootstrap/lib/Popover')        # require('react-bootstrap').Popover
-OverlayTrigger = require('../node_modules/react-bootstrap/lib/OverlayTrigger') # require('react-bootstrap').OverlayTrigger
 Backbone = require('backbone')
 _ = require('underscore')
+
+if ReactBootstrap?                   #if loaded
+  Popover = ReactBootstrap.Popover
+  OverlayTrigger = ReactBootstrap.OverlayTrigger
 
 ###
   This is base class of all display+input components that render presentation
@@ -222,16 +224,18 @@ module.exports = class Datum extends React.Component
   renderIcons: ->
     if @isEditing() && @errors.length > 0
       errors = []
-      errors.push(<div>{error}</div>) for error in @errors
-      popover = <Popover id='datumInvalid' bsStyle='danger'>
-        {errors}
-      </Popover>
 
-      return (
-        <OverlayTrigger trigger={['hover','focus']} placement="bottom" overlay={popover}>
-          <span className="error"><i className='icon-exclamation-sign'/></span>
-        </OverlayTrigger>
-      )
+      if Popover?
+        errors.push(<div>{error}</div>) for error in @errors
+        popover = <Popover id='datumInvalid' bsStyle='danger'>
+          {errors}
+        </Popover>
+
+        return (
+          <OverlayTrigger trigger={['hover','focus']} placement="bottom" overlay={popover}>
+            <span className="error"><i className='icon-exclamation-sign'/></span>
+          </OverlayTrigger>
+        )
 
     return null
 
@@ -345,15 +349,20 @@ module.exports = class Datum extends React.Component
 
   _ellipsize: (value, options={}) ->
     ellipsizeAt = @getEllipsizeAt()
+    ellipsizedValue = value.slice(0, ellipsizeAt-3) + '...'
     if ((value && ellipsizeAt && value.length > ellipsizeAt) || @alwaysAddPopover)
       if @props.noPopover
         value = elipsis(value)
       else
-        popover = <Popover id='bbeditTextEllisize'>{value}</Popover>
-        value = (
-          <OverlayTrigger trigger={['hover','focus']} placement="bottom" overlay={popover}>
-            <span>{value.slice(0, ellipsizeAt-3) + '...'}</span>
-          </OverlayTrigger>
-        )
+        if Popover?
+          popover = <Popover id='bbeditTextEllisize'>{value}</Popover>
+          value = (
+            <OverlayTrigger trigger={['hover','focus']} placement="bottom" overlay={popover}>
+              <span>{ellipsizedValue}</span>
+            </OverlayTrigger>
+          )
+        else
+          value = ellipsizedValue
+
 
     return value
