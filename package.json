@@ -4,7 +4,7 @@
   "description": " Code",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt newer:coffee && grunt newer:cjsx && jest"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,15 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/zulily/react-datum/issues"
+  },
+  "jest": {
+    "unmockedModulePathPatterns": [
+      "node_modules/react"
+    ],
+    "rootDir": "build",
+    "scriptPreprocessor": "../preprocessor.js",
+    "testFileExtensions": ["coffee", "litcoffee", "coffee.md", "js"],
+    "moduleFileExtensions": ["coffee", "litcoffee", "coffee.md", "js"]
   },
   "homepage": "https://github.com/zulily/react-datum",
   "dependencies": {
@@ -38,6 +47,7 @@
     "backbone": ">=0.9.2",
     "cjsx-loader": "^2.0.1",
     "coffee-loader": "^0.7.2",
+    "coffee-react": "^4.0.0",
     "coffee-script": "^1.10.0",
     "css-loader": "^0.21.0",
     "exports-loader": "^0.6.2",
