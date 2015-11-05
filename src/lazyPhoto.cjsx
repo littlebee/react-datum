@@ -3,6 +3,7 @@ React = require('react')
 Datum = require('./datum')
 
 
+
 ###
   This is a lazy loading image.
 
@@ -23,9 +24,9 @@ Datum = require('./datum')
 module.exports = class LazyPhoto extends Datum
   @displayName: "widgets.react.LazyPhoto"
 
-  # TODO : open source: need images?  make into props?
-  notFoundUrl: "/img/petals.png"
-  loadingUrl: "/img/blank.jpg"
+  notFoundUrl: require("../img/petals.png")
+  loadingUrl: require("../img/blank.jpg")
+
   subClassName: 'fast-fade lazy-image'
 
   # these are updated as events are fired

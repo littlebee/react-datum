@@ -1,6 +1,7 @@
 
 React = require('react')
-ReactDom = require('react-dom')
+_ = require('underscore')
+
 ContextualData = require('./contextualData')
 SelectableCollection = require('mixins/SelectableCollection')
 

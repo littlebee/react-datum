@@ -1,6 +1,8 @@
 
 React = require('react')
+Backbone = require('backbone')
 ContextualData = require('./contextualData')
+
 
 ###
   Contextual data component that accepts a collection as a prop or context arg, and

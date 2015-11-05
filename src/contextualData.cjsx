@@ -1,5 +1,6 @@
 
-React = reaquire('react')
+React = require('react')
+Backbone = require('backbone')
 
 ###
   This is an abstract base class for contextual data components like
@@ -79,10 +80,10 @@ module.exports = class ContextualData extends React.Component
 
 
   _setDataItem: () ->
-    if @props[@contextKey] instanceof @dataType
-      @dataItem = @props[@contextKey]     # an instance...
+    if _.isFunction(@props[@contextKey])
+      @dataItem = new @props[@contextKey]()  # a class
     else
-      @dataItem = new @props[@contextKey]()  # ... or a class
+      @dataItem = @props[@contextKey]     # or an instance...
 
 
   _bindEvents: () ->

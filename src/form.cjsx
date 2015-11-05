@@ -1,6 +1,8 @@
 
 React = require('react')
 Datum = require('./datum')
+Backbone = require('backbone')
+$ = jQuery = require('jquery')
 
 module.exports = class Form extends React.Component
   @displayName: "widgets.react.Form"

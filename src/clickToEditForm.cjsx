@@ -1,6 +1,5 @@
 
 React = require('react')
-ReactDom = require('react-dom')
 Form = require('./form')
 
 ###

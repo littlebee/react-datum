@@ -1,6 +1,6 @@
 
 _ = require('underscore')
-$ = require('jquery')
+$ = jQuery = require('jquery')
 
 SelectableCollection = require('../mixins/SelectableCollection')
 
