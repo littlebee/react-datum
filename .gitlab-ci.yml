@@ -1,0 +1,4 @@
+npm_test:
+  script:
+    - "npm i"
+    - "npm test"
