@@ -1,7 +1,7 @@
 
 React = require('react')
-Popover = require('react-bootstrap').Popover
-OverlayTrigger = require('react-bootstrap').OverlayTrigger
+Popover = require('../node_modules/react-bootstrap/lib/Popover')        # require('react-bootstrap').Popover
+OverlayTrigger = require('../node_modules/react-bootstrap/lib/OverlayTrigger') # require('react-bootstrap').OverlayTrigger
 Backbone = require('backbone')
 _ = require('underscore')
 
@@ -263,7 +263,7 @@ module.exports = class Datum extends React.Component
 
 
   getValueToRender: () ->
-    @state.value || @getModelValue()
+    @getModelValue()
 
 
   getModel: ->

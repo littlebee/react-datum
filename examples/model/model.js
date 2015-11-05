@@ -13,16 +13,22 @@ var kittenModel = new Backbone.Model({
   comment: ""
 });
 
-var kittenCard = React.createElement("div", {className: "kitten-card"}, 
-  React.createElement(Rd.Model, {model: kittenModel}, 
-    React.createElement("h3", null, "Adopt ", React.createElement(Rd.Text, {attr: "name"}), " Today!"), 
-    React.createElement("div", null, React.createElement(Rd.LazyPhoto, {attr: "imgUrl"})), 
-    React.createElement("div", null, React.createElement(Rd.Text, {attr: "name", label: "Name"}), " (", React.createElement(Rd.Text, {attr: "title"}), ")"), 
-    React.createElement("div", null, React.createElement(Rd.Email, {attr: "sponsorEmail", label: "Adoption Sponsor", displayLink: true})), 
-    React.createElement(Rd.Text, {attr: "description"}), 
-    React.createElement("h5", null, "Leave a comment"), 
-    React.createElement(Rd.Text, {attr: "comment", inputMode: "edit"})
-  )
-)
-
-ReactDOM.render(kittenCard, $('#demo')[0])
+var kittenCard = React.createClass({
+  displayName:"KittenCard",
+  render: function(){
+    return (
+      React.createElement("div", {className: "kitten-card"}, 
+        React.createElement(Rd.Model, {model: kittenModel}, 
+          React.createElement("h3", null, "Adopt ", React.createElement(Rd.Text, {attr: "name"}), " Today!"), 
+          React.createElement("div", null, React.createElement(Rd.LazyPhoto, {attr: "imgUrl"})), 
+          React.createElement("div", null, React.createElement(Rd.Text, {attr: "name", label: "Name"}), " (", React.createElement(Rd.Text, {attr: "title"}), ")"), 
+          React.createElement("div", null, React.createElement(Rd.Email, {attr: "sponsorEmail", label: "Adoption Sponsor", displayLink: true})), 
+          React.createElement(Rd.Text, {attr: "description"}), 
+          React.createElement("h5", null, "Leave a comment"), 
+          React.createElement(Rd.Text, {attr: "comment", inputMode: "edit"})
+        )
+      )
+    )
+  }
+})
+ReactDOM.render(React.createElement(kittenCard), $('#demo')[0])

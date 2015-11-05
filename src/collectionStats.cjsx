@@ -1,6 +1,5 @@
 
 React = require('react')
-Inflection = require('inflection')
 Backbone = require('backbone')
 
 require('../css/collectionStats.css')
@@ -48,7 +47,14 @@ module.exports = class CollectionStats extends React.Component
 
   _renderFound: ->
     total = @collection.getTotalRows()
-    things = Inflection.inflect(@props.itemDisplayName, total)
+    displayName = @props.itemDisplayName
+    things = switch
+      # inflection is loaded globally
+      when inflection?.inflect? then inflection.inflect(@props.itemDisplayName, total)
+      # ... hack for zuKeeper string helpers
+      when displayName.plural? then displayName.plural(total)
+      else displayName
+
     return (
       <span className="found stats fade in">
         Found {total} {things}

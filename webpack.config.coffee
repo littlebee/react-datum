@@ -17,8 +17,8 @@ path = require("path")
 module.exports =
   cache: true
   entry: [
-    "webpack-dev-server/client?http://localhost:3000", # WebpackDevServer host and port
-    "webpack/hot/only-dev-server",
+    # "webpack-dev-server/client?http://localhost:3000", # WebpackDevServer host and port
+    # "webpack/hot/only-dev-server",
     "./src/index" # Main app"s entry point
   ],
   output:
@@ -31,8 +31,10 @@ module.exports =
     "jquery": "jQuery"
     "backbone": "Backbone"
     "react": "React"
-    #   "react-bootstrap": "Rbs"
-  debug: true,
+    "react-dom": "ReactDOM"
+    "react-bootstrap": "Rbs"
+
+  debug: false,
 
   resolve:
     extensions: ["", ".jsx", ".cjsx", ".coffee", ".js"]
@@ -63,15 +65,15 @@ module.exports =
         test: require.resolve("jquery")
         loader: "expose?jQuery"
       ,
-        test: require.resolve("react")
-        loader: "expose?React"
-      ,
-        test: /\.jsx$/
-        loaders: ["react-hot", "jsx-loader?insertPragma=React.DOM"]
-        include: path.join(__dirname, "src")
-      ,
+      #   test: require.resolve("react")
+      #   loader: "expose?React"
+      # ,
+      #   test: /\.jsx$/
+      #   loaders: ["react-hot", "jsx-loader?insertPragma=React.DOM"]
+      #   include: path.join(__dirname, "src")
+      # ,
         test: /\.(cjsx|coffee)$/
-        loaders: ["react-hot", "coffee", "cjsx"]
+        loaders: ["coffee", "cjsx"]
         include: path.join(__dirname, "src")
       ,
         test: /\.(png|jpg)$/
@@ -89,10 +91,10 @@ module.exports =
       jQuery: "jquery"
       $: "jquery"
 
-    # new webpack.optimize.DedupePlugin(),
-    # new webpack.optimize.UglifyJsPlugin
-    #  compress:
-    #    warnings: false
-    #  mangle:
-    #    except: ['$super', '$', 'exports', 'require']
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.UglifyJsPlugin
+     compress:
+       warnings: false
+     mangle:
+       except: ['$super', '$', 'exports', 'require']
   ]
