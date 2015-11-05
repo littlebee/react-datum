@@ -23,7 +23,7 @@ module.exports =
   ],
   output:
     path: path.join(__dirname, "dist")
-    filename: "bundle.js"
+    filename: "react-datum.js"
     libraryTarget: "var"
     library: "ReactDatum"
     publicPath: "/dist/"
