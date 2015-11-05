@@ -1,4 +1,7 @@
+variables:
+  N_PREFIX: .node
 before_script:
+  - "mkdir .node"
   - "npm i n"
   - "./node_modules/.bin/n latest"
 npm_test:
