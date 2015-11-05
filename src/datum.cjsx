@@ -2,6 +2,8 @@
 React = require('react')
 Popover = require('react-bootstrap').Popover
 OverlayTrigger = require('react-bootstrap').OverlayTrigger
+Backbone = require('backbone')
+_ = require('underscore')
 
 ###
   This is base class of all display+input components that render presentation
