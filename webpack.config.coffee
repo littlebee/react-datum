@@ -30,6 +30,7 @@ module.exports =
   externals:
     "jquery": "jQuery"
     "backbone": "Backbone"
+    "underscore": "_"
     "react": "React"
     "react-dom": "ReactDOM"
     "react-bootstrap": "Rbs"
