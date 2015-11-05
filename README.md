@@ -126,8 +126,10 @@ All validations are instant and complete.  For example, if you have a whole numb
 
 ## Test
 
-We write tests using [Jest](https://facebook.github.io/jest/). Test files are written in CoffeeScript. To run tests locally, do
+We write unit tests using [Jest](https://facebook.github.io/jest/) and CoffeeScript. 
+
+To run tests locally, do
  
      npm test
      
-Tests are also triggered whenever a new commit is pushed to the master branch.
+New commits to master will trigger tests on the CI server.
