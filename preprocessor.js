@@ -1,4 +1,6 @@
-// preprocessor.js
+// Taken from:
+//
+//    https://facebook.github.io/jest/docs/tutorial-coffeescript.html#content
 var coffee = require('coffee-script');
 
 module.exports = {
