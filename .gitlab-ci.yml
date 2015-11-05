@@ -1,5 +1,8 @@
-image: node:5.0.0
+before_script:
+  - "npm i n"
+  - "n latest"
 npm_test:
   script:
     - "npm i"
     - "npm test"
+    - "n prev"
