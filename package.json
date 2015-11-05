@@ -16,6 +16,9 @@
     "tilegrid",
     "backbone"
   ],
+  "files": [
+    "!build/**/*-test.js"
+  ],
   "author": "Zulily",
   "license": "ISC",
   "bugs": {
