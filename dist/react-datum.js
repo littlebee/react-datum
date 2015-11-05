@@ -55,7 +55,7 @@ var ReactDatum =
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "539f8bdb7af2665766ff"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "ba8c6030bc45ca6b31ca"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/ 	
@@ -1997,7 +1997,7 @@ var ReactDatum =
 		styleElementsInsertedAtTop = [];
 
 	module.exports = function(list, options) {
-		if(false) {
+		if(true) {
 			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
 		}
 

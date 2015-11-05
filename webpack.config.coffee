@@ -35,7 +35,7 @@ module.exports =
     "react-dom": "ReactDOM"
     "react-bootstrap": "Rbs"
 
-  debug: false,
+  debug: true,
 
   resolve:
     extensions: ["", ".jsx", ".cjsx", ".coffee", ".js"]
