@@ -1,7 +1,5 @@
-variables:
-  N_PREFIX: .n
 before_script:
-  - "mkdir .n"
+  - "export N_PREFIX=$HOME"
   - "npm i n"
   - "./node_modules/.bin/n 5.0.0"
   - "./node_modules/.bin/n use 5.0.0"
