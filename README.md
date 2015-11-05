@@ -1,7 +1,5 @@
 react-datum
 ============
-[![build status](https://gitlab.corp.zulily.com/ci/projects/10/status.png?ref=master)](https://gitlab.corp.zulily.com/ci/projects/10?ref=master)
-
 
 A set of [React](https://facebook.github.io/react/) components for interacting with Backbone collections and models.
 
@@ -131,5 +129,3 @@ We write unit tests using [Jest](https://facebook.github.io/jest/) and CoffeeScr
 To run tests locally, do
  
      npm test
-     
-New commits to master will trigger tests on the CI server.
