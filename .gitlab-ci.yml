@@ -1,6 +1,6 @@
 before_script:
   - "npm i n"
-  - "sudo ./node_modules/.bin/n latest"
+  - "./node_modules/.bin/n latest"
 npm_test:
   script:
     - "npm i"
