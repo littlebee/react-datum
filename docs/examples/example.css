@@ -10,10 +10,13 @@
   width 390px;
   vertical-align: top;
   margin-left: 5px;
+
+}
+
+#demo {
   border: 1px solid grey;
   border-radius: 5px;
   padding: 4px 5px;
-
 }
 
 .syntaxhighlighter {
