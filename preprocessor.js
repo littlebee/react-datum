@@ -1,12 +1,14 @@
 // Taken from:
 //
 //    https://facebook.github.io/jest/docs/tutorial-coffeescript.html#content
-var coffee = require('coffee-react');
+var react = require('coffee-react');
+var coffee = require('coffee-script');
 
 module.exports = {
   process: function(src, path) {
-    // CoffeeScript files can be .coffee, .litcoffee, or .coffee.md
-    if (coffee.helpers.isCoffee(path)) {
+    if (react.helpers.hasCJSXExtension(path)) {
+      return react.compile(src, {'bare': true});
+    } else if (react.helpers.isCoffee(path)) {
       return coffee.compile(src, {'bare': true});
     }
     return src;
