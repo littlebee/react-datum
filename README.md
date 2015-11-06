@@ -1,6 +1,8 @@
 react-datum
 ============
 
+[![Build Status](https://travis-ci.org/zulily/react-datum.svg?branch=master)](https://travis-ci.org/zulily/react-datum)
+
 A set of [React](https://facebook.github.io/react/) components for interacting with Backbone collections and models.
 
 ## Demo & Examples
