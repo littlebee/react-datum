@@ -1,0 +1,21 @@
+
+.code-pane {
+  display: inline-block;
+  width: calc(100% - 400px);
+  overflow: auto;
+}
+
+.demo-pane {
+  display: inline-block;
+  width 390px;
+  vertical-align: top;
+  margin-left: 5px;
+  border: 1px solid grey;
+  border-radius: 5px;
+  padding: 4px 5px;
+
+}
+
+.syntaxhighlighter {
+    width: 1000px;
+}
