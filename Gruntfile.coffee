@@ -123,6 +123,6 @@ module.exports = (grunt) ->
 
   # tasks
   grunt.registerTask 'distrib', ['webpack:distrib', 'shell:deploy']
-  grunt.registerTask 'examples', ['react:examples', 'cjsx:examples', 'coffee:examples', 'shell:buildExamples']
+  grunt.registerTask 'examples', ['newer:react:examples', 'newer:cjsx:examples', 'newer:coffee:examples', 'shell:buildExamples']
   grunt.registerTask 'build', ['examples', 'distrib'] # ['newer:cjsx:build', 'newer:coffee:build', 'distrib']
   grunt.registerTask 'default', ['availabletasks']

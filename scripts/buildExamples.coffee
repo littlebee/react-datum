@@ -6,6 +6,7 @@ path = require('path')
 nsh = require('node-syntaxhighlighter')
 language =  require('jsx-syntaxhighlighter')
 _ = require('underscore')
+moment = require('moment')
 
 ###
   This script generates a small HTML wrapper around each example in
@@ -35,7 +36,6 @@ processFile = (file) ->
   ext = path.extname(file)
   simpleName = path.basename(file, ext)
   relativePath = path.dirname(file).slice(EXAMPLE_SRC_DIR.length)
-  console.log "processing file: " + file
   return unless ext in [".coffee", ".js", ".jsx", ".cjsx"]
 
   rawSource = fs.readFileSync(file).toString()
@@ -50,8 +50,13 @@ processFile = (file) ->
     sourceFile: simpleName + '.js'
 
   fullOutPath = path.join(EXAMPLE_TARGET_DIR, relativePath, simpleName + '.html')
-  # console.log 'writing example html: ' + fullOutPath
-  fs.writeFileSync fullOutPath, exampleTemplate(templateArgs)
+  exists = fs.existsSync(fullOutPath)
+  if exists
+    srcMtime = moment(fs.statSync(file).mtime)
+    targetMtime = moment(fs.statSync(fullOutPath).mtime)
+  if !exists || srcMtime.isAfter(targetMtime)
+    console.log "processing file: " + file
+    fs.writeFileSync fullOutPath, exampleTemplate(templateArgs)
 
 
 files = glob.sync(EXAMPLE_SRC_DIR + '/**/*', {nodir: true})

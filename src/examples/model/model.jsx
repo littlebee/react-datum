@@ -1,9 +1,8 @@
 
+
 var Rd = ReactDatum
 
 // Say you have this model:
-
-// does it pick up model changes
 
 var kittenModel = new Backbone.Model({
   name: "Fluffy",
