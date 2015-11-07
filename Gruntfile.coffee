@@ -16,6 +16,8 @@ module.exports = (grunt) ->
   require("load-grunt-tasks")(grunt)
   pkg = grunt.file.readJSON("package.json")
 
+  vps: process.env.VPS || grunt.option('vps') || "#{process.env.USER}-emsweb-01.vps.zulily.com"
+
   # configuration
   grunt.initConfig
     pkg: pkg
@@ -28,7 +30,7 @@ module.exports = (grunt) ->
         ["build/**/*.js"]
 
       distrib:
-        ["dist/**/*"]
+        ["dist/react-datum.*"]
 
       # all examples need to be .jsx or .csx
       examples:
@@ -46,13 +48,15 @@ module.exports = (grunt) ->
         ]
 
     coffee:
+      # build isn't really used right now (examples is) because webpack takes
+      # care of pipelining coffeescript and cjsx
       build:
         options:
           header: true
         files: [
           expand: true
           cwd: 'src'
-          src: ['**/*.coffee', '!**/*-test.coffee', '!examples/*']
+          src: ['**/*.coffee', '!examples/*']
           dest: 'build'
           ext: '.js'
         ]
@@ -66,6 +70,8 @@ module.exports = (grunt) ->
         ]
 
     cjsx:
+      # build isn't really used right now (examples is) because webpack takes
+      # care of pipelining coffeescript and cjsx
       build:
         files: [
           expand: true
@@ -83,28 +89,31 @@ module.exports = (grunt) ->
           ext: '.js'
         ]
 
-    run:
+    shell:
       buildExamples:
+        command: 'coffee ./scripts/buildExamples.coffee grunt'
+      deploy:
         options:
-          failOnError: true
-        cmd: 'coffee'
-        args: ['./scripts/buildExamples.coffee','grunt']
+          # should gracefully fail if it doesn't find zukeeper src.  see comment at top of the script
+          failOnError: false
+        command: 'coffee ./scripts/deployToZukeeper.coffee'
+      npmInstall:
+        command: 'npm install'
+
+
+    availabletasks:
+      tasks:
+        options:
+          filter: 'include'
+          tasks: ['build', 'watch', 'examples', 'distrib']
 
 
     watch:
-      coffee:
-        files: ["app/coffeescripts/**/*.coffee"]
-        tasks: ["newer:coffee"]
-        options:
-          livereload: true
-      cjsx:
-        files: ["app/coffeescripts/**/*.cjsx"]
-        tasks: ["newer:cjsx"]
-
+      examples:
+        files: ["src/examples/**/*"]
+        tasks: ["examples"]
       distrib:
-        files: [
-          "build/**/*"
-        ]
+        files: ["src/**/*", "!src/examples/*"]
         tasks: ["distrib"]
 
 
@@ -113,7 +122,7 @@ module.exports = (grunt) ->
 
 
   # tasks
-  grunt.registerTask 'distrib', ['webpack:distrib']
-  grunt.registerTask 'examples', ['react:examples', 'cjsx:examples', 'coffee:examples', 'run:buildExamples']
+  grunt.registerTask 'distrib', ['webpack:distrib', 'shell:deploy']
+  grunt.registerTask 'examples', ['react:examples', 'cjsx:examples', 'coffee:examples', 'shell:buildExamples']
   grunt.registerTask 'build', ['examples', 'distrib'] # ['newer:cjsx:build', 'newer:coffee:build', 'distrib']
-  grunt.registerTask 'default', ['build']
+  grunt.registerTask 'default', ['availabletasks']
