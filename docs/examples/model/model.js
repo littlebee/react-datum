@@ -1,6 +1,8 @@
 
 var Rd = ReactDatum
 
+// Say you have this model:
+
 var kittenModel = new Backbone.Model({
   name: "Fluffy",
   title: "His Royal Cuteness",
@@ -12,6 +14,8 @@ var kittenModel = new Backbone.Model({
   sponsorEmail: "kindoldcatlady@lotsofcats.com",
   comment: ""
 });
+
+// To create the card on the right:
 
 var kittenCard = React.createClass({
   displayName:"KittenCard",

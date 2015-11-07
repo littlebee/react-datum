@@ -24,7 +24,7 @@ EXAMPLE_SRC_DIR = 'src/examples'
 EXAMPLE_TARGET_DIR = 'docs/examples'
 
 rawTemplate = fs.readFileSync('scripts/lib/exampleFile.tpl')
-EXAMPLE_TEMPLATE = _.template(rawTemplate.toString())
+exampleTemplate = _.template(rawTemplate.toString())
 
 unless 'grunt' in process.argv
   throw "You should probably use `grunt examples` instead - which first builds the example " +
@@ -40,12 +40,7 @@ processFile = (file) ->
 
   rawSource = fs.readFileSync(file).toString()
   # console.log rawSource
-  try
-    highlightedSource = nsh.highlight(rawSource, language)
-  catch
-    # nothing to here - syntax highlighter fails some(?) times :(  not sure why
-
-  highlightedSource ||= rawSource
+  highlightedSource = nsh.highlight(rawSource, language) || rawSource
 
   templateArgs =
     sourceCode: highlightedSource
@@ -56,7 +51,7 @@ processFile = (file) ->
 
   fullOutPath = path.join(EXAMPLE_TARGET_DIR, relativePath, simpleName + '.html')
   # console.log 'writing example html: ' + fullOutPath
-  fs.writeFileSync fullOutPath, EXAMPLE_TEMPLATE(templateArgs)
+  fs.writeFileSync fullOutPath, exampleTemplate(templateArgs)
 
 
 files = glob.sync(EXAMPLE_SRC_DIR + '/**/*', {nodir: true})
