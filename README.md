@@ -63,9 +63,11 @@ ReactDOM.render(React.createElement(kittenCard), document.getElementById('demo')
 
 ```
 
-## For Display and Input
+## For Display and Input!
 
-In the example above, the comment field, having the `inputMode="edit"` prop, renders as an input and when the user enters a comment, `kittenModel.set('comment', userEnteredValue)` is called. Using the **Rd.Form** component, you can easily convert the above into a editable form with a save and cancel buttons:
+In the example above, the comment field, having the `inputMode="edit"` prop, renders as an input and when the user enters a comment, `kittenModel.set('comment', userEnteredValue, {silent: true})` is called.
+
+Adding the **Rd.Form** component, you can easily convert the above into a editable form with a save and cancel buttons:
 
 <img alt="Screenshot from doc/examples/form/form.html" src="https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_form-example.png" align="right"/>
 ```javascript
@@ -94,7 +96,7 @@ var kittenCard = React.createClass({
 
 By wrapping the datums in the **Rd.Form** tag, they implicitedly recieve `inputMode='edit'` props that make them all render as inputs.  Almost all.  Some Datums, like **Rd.LazyPhoto**, only have a display mode, no editing.  If given an `inputMode='edit'` they will ignore, and continue showing their display ('readonly') representation.  
 
-The **Rd.Model** component provides the model to the other Rd child elements. **Rd.Text**, **Rd.LazyPhoto**, **Rd.Text**, and **Rd.Email** are just a few of the Datums provided by this package.  
+**Rd.Text**, **Rd.LazyPhoto**, and **Rd.Email** are just a few of the Datums provided by this package.  
 The **Rd.Model** and **Rd.Form** components introduce the concept of contextual data, and provides a provides a 'model' context to any of it's children that want to use it.  The datums like **Rd.Text** will also accept a model by means of a prop called 'model'.  The **Rd.Model** component also listens to Backbone Model events and forces a rerender of all children anytime a change occurs to the model.   
 
 ## What are "Datums"
@@ -104,10 +106,18 @@ Datums are the presentation of attributes from a Backbone model.  All are object
 
 Datums interact with the model only by .get() and .set().  Datums do not directly listen to any model events.  The contextual data components are what cause datums to rerender in reponse to model changes.  
 
+#### Shhhh, don't call it "2 way data-binding"
+
+In the form example above, the **Rd.Name** was given a 'setOnChange' prop,  when it is changed by the user, every character entered causes `kittenModel.set('name', userEnteredValue)`,  the difference is the lack of `{silent: true}`.  Since all children of **Rd.model** tag  rerender on every triggered event, the form updates as you type and the two other references to the 'name' attribute on the model are updated as you type.  Pretty cool, but mostly just a parlor trick.  The reasoning behind using `{silent: true}` by default is that in most cases, users will get confused as to the saved state of the data. Since the `model.save` is not called until the user presses the 'Save' button, a table or grid cell changing as you typed in the edit form is probably not what you want.   
+
+In essense, the Backbone model is the arbiter of state for the datums associated with it.  
 
 ## Implied Context, Deterministic Props
 
+In the examples above, The **Rd.Model** component provides the model to the other Rd child elements.
+
 Any contextually provided properties like the 'model' that the datum is acting on, or the 'inputMode' implied by being in a **Rd.Form**, can be overriden by explict properties.  So, if in the example above, the comments were stored in another model, you could break out of context by adding:  
+
 ```javascript
         <Rd.Text attr="comment", model={kittenCommentsModel}/>
 ```
