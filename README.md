@@ -21,7 +21,7 @@ Install using Bower:
 Install from the web:  Copy file at (TODO: add link to checked in min dist file here)
 
 ## Usage:
-<img alt = "Example1" src="https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_model-example.png" style="float:right;"/>
+<img alt = "Example1" src="https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_model-example.png" align="right"/>
 
 ```javascript
 var Rd = ReactDatum
