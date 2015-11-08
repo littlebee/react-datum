@@ -96,9 +96,6 @@ var kittenCard = React.createClass({
 
 By wrapping the datums in the **Rd.Form** tag, they implicitedly recieve `inputMode='edit'` props that make them all render as inputs.  Almost all.  Some Datums, like **Rd.LazyPhoto**, only have a display mode, no editing.  If given an `inputMode='edit'` they will ignore, and continue showing their display ('readonly') representation.  
 
-**Rd.Text**, **Rd.LazyPhoto**, and **Rd.Email** are just a few of the Datums provided by this package.  
-The **Rd.Model** and **Rd.Form** components introduce the concept of contextual data, and provides a provides a 'model' context to any of it's children that want to use it.  The datums like **Rd.Text** will also accept a model by means of a prop called 'model'.  The **Rd.Model** component also listens to Backbone Model events and forces a rerender of all children anytime a change occurs to the model.   
-
 ## What are "Datums"
 *and you do realize that the plural of "datum" is "data", don't you?*
 
@@ -114,7 +111,11 @@ In essense, the Backbone model is the arbiter of state for the datums associated
 
 ## Implied Context, Deterministic Props
 
-In the examples above, The **Rd.Model** component provides the model to the other Rd child elements.
+The **Rd.Model** and **Rd.Form** components introduce the concept of contextual data.
+
+The **Rd.Model** component provides a provides a 'model' context to any of it's children that want to use it.  The datums like **Rd.Text** will also accept a model by means of a prop called 'model'.  The **Rd.Model** component also listens to Backbone Model events and forces a rerender of all children anytime a change occurs to the model.   
+
+The **Rd.Form** component provides an 'inputMode' context to it's children.
 
 Any contextually provided properties like the 'model' that the datum is acting on, or the 'inputMode' implied by being in a **Rd.Form**, can be overriden by explict properties.  So, if in the example above, the comments were stored in another model, you could break out of context by adding:  
 
