@@ -61,7 +61,7 @@ var kittenCard = React.createClass({
 ReactDOM.render(React.createElement(kittenCard), document.getElementById('demo'))
 
 ```
-![Example1](https://gitlab.corp.zulily.com/bwilkerson/react-datum/tree/master/img/react-datum_model-example.png)
+![Example1](https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_model-example.png)
 
 The **Rd.Model** component provides the model to the other Rd child elements. **Rd.Text**, **Rd.LazyPhoto**, **Rd.Text**, and **Rd.Email** are just a few of the Datums provided by this package.  
 
@@ -101,7 +101,7 @@ var kittenCard = React.createClass({
   }
 })
 ```
-![Example2](https://gitlab.corp.zulily.com/bwilkerson/react-datum/tree/master/img/react-datum_form-example.png)
+![Example2](https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_form-example.png)
 
 By wrapping the datums in the **Rd.Form** tag, they implicitedly recieve `inputMode='edit'` props that make them all render as inputs.  Almost all.  Some Datums, like **Rd.LazyPhoto**, only have a display mode, no editing.  If given an `inputMode='edit'` they will ignore, and continue showing their display ('readonly') representation.  
 
