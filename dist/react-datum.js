@@ -464,10 +464,10 @@ var ReactDatum =
 	  This is base class of all display+input components that render presentation
 	  of an attribute from a Backbone.Model or Javascript object.
 
-	  There is one required prop - 'attr' that is the attribute name.
+	  There is one required prop, 'attr' - the model attribute name.
 
 	  The backbone model or javascript object to get and set attributes on is
-	  specified in the @props.model or @context.model attribute. Note that
+	  specified in the @props.model or @context.model. Note that
 	  @props.model has precendence.
 
 	  TODO :  Better Examples
@@ -501,7 +501,7 @@ var ReactDatum =
 	  *Validations*
 
 	  Datums support validations.  All validation methods should return either true or an
-	  error message.  All datums should support required validation.
+	  error message.  All datums should support 'required' validation prop.
 
 	  To make a datum required, simply add the required prop to the component.  Ex:
 	  ```
@@ -593,6 +593,11 @@ var ReactDatum =
 	    return (ref = this.context) != null ? (ref1 = ref.form) != null ? typeof ref1.removeDatum === "function" ? ref1.removeDatum(this) : void 0 : void 0 : void 0;
 	  };
 
+
+	  /*
+	    Rendering methods
+	   */
+
 	  Datum.prototype.render = function() {
 	    return this.renderWrapper((function(_this) {
 	      return function() {
@@ -635,7 +640,7 @@ var ReactDatum =
 	  Datum.prototype.renderValue = function() {
 	    var value;
 	    value = this.getValueToRender();
-	    value = this._ellipsize(value);
+	    value = this.renderEllipsizedValue(value);
 	    return value;
 	  };
 
@@ -645,6 +650,36 @@ var ReactDatum =
 	    return React.createElement("span", {
 	      "className": "placeholder"
 	    }, placeholder);
+	  };
+
+	  Datum.prototype.renderEllipsizedValue = function(value, options) {
+	    var ellipsizeAt, ellipsizedValue, popover;
+	    if (options == null) {
+	      options = {};
+	    }
+	    ellipsizeAt = this.getEllipsizeAt();
+	    ellipsizedValue = value.slice(0, ellipsizeAt - 3) + '...';
+	    if (value && _.isString(value) && ellipsizeAt && value.length > ellipsizeAt) {
+	      if (this.props.noPopover) {
+	        value = elipsis(value);
+	      } else {
+	        if (Popover != null) {
+	          popover = React.createElement(Popover, {
+	            "id": 'datumTextEllisize'
+	          }, value);
+	          value = React.createElement(OverlayTrigger, {
+	            "trigger": ['hover', 'focus'],
+	            "placement": "bottom",
+	            "overlay": popover
+	          }, React.createElement("span", null, ellipsizedValue));
+	        } else {
+	          value = React.createElement("span", {
+	            "title": value
+	          }, ellipsizedValue);
+	        }
+	      }
+	    }
+	    return value;
 	  };
 
 	  Datum.prototype.renderForInput = function() {
@@ -693,6 +728,14 @@ var ReactDatum =
 	        }, React.createElement("i", {
 	          "className": 'icon-exclamation-sign'
 	        })));
+	      } else {
+	        errors = this.errors.join('\n');
+	        return React.createElement("span", {
+	          "className": "error",
+	          "title": errors
+	        }, React.createElement("i", {
+	          "className": 'icon-exclamation-sign'
+	        }));
 	      }
 	    }
 	    return null;
@@ -850,34 +893,6 @@ var ReactDatum =
 	      return true;
 	    }
 	    return "This input is required";
-	  };
-
-	  Datum.prototype._ellipsize = function(value, options) {
-	    var ellipsizeAt, ellipsizedValue, popover;
-	    if (options == null) {
-	      options = {};
-	    }
-	    ellipsizeAt = this.getEllipsizeAt();
-	    ellipsizedValue = value.slice(0, ellipsizeAt - 3) + '...';
-	    if ((value && ellipsizeAt && value.length > ellipsizeAt) || this.alwaysAddPopover) {
-	      if (this.props.noPopover) {
-	        value = elipsis(value);
-	      } else {
-	        if (Popover != null) {
-	          popover = React.createElement(Popover, {
-	            "id": 'bbeditTextEllisize'
-	          }, value);
-	          value = React.createElement(OverlayTrigger, {
-	            "trigger": ['hover', 'focus'],
-	            "placement": "bottom",
-	            "overlay": popover
-	          }, React.createElement("span", null, ellipsizedValue));
-	        } else {
-	          value = ellipsizedValue;
-	        }
-	      }
-	    }
-	    return value;
 	  };
 
 	  return Datum;
@@ -3456,8 +3471,7 @@ var ReactDatum =
 
 	  Email.prototype.renderValue = function() {
 	    var value;
-	    value = this.getValueToRender();
-	    value = this._ellipsize(value);
+	    value = Email.__super__.renderValue.apply(this, arguments);
 	    if (this.props.displayLink) {
 	      return React.createElement("a", {
 	        "href": this.getMailToHref(value)

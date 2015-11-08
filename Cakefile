@@ -1,15 +1,12 @@
 
 child_process = require 'child_process'
 fs = require 'fs'
-
+util = require './scripts/lib/util'
 
 console.log "Running on #{process.platform}"
+util.npmInstall()
+console.log("")   # add a newline just because it looks nicer
 
-# can't reliably use util.systemCmd until deps are installed
-console.log 'running npm install (this may take a while the first time)'
-child_process.execSync('npm install')
-
-util = require './scripts/lib/util'
 
 task 'build', 'Build & create distribution packages', ->
   util.systemCmd 'grunt build'

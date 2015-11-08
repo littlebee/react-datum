@@ -25,8 +25,7 @@ module.exports = class Email extends Datum
 
 
   renderValue: ->
-    value = @getValueToRender()
-    value = @_ellipsize(value)
+    value = super
     return if @props.displayLink
       <a href={@getMailToHref(value)}>{value}</a>
     else

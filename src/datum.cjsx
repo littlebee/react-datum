@@ -11,10 +11,10 @@ if ReactBootstrap?                   #if loaded
   This is base class of all display+input components that render presentation
   of an attribute from a Backbone.Model or Javascript object.
 
-  There is one required prop - 'attr' that is the attribute name.
+  There is one required prop, 'attr' - the model attribute name.
 
   The backbone model or javascript object to get and set attributes on is
-  specified in the @props.model or @context.model attribute. Note that
+  specified in the @props.model or @context.model. Note that
   @props.model has precendence.
 
   TODO :  Better Examples
@@ -48,7 +48,7 @@ if ReactBootstrap?                   #if loaded
   *Validations*
 
   Datums support validations.  All validation methods should return either true or an
-  error message.  All datums should support required validation.
+  error message.  All datums should support 'required' validation prop.
 
   To make a datum required, simply add the required prop to the component.  Ex:
   ```
@@ -160,6 +160,10 @@ module.exports = class Datum extends React.Component
     @context?.form?.removeDatum?(@)
 
 
+  ###
+    Rendering methods
+  ###
+
   render: ->
     @renderWrapper =>
       if @isEditable()
@@ -199,13 +203,38 @@ module.exports = class Datum extends React.Component
 
   renderValue: ->
     value = @getValueToRender()
-    value = @_ellipsize(value)
+    value = @renderEllipsizedValue(value)
     return value
 
 
   renderPlaceholder: ->
     placeholder = @props.placeholder
     <span className="placeholder">{placeholder}</span>
+
+
+  renderEllipsizedValue: (value, options={}) ->
+    ellipsizeAt = @getEllipsizeAt()
+    ellipsizedValue = value.slice(0, ellipsizeAt-3) + '...'
+
+    # don't try to ellipsize unless the value is a string,  subclass may have sent us
+    # a value that is a react component.  this still doesn't catch the case where
+    # a subclass component sent us HTML as a string.  Why would you?
+    if ( value && _.isString(value) && ellipsizeAt && value.length > ellipsizeAt )
+      if @props.noPopover
+        value = elipsis(value)
+      else
+        # if react-bootstrap is available globally use it
+        if Popover?
+          popover = <Popover id='datumTextEllisize'>{value}</Popover>
+          value = (
+            <OverlayTrigger trigger={['hover','focus']} placement="bottom" overlay={popover}>
+              <span>{ellipsizedValue}</span>
+            </OverlayTrigger>
+          )
+        else
+          value = <span title={value}>{ellipsizedValue}</span>
+
+    return value
 
 
   renderForInput: ->
@@ -225,7 +254,7 @@ module.exports = class Datum extends React.Component
   renderIcons: ->
     if @isEditing() && @errors.length > 0
       errors = []
-
+      # if react-bootstrap is globally available, we will use that
       if Popover?
         errors.push(<div>{error}</div>) for error in @errors
         popover = <Popover id='datumInvalid' bsStyle='danger'>
@@ -236,6 +265,11 @@ module.exports = class Datum extends React.Component
           <OverlayTrigger trigger={['hover','focus']} placement="bottom" overlay={popover}>
             <span className="error"><i className='icon-exclamation-sign'/></span>
           </OverlayTrigger>
+        )
+      else
+        errors = @errors.join('\n')
+        return (
+          <span className="error" title={errors}><i className='icon-exclamation-sign'/></span>
         )
 
     return null
@@ -347,24 +381,3 @@ module.exports = class Datum extends React.Component
     return true unless @props.required
     return true if !(_.isNull(value) || _.isEmpty(value) || _.isUndefined(value))
     return "This input is required"
-
-
-  _ellipsize: (value, options={}) ->
-    ellipsizeAt = @getEllipsizeAt()
-    ellipsizedValue = value.slice(0, ellipsizeAt-3) + '...'
-    if ((value && ellipsizeAt && value.length > ellipsizeAt) || @alwaysAddPopover)
-      if @props.noPopover
-        value = elipsis(value)
-      else
-        if Popover?
-          popover = <Popover id='bbeditTextEllisize'>{value}</Popover>
-          value = (
-            <OverlayTrigger trigger={['hover','focus']} placement="bottom" overlay={popover}>
-              <span>{ellipsizedValue}</span>
-            </OverlayTrigger>
-          )
-        else
-          value = ellipsizedValue
-
-
-    return value

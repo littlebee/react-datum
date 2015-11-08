@@ -41,5 +41,5 @@ vps = process.env.ZUKEEPER_VPS || "#{process.env.USER}-emsweb-01.vps.zulily.com"
 zkLocalDir = path.join(zkSrcDir, zkRelativeDir)
 zkRemoteDir = "#{vps}:#{path.join(zkRemoteRoot, zkRelativeDir)}"
 
-util.systemCmd "cp #{srcs} #{zkLocalDir}"
+util.systemCmd "cp -f #{srcs} #{zkLocalDir}"
 util.systemCmd "scp #{srcs} #{vps}:/var/www/htdocs/zulily-event-management/app/webroot/js/lib"
