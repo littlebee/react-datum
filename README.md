@@ -21,8 +21,7 @@ Install using Bower:
 Install from the web:  Copy file at (TODO: add link to checked in min dist file here)
 
 ## Usage:
-<img alt = "Example1" src="https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_model-example.png" align="right"/>
-
+<img alt="Screenshot from doc/examples/model/model.html" src="https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_model-example.png" align="right"/>
 ```javascript
 var Rd = ReactDatum
 
@@ -68,8 +67,7 @@ ReactDOM.render(React.createElement(kittenCard), document.getElementById('demo')
 
 In the example above, the comment field, having the `inputMode="edit"` prop, renders as an input and when the user enters a comment, `kittenModel.set('comment', userEnteredValue)` is called. Using the **Rd.Form** component, you can easily convert the above into a editable form with a save and cancel buttons:
 
-<img alt = "Example2" src="https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_form-example.png" align="right"/>
-
+<img alt="Screenshot from doc/examples/form/form.html" src="https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_form-example.png" align="right"/>
 ```javascript
 var kittenCard = React.createClass({
   displayName:"KittenCard",
