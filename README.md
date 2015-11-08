@@ -21,6 +21,8 @@ Install using Bower:
 Install from the web:  Copy file at (TODO: add link to checked in min dist file here)
 
 ## Usage:
+<img alt = "Example1" src="https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_model-example.png" style="float:right"/>
+
 ```javascript
 var Rd = ReactDatum
 
@@ -61,7 +63,6 @@ var kittenCard = React.createClass({
 ReactDOM.render(React.createElement(kittenCard), document.getElementById('demo'))
 
 ```
-![Example1](https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_model-example.png)
 
 The **Rd.Model** component provides the model to the other Rd child elements. **Rd.Text**, **Rd.LazyPhoto**, **Rd.Text**, and **Rd.Email** are just a few of the Datums provided by this package.  
 
