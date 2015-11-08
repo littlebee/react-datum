@@ -2,3 +2,9 @@
 node_modules/
 assets
 build
+.lastNpmInstall
+.zukeeperRoot
+watch.pid
+coffee.log
+tags
+
