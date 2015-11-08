@@ -185,7 +185,7 @@ module.exports = class Datum extends React.Component
 
   renderLabel: ->
     if @props.label?
-      return <label>{@props.label} :</label>
+      return <label>{@props.label} </label>
     else
       return null
 

@@ -27,10 +27,10 @@ var kittenCard = React.createClass({
           React.createElement("h3", null, "Adopt ", React.createElement(Rd.Text, {attr: "name"}), " Today!"), 
           React.createElement(Rd.Form, null, 
             React.createElement("div", null, React.createElement(Rd.LazyPhoto, {attr: "imgUrl"})), 
-            React.createElement("div", null, React.createElement(Rd.Text, {attr: "name", label: "Name", setOnChange: true}), " (", React.createElement(Rd.Text, {attr: "title"}), ")"), 
+            React.createElement("div", null, React.createElement(Rd.Text, {attr: "name", label: "Name:", setOnChange: true}), " (", React.createElement(Rd.Text, {attr: "title"}), ")"), 
             React.createElement("label", null, "Say something about ", React.createElement(Rd.Text, {attr: "name", readonly: true}), ": "), 
             React.createElement("div", null, React.createElement(Rd.Text, {attr: "description", className: "wide-input"})), 
-            React.createElement("div", null, React.createElement(Rd.Email, {attr: "sponsorEmail", label: "Adoption Sponsor", displayLink: true})), 
+            React.createElement("div", null, React.createElement(Rd.Email, {attr: "sponsorEmail", label: "Adoption Sponsor:", displayLink: true})), 
             React.createElement("label", null, "Leave a Comment!"), 
             React.createElement("div", null, React.createElement(Rd.Text, {attr: "comment", className: "wide-input"}))
           )

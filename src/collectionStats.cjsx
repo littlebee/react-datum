@@ -46,7 +46,7 @@ module.exports = class CollectionStats extends React.Component
 
 
   _renderFound: ->
-    total = @collection.getTotalRows()
+    total = @collection.getTotalRows?() || @collection.models.length
     displayName = @props.itemDisplayName
     things = switch
       # inflection is loaded globally

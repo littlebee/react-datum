@@ -51,6 +51,7 @@ processFile = (file) ->
     # as compiled there by `grunt`
     sourceFile: simpleName + '.js'
     relativeFile: relativeFile
+    simpleName: simpleName
 
   fullOutPath = path.join(EXAMPLE_TARGET_DIR, relativePath, simpleName + '.html')
   exists = fs.existsSync(fullOutPath)

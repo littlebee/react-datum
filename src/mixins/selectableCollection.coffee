@@ -37,8 +37,8 @@ module.exports = class SelectableCollection
     # escape hatch if we or someone else has grabbed this reponsibility.   If you want to have
     # you own compatible selectable collection functionality, you can set
     # hasSelectableCollectionMixin to true in the class prototype definition and we will not mix in.
-
     return if @hasSelectableCollectionMixin
+
     @warnIfReplacingMethods(collection)
     _.extend collection, @prototype
 

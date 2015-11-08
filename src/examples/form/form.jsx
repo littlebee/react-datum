@@ -27,10 +27,10 @@ var kittenCard = React.createClass({
           <h3>Adopt <Rd.Text attr="name"/> Today!</h3>
           <Rd.Form>
             <div><Rd.LazyPhoto attr="imgUrl"/></div>
-            <div><Rd.Text attr="name" label="Name" setOnChange/> (<Rd.Text attr="title"/>)</div>
+            <div><Rd.Text attr="name" label="Name:" setOnChange/> (<Rd.Text attr="title"/>)</div>
             <label>Say something about <Rd.Text attr="name" readonly/>: </label>
             <div><Rd.Text attr="description" className="wide-input"/></div>
-            <div><Rd.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/></div>
+            <div><Rd.Email attr="sponsorEmail" label="Adoption Sponsor:" displayLink/></div>
             <label>Leave a Comment!</label>
             <div><Rd.Text attr="comment" className="wide-input"/></div>
           </Rd.Form>

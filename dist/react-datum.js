@@ -618,7 +618,7 @@ var ReactDatum =
 
 	  Datum.prototype.renderLabel = function() {
 	    if (this.props.label != null) {
-	      return React.createElement("label", null, this.props.label, " :");
+	      return React.createElement("label", null, this.props.label, " ");
 	    } else {
 	      return null;
 	    }
@@ -1347,8 +1347,8 @@ var ReactDatum =
 	  };
 
 	  CollectionStats.prototype._renderFound = function() {
-	    var displayName, things, total;
-	    total = this.collection.getTotalRows();
+	    var base, displayName, things, total;
+	    total = (typeof (base = this.collection).getTotalRows === "function" ? base.getTotalRows() : void 0) || this.collection.models.length;
 	    displayName = this.props.itemDisplayName;
 	    things = (function() {
 	      switch (false) {
