@@ -1,5 +1,6 @@
 
 React = require('react')
+ReactDOM = require('react-dom')
 Backbone = require('backbone')
 _ = require('underscore')
 
@@ -248,7 +249,7 @@ module.exports = class Datum extends React.Component
   renderInput: ->
     placeholder = @props.placeholder || ""
     value = @getValueToRender()
-    <input type="text" placeholder={placeholder} value={value} onChange={@onChange} ref={(i) => @onInputRef(i)}/>
+    <input type="text" placeholder={placeholder} value={value} onChange={@onChange} ref={@onInputRef} />
 
 
   renderIcons: ->
@@ -354,7 +355,7 @@ module.exports = class Datum extends React.Component
   onInputRef: (input) =>
     @inputComponent = input
     if @needsFocus && input?
-      node = React.findDOMNode(input)
+      node = ReactDOM.findDOMNode(input)
       node.focus()
       node.select()
       @needsFocus = false

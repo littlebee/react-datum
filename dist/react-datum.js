@@ -116,6 +116,7 @@ var ReactDatum =
 	      return ClickToEditForm.__super__.renderButtons.apply(this, arguments);
 	    }
 	    return React.createElement("button", {
+	      "key": "edit",
 	      "className": "btn-primary",
 	      "onClick": this.onEditClick
 	    }, "Edit");
@@ -300,9 +301,11 @@ var ReactDatum =
 	  Form.prototype.renderButtons = function(options) {
 	    return [
 	      React.createElement("button", {
+	        "key": "save",
 	        "className": 'btn btn-success',
 	        "onClick": this.onSaveClick
 	      }, "Save"), React.createElement("button", {
+	        "key": "cancel",
 	        "className": 'btn',
 	        "onClick": this.onCancelClick
 	      }, "Cancel")
@@ -443,12 +446,14 @@ var ReactDatum =
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Backbone, Datum, OverlayTrigger, Popover, React, _,
+	var Backbone, Datum, OverlayTrigger, Popover, React, ReactDOM, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
 	React = __webpack_require__(3);
+
+	ReactDOM = __webpack_require__(5);
 
 	Backbone = __webpack_require__(7);
 
@@ -697,22 +702,18 @@ var ReactDatum =
 	      "placeholder": placeholder,
 	      "value": value,
 	      "onChange": this.onChange,
-	      "ref": ((function(_this) {
-	        return function(i) {
-	          return _this.onInputRef(i);
-	        };
-	      })(this))
+	      "ref": this.onInputRef
 	    });
 	  };
 
 	  Datum.prototype.renderIcons = function() {
-	    var error, errors, j, len, popover, ref;
+	    var error, errors, i, len, popover, ref;
 	    if (this.isEditing() && this.errors.length > 0) {
 	      errors = [];
 	      if (Popover != null) {
 	        ref = this.errors;
-	        for (j = 0, len = ref.length; j < len; j++) {
-	          error = ref[j];
+	        for (i = 0, len = ref.length; i < len; i++) {
+	          error = ref[i];
 	          errors.push(React.createElement("div", null, error));
 	        }
 	        popover = React.createElement(Popover, {
@@ -853,7 +854,7 @@ var ReactDatum =
 	    var node;
 	    this.inputComponent = input;
 	    if (this.needsFocus && (input != null)) {
-	      node = React.findDOMNode(input);
+	      node = ReactDOM.findDOMNode(input);
 	      node.focus();
 	      node.select();
 	      return this.needsFocus = false;
@@ -866,7 +867,7 @@ var ReactDatum =
 	  };
 
 	  Datum.prototype.validate = function(value) {
-	    var j, len, ref, valid, validation;
+	    var i, len, ref, valid, validation;
 	    if (value == null) {
 	      value = this.state.value;
 	    }
@@ -875,8 +876,8 @@ var ReactDatum =
 	    }
 	    this.errors = [];
 	    ref = this.validations;
-	    for (j = 0, len = ref.length; j < len; j++) {
-	      validation = ref[j];
+	    for (i = 0, len = ref.length; i < len; i++) {
+	      validation = ref[i];
 	      valid = validation(value);
 	      if (valid !== true) {
 	        this.errors.push(valid);

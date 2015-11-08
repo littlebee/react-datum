@@ -128,8 +128,8 @@ module.exports = class Form extends React.Component
 
   renderButtons: (options) ->
     return [
-      <button className='btn btn-success' onClick={@onSaveClick}>Save</button>
-      <button className='btn' onClick={@onCancelClick}>Cancel</button>
+      <button key="save" className='btn btn-success' onClick={@onSaveClick}>Save</button>
+      <button key="cancel" className='btn' onClick={@onCancelClick}>Cancel</button>
     ]
 
 
