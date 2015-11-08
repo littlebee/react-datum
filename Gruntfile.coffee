@@ -105,7 +105,7 @@ module.exports = (grunt) ->
       tasks:
         options:
           filter: 'include'
-          tasks: ['build', 'watch', 'examples', 'distrib']
+          tasks: ['build', 'watch']
 
 
     watch:
@@ -119,10 +119,11 @@ module.exports = (grunt) ->
 
     webpack:
       distrib: require("./webpack.config.coffee")
+      optimize: require("./webpack.optimized.config.coffee")
 
 
   # tasks
-  grunt.registerTask 'distrib', ['webpack:distrib', 'shell:deploy']
+  grunt.registerTask 'distrib', ['webpack:distrib', 'webpack:optimize','shell:deploy']
   grunt.registerTask 'examples', ['newer:react:examples', 'newer:cjsx:examples', 'newer:coffee:examples', 'shell:buildExamples']
   grunt.registerTask 'build', ['examples', 'distrib'] # ['newer:cjsx:build', 'newer:coffee:build', 'distrib']
   grunt.registerTask 'default', ['availabletasks']

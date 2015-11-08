@@ -19,14 +19,6 @@ task 'clean',  'delete all compiled js - doc/examples, dist/react-datum', ->
   util.systemCmd 'grunt clean'
 
 
-task 'distrib', 'Build dist/react-datum.js and .min.js ', ->
-  util.systemCmd 'grunt distrib'
-
-
-task 'examples', 'just build the src/examples/**/* to doc/examples/**/*', ->
-  util.systemCmd 'grunt examples'
-
-
 task 'watch', 'watch source files and examples and build when changed', ->
   invoke 'unwatch'
   invoke 'build'

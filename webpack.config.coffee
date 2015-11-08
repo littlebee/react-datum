@@ -43,11 +43,11 @@ module.exports =
 
   module:
     loaders: [
-      # required to write "require("./style.css")"
+        # required to write "require("./style.css")"
         test: /\.css$/
         loader: "style-loader!css-loader"
       ,
-      # required for bootstrap icons
+        # required for bootstrap icons
         test: /\.(woff|woff2)$/
         loader: "url-loader?prefix=font/&limit=5000&mimetype=application/font-woff"
       ,
@@ -82,9 +82,10 @@ module.exports =
 
     ]
   plugins: [
-    new webpack.HotModuleReplacementPlugin()
-    new webpack.NoErrorsPlugin()
-    new webpack.IgnorePlugin(/vertx/) # https://github.com/webpack/webpack/issues/353
+    # #  this adds a lot of code to the bundle for hot loading feature
+    # new webpack.HotModuleReplacementPlugin()
+
+    ## We will probably need this plugin at some point
     # new webpack.ProvidePlugin
     #   # Automatically detect jQuery and $ as free var in modules
     #   # and inject the jquery library
@@ -92,6 +93,8 @@ module.exports =
     #   jQuery: "jquery"
     #   $: "jquery"
 
+    ## I think this and changing the debug setting above to `debug: false` above are all that
+    ##   should be needed to produce an optimized minified package
     # new webpack.optimize.DedupePlugin(),
     # new webpack.optimize.UglifyJsPlugin
     #  compress:
