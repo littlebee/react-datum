@@ -36,6 +36,8 @@ processFile = (file) ->
   ext = path.extname(file)
   simpleName = path.basename(file, ext)
   relativePath = path.dirname(file).slice(EXAMPLE_SRC_DIR.length)
+  relativeFile = path.join(relativePath, simpleName + ext)
+
   return unless ext in [".coffee", ".js", ".jsx", ".cjsx"]
 
   rawSource = fs.readFileSync(file).toString()
@@ -48,6 +50,7 @@ processFile = (file) ->
     # directories in docs/examples.   The compiled .js should already be there
     # as compiled there by `grunt`
     sourceFile: simpleName + '.js'
+    relativeFile: relativeFile
 
   fullOutPath = path.join(EXAMPLE_TARGET_DIR, relativePath, simpleName + '.html')
   exists = fs.existsSync(fullOutPath)

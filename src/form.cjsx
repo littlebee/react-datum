@@ -1,8 +1,14 @@
 
 React = require('react')
+ReactDom = require('react-dom')
 Datum = require('./datum')
 Backbone = require('backbone')
 $ = jQuery = require('jquery')
+
+###
+ How about this comment here huh?
+
+###
 
 module.exports = class Form extends React.Component
   @displayName: "widgets.react.Form"
@@ -84,6 +90,7 @@ module.exports = class Form extends React.Component
 
   componentDidMount: ->
     @node = ReactDom.findDOMNode(this)
+    @focus()
 
 
   focus: ->

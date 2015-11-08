@@ -20,5 +20,17 @@
 }
 
 .syntaxhighlighter {
-    width: 1000px;
+  width: 1000px;
+}
+
+.wide-input input {
+  width: 340px;
+}
+
+.form-buttons {
+  margin-top: 20px;
+}
+.kitten-card .datum.lazy-image img{
+  min-height: 160px;
+  overflow: hidden;
 }

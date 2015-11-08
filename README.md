@@ -21,8 +21,11 @@ Install using Bower:
 Install from the web:  Copy file at (TODO: add link to checked in min dist file here)
 
 ## Usage:
-Say you have this model:
 ```javascript
+var Rd = ReactDatum
+
+// Say you have this model:
+
 var kittenModel = new Backbone.Model({
   name: "Fluffy",
   title: "His Royal Cuteness",
@@ -30,18 +33,16 @@ var kittenModel = new Backbone.Model({
   forAdoption: true,
   ageInMonths: 10,
   createdAt: 1446520828,
-  imgUrl: "https://drpem3xzef3kf.cloudfront.net/photos/pets/32707403/1/?bust=1436666804&width=632&no_scale_up=1",
+  imgUrl: "https://drpem3xzef3kf.cloudfront.net/photos/pets/32707403/1/?bust=1436666804&width=200&no_scale_up=1",
   sponsorEmail: "kindoldcatlady@lotsofcats.com",
   comment: ""
-})
-```
-to render a card for this model with react-datum:
+});
 
-```javascript
-Rd = require('react-datum')
+// To create the card on the right:
 
-Kitten = React.CreateClass({
-  render: function() {
+var kittenCard = React.createClass({
+  displayName:"KittenCard",
+  render: function(){
     return (
       <div className='kitten-card'>
         <Rd.Model model={kittenModel}>
@@ -57,7 +58,11 @@ Kitten = React.CreateClass({
     )
   }
 })
+ReactDOM.render(React.createElement(kittenCard), document.getElementById('demo'))
+
 ```
+![Example1](https://gitlab.corp.zulily.com/bwilkerson/react-datum/tree/master/img/react-datum_model-example.png)
+
 The **Rd.Model** component provides the model to the other Rd child elements. **Rd.Text**, **Rd.LazyPhoto**, **Rd.Text**, and **Rd.Email** are just a few of the Datums provided by this package.  
 
 The **Rd.Model** component introduces the concept of contextual data, and provides a provides a 'model' context to any of it's children that want to use it.  The datums like **Rd.Text** will also accept a model by means of a prop called 'model'.  The **Rd.Model** component also listens to Backbone Model events and forces a rerender of all children anytime a change occurs to the model.   
@@ -74,21 +79,21 @@ Datums interact with the model only by .get() and .set().  Datums do not directl
 In the example above, the comment field, having the `inputMode="edit"` prop, renders as an input and when the user enters a comment, `kittenModel.set('comment', userEnteredValue)` is called. Using the **Rd.Form** component, you can easily convert the above into a editable form with a save and cancel buttons:
 
 ```javascript
-Rd = require('react-datum')
-
-KittenCard = React.CreateClass({
-  render: function() {
+var kittenCard = React.createClass({
+  displayName:"KittenCard",
+  render: function(){
     return (
       <div className='kitten-card'>
         <Rd.Model model={kittenModel}>
           <h3>Adopt <Rd.Text attr="name"/> Today!</h3>
           <Rd.Form>
             <div><Rd.LazyPhoto attr="imgUrl"/></div>
-            <div><Rd.Text attr="name" label="Name"/> (<Rd.Text attr="title"/>)</div>
+            <div><Rd.Text attr="name" label="Name" setOnChange/> (<Rd.Text attr="title"/>)</div>
+            <label>Say something about <Rd.Text attr="name" readonly/>: </label>
+            <div><Rd.Text attr="description" className="wide-input"/></div>
             <div><Rd.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/></div>
-            <Rd.Text attr="description">
-            <h5>Leave a comment</h5>
-            <Rd.Text attr="comment"/>
+            <label>Leave a Comment!</label>
+            <div><Rd.Text attr="comment" className="wide-input"/></div>
           </Rd.Form>
         </Rd.Model>
       </div>
@@ -96,6 +101,8 @@ KittenCard = React.CreateClass({
   }
 })
 ```
+![Example2](https://gitlab.corp.zulily.com/bwilkerson/react-datum/tree/master/img/react-datum_form-example.png)
+
 By wrapping the datums in the **Rd.Form** tag, they implicitedly recieve `inputMode='edit'` props that make them all render as inputs.  Almost all.  Some Datums, like **Rd.LazyPhoto**, only have a display mode, no editing.  If given an `inputMode='edit'` they will ignore, and continue showing their display ('readonly') representation.  
 
 ## Implied Context, Deterministic Props
@@ -124,8 +131,8 @@ All validations are instant and complete.  For example, if you have a whole numb
 
 ## Test
 
-We write unit tests using [Jest](https://facebook.github.io/jest/) and CoffeeScript. 
+We write unit tests using [Jest](https://facebook.github.io/jest/) and CoffeeScript.
 
 To run tests locally, do
- 
+
      npm test

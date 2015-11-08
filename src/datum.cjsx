@@ -64,6 +64,8 @@ module.exports = class Datum extends React.Component
   @displayName: "widgets.react.Datum"
 
   @propTypes:
+    # additional css classes (space seperated) to add to wrapper div
+    className: React.PropTypes.string
     # can also accept model instance as context var. prop has precendence
     model: React.PropTypes.oneOfType([
       React.PropTypes.instanceOf(Backbone.Model)
@@ -72,7 +74,6 @@ module.exports = class Datum extends React.Component
     # the backbone attribute on the model to get and set
     attr: React.PropTypes.string.isRequired
     label: React.PropTypes.string
-
     # set ellipsizeAt to false to display whole value. Only effects 'readonly' display
     # values displayed in 'edit' mode are never truncated.
     ellipsizeAt: React.PropTypes.oneOfType([
@@ -297,6 +298,7 @@ module.exports = class Datum extends React.Component
     className = if @subClassName? then "#{@className} #{@subClassName}" else @className
     className += " required" if @props.required
     className += " invalid" if @errors.length > 0
+    className += " #{@props.className}" if @props.className?
     return className
 
 

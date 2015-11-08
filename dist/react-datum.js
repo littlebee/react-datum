@@ -54,13 +54,13 @@ var ReactDatum =
 
 	module.exports = {
 	  ClickToEditForm: __webpack_require__(2),
-	  Collection: __webpack_require__(9),
-	  CollectionStats: __webpack_require__(12),
+	  Collection: __webpack_require__(10),
+	  CollectionStats: __webpack_require__(13),
 	  Form: __webpack_require__(4),
-	  Model: __webpack_require__(17),
-	  SelectedModel: __webpack_require__(18),
-	  Tilegrid: __webpack_require__(19),
-	  Datum: __webpack_require__(5),
+	  Model: __webpack_require__(18),
+	  SelectedModel: __webpack_require__(19),
+	  Tilegrid: __webpack_require__(20),
+	  Datum: __webpack_require__(6),
 	  Email: __webpack_require__(27),
 	  LazyPhoto: __webpack_require__(28),
 	  Link: __webpack_require__(31),
@@ -163,7 +163,7 @@ var ReactDatum =
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $, Backbone, Datum, Form, React, jQuery,
+	var $, Backbone, Datum, Form, React, ReactDom, jQuery,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty,
@@ -171,11 +171,18 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	Datum = __webpack_require__(5);
+	ReactDom = __webpack_require__(5);
 
-	Backbone = __webpack_require__(6);
+	Datum = __webpack_require__(6);
 
-	$ = jQuery = __webpack_require__(8);
+	Backbone = __webpack_require__(7);
+
+	$ = jQuery = __webpack_require__(9);
+
+
+	/*
+	 How about this comment here huh?
+	 */
 
 	module.exports = Form = (function(superClass) {
 	  extend(Form, superClass);
@@ -237,7 +244,8 @@ var ReactDatum =
 	  };
 
 	  Form.prototype.componentDidMount = function() {
-	    return this.node = ReactDom.findDOMNode(this);
+	    this.node = ReactDom.findDOMNode(this);
+	    return this.focus();
 	  };
 
 	  Form.prototype.focus = function() {
@@ -427,6 +435,12 @@ var ReactDatum =
 
 /***/ },
 /* 5 */
+/***/ function(module, exports) {
+
+	module.exports = ReactDOM;
+
+/***/ },
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, Datum, OverlayTrigger, Popover, React, _,
@@ -436,9 +450,9 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	Backbone = __webpack_require__(6);
+	Backbone = __webpack_require__(7);
 
-	_ = __webpack_require__(7);
+	_ = __webpack_require__(8);
 
 	if (typeof ReactBootstrap !== "undefined" && ReactBootstrap !== null) {
 	  Popover = ReactBootstrap.Popover;
@@ -504,6 +518,7 @@ var ReactDatum =
 	  Datum.displayName = "widgets.react.Datum";
 
 	  Datum.propTypes = {
+	    className: React.PropTypes.string,
 	    model: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Model), React.PropTypes.object]),
 	    attr: React.PropTypes.string.isRequired,
 	    label: React.PropTypes.string,
@@ -765,6 +780,9 @@ var ReactDatum =
 	    if (this.errors.length > 0) {
 	      className += " invalid";
 	    }
+	    if (this.props.className != null) {
+	      className += " " + this.props.className;
+	    }
 	    return className;
 	  };
 
@@ -868,25 +886,25 @@ var ReactDatum =
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	module.exports = Backbone;
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	module.exports = _;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	module.exports = jQuery;
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Collection, ContextualData, React, SelectableCollection, _,
@@ -895,11 +913,11 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	_ = __webpack_require__(7);
+	_ = __webpack_require__(8);
 
-	ContextualData = __webpack_require__(10);
+	ContextualData = __webpack_require__(11);
 
-	SelectableCollection = __webpack_require__(11);
+	SelectableCollection = __webpack_require__(12);
 
 
 	/*
@@ -948,7 +966,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, React,
@@ -957,7 +975,7 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	Backbone = __webpack_require__(6);
+	Backbone = __webpack_require__(7);
 
 
 	/*
@@ -1059,13 +1077,13 @@ var ReactDatum =
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var SelectableCollection, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-	_ = __webpack_require__(7);
+	_ = __webpack_require__(8);
 
 
 	/*
@@ -1275,7 +1293,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, CollectionStats, React,
@@ -1284,9 +1302,9 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	Backbone = __webpack_require__(6);
+	Backbone = __webpack_require__(7);
 
-	__webpack_require__(13);
+	__webpack_require__(14);
 
 
 	/*
@@ -1371,16 +1389,16 @@ var ReactDatum =
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(14);
+	var content = __webpack_require__(15);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(16)(content, {});
+	var update = __webpack_require__(17)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -1397,10 +1415,10 @@ var ReactDatum =
 	}
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(15)();
+	exports = module.exports = __webpack_require__(16)();
 	// imports
 
 
@@ -1411,7 +1429,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	/*
@@ -1467,7 +1485,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -1721,7 +1739,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, Model, React, _,
@@ -1730,11 +1748,11 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	Backbone = __webpack_require__(6);
+	Backbone = __webpack_require__(7);
 
-	_ = __webpack_require__(7);
+	_ = __webpack_require__(8);
 
-	ContextualData = __webpack_require__(10);
+	ContextualData = __webpack_require__(11);
 
 
 	/*
@@ -1768,7 +1786,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, React, SelectedModel,
@@ -1778,9 +1796,9 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	Backbone = __webpack_require__(6);
+	Backbone = __webpack_require__(7);
 
-	ContextualData = __webpack_require__(10);
+	ContextualData = __webpack_require__(11);
 
 
 	/*
@@ -1872,7 +1890,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var MultiSelect, React, SingleSelect, Tilegrid, TilegridReact,
@@ -1881,7 +1899,7 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	TilegridReact = __webpack_require__(20);
+	TilegridReact = __webpack_require__(21);
 
 	SingleSelect = __webpack_require__(25);
 
@@ -1955,7 +1973,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var $, Model, React, ReactDom, Tilegrid, TilegridReact, jQuery,
@@ -1965,13 +1983,13 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	ReactDom = __webpack_require__(21);
+	ReactDom = __webpack_require__(5);
 
 	$ = jQuery = __webpack_require__(3);
 
 	Tilegrid = __webpack_require__(22);
 
-	Model = __webpack_require__(17);
+	Model = __webpack_require__(18);
 
 
 	/*
@@ -2054,23 +2072,17 @@ var ReactDatum =
 
 
 /***/ },
-/* 21 */
-/***/ function(module, exports) {
-
-	module.exports = ReactDOM;
-
-/***/ },
 /* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var $, Backbone, Tilegrid, _, jQuery,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-	_ = __webpack_require__(7);
+	_ = __webpack_require__(8);
 
-	$ = jQuery = __webpack_require__(8);
+	$ = jQuery = __webpack_require__(9);
 
-	Backbone = __webpack_require__(6);
+	Backbone = __webpack_require__(7);
 
 	__webpack_require__(23);
 
@@ -2742,7 +2754,7 @@ var ReactDatum =
 	var content = __webpack_require__(24);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(16)(content, {});
+	var update = __webpack_require__(17)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -2762,7 +2774,7 @@ var ReactDatum =
 /* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(15)();
+	exports = module.exports = __webpack_require__(16)();
 	// imports
 
 
@@ -2780,11 +2792,11 @@ var ReactDatum =
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-	_ = __webpack_require__(7);
+	_ = __webpack_require__(8);
 
-	$ = jQuery = __webpack_require__(8);
+	$ = jQuery = __webpack_require__(9);
 
-	SelectableCollection = __webpack_require__(11);
+	SelectableCollection = __webpack_require__(12);
 
 
 	/*
@@ -3213,9 +3225,9 @@ var ReactDatum =
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	$ = jQuery = __webpack_require__(8);
+	$ = jQuery = __webpack_require__(9);
 
-	_ = __webpack_require__(7);
+	_ = __webpack_require__(8);
 
 	SingleSelect = __webpack_require__(25);
 
@@ -3413,9 +3425,9 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	_ = __webpack_require__(7);
+	_ = __webpack_require__(8);
 
-	Datum = __webpack_require__(5);
+	Datum = __webpack_require__(6);
 
 
 	/*
@@ -3482,7 +3494,7 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	Datum = __webpack_require__(5);
+	Datum = __webpack_require__(6);
 
 
 	/*
@@ -3598,9 +3610,9 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	_ = __webpack_require__(7);
+	_ = __webpack_require__(8);
 
-	Datum = __webpack_require__(5);
+	Datum = __webpack_require__(6);
 
 
 	/*
@@ -3670,9 +3682,9 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	_ = __webpack_require__(7);
+	_ = __webpack_require__(8);
 
-	Datum = __webpack_require__(5);
+	Datum = __webpack_require__(6);
 
 	ONE_MILLION = 1000000;
 
@@ -3800,9 +3812,9 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	_ = __webpack_require__(7);
+	_ = __webpack_require__(8);
 
-	Datum = __webpack_require__(5);
+	Datum = __webpack_require__(6);
 
 
 	/*
@@ -3840,7 +3852,7 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	Datum = __webpack_require__(5);
+	Datum = __webpack_require__(6);
 
 
 	/*

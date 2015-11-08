@@ -109,8 +109,11 @@ module.exports = (grunt) ->
 
 
     watch:
+      examplesDeps:
+        files: ["scripts/lib/exampleFile.tpl", "scripts/buildExamples.coffee"]
+        tasks: ["clean:examples", "examples"]
       examples:
-        files: ["src/examples/**/*"]
+        files: ["src/examples/**/*", "scripts/lib/exampleFile.tpl"]
         tasks: ["examples"]
       distrib:
         files: ["src/**/*", "!src/examples/*"]
