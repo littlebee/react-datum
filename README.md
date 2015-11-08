@@ -102,7 +102,8 @@ var kittenCard = React.createClass({
   }
 })
 ```
-![Example2](https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_form-example.png)
+<img alt = "Example2" src="https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_form-example.png" align="right"/>
+
 
 By wrapping the datums in the **Rd.Form** tag, they implicitedly recieve `inputMode='edit'` props that make them all render as inputs.  Almost all.  Some Datums, like **Rd.LazyPhoto**, only have a display mode, no editing.  If given an `inputMode='edit'` they will ignore, and continue showing their display ('readonly') representation.  
 
