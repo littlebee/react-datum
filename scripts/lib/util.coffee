@@ -21,15 +21,19 @@ systemCmd = (cmd, options={}) ->
   options = _.defaults options,
     failOnError: true
     echo: true
+    showOutput: true
 
   console.log("$ " + cmd) if options.echo
   try
     out = child_process.execSync(cmd)
-    process.stdout.write out
+    process.stdout.write(out) if options.showOutput
   catch e
-    console.error e.stdout.toString()
+    out = e.stderr.toString()
+    console.error out if options.showOutput
     if options.failOnError
       throw e
+
+  return out.toString()
 
 
 
@@ -55,6 +59,21 @@ npmInstall = () ->
     console.log 'running npm install (this may take a while the first time)'
     systemCmd 'npm install'
     fs.writeFileSync(LAST_NPM_INSTALL_FILE, packageFileMtime.valueOf())
+
+
+# only installs if not alread installed
+installNodePackage = (packageName, options={}) ->
+  options = _.defaults options,
+    global: false
+
+  flags = if options.global then '-g' else ''
+  output = systemCmd "npm list #{flags} #{packageName} 2>&1", echo: false, showOutput: false, failOnError: false
+  unless output.indexOf(packageName) >= 0
+    if options.global
+      console.log 'you may be asked to enter your sudo password (and this may take a few seconds)'
+      systemCmd "sudo npm install #{flags} #{packageName}"
+    else
+      systemCmd "npm install #{flags} #{packageName}"
 
 
 openTerminalTab = (cdPath = './', cmd='')->
@@ -97,4 +116,5 @@ module.exports =
   systemCmd: systemCmd
   handleError: handleError
   npmInstall: npmInstall
+  installNodePackage: installNodePackage
   openTerminalTab: openTerminalTab

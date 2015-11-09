@@ -4,16 +4,23 @@ fs = require 'fs'
 util = require './scripts/lib/util'
 
 console.log "Running on #{process.platform}"
+# these only do their thing if needed
 util.npmInstall()
+util.installNodePackage('grunt-cli', global: true)
+
 console.log("")   # add a newline just because it looks nicer
 
 
-task 'build', 'Build & create distribution packages', ->
+task 'build', 'build & create distribution packages', ->
   util.systemCmd 'grunt build'
 
 
 task 'clean',  'delete all compiled js - doc/examples, dist/react-datum', ->
   util.systemCmd 'grunt clean'
+
+
+task 'test', 'run all tests in ./test dir', ->
+  util.systemCmd 'scripts/testRunner.coffee'
 
 
 task 'watch', 'watch source files and examples and build when changed', ->
