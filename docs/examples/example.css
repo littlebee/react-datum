@@ -34,3 +34,16 @@
   min-height: 160px;
   overflow: hidden;
 }
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}
+
+button {
+  margin-right: 5px;
+
+}

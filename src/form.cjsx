@@ -3,7 +3,6 @@ React = require('react')
 ReactDom = require('react-dom')
 Datum = require('./datum')
 Backbone = require('backbone')
-$ = jQuery = require('jquery')
 
 ###
  How about this comment here huh?
@@ -32,6 +31,16 @@ module.exports = class Form extends React.Component
     buttonPosition: React.PropTypes.oneOf(['top', 'bottom', 'none'])
     # specify className of form element
     className: React.PropTypes.string
+    # on save success this method, if specified, will be called with the standard
+    # Backbone success callback arguments (model, response, options)
+    # If you don't specify a saveSuccessCallback, a small success message will be rerendered
+    # below the form button after successfully saving the form
+    saveSuccessCallback: React.PropTypes.func
+    # on save error this method, if specified, will be called with the standard
+    # Backbone error callback arguments (model, response, options)
+    # If you don't specify a saveErrorCallback, an error message will be rerendered
+    # below the form button after failing to save the form on user request
+    saveErrorCallback: React.PropTypes.func
 
 
   @defaultProps:
@@ -65,6 +74,11 @@ module.exports = class Form extends React.Component
 
   constructor: (props) ->
     @datums = [] # see addDatum() and removeDatum()
+    @state =
+      errorMessage: null
+      successMessage: null
+
+
     super
 
 
@@ -84,13 +98,13 @@ module.exports = class Form extends React.Component
       {@renderTopButtons()}
       {@renderChildren()}
       {@renderBottomButtons()}
-      {@renderErrorMessage()}
+      {@renderMessages()}
     </div>
 
 
   componentDidMount: ->
     @node = ReactDom.findDOMNode(this)
-    @focus()
+
 
 
   focus: ->
@@ -133,31 +147,76 @@ module.exports = class Form extends React.Component
     ]
 
 
+  renderMessages: ->
+    return [
+      @renderSuccessMessage()
+      @renderErrorMessage()
+    ]
+
+
   renderErrorMessage: ->
-    return null unless @errorMessage?
-    console.log 'errorMessage: ', @errorMessage
-    <div className="error">{@errorMessage}</div>
+    @renderMessage @state.errorMessage, 'error'
+
+
+  renderSuccessMessage: ->
+    @renderMessage @state.successMesage, 'success'
+
+
+  renderMessage: (message, className) ->
+    return null unless message?
+    <div className={className}>{message}</div>
+
+
+  save: ->
+    @setState errorMessage: null, successMesage: null
+    model = @getModel()
+    return unless model?
+
+    # Note that backbone 0.9.2 would call error callback on save if the model was
+    # invalid.  Somewhere around 1.1, that is no more.  Now the model returns false
+    # from save and you have to check a new model instance attribute called validationError
+    unless model.isValid()
+      if model.validationError?
+        @onSaveError model, model.validationError
+        return
+    # if model was not valid but there is no .validationError, then we are probably
+    # dealing with an earlier version of Backbone. Let it fall out through the
+    # error handler on save
+
+    # saving the model triggers events that will rerender us
+    try
+      saved = model.save {},
+        success: @onSaveSuccess
+        error: @onSaveError
+    catch ex
+      @onSaveError(model, ex.message)
 
 
   onSaveClick: (evt) =>
     if @getInvalidDatums().length > 0
-      # TODO : move @errorMessage to state and not forceUpdate
-      @errorMessage = "Unable to save. Please correct errors and try again."
-      @forceUpdate()
+      @setState errorMessage: "Unable to save. Please correct errors and try again."
     else
-      @errorMessage = null
-      model = @getModel()
-      return unless model?
-      model.save({}, success: @onSaveSuccess)    # saving the model triggers events that will rerender us
+      @save()
 
 
-  onSaveSuccess: ->
+  onSaveSuccess: (model, response, options={}) =>
     @_saveModelState()
-    @successMessage = "Saved!"
+    if @props.saveSuccessCallback? && _.isFunction @props.saveSuccessCallback
+      @props.saveSuccessCallback(model, response, options)
+    else
+      @setState successMessage: "Successfully saved!", successAt: Date.now()
+
+
+  onSaveError: (model, response, options={}) =>
+    if @props.saveErrorCallback? && _.isFunction @props.saveErrorCallback
+      @props.saveErrorCallback(model, response, options)
+    else
+      response = if !response? || _.isString(response) then response else JSON.stringify(response)
+      @setState errorMessage: "Unable to save: " + response || "unknown"
 
 
   onCancelClick: (evt) =>
-    @errorMessage = null
+    @setState errorMessage: null, successMessage: null
     @_restoreModelState()
     @_resetDatums()
 
@@ -202,8 +261,7 @@ module.exports = class Form extends React.Component
   # on cancel
   _saveModelState: ->
     @_savedModel = @getModel()
-    # TODO : replace this with lodash extends deep for open source
-    @_savedAttrs = $.extend true, {}, @_savedModel.attributes
+    @_savedAttrs = @_savedModel.toJSON()
 
 
   _restoreModelState: ->

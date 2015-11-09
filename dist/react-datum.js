@@ -54,12 +54,12 @@ var ReactDatum =
 
 	module.exports = {
 	  ClickToEditForm: __webpack_require__(2),
-	  Collection: __webpack_require__(10),
-	  CollectionStats: __webpack_require__(13),
+	  Collection: __webpack_require__(9),
+	  CollectionStats: __webpack_require__(12),
 	  Form: __webpack_require__(4),
-	  Model: __webpack_require__(18),
-	  SelectedModel: __webpack_require__(19),
-	  Tilegrid: __webpack_require__(20),
+	  Model: __webpack_require__(17),
+	  SelectedModel: __webpack_require__(18),
+	  Tilegrid: __webpack_require__(19),
 	  Datum: __webpack_require__(6),
 	  Email: __webpack_require__(27),
 	  LazyPhoto: __webpack_require__(28),
@@ -164,7 +164,7 @@ var ReactDatum =
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $, Backbone, Datum, Form, React, ReactDom, jQuery,
+	var Backbone, Datum, Form, React, ReactDom,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty,
@@ -177,8 +177,6 @@ var ReactDatum =
 	Datum = __webpack_require__(6);
 
 	Backbone = __webpack_require__(7);
-
-	$ = jQuery = __webpack_require__(9);
 
 
 	/*
@@ -198,7 +196,9 @@ var ReactDatum =
 	    model: Form.modelOrObject(),
 	    readonly: React.PropTypes.bool,
 	    buttonPosition: React.PropTypes.oneOf(['top', 'bottom', 'none']),
-	    className: React.PropTypes.string
+	    className: React.PropTypes.string,
+	    saveSuccessCallback: React.PropTypes.func,
+	    saveErrorCallback: React.PropTypes.func
 	  };
 
 	  Form.defaultProps = {
@@ -221,8 +221,14 @@ var ReactDatum =
 
 	  function Form(props) {
 	    this.onCancelClick = bind(this.onCancelClick, this);
+	    this.onSaveError = bind(this.onSaveError, this);
+	    this.onSaveSuccess = bind(this.onSaveSuccess, this);
 	    this.onSaveClick = bind(this.onSaveClick, this);
 	    this.datums = [];
+	    this.state = {
+	      errorMessage: null,
+	      successMessage: null
+	    };
 	    Form.__super__.constructor.apply(this, arguments);
 	  }
 
@@ -241,12 +247,11 @@ var ReactDatum =
 	    this._saveModelStateAtRender();
 	    return React.createElement("div", {
 	      "className": this.props.className
-	    }, this.renderTopButtons(), this.renderChildren(), this.renderBottomButtons(), this.renderErrorMessage());
+	    }, this.renderTopButtons(), this.renderChildren(), this.renderBottomButtons(), this.renderMessages());
 	  };
 
 	  Form.prototype.componentDidMount = function() {
-	    this.node = ReactDom.findDOMNode(this);
-	    return this.focus();
+	    return this.node = ReactDom.findDOMNode(this);
 	  };
 
 	  Form.prototype.focus = function() {
@@ -312,40 +317,98 @@ var ReactDatum =
 	    ];
 	  };
 
+	  Form.prototype.renderMessages = function() {
+	    return [this.renderSuccessMessage(), this.renderErrorMessage()];
+	  };
+
 	  Form.prototype.renderErrorMessage = function() {
-	    if (this.errorMessage == null) {
+	    return this.renderMessage(this.state.errorMessage, 'error');
+	  };
+
+	  Form.prototype.renderSuccessMessage = function() {
+	    return this.renderMessage(this.state.successMesage, 'success');
+	  };
+
+	  Form.prototype.renderMessage = function(message, className) {
+	    if (message == null) {
 	      return null;
 	    }
-	    console.log('errorMessage: ', this.errorMessage);
 	    return React.createElement("div", {
-	      "className": "error"
-	    }, this.errorMessage);
+	      "className": className
+	    }, message);
+	  };
+
+	  Form.prototype.save = function() {
+	    var error, ex, model, saved;
+	    this.setState({
+	      errorMessage: null,
+	      successMesage: null
+	    });
+	    model = this.getModel();
+	    if (model == null) {
+	      return;
+	    }
+	    if (!model.isValid()) {
+	      if (model.validationError != null) {
+	        this.onSaveError(model, model.validationError);
+	        return;
+	      }
+	    }
+	    try {
+	      return saved = model.save({}, {
+	        success: this.onSaveSuccess,
+	        error: this.onSaveError
+	      });
+	    } catch (error) {
+	      ex = error;
+	      return this.onSaveError(model, ex.message);
+	    }
 	  };
 
 	  Form.prototype.onSaveClick = function(evt) {
-	    var model;
 	    if (this.getInvalidDatums().length > 0) {
-	      this.errorMessage = "Unable to save. Please correct errors and try again.";
-	      return this.forceUpdate();
+	      return this.setState({
+	        errorMessage: "Unable to save. Please correct errors and try again."
+	      });
 	    } else {
-	      this.errorMessage = null;
-	      model = this.getModel();
-	      if (model == null) {
-	        return;
-	      }
-	      return model.save({}, {
-	        success: this.onSaveSuccess
+	      return this.save();
+	    }
+	  };
+
+	  Form.prototype.onSaveSuccess = function(model, response, options) {
+	    if (options == null) {
+	      options = {};
+	    }
+	    this._saveModelState();
+	    if ((this.props.saveSuccessCallback != null) && _.isFunction(this.props.saveSuccessCallback)) {
+	      return this.props.saveSuccessCallback(model, response, options);
+	    } else {
+	      return this.setState({
+	        successMessage: "Successfully saved!",
+	        successAt: Date.now()
 	      });
 	    }
 	  };
 
-	  Form.prototype.onSaveSuccess = function() {
-	    this._saveModelState();
-	    return this.successMessage = "Saved!";
+	  Form.prototype.onSaveError = function(model, response, options) {
+	    if (options == null) {
+	      options = {};
+	    }
+	    if ((this.props.saveErrorCallback != null) && _.isFunction(this.props.saveErrorCallback)) {
+	      return this.props.saveErrorCallback(model, response, options);
+	    } else {
+	      response = (response == null) || _.isString(response) ? response : JSON.stringify(response);
+	      return this.setState({
+	        errorMessage: "Unable to save: " + response || "unknown"
+	      });
+	    }
 	  };
 
 	  Form.prototype.onCancelClick = function(evt) {
-	    this.errorMessage = null;
+	    this.setState({
+	      errorMessage: null,
+	      successMessage: null
+	    });
 	    this._restoreModelState();
 	    return this._resetDatums();
 	  };
@@ -405,7 +468,7 @@ var ReactDatum =
 
 	  Form.prototype._saveModelState = function() {
 	    this._savedModel = this.getModel();
-	    return this._savedAttrs = $.extend(true, {}, this._savedModel.attributes);
+	    return this._savedAttrs = this._savedModel.toJSON();
 	  };
 
 	  Form.prototype._restoreModelState = function() {
@@ -851,19 +914,16 @@ var ReactDatum =
 	  };
 
 	  Datum.prototype.onInputRef = function(input) {
-	    var node;
-	    this.inputComponent = input;
-	    if (this.needsFocus && (input != null)) {
-	      node = ReactDOM.findDOMNode(input);
-	      node.focus();
-	      node.select();
-	      return this.needsFocus = false;
-	    }
+	    return this.inputComponent = input;
 	  };
 
 	  Datum.prototype.focus = function() {
-	    this.needsFocus = true;
-	    return this.forceUpdate();
+	    var node;
+	    if (this.inputComponent != null) {
+	      node = ReactDOM.findDOMNode(this.inputComponent);
+	      node.focus();
+	      return node.select();
+	    }
 	  };
 
 	  Datum.prototype.validate = function(value) {
@@ -915,12 +975,6 @@ var ReactDatum =
 
 /***/ },
 /* 9 */
-/***/ function(module, exports) {
-
-	module.exports = jQuery;
-
-/***/ },
-/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Collection, ContextualData, React, SelectableCollection, _,
@@ -931,9 +985,9 @@ var ReactDatum =
 
 	_ = __webpack_require__(8);
 
-	ContextualData = __webpack_require__(11);
+	ContextualData = __webpack_require__(10);
 
-	SelectableCollection = __webpack_require__(12);
+	SelectableCollection = __webpack_require__(11);
 
 
 	/*
@@ -982,7 +1036,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 11 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, React,
@@ -1093,7 +1147,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 12 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var SelectableCollection, _,
@@ -1309,7 +1363,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 13 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, CollectionStats, React,
@@ -1320,7 +1374,7 @@ var ReactDatum =
 
 	Backbone = __webpack_require__(7);
 
-	__webpack_require__(14);
+	__webpack_require__(13);
 
 
 	/*
@@ -1405,16 +1459,16 @@ var ReactDatum =
 
 
 /***/ },
-/* 14 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(15);
+	var content = __webpack_require__(14);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(17)(content, {});
+	var update = __webpack_require__(16)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -1431,10 +1485,10 @@ var ReactDatum =
 	}
 
 /***/ },
-/* 15 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(16)();
+	exports = module.exports = __webpack_require__(15)();
 	// imports
 
 
@@ -1445,7 +1499,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 16 */
+/* 15 */
 /***/ function(module, exports) {
 
 	/*
@@ -1501,7 +1555,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 17 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -1755,7 +1809,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 18 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, Model, React, _,
@@ -1768,7 +1822,7 @@ var ReactDatum =
 
 	_ = __webpack_require__(8);
 
-	ContextualData = __webpack_require__(11);
+	ContextualData = __webpack_require__(10);
 
 
 	/*
@@ -1802,7 +1856,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 19 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, React, SelectedModel,
@@ -1814,7 +1868,7 @@ var ReactDatum =
 
 	Backbone = __webpack_require__(7);
 
-	ContextualData = __webpack_require__(11);
+	ContextualData = __webpack_require__(10);
 
 
 	/*
@@ -1906,7 +1960,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 20 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var MultiSelect, React, SingleSelect, Tilegrid, TilegridReact,
@@ -1915,7 +1969,7 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	TilegridReact = __webpack_require__(21);
+	TilegridReact = __webpack_require__(20);
 
 	SingleSelect = __webpack_require__(25);
 
@@ -1989,7 +2043,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 21 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var $, Model, React, ReactDom, Tilegrid, TilegridReact, jQuery,
@@ -2003,9 +2057,9 @@ var ReactDatum =
 
 	$ = jQuery = __webpack_require__(3);
 
-	Tilegrid = __webpack_require__(22);
+	Tilegrid = __webpack_require__(21);
 
-	Model = __webpack_require__(18);
+	Model = __webpack_require__(17);
 
 
 	/*
@@ -2088,7 +2142,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 22 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var $, Backbone, Tilegrid, _, jQuery,
@@ -2096,7 +2150,7 @@ var ReactDatum =
 
 	_ = __webpack_require__(8);
 
-	$ = jQuery = __webpack_require__(9);
+	$ = jQuery = __webpack_require__(22);
 
 	Backbone = __webpack_require__(7);
 
@@ -2761,6 +2815,12 @@ var ReactDatum =
 
 
 /***/ },
+/* 22 */
+/***/ function(module, exports) {
+
+	module.exports = jQuery;
+
+/***/ },
 /* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -2770,7 +2830,7 @@ var ReactDatum =
 	var content = __webpack_require__(24);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(17)(content, {});
+	var update = __webpack_require__(16)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -2790,7 +2850,7 @@ var ReactDatum =
 /* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(16)();
+	exports = module.exports = __webpack_require__(15)();
 	// imports
 
 
@@ -2810,9 +2870,9 @@ var ReactDatum =
 
 	_ = __webpack_require__(8);
 
-	$ = jQuery = __webpack_require__(9);
+	$ = jQuery = __webpack_require__(22);
 
-	SelectableCollection = __webpack_require__(12);
+	SelectableCollection = __webpack_require__(11);
 
 
 	/*
@@ -3241,7 +3301,7 @@ var ReactDatum =
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	$ = jQuery = __webpack_require__(9);
+	$ = jQuery = __webpack_require__(22);
 
 	_ = __webpack_require__(8);
 

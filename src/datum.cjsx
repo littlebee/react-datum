@@ -354,16 +354,13 @@ module.exports = class Datum extends React.Component
 
   onInputRef: (input) =>
     @inputComponent = input
-    if @needsFocus && input?
-      node = ReactDOM.findDOMNode(input)
-      node.focus()
-      node.select()
-      @needsFocus = false
 
 
   focus: () =>
-    @needsFocus = true
-    @forceUpdate()
+    if @inputComponent?
+      node = ReactDOM.findDOMNode(@inputComponent)
+      node.focus()
+      node.select()
 
 
   validate: (value=@state.value)->
