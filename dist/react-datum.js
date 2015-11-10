@@ -683,7 +683,8 @@ var ReactDatum =
 	  Datum.prototype.renderWrapper = function(contentFn) {
 	    return React.createElement("span", {
 	      "className": this.getFullClassName(),
-	      "data-zattr": this.props.attr
+	      "data-zattr": this.props.attr,
+	      "data-z": true
 	    }, contentFn());
 	  };
 
@@ -711,7 +712,13 @@ var ReactDatum =
 	    var value;
 	    value = this.getValueToRender();
 	    value = this.renderEllipsizedValue(value);
-	    return value;
+	    return this.wrapDisplayValue(value);
+	  };
+
+	  Datum.prototype.wrapDisplayValue = function(value) {
+	    return React.createElement("span", {
+	      "className": "datum-display-value"
+	    }, value);
 	  };
 
 	  Datum.prototype.renderPlaceholder = function() {
@@ -728,10 +735,10 @@ var ReactDatum =
 	      options = {};
 	    }
 	    ellipsizeAt = this.getEllipsizeAt();
-	    ellipsizedValue = value.slice(0, ellipsizeAt - 3) + '...';
 	    if (value && _.isString(value) && ellipsizeAt && value.length > ellipsizeAt) {
+	      ellipsizedValue = value.slice(0, ellipsizeAt - 3) + '...';
 	      if (this.props.noPopover) {
-	        value = elipsis(value);
+	        value = ellipsizedValue;
 	      } else {
 	        if (Popover != null) {
 	          popover = React.createElement(Popover, {
@@ -3813,7 +3820,7 @@ var ReactDatum =
 	    return value.match(this.charactersMustMatch);
 	  };
 
-	  Number.prototype.getValueForDisplay = function() {
+	  Number.prototype.renderValue = function() {
 	    var dataValue;
 	    dataValue = this.getModelValue();
 	    switch (this.props.format) {
@@ -3839,7 +3846,7 @@ var ReactDatum =
 	      default:
 	        dataValue;
 	    }
-	    return dataValue;
+	    return this.wrapDisplayValue(dataValue);
 	  };
 
 	  Number.prototype.renderPlaceHolder = function() {

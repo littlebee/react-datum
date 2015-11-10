@@ -175,7 +175,7 @@ module.exports = class Datum extends React.Component
 
   renderWrapper: (contentFn)->
     # TODO: add data-zattr attribute for backward compatibility?
-    <span className={@getFullClassName()} data-zattr={@props.attr}>
+    <span className={@getFullClassName()} data-zattr={@props.attr} data-z>
       {contentFn()}
     </span>
 
@@ -205,7 +205,11 @@ module.exports = class Datum extends React.Component
   renderValue: ->
     value = @getValueToRender()
     value = @renderEllipsizedValue(value)
-    return value
+    return @wrapDisplayValue(value)
+
+
+  wrapDisplayValue: (value)->
+    <span className="datum-display-value">{value}</span>
 
 
   renderPlaceholder: ->
@@ -215,14 +219,14 @@ module.exports = class Datum extends React.Component
 
   renderEllipsizedValue: (value, options={}) ->
     ellipsizeAt = @getEllipsizeAt()
-    ellipsizedValue = value.slice(0, ellipsizeAt-3) + '...'
 
     # don't try to ellipsize unless the value is a string,  subclass may have sent us
     # a value that is a react component.  this still doesn't catch the case where
     # a subclass component sent us HTML as a string.  Why would you?
     if ( value && _.isString(value) && ellipsizeAt && value.length > ellipsizeAt )
+      ellipsizedValue = value.slice(0, ellipsizeAt-3) + '...'
       if @props.noPopover
-        value = elipsis(value)
+        value = ellipsizedValue
       else
         # if react-bootstrap is available globally use it
         if Popover?

@@ -47,7 +47,7 @@ module.exports = class Number extends Datum
 
 
   # overrides super - adds formatting
-  getValueForDisplay: ->
+  renderValue: ->
     dataValue = @getModelValue()
     switch @props.format
       when 'abbreviate'
@@ -68,7 +68,7 @@ module.exports = class Number extends Datum
       else
         dataValue
 
-    return dataValue
+    return @wrapDisplayValue(dataValue)
 
 
   # extends super
