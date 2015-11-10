@@ -3,6 +3,7 @@ React = require('react')
 ReactDom = require('react-dom')
 Datum = require('./datum')
 Backbone = require('backbone')
+_ = require('underscore')
 
 ###
  How about this comment here huh?

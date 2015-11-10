@@ -164,7 +164,7 @@ var ReactDatum =
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Backbone, Datum, Form, React, ReactDom,
+	var Backbone, Datum, Form, React, ReactDom, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty,
@@ -177,6 +177,8 @@ var ReactDatum =
 	Datum = __webpack_require__(6);
 
 	Backbone = __webpack_require__(7);
+
+	_ = __webpack_require__(8);
 
 
 	/*
@@ -1039,13 +1041,15 @@ var ReactDatum =
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Backbone, ContextualData, React,
+	var Backbone, ContextualData, React, _,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
 	React = __webpack_require__(3);
 
 	Backbone = __webpack_require__(7);
+
+	_ = __webpack_require__(8);
 
 
 	/*

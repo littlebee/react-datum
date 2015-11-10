@@ -30,7 +30,9 @@ mocha = new Mocha(
 
 ##  We don't concern ourselves with building, you should have gotten here from
 ##     `cake test`
-##  which would have invoked the build step
+##  which would have invoked the build step.  Besides, that every test loads it's
+##  components under test using node require() which is setup to inline compile
+##  coffee and cjsx
 # util.systemCmd 'cake build'
 
 # we load these globally so we don't have to repeat ourselves in every test
@@ -41,6 +43,8 @@ global.expect = chai.expect
 
 chai.config.includeStack = true   # need stack on exceptions
 
+##  Let's see how far we get without doing this.  If a test itself requires one of these
+##  just require it in the test src file
 # things expect react, jquery, backbone and underscore to be in globals
 # global.jQuery = global.$ = require("jquery");
 # _ = global._ = require("underscore")
@@ -50,7 +54,7 @@ chai.config.includeStack = true   # need stack on exceptions
 # global.ReactTest = require('react-addons-test-utils')
 
 jsdom = require("jsdom");
-jsdom.env '<html><body></body></html>', [], (err, window) ->
+jsdom.env '<html><body><div id="testBody"></div></body></html>', [], (err, window) ->
   global.window = window
   global.document = window.document
   global.navigator = window.navigator
@@ -84,8 +88,8 @@ jsdom.env '<html><body></body></html>', [], (err, window) ->
   BROWSER_ONLY_ANNOTATION = '#@browserOnly'
 
   processFile = (file) ->
-    if path.extname(file) not in ['.coffee', '.cjsx']
-      return
+    # all tests should be in coffee or cjsx please.  ignore our test/lib dir
+    return if path.extname(file) not in ['.coffee', '.cjsx'] || file.match(/\/lib\//g)
 
     fileContents = fs.readFileSync(file)
     if fileContents.slice(0, BROWSER_ONLY_ANNOTATION.length) == BROWSER_ONLY_ANNOTATION

@@ -1,7 +1,7 @@
 
 Email = require('../src/email')
 
-describe 'email', ->
+describe 'Email', ->
 
   it 'should invalidate bad email', ->
     badResponse = Email::validateEmail('bad_email')

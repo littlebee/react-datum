@@ -1,6 +1,7 @@
 
 React = require('react')
 Backbone = require('backbone')
+_ = require('underscore')
 
 ###
   This is an abstract base class for contextual data components like
