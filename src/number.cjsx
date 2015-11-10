@@ -59,7 +59,9 @@ module.exports = class Number extends Datum
           dataValue
       when 'comma'
         # add thousands separater
-        dataValue = dataValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        [wholeNumber, decimal] = dataValue.toString().split('.')
+        dataValue = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        dataValue += '.' + decimal if decimal?
       when 'money'
         dataValue = dataValue.toString().replace(/(.*\.\d$)/, '$10')
         unless dataValue.indexOf('.') >= 0

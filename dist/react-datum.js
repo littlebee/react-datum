@@ -3821,7 +3821,7 @@ var ReactDatum =
 	  };
 
 	  Number.prototype.renderValue = function() {
-	    var dataValue;
+	    var dataValue, decimal, ref, wholeNumber;
 	    dataValue = this.getModelValue();
 	    switch (this.props.format) {
 	      case 'abbreviate':
@@ -3834,7 +3834,11 @@ var ReactDatum =
 	        }
 	        break;
 	      case 'comma':
-	        dataValue = dataValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	        ref = dataValue.toString().split('.'), wholeNumber = ref[0], decimal = ref[1];
+	        dataValue = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	        if (decimal != null) {
+	          dataValue += '.' + decimal;
+	        }
 	        break;
 	      case 'money':
 	        dataValue = dataValue.toString().replace(/(.*\.\d$)/, '$10');
