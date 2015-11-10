@@ -15,6 +15,7 @@ Text = require '../src/text'
 
 KittenModel = require('./lib/kittenModel')
 
+# needed to wrap the below in a div to get around stateless component not
 simpleTestForm = (formProps={}) ->
   <Form {... formProps}>
     <Text attr='name'/>
@@ -63,7 +64,36 @@ describe 'Form', ->
 
     # with a model context, we expect the name to rerender to reflect the change to the model
     it 'should respond to model changes', ->
-      debugger
       model.set('name', 'Foofoo')
       domNode = Th.domNodeByClass(component, 'datum')
       expect(domNode.innerHTML).to.contain('Foofoo')
+
+
+  describe "without any props other than model", ->
+    model = new KittenModel()
+    component = Th.render(<div>{simpleTestForm(model: model)}</div>)
+    formNode = Th.domNode(component).children[0]
+
+    it 'form node should not have zform class', ->
+      expect($(formNode).hasClass('zform')).to.equal(true)
+
+
+  describe "with readonly prop", ->
+    model = new KittenModel()
+    component = Th.render simpleTestForm(readyOnly: true)
+
+    it 'should not have any inputs', ->
+      expect(Th.findByTag(component, 'input').length).to.equal(0)
+
+
+  describe "with className prop", ->
+    model = new KittenModel()
+    component = Th.render(<div>{simpleTestForm(model: model, className: 'test-form')}</div>)
+    formNode = Th.domNode(component).children[0]
+    #console.log formNode.outerHTML
+
+    it 'form node should have test-form class', ->
+      expect($(formNode).hasClass('test-form')).to.equal(true)
+
+    it 'form node should not have zform class', ->
+      expect($(formNode).hasClass('zform')).to.equal(false)

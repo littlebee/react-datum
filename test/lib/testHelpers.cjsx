@@ -24,4 +24,12 @@ module.exports = class TestHelpers
 
 
   @dumpHtml: (component) ->
-    console.log @domNode(component).outerHTML
+    me = "dumpHtml"
+    if component?
+      node = @domNode(component)
+      if node?
+        console.log me, node.outerHTML
+      else
+        console.log me, "node not found for component:", component
+    else
+      console.log me, 'component passed is null or undefined'
