@@ -8,7 +8,7 @@ $ = require('jquery')
 
 Th = require './lib/testHelpers'
 
-Model = require '../src/Model'
+Model = require '../src/model'
 Form = require '../src/form'
 Text = require '../src/text'
 
@@ -74,7 +74,7 @@ describe 'Form', ->
     component = Th.render(<div>{simpleTestForm(model: model)}</div>)
     formNode = Th.domNode(component).children[0]
 
-    it 'form node should not have zform class', ->
+    it 'form node should have zform class', ->
       expect($(formNode).hasClass('zform')).to.equal(true)
 
 
