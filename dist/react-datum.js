@@ -754,7 +754,8 @@ var ReactDatum =
 
 	  Datum.prototype.renderForInput = function() {
 	    return React.createElement("span", {
-	      "className": "datum-input"
+	      "className": "datum-input",
+	      "data-value": this.getValueToRender()
 	    }, this.renderLabel(), this.renderInput(), this.renderIcons());
 	  };
 
