@@ -20,7 +20,7 @@ ContextualData = require('./contextualData')
 
 ###
 module.exports = class SelectedModel extends ContextualData
-  @displayName: "widgets.react.SelectedModel"
+  @displayName: "react-datum.SelectedModel"
 
   # this class also supplies a "model" context to it's children that is
   # the selected model in the collection we recieve as a prop or context

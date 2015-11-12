@@ -11,7 +11,7 @@ _ = require('underscore')
 ###
 
 module.exports = class Form extends React.Component
-  @displayName: "widgets.react.Form"
+  @displayName: "react-datum.Form"
 
   # TODO : move this to somewhere reusable. most of the datums accept
   # a model or plain js object

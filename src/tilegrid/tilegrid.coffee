@@ -68,9 +68,7 @@ module.exports = class Tilegrid
     unless @$element?.length > 0
       throw "Dev: error: #{@$element.selector} not found in DOM"
 
-    @_initializeElement()
     @_initializeCollection()
-
     @_renderGrid()
     @reset()
 
@@ -300,8 +298,13 @@ module.exports = class Tilegrid
     last = first + @options.pageSize
     @lastFirst = first
 
+    if @collection? && _.isFunction @collection.ensureRows
+      @collection.ensureRows first, last, complete: @_onEnsureComplete
+    else
+      @_onEnsureComplete(first, last)
 
-  onEnsureComplete = () =>
+  
+  _onEnsureComplete: (first, last) =>
     for index in [first...last]
       if index >= @getTotalItems()
         @_endOfData()
@@ -309,11 +312,6 @@ module.exports = class Tilegrid
       @appendTile(index)
 
     options.success?()
-
-    if @collection? && _.isFunction @collection.ensureRows
-      @collection.ensureRows first, last, complete: onEnsureComplete
-    else
-      onEnsureComplete()
 
 
   getTotalItems: () =>

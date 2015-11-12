@@ -1,5 +1,6 @@
 
 React = require('react')
+ReactDom = require('react-dom')
 
 TilegridReact = require('./tilegrid/tilegridReact')
 SingleSelect = require('./tilegrid/singleSelect')
@@ -7,7 +8,7 @@ MultiSelect = require('./tilegrid/multiSelect')
 
 
 module.exports = class Tilegrid extends React.Component
-  @displayName: "widgets.react.Tilegrid"
+  @displayName: "react-datum.Tilegrid"
 
   @propTypes:
     # can also accept collection through the @context.collection (see, widgets.react.Collection)

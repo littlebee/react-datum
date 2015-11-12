@@ -14,7 +14,7 @@ Form = require('./form')
 
 ###
 module.exports = class ClickToEditForm extends Form
-  @displayName: "widgets.react.ClickToEditForm"
+  @displayName: "react-datum.ClickToEditForm"
 
   # override default for Form is all input, we start out readonly and then
   # switch to 'edit' mode when the user clicks edit button

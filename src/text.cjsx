@@ -12,7 +12,7 @@ Datum = require('./datum')
   beauty, let's create an extension specifically for text data
 ###
 module.exports = class Text extends Datum
-  @displayName: "widgets.react.Text"
+  @displayName: "react-datum.Text"
 
 
   render: ->

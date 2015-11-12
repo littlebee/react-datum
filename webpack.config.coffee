@@ -85,13 +85,12 @@ module.exports =
     # #  this adds a lot of code to the bundle for hot loading feature
     # new webpack.HotModuleReplacementPlugin()
 
-    ## We will probably need this plugin at some point
+    # We will probably need this plugin at some point
     # new webpack.ProvidePlugin
-    #   # Automatically detect jQuery and $ as free var in modules
-    #   # and inject the jquery library
-    #   # This is required by many jquery plugins
+    #   React: "react"
     #   jQuery: "jquery"
     #   $: "jquery"
+    #   "window.jQuery": "jquery"      
 
     ## I think this and changing the debug setting above to `debug: false` above are all that
     ##   should be needed to produce an optimized minified package

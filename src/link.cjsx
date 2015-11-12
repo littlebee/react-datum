@@ -14,7 +14,7 @@ Datum = require('./datum')
   tags.  If 'nameAttr' prop is not specified, the children of the link are rendered
 ###
 module.exports = class Link extends Datum
-  @displayName: "widgets.react.Link"
+  @displayName: "react-datum.Link"
 
   @propTypes: _.extend {}, Datum.propTypes,
     nameAttr: React.PropTypes.string

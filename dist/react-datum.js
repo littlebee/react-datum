@@ -98,7 +98,7 @@ var ReactDatum =
 	module.exports = ClickToEditForm = (function(superClass) {
 	  extend(ClickToEditForm, superClass);
 
-	  ClickToEditForm.displayName = "widgets.react.ClickToEditForm";
+	  ClickToEditForm.displayName = "react-datum.ClickToEditForm";
 
 	  ClickToEditForm.prototype.datumInputMode = 'readonly';
 
@@ -188,7 +188,7 @@ var ReactDatum =
 	module.exports = Form = (function(superClass) {
 	  extend(Form, superClass);
 
-	  Form.displayName = "widgets.react.Form";
+	  Form.displayName = "react-datum.Form";
 
 	  Form.modelOrObject = function() {
 	    return React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Model), React.PropTypes.object]);
@@ -585,7 +585,7 @@ var ReactDatum =
 	module.exports = Datum = (function(superClass) {
 	  extend(Datum, superClass);
 
-	  Datum.displayName = "widgets.react.Datum";
+	  Datum.displayName = "react-datum.Datum";
 
 	  Datum.propTypes = {
 	    className: React.PropTypes.string,
@@ -1017,7 +1017,7 @@ var ReactDatum =
 	    return Collection.__super__.constructor.apply(this, arguments);
 	  }
 
-	  Collection.displayName = "widgets.react.Collection";
+	  Collection.displayName = "react-datum.Collection";
 
 	  Collection.prototype.dataType = Backbone.Collection;
 
@@ -1403,7 +1403,7 @@ var ReactDatum =
 	    return CollectionStats.__super__.constructor.apply(this, arguments);
 	  }
 
-	  CollectionStats.displayName = "widgets.react.CollectionStats";
+	  CollectionStats.displayName = "react-datum.CollectionStats";
 
 	  CollectionStats.propTypes = {
 	    collection: React.PropTypes.instanceOf(Backbone.Collection),
@@ -1848,7 +1848,7 @@ var ReactDatum =
 	    return Model.__super__.constructor.apply(this, arguments);
 	  }
 
-	  Model.displayName = "widgets.react.Model";
+	  Model.displayName = "react-datum.Model";
 
 	  Model.prototype.dataType = Backbone.Model;
 
@@ -1906,7 +1906,7 @@ var ReactDatum =
 	    return SelectedModel.__super__.constructor.apply(this, arguments);
 	  }
 
-	  SelectedModel.displayName = "widgets.react.SelectedModel";
+	  SelectedModel.displayName = "react-datum.SelectedModel";
 
 	  SelectedModel.prototype.dataType = Backbone.Model;
 
@@ -1975,11 +1975,13 @@ var ReactDatum =
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var MultiSelect, React, SingleSelect, Tilegrid, TilegridReact,
+	var MultiSelect, React, ReactDom, SingleSelect, Tilegrid, TilegridReact,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
 	React = __webpack_require__(3);
+
+	ReactDom = __webpack_require__(5);
 
 	TilegridReact = __webpack_require__(20);
 
@@ -1994,7 +1996,7 @@ var ReactDatum =
 	    return Tilegrid.__super__.constructor.apply(this, arguments);
 	  }
 
-	  Tilegrid.displayName = "widgets.react.Tilegrid";
+	  Tilegrid.displayName = "react-datum.Tilegrid";
 
 	  Tilegrid.propTypes = {
 	    collection: React.PropTypes.any,
@@ -2067,9 +2069,9 @@ var ReactDatum =
 
 	ReactDom = __webpack_require__(5);
 
-	$ = jQuery = __webpack_require__(3);
+	$ = jQuery = __webpack_require__(21);
 
-	Tilegrid = __webpack_require__(21);
+	Tilegrid = __webpack_require__(22);
 
 	Model = __webpack_require__(17);
 
@@ -2084,7 +2086,7 @@ var ReactDatum =
 	  above which adds 135KB to download the minified version.
 	 */
 
-	TilegridReact = (function(superClass) {
+	module.exports = TilegridReact = (function(superClass) {
 	  extend(TilegridReact, superClass);
 
 	  function TilegridReact() {
@@ -2155,6 +2157,12 @@ var ReactDatum =
 
 /***/ },
 /* 21 */
+/***/ function(module, exports) {
+
+	module.exports = jQuery;
+
+/***/ },
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var $, Backbone, Tilegrid, _, jQuery,
@@ -2162,7 +2170,7 @@ var ReactDatum =
 
 	_ = __webpack_require__(8);
 
-	$ = jQuery = __webpack_require__(22);
+	$ = jQuery = __webpack_require__(21);
 
 	Backbone = __webpack_require__(7);
 
@@ -2181,8 +2189,6 @@ var ReactDatum =
 	 */
 
 	module.exports = Tilegrid = (function() {
-	  var onEnsureComplete;
-
 	  Tilegrid.prototype.$tilegridTemplate = $("<div class=\"tilegrid\">\n    <div class=\"tilegrid-loading fade\">\n        <div class=\"placeholder\">\n            ... more to come ...\n            &nbsp;\n        </div>\n    </div>\n</div>");
 
 	  function Tilegrid(selector, data, tileTemplate1, options) {
@@ -2216,6 +2222,7 @@ var ReactDatum =
 	    this._cloneTileTemplate = bind(this._cloneTileTemplate, this);
 	    this.appendTile = bind(this.appendTile, this);
 	    this.getTotalItems = bind(this.getTotalItems, this);
+	    this._onEnsureComplete = bind(this._onEnsureComplete, this);
 	    this._renderNextPage = bind(this._renderNextPage, this);
 	    this.renderAllTiles = bind(this.renderAllTiles, this);
 	    this._findBottomTile = bind(this._findBottomTile, this);
@@ -2263,7 +2270,6 @@ var ReactDatum =
 	    if (!(((ref = this.$element) != null ? ref.length : void 0) > 0)) {
 	      throw "Dev: error: " + this.$element.selector + " not found in DOM";
 	    }
-	    this._initializeElement();
 	    this._initializeCollection();
 	    this._renderGrid();
 	    this.reset();
@@ -2579,28 +2585,26 @@ var ReactDatum =
 	    }
 	    first = this.lastRenderedIndex + 1;
 	    last = first + this.options.pageSize;
-	    return this.lastFirst = first;
-	  };
-
-	  onEnsureComplete = function() {
-	    var i, index, ref, ref1;
-	    for (index = i = ref = first, ref1 = last; ref <= ref1 ? i < ref1 : i > ref1; index = ref <= ref1 ? ++i : --i) {
-	      if (index >= Tilegrid.getTotalItems()) {
-	        Tilegrid._endOfData();
-	        break;
-	      }
-	      Tilegrid.appendTile(index);
-	    }
-	    if (typeof options.success === "function") {
-	      options.success();
-	    }
-	    if ((Tilegrid.collection != null) && _.isFunction(Tilegrid.collection.ensureRows)) {
-	      return Tilegrid.collection.ensureRows(first, last, {
-	        complete: onEnsureComplete
+	    this.lastFirst = first;
+	    if ((this.collection != null) && _.isFunction(this.collection.ensureRows)) {
+	      return this.collection.ensureRows(first, last, {
+	        complete: this._onEnsureComplete
 	      });
 	    } else {
-	      return onEnsureComplete();
+	      return this._onEnsureComplete(first, last);
 	    }
+	  };
+
+	  Tilegrid.prototype._onEnsureComplete = function(first, last) {
+	    var i, index, ref, ref1;
+	    for (index = i = ref = first, ref1 = last; ref <= ref1 ? i < ref1 : i > ref1; index = ref <= ref1 ? ++i : --i) {
+	      if (index >= this.getTotalItems()) {
+	        this._endOfData();
+	        break;
+	      }
+	      this.appendTile(index);
+	    }
+	    return typeof options.success === "function" ? options.success() : void 0;
 	  };
 
 	  Tilegrid.prototype.getTotalItems = function() {
@@ -2827,12 +2831,6 @@ var ReactDatum =
 
 
 /***/ },
-/* 22 */
-/***/ function(module, exports) {
-
-	module.exports = jQuery;
-
-/***/ },
 /* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -2882,7 +2880,7 @@ var ReactDatum =
 
 	_ = __webpack_require__(8);
 
-	$ = jQuery = __webpack_require__(22);
+	$ = jQuery = __webpack_require__(21);
 
 	SelectableCollection = __webpack_require__(11);
 
@@ -3313,7 +3311,7 @@ var ReactDatum =
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	$ = jQuery = __webpack_require__(22);
+	$ = jQuery = __webpack_require__(21);
 
 	_ = __webpack_require__(8);
 
@@ -3530,7 +3528,7 @@ var ReactDatum =
 	module.exports = Email = (function(superClass) {
 	  extend(Email, superClass);
 
-	  Email.displayName = "widgets.react.Email";
+	  Email.displayName = "react-datum.Email";
 
 	  Email.propTypes = _.extend({}, Datum.propTypes, {
 	    displayLink: React.PropTypes.bool
@@ -3611,7 +3609,7 @@ var ReactDatum =
 	    return LazyPhoto.__super__.constructor.apply(this, arguments);
 	  }
 
-	  LazyPhoto.displayName = "widgets.react.LazyPhoto";
+	  LazyPhoto.displayName = "react-datum.LazyPhoto";
 
 	  LazyPhoto.prototype.notFoundUrl = __webpack_require__(29);
 
@@ -3718,7 +3716,7 @@ var ReactDatum =
 	    return Link.__super__.constructor.apply(this, arguments);
 	  }
 
-	  Link.displayName = "widgets.react.Link";
+	  Link.displayName = "react-datum.Link";
 
 	  Link.propTypes = _.extend({}, Datum.propTypes, {
 	    nameAttr: React.PropTypes.string
@@ -3798,7 +3796,7 @@ var ReactDatum =
 	module.exports = Number = (function(superClass) {
 	  extend(Number, superClass);
 
-	  Number.displayName = "widgets.react.Number";
+	  Number.displayName = "react-datum.Number";
 
 	  Number.propTypes = _.extend({}, Datum.propTypes, {
 	    format: React.PropTypes.oneOf(['abbreviate', 'money', 'comma']),
@@ -3922,7 +3920,7 @@ var ReactDatum =
 	    return Text.__super__.constructor.apply(this, arguments);
 	  }
 
-	  Text.displayName = "widgets.react.Text";
+	  Text.displayName = "react-datum.Text";
 
 	  Text.prototype.render = function() {
 	    return Text.__super__.render.apply(this, arguments);
@@ -3957,7 +3955,7 @@ var ReactDatum =
 	    return WholeNumber.__super__.constructor.apply(this, arguments);
 	  }
 
-	  WholeNumber.displayName = "widgets.react.WholeNumber";
+	  WholeNumber.displayName = "react-datum.WholeNumber";
 
 	  WholeNumber.prototype.charactersMustMatch = /^\-?[0-9]*$/;
 

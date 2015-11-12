@@ -6,6 +6,6 @@ Datum = require('./datum')
   For whole numbers (no decimal input allowed).
 ###
 module.exports = class WholeNumber extends Number
-  @displayName: "widgets.react.WholeNumber"
+  @displayName: "react-datum.WholeNumber"
 
   charactersMustMatch: /^\-?[0-9]*$/

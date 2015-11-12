@@ -11,7 +11,7 @@ require('../css/collectionStats.css')
   items found, selected (if SelectableCollection) and viewing.
 ###
 module.exports = class CollectionStats extends React.Component
-  @displayName: "widgets.react.CollectionStats"
+  @displayName: "react-datum.CollectionStats"
 
   @propTypes:
     # a Backbone.Collection

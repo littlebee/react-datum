@@ -17,7 +17,7 @@ SelectableCollection = require('mixins/SelectableCollection')
 
 ###
 module.exports = class Collection extends ContextualData
-  @displayName: "widgets.react.Collection"
+  @displayName: "react-datum.Collection"
 
   # this is the class of thing being placed in the context.
   dataType:  Backbone.Collection

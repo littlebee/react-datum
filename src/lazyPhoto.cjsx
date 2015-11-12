@@ -22,7 +22,7 @@ Datum = require('./datum')
   image is rendered.
 ###
 module.exports = class LazyPhoto extends Datum
-  @displayName: "widgets.react.LazyPhoto"
+  @displayName: "react-datum.LazyPhoto"
 
   notFoundUrl: require("../img/petals.png")
   loadingUrl: require("../img/blank.jpg")

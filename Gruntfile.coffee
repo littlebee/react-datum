@@ -116,7 +116,7 @@ module.exports = (grunt) ->
         files: ["src/examples/**/*", "scripts/lib/exampleFile.tpl"]
         tasks: ["examples"]
       distrib:
-        files: ["src/**/*", "!src/examples/*"]
+        files: ["src/**/*", "!src/examples/*", "webpack.config.coffee"]
         tasks: ["distrib"]
 
 

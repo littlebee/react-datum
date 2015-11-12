@@ -26,7 +26,7 @@ ONE_THOUSAND = 1000
 
 ###
 module.exports = class Number extends Datum
-  @displayName: "widgets.react.Number"
+  @displayName: "react-datum.Number"
 
   @propTypes: _.extend {}, Datum.propTypes,
     format: React.PropTypes.oneOf(['abbreviate','money','comma'])

@@ -10,7 +10,7 @@ ContextualData = require('./contextualData')
   Model react component provides a model context to all children
 ###
 module.exports = class Model extends ContextualData
-  @displayName: "widgets.react.Model"
+  @displayName: "react-datum.Model"
 
   # this is the class of thing being placed in the context.
   dataType:  Backbone.Model

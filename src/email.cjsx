@@ -14,7 +14,7 @@ Datum = require('./datum')
 
 ###
 module.exports = class Email extends Datum
-  @displayName: "widgets.react.Email"
+  @displayName: "react-datum.Email"
 
   @propTypes: _.extend {}, Datum.propTypes,
     displayLink: React.PropTypes.bool

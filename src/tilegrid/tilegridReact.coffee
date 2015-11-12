@@ -1,7 +1,7 @@
 
 React = require('react')
 ReactDom = require('react-dom')
-$ = jQuery = require('react')
+$ = jQuery = require('jquery')
 
 Tilegrid = require('./tilegrid')
 Model = require('../model')
@@ -16,7 +16,7 @@ Model = require('../model')
   above which adds 135KB to download the minified version.
 ###
 
-class TilegridReact extends Tilegrid
+module.exports = class TilegridReact extends Tilegrid
 
   # extends - adds support for rendering react components
   setTileTemplate: (tileTemplate) =>

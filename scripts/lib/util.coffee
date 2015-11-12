@@ -66,14 +66,13 @@ installNodePackage = (packageName, options={}) ->
   options = _.defaults options,
     global: false
 
-  flags = if options.global then '-g' else ''
-  output = systemCmd "npm list #{flags} #{packageName} 2>&1", echo: false, showOutput: false, failOnError: false
-  unless output.indexOf(packageName) >= 0
+  [flags, sudo] = if options.global then ['-g', 'sudo'] else ['', '']
+
+  unless fs.existsSync("/usr/local/lib/node_modules/#{packageName}") ||
+         fs.existsSync("/opt/nodejs/current/lib/node_modules/#{packageName}")
     if options.global
       console.log 'you may be asked to enter your sudo password (and this may take a few seconds)'
-      systemCmd "sudo npm install #{flags} #{packageName}"
-    else
-      systemCmd "npm install #{flags} #{packageName}"
+    systemCmd "#{sudo} npm install #{flags} #{packageName}"
 
 
 openTerminalTab = (cdPath = './', cmd='')->

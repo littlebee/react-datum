@@ -62,7 +62,7 @@ if ReactBootstrap?                   #if loaded
 
 ###
 module.exports = class Datum extends React.Component
-  @displayName: "widgets.react.Datum"
+  @displayName: "react-datum.Datum"
 
   @propTypes:
     # additional css classes (space seperated) to add to wrapper div

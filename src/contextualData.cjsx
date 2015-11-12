@@ -10,7 +10,7 @@ _ = require('underscore')
 ###
 module.exports = class ContextualData extends React.Component
   #  don't forget your display name so you get semi-intelligent errors from react
-  #@displayName: "widgets.react.Model"
+  #@displayName: "react-datum.Model"
 
   ### you need to override these ###
 
