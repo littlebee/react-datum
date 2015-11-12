@@ -341,7 +341,7 @@ var ReactDatum =
 	  };
 
 	  Form.prototype.save = function() {
-	    var error, ex, model, saved;
+	    var error, error1, ex, model, saved;
 	    this.setState({
 	      errorMessage: null,
 	      successMesage: null
@@ -350,19 +350,23 @@ var ReactDatum =
 	    if (model == null) {
 	      return;
 	    }
-	    if (!model.isValid()) {
-	      if (model.validationError != null) {
-	        this.onSaveError(model, model.validationError);
-	        return;
+	    try {
+	      if (!model.isValid()) {
+	        if (model.validationError != null) {
+	          this.onSaveError(model, model.validationError);
+	          return;
+	        }
 	      }
+	    } catch (error) {
+	      null;
 	    }
 	    try {
 	      return saved = model.save({}, {
 	        success: this.onSaveSuccess,
 	        error: this.onSaveError
 	      });
-	    } catch (error) {
-	      ex = error;
+	    } catch (error1) {
+	      ex = error1;
 	      return this.onSaveError(model, ex.message);
 	    }
 	  };
@@ -3935,13 +3939,13 @@ var ReactDatum =
 /* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Datum, React, WholeNumber,
+	var Number, React, WholeNumber,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
 	React = __webpack_require__(3);
 
-	Datum = __webpack_require__(6);
+	Number = __webpack_require__(32);
 
 
 	/*

@@ -173,13 +173,19 @@ module.exports = class Form extends React.Component
     model = @getModel()
     return unless model?
 
-    # Note that backbone 0.9.2 would call error callback on save if the model was
-    # invalid.  Somewhere around 1.1, that is no more.  Now the model returns false
-    # from save and you have to check a new model instance attribute called validationError
-    unless model.isValid()
-      if model.validationError?
-        @onSaveError model, model.validationError
-        return
+    try
+      # Note that backbone 0.9.2 would call error callback on save if the model was
+      # invalid.  Somewhere around 1.1, that is no more.  Now the model returns false
+      # from save and you have to check a new model instance attribute called validationError
+      unless model.isValid()
+        if model.validationError?
+          @onSaveError model, model.validationError
+          return
+    catch 
+      null
+      # Backbone 0.9.2 isValid will exception if the model subject doesn't have a
+      #   validate() method
+      
     # if model was not valid but there is no .validationError, then we are probably
     # dealing with an earlier version of Backbone. Let it fall out through the
     # error handler on save
