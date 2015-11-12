@@ -374,16 +374,18 @@ var ReactDatum =
 	  };
 
 	  Form.prototype.renderSuccessMessage = function() {
-	    return this.renderMessage(this.state.successMesage, 'success');
+	    return this.renderMessage(this.state.successMessage, 'success');
 	  };
 
 	  Form.prototype.renderMessage = function(message, className) {
+	    var fullClassName;
 	    if (message == null) {
 	      return null;
 	    }
-	    className = "datum-form-message-" + className;
+	    fullClassName = "datum-form-message-" + className + " " + className;
 	    return React.createElement("div", {
-	      "className": className
+	      "key": className,
+	      "className": fullClassName
 	    }, message);
 	  };
 
@@ -410,11 +412,11 @@ var ReactDatum =
 	    });
 	    this.setState({
 	      errorMessage: null,
-	      successMesage: null
+	      successMessage: null
 	    });
 	    model = this.getModel();
 	    if (options.validateDatums && !this.validateDatums(options)) {
-	      this.onSaveError(model, model.validationError);
+	      this.onSaveError(model, "Correct errors and try again.");
 	      return;
 	    }
 	    if (options.validateModel && !this.validateModel(options)) {
@@ -437,7 +439,7 @@ var ReactDatum =
 	    }
 	    if (this.getInvalidDatums().length > 0) {
 	      this.setState({
-	        errorMessage: "Unable to save. Please correct errors and try again."
+	        errorMessage: "Please correct errors and try again."
 	      });
 	      return false;
 	    }
@@ -525,13 +527,12 @@ var ReactDatum =
 	    if (options == null) {
 	      options = {};
 	    }
-	    console.error(this.constructor.displayName + ": error saving model: " + response);
 	    if ((this.props.saveErrorCallback != null) && _.isFunction(this.props.saveErrorCallback)) {
 	      return this.props.saveErrorCallback(model, response, options);
 	    } else {
 	      response = (response == null) || _.isString(response) ? response : JSON.stringify(response);
 	      return this.setState({
-	        errorMessage: "Unable to save: " + response || "unknown"
+	        errorMessage: "Unable to save. " + response || "Reason unknown."
 	      });
 	    }
 	  };
@@ -758,9 +759,6 @@ var ReactDatum =
 	    this.onChange = bind(this.onChange, this);
 	    this.addValidations = bind(this.addValidations, this);
 	    Datum.__super__.constructor.call(this, props);
-	    this.state = {
-	      value: this.getModelValue()
-	    };
 	    this.addValidations(this.validateRequired);
 	  }
 
@@ -769,11 +767,7 @@ var ReactDatum =
 	      React life cycle methods
 	   */
 
-	  Datum.prototype.componentWillMount = function() {
-	    return this.setState({
-	      value: this.getModelValue()
-	    });
-	  };
+	  Datum.prototype.componentWillMount = function() {};
 
 	  Datum.prototype.componentDidMount = function() {
 	    var ref, ref1;
@@ -782,10 +776,7 @@ var ReactDatum =
 
 	  Datum.prototype.componentWillReceiveProps = function(nextProps) {
 	    var model;
-	    model = nextProps.model || this.context.model;
-	    return this.setState({
-	      value: model != null ? model.get(this.nextProps.attr) : void 0
-	    });
+	    return model = nextProps.model || this.context.model;
 	  };
 
 	  Datum.prototype.componentWillUnmount = function() {
@@ -960,10 +951,7 @@ var ReactDatum =
 	  };
 
 	  Datum.prototype.cancelEdit = function() {
-	    this.errors = [];
-	    return this.setState({
-	      value: this.getModelValue()
-	    });
+	    return this.errors = [];
 	  };
 
 	  Datum.prototype.addValidations = function(validations) {
@@ -1000,9 +988,6 @@ var ReactDatum =
 
 	  Datum.prototype.setModelValue = function(value, options) {
 	    var ref;
-	    if (value == null) {
-	      value = this.state.value;
-	    }
 	    if (options == null) {
 	      options = {};
 	    }
@@ -1042,15 +1027,12 @@ var ReactDatum =
 	    currentValue = event.target.value;
 	    this.validate(currentValue);
 	    if (this.shouldSetOnChange()) {
-	      this.setModelValue(currentValue);
+	      return this.setModelValue(currentValue);
 	    } else {
-	      this.setModelValue(currentValue, {
+	      return this.setModelValue(currentValue, {
 	        silent: true
 	      });
 	    }
-	    return this.setState({
-	      value: currentValue
-	    });
 	  };
 
 	  Datum.prototype.onInputRef = function(input) {
@@ -1069,7 +1051,7 @@ var ReactDatum =
 	  Datum.prototype.validate = function(value) {
 	    var i, len, ref, valid, validation;
 	    if (value == null) {
-	      value = this.state.value;
+	      value = this.getModelValue();
 	    }
 	    if (!this.isEditable()) {
 	      return true;

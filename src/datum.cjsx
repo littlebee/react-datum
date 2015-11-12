@@ -133,7 +133,6 @@ module.exports = class Datum extends React.Component
 
   constructor: (props) ->
     super props
-    @state = {value: @getModelValue()}
     @addValidations @validateRequired
 
 
@@ -142,8 +141,7 @@ module.exports = class Datum extends React.Component
   ###
 
   componentWillMount: ->
-    @setState value: @getModelValue()
-
+    # TODO: save node if necessary
 
   componentDidMount: ->
     # note that we don't need a form to work. this is for it's benefit, mostly
@@ -154,7 +152,6 @@ module.exports = class Datum extends React.Component
 
   componentWillReceiveProps: (nextProps) ->
     model = nextProps.model || @context.model
-    @setState(value: model?.get(@nextProps.attr)) # state to null if not model or attr
 
 
   componentWillUnmount: ->
@@ -296,7 +293,6 @@ module.exports = class Datum extends React.Component
 
   cancelEdit: () ->
     @errors = []
-    @setState value: @getModelValue()
 
 
   addValidations: (validations) =>
@@ -324,7 +320,7 @@ module.exports = class Datum extends React.Component
 
 
   # options pass through to model.set
-  setModelValue: (value=@state.value, options={}) ->
+  setModelValue: (value, options={}) ->
     @getModel()?.set(@props.attr, value, options)
 
 
@@ -356,8 +352,6 @@ module.exports = class Datum extends React.Component
     else
       @setModelValue(currentValue, silent: true)
 
-    this.setState({value: currentValue});
-
 
   onInputRef: (input) =>
     @inputComponent = input
@@ -370,7 +364,7 @@ module.exports = class Datum extends React.Component
       node.select()
 
 
-  validate: (value=@state.value)->
+  validate: (value=@getModelValue())->
     return true unless @isEditable()
     @errors = []
     for validation in @validations

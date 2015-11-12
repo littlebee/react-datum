@@ -12,8 +12,6 @@ _ = require('underscore')
 
 require('coffee-react/register') #  jit compile .coffee and .cjsx on require
 
-testFile = null
-
 testOptions = require('commander')
 .option('--verbose', 'I like lots of output')
 .on '--help', ->
@@ -105,16 +103,18 @@ jsdom.env '<html><body><div id="testBody"></div></body></html>', [], (err, windo
 
 
   runMocha = ->
-    runner = mocha.run(->
+    runner = mocha.run ->
       console.log 'finished'
       return
-    )
+    
     runner.on 'pass', (test) ->
       #console.log('... %s passed', test.title);
       return
+    
     runner.on 'fail', (test) ->
       #console.log('... %s failed', test.title);
       return
+    
     return
 
   console.log 'Running tests...'

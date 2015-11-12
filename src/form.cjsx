@@ -201,13 +201,13 @@ module.exports = class Form extends React.Component
 
 
   renderSuccessMessage: ->
-    @renderMessage @state.successMesage, 'success'
+    @renderMessage @state.successMessage, 'success'
 
 
   renderMessage: (message, className) ->
     return null unless message?
-    className = "datum-form-message-" + className
-    <div className={className}>{message}</div>
+    fullClassName = "datum-form-message-#{className} #{className}"
+    <div key={className} className={fullClassName}>{message}</div>
 
 
   ###
@@ -225,11 +225,11 @@ module.exports = class Form extends React.Component
       validateDatums: true      # TODO : these should also be @props
       validateModel: true
       
-    @setState errorMessage: null, successMesage: null
+    @setState errorMessage: null, successMessage: null
     model = @getModel()
     
     if options.validateDatums and not @validateDatums(options)
-      @onSaveError model, model.validationError
+      @onSaveError model, "Correct errors and try again."
       return
 
     if options.validateModel and not @validateModel(options)
@@ -247,7 +247,7 @@ module.exports = class Form extends React.Component
   ###
   validateDatums: (options={}) ->
     if @getInvalidDatums().length > 0
-      @setState errorMessage: "Unable to save. Please correct errors and try again."
+      @setState errorMessage: "Please correct errors and try again."
       return false
       
     return true
@@ -315,13 +315,11 @@ module.exports = class Form extends React.Component
 
 
   onSaveError: (model, response, options={}) =>
-    console.error(@constructor.displayName + ": error saving model: " + response)
-
     if @props.saveErrorCallback? && _.isFunction @props.saveErrorCallback
       @props.saveErrorCallback(model, response, options)
     else
       response = if !response? || _.isString(response) then response else JSON.stringify(response)
-      @setState errorMessage: "Unable to save: " + response || "unknown"
+      @setState errorMessage: "Unable to save. " + response || "Reason unknown."
 
 
   onCancelClick: (evt) =>

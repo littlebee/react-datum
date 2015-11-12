@@ -31,12 +31,12 @@ describe 'Number datum', ->
 
     it 'should not have an input', -> Th.findByTag(component, 'input').length.should.be.equal(0)
 
-    it 'should have tres commas for one million', ->
-      model.set('foo', 1000000)
+    it 'should have tres commas for one billion', ->
+      model.set('foo', 1000000000)
       component.forceUpdate()        # doesn't automatically update because it's not in a <Model> context
-      $(domNode).find('.datum-display-value').text().should.be.equal("1,000,000")
+      $(domNode).find('.datum-display-value').text().should.be.equal("1,000,000,000")
 
-    it 'should have tres commas for one million plus a lot of decimal places', ->
+    it 'should have two commas for one million plus a lot of decimal places', ->
       model.set('foo', 1000000.9882794274)
       component.forceUpdate()       
       $(domNode).find('.datum-display-value').text().should.be.equal("1,000,000.9882794274")

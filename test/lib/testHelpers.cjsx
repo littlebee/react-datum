@@ -7,6 +7,16 @@ React = require 'react'
 ReactDOM = require 'react-dom'
 ReactTest = require 'react-addons-test-utils'
 
+###
+  leave this in here so tests can be debugged using node-inspector using
+  ```
+  coffee --nodejs --debug-brk scripts/testRunner.coffee test/form/formSaving.cjsx
+  ``` 
+  Then hit run in node-inspector UI and it will stop here with the tests loaded so you can
+  set breakpoints in them in the debugger
+###
+debugger 
+
 
 module.exports = class TestHelpers
   # these are aliases of React test util names that are TFL
