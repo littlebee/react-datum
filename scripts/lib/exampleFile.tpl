@@ -7,6 +7,7 @@
   <link rel="stylesheet" type="text/css" href="../bootstrap-light.css">
   <link rel="stylesheet" type="text/css" href="../syntaxHighlight.css">
   <link rel="stylesheet" type="text/css" href="../example.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
   <title>react-datum <%= simpleName %> example</title>
 </head>

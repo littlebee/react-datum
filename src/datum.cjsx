@@ -133,15 +133,13 @@ module.exports = class Datum extends React.Component
 
   constructor: (props) ->
     super props
+    @state = {errors: []}
     @addValidations @validateRequired
 
 
   ###
       React life cycle methods
   ###
-
-  componentWillMount: ->
-    # TODO: save node if necessary
 
   componentDidMount: ->
     # note that we don't need a form to work. this is for it's benefit, mostly
@@ -257,11 +255,11 @@ module.exports = class Datum extends React.Component
 
 
   renderIcons: ->
-    if @isEditing() && @errors.length > 0
+    if @isEditing() && @state.errors.length > 0
       errors = []
       # if react-bootstrap is globally available, we will use that
       if Popover?
-        errors.push(<div>{error}</div>) for error in @errors
+        errors.push(<div>{error}</div>) for error in @state.errors
         popover = <Popover id='datumInvalid' bsStyle='danger'>
           {errors}
         </Popover>
@@ -272,9 +270,9 @@ module.exports = class Datum extends React.Component
           </OverlayTrigger>
         )
       else
-        errors = @errors.join('\n')
+        errors = @state.errors.join('\n')
         return (
-          <span className="error" title={errors}><i className='icon-exclamation-sign'/></span>
+          <span className="error" title={errors}><i className='icon-exclamation-sign fa fa-exclamation-triangle'/></span>
         )
 
     return null
@@ -292,7 +290,7 @@ module.exports = class Datum extends React.Component
 
 
   cancelEdit: () ->
-    @errors = []
+    setState errors: []
 
 
   addValidations: (validations) =>
@@ -335,7 +333,7 @@ module.exports = class Datum extends React.Component
   getFullClassName: ->
     className = if @subClassName? then "#{@className} #{@subClassName}" else @className
     className += " required" if @props.required
-    className += " invalid" if @errors.length > 0
+    className += " invalid" if @state.errors.length > 0
     className += " #{@props.className}" if @props.className?
     return className
 
@@ -366,13 +364,15 @@ module.exports = class Datum extends React.Component
 
   validate: (value=@getModelValue())->
     return true unless @isEditable()
-    @errors = []
+    @setState errors: []
+    errors = []
     for validation in @validations
       valid = validation(value)
       unless valid == true
-        @errors.push valid
-
-    return @errors.length == 0
+        errors.push valid
+    @setState errors: errors
+    
+    return errors.length == 0
 
 
   validateRequired: (value) =>

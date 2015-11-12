@@ -759,6 +759,9 @@ var ReactDatum =
 	    this.onChange = bind(this.onChange, this);
 	    this.addValidations = bind(this.addValidations, this);
 	    Datum.__super__.constructor.call(this, props);
+	    this.state = {
+	      errors: []
+	    };
 	    this.addValidations(this.validateRequired);
 	  }
 
@@ -766,8 +769,6 @@ var ReactDatum =
 	  /*
 	      React life cycle methods
 	   */
-
-	  Datum.prototype.componentWillMount = function() {};
 
 	  Datum.prototype.componentDidMount = function() {
 	    var ref, ref1;
@@ -902,10 +903,10 @@ var ReactDatum =
 
 	  Datum.prototype.renderIcons = function() {
 	    var error, errors, i, len, popover, ref;
-	    if (this.isEditing() && this.errors.length > 0) {
+	    if (this.isEditing() && this.state.errors.length > 0) {
 	      errors = [];
 	      if (Popover != null) {
-	        ref = this.errors;
+	        ref = this.state.errors;
 	        for (i = 0, len = ref.length; i < len; i++) {
 	          error = ref[i];
 	          errors.push(React.createElement("div", null, error));
@@ -924,12 +925,12 @@ var ReactDatum =
 	          "className": 'icon-exclamation-sign'
 	        })));
 	      } else {
-	        errors = this.errors.join('\n');
+	        errors = this.state.errors.join('\n');
 	        return React.createElement("span", {
 	          "className": "error",
 	          "title": errors
 	        }, React.createElement("i", {
-	          "className": 'icon-exclamation-sign'
+	          "className": 'icon-exclamation-sign fa fa-exclamation-triangle'
 	        }));
 	      }
 	    }
@@ -951,7 +952,9 @@ var ReactDatum =
 	  };
 
 	  Datum.prototype.cancelEdit = function() {
-	    return this.errors = [];
+	    return setState({
+	      errors: []
+	    });
 	  };
 
 	  Datum.prototype.addValidations = function(validations) {
@@ -1009,7 +1012,7 @@ var ReactDatum =
 	    if (this.props.required) {
 	      className += " required";
 	    }
-	    if (this.errors.length > 0) {
+	    if (this.state.errors.length > 0) {
 	      className += " invalid";
 	    }
 	    if (this.props.className != null) {
@@ -1049,23 +1052,29 @@ var ReactDatum =
 	  };
 
 	  Datum.prototype.validate = function(value) {
-	    var i, len, ref, valid, validation;
+	    var errors, i, len, ref, valid, validation;
 	    if (value == null) {
 	      value = this.getModelValue();
 	    }
 	    if (!this.isEditable()) {
 	      return true;
 	    }
-	    this.errors = [];
+	    this.setState({
+	      errors: []
+	    });
+	    errors = [];
 	    ref = this.validations;
 	    for (i = 0, len = ref.length; i < len; i++) {
 	      validation = ref[i];
 	      valid = validation(value);
 	      if (valid !== true) {
-	        this.errors.push(valid);
+	        errors.push(valid);
 	      }
 	    }
-	    return this.errors.length === 0;
+	    this.setState({
+	      errors: errors
+	    });
+	    return errors.length === 0;
 	  };
 
 	  Datum.prototype.validateRequired = function(value) {
