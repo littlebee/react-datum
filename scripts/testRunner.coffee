@@ -72,8 +72,9 @@ jsdom.env '<html><body><div id="testBody"></div></body></html>', [], (err, windo
 
   # adds spies, mocks and other  see http://sinonjs.org/docs/
   # and http://chaijs.com/plugins/sinon-chai  for chai expectation
-  chaiSinon = require('sinon-chai')
-  chai.use(chaiSinon)
+  global.sinon = require('sinon')
+  global.chaiSinon = require('sinon-chai')
+  global.chai.use(chaiSinon)
 
   # adds should.trigger semantics  http://chaijs.com/plugins/chai-backbone
   chaiBackbone = require("chai-backbone");

@@ -16,6 +16,11 @@ var kittenModel = new Backbone.Model({
   comment: ""
 });
 
+kittenModel.save = function(attrs, options) {
+  options.success(kittenModel, "success", options)
+  return true
+}
+
 // To make it into a form, just add the <Rd.Form>
 
 var kittenCard = React.createClass({
@@ -27,7 +32,7 @@ var kittenCard = React.createClass({
           <h3>Adopt <Rd.Text attr="name"/> Today!</h3>
           <Rd.Form>
             <div><Rd.LazyPhoto attr="imgUrl"/></div>
-            <div><Rd.Text attr="name" label="Name:" setOnChange/> (<Rd.Text attr="title"/>)</div>
+            <div><Rd.Text attr="name" label="Name:" setOnChange required/> (<Rd.Text attr="title"/>)</div>
             <label>Say something about <Rd.Text attr="name" readonly/>: </label>
             <div><Rd.Text attr="description" className="wide-input"/></div>
             <div><Rd.Email attr="sponsorEmail" label="Adoption Sponsor:" displayLink/></div>

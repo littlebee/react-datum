@@ -6,10 +6,49 @@ Backbone = require('backbone')
 _ = require('underscore')
 
 ###
- How about this comment here huh?
+
+# ReactDatum.Form 
+
+## This component provides a form context to all of the datums within.  
+
+    Adding the **ReactDatum.Form** component, you can easily convert a group of datums into an 
+    editable form with save and cancel buttons:
+
+    <img alt="Screenshot from doc/examples/form/form.html" src="https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_form-example.png" align="right"/>
+    ```javascript
+    var kittenCard = React.createClass({
+      displayName:"KittenCard",
+      render: function(){
+        return (
+          <div className='kitten-card'>
+            <ReactDatum.Model model={kittenModel}>
+              <h3>Adopt <ReactDatum.Text attr="name"/> Today!</h3>
+              <ReactDatum.Form>
+                <div><ReactDatum.LazyPhoto attr="imgUrl"/></div>
+                <div><ReactDatum.Text attr="name" label="Name" setOnChange/> (<ReactDatum.Text attr="title"/>)</div>
+                <label>Say something about <ReactDatum.Text attr="name" readonly/>: </label>
+                <div><ReactDatum.Text attr="description" className="wide-input"/></div>
+                <div><ReactDatum.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/></div>
+                <label>Leave a Comment!</label>
+                <div><ReactDatum.Text attr="comment" className="wide-input"/></div>
+              </ReactDatum.Form>
+            </ReactDatum.Model>
+          </div>
+        )
+      }
+    })
+    ```
+
+    When the user presses save, model.save() is called.   All of the attributes were set() when the user entered new values.  
+    If cancel is clicked, the model and subsequently, the form are reset back to the state of the last model.save().
+
+    By wrapping the datums in the **ReactDatum.Form** tag, they implicitedly recieve `inputMode='edit'` props that make 
+    them all render as inputs.  Almost all.  Some Datums, like **ReactDatum.LazyPhoto**, only have a display presentation, 
+    no update.  If given an `inputMode='edit'` they will ignore, and continue showing their display (`inputMode='readonly'``) 
+    representation.  
+
 
 ###
-
 module.exports = class Form extends React.Component
   @displayName: "react-datum.Form"
 
@@ -107,7 +146,9 @@ module.exports = class Form extends React.Component
     @node = ReactDom.findDOMNode(this)
 
 
-
+  ###
+    Gives the first editable datum focus
+  ###
   focus: ->
     firstEditable = _.find @datums, (d) -> d.isEditable()
     firstEditable?.focus()
@@ -143,8 +184,8 @@ module.exports = class Form extends React.Component
 
   renderButtons: (options) ->
     return [
-      <button key="save" className='btn btn-success' onClick={@onSaveClick}>Save</button>
-      <button key="cancel" className='btn' onClick={@onCancelClick}>Cancel</button>
+      <button key="save" ref="saveButton" className='btn btn-success' onClick={@onSaveClick}>Save</button>
+      <button key="cancel" ref="cancelButton" className='btn' onClick={@onCancelClick}>Cancel</button>
     ]
 
 
@@ -165,11 +206,58 @@ module.exports = class Form extends React.Component
 
   renderMessage: (message, className) ->
     return null unless message?
+    className = "datum-form-message-" + className
     <div className={className}>{message}</div>
 
 
-  save: ->
+  ###
+    Save the changes from datums on the form to the Backbone model. 
+    
+    Calls model.save after first attempting to validate() the model.  Handles 
+    inconsistencies in model.validate() between versions 0.9.2 - 1.2.2 of Backbone.
+    
+    The user clicking on the save button belonging to the Form will call this Method
+    
+    The options argument is passed on to Backbone model.save()
+  ###
+  save: (options={})->
+    options = _.defaults options,
+      validateDatums: true      # TODO : these should also be @props
+      validateModel: true
+      
     @setState errorMessage: null, successMesage: null
+    model = @getModel()
+    
+    if options.validateDatums and not @validateDatums(options)
+      @onSaveError model, model.validationError
+      return
+
+    if options.validateModel and not @validateModel(options)
+      @onSaveError model, model.validationError
+      return
+
+    # saving the model triggers events that will rerender us
+    return @saveModel(options)
+
+
+  ###
+    Validate the datums on the form. 
+    
+    returns false if any are currently invalid
+  ###
+  validateDatums: (options={}) ->
+    if @getInvalidDatums().length > 0
+      @setState errorMessage: "Unable to save. Please correct errors and try again."
+      return false
+      
+    return true
+    
+  
+  ###
+    Calls Backbone model.validate and handles inconsistencies in model.validate() 
+    between versions 0.9.2 - 1.2.2 of Backbone.
+  ###    
+  validateModel: (options={}) ->
     model = @getModel()
     return unless model?
 
@@ -179,8 +267,7 @@ module.exports = class Form extends React.Component
       # from save and you have to check a new model instance attribute called validationError
       unless model.isValid()
         if model.validationError?
-          @onSaveError model, model.validationError
-          return
+          return false
     catch 
       null
       # Backbone 0.9.2 isValid will exception if the model subject doesn't have a
@@ -188,22 +275,35 @@ module.exports = class Form extends React.Component
       
     # if model was not valid but there is no .validationError, then we are probably
     # dealing with an earlier version of Backbone. Let it fall out through the
-    # error handler on save
+    # error handler on save    
+    return true;
+    
+    
+  
+  # TODO : move this to somewhere utilitarian
+  preceedOriginalCallback: (obj, attr, newCallback) ->
+    originalCallback = obj[attr]
+    obj[attr] = () ->
+      newCallback.apply(this, arguments)
+      originalCallback?.apply(this, argumentsk)
 
-    # saving the model triggers events that will rerender us
-    try
-      saved = model.save {},
-        success: @onSaveSuccess
-        error: @onSaveError
-    catch ex
-      @onSaveError(model, ex.message)
-
+  ###  
+    calls Backbone model.save and calls success and error handlers. 
+    
+    You should probably call Form.save() above instead.  It will also validate the model 
+    and datums.  
+  ### 
+  saveModel: (options={}) ->
+    model = @getModel() 
+    return unless model?
+    
+    @preceedOriginalCallback(options, 'success', @onSaveSuccess)
+    @preceedOriginalCallback(options, 'error', @onSaveError)
+    saved = model.save {}, options
+      
 
   onSaveClick: (evt) =>
-    if @getInvalidDatums().length > 0
-      @setState errorMessage: "Unable to save. Please correct errors and try again."
-    else
-      @save()
+    @save()
 
 
   onSaveSuccess: (model, response, options={}) =>
@@ -215,6 +315,8 @@ module.exports = class Form extends React.Component
 
 
   onSaveError: (model, response, options={}) =>
+    console.error(@constructor.displayName + ": error saving model: " + response)
+
     if @props.saveErrorCallback? && _.isFunction @props.saveErrorCallback
       @props.saveErrorCallback(model, response, options)
     else

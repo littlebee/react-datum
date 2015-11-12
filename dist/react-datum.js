@@ -182,7 +182,46 @@ var ReactDatum =
 
 
 	/*
-	 How about this comment here huh?
+
+	 * ReactDatum.Form 
+
+	## This component provides a form context to all of the datums within.  
+
+	    Adding the **ReactDatum.Form** component, you can easily convert a group of datums into an 
+	    editable form with save and cancel buttons:
+
+	    <img alt="Screenshot from doc/examples/form/form.html" src="https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_form-example.png" align="right"/>
+	    ```javascript
+	    var kittenCard = React.createClass({
+	      displayName:"KittenCard",
+	      render: function(){
+	        return (
+	          <div className='kitten-card'>
+	            <ReactDatum.Model model={kittenModel}>
+	              <h3>Adopt <ReactDatum.Text attr="name"/> Today!</h3>
+	              <ReactDatum.Form>
+	                <div><ReactDatum.LazyPhoto attr="imgUrl"/></div>
+	                <div><ReactDatum.Text attr="name" label="Name" setOnChange/> (<ReactDatum.Text attr="title"/>)</div>
+	                <label>Say something about <ReactDatum.Text attr="name" readonly/>: </label>
+	                <div><ReactDatum.Text attr="description" className="wide-input"/></div>
+	                <div><ReactDatum.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/></div>
+	                <label>Leave a Comment!</label>
+	                <div><ReactDatum.Text attr="comment" className="wide-input"/></div>
+	              </ReactDatum.Form>
+	            </ReactDatum.Model>
+	          </div>
+	        )
+	      }
+	    })
+	    ```
+
+	    When the user presses save, model.save() is called.   All of the attributes were set() when the user entered new values.  
+	    If cancel is clicked, the model and subsequently, the form are reset back to the state of the last model.save().
+
+	    By wrapping the datums in the **ReactDatum.Form** tag, they implicitedly recieve `inputMode='edit'` props that make 
+	    them all render as inputs.  Almost all.  Some Datums, like **ReactDatum.LazyPhoto**, only have a display presentation, 
+	    no update.  If given an `inputMode='edit'` they will ignore, and continue showing their display (`inputMode='readonly'``) 
+	    representation.
 	 */
 
 	module.exports = Form = (function(superClass) {
@@ -256,6 +295,11 @@ var ReactDatum =
 	    return this.node = ReactDom.findDOMNode(this);
 	  };
 
+
+	  /*
+	    Gives the first editable datum focus
+	   */
+
 	  Form.prototype.focus = function() {
 	    var firstEditable;
 	    firstEditable = _.find(this.datums, function(d) {
@@ -309,10 +353,12 @@ var ReactDatum =
 	    return [
 	      React.createElement("button", {
 	        "key": "save",
+	        "ref": "saveButton",
 	        "className": 'btn btn-success',
 	        "onClick": this.onSaveClick
 	      }, "Save"), React.createElement("button", {
 	        "key": "cancel",
+	        "ref": "cancelButton",
 	        "className": 'btn',
 	        "onClick": this.onCancelClick
 	      }, "Cancel")
@@ -335,17 +381,80 @@ var ReactDatum =
 	    if (message == null) {
 	      return null;
 	    }
+	    className = "datum-form-message-" + className;
 	    return React.createElement("div", {
 	      "className": className
 	    }, message);
 	  };
 
-	  Form.prototype.save = function() {
-	    var error, error1, ex, model, saved;
+
+	  /*
+	    Save the changes from datums on the form to the Backbone model. 
+	    
+	    Calls model.save after first attempting to validate() the model.  Handles 
+	    inconsistencies in model.validate() between versions 0.9.2 - 1.2.2 of Backbone.
+	    
+	    The user clicking on the save button belonging to the Form will call this Method
+	    
+	    The options argument is passed on to Backbone model.save()
+	   */
+
+	  Form.prototype.save = function(options) {
+	    var model;
+	    if (options == null) {
+	      options = {};
+	    }
+	    options = _.defaults(options, {
+	      validateDatums: true,
+	      validateModel: true
+	    });
 	    this.setState({
 	      errorMessage: null,
 	      successMesage: null
 	    });
+	    model = this.getModel();
+	    if (options.validateDatums && !this.validateDatums(options)) {
+	      this.onSaveError(model, model.validationError);
+	      return;
+	    }
+	    if (options.validateModel && !this.validateModel(options)) {
+	      this.onSaveError(model, model.validationError);
+	      return;
+	    }
+	    return this.saveModel(options);
+	  };
+
+
+	  /*
+	    Validate the datums on the form. 
+	    
+	    returns false if any are currently invalid
+	   */
+
+	  Form.prototype.validateDatums = function(options) {
+	    if (options == null) {
+	      options = {};
+	    }
+	    if (this.getInvalidDatums().length > 0) {
+	      this.setState({
+	        errorMessage: "Unable to save. Please correct errors and try again."
+	      });
+	      return false;
+	    }
+	    return true;
+	  };
+
+
+	  /*
+	    Calls Backbone model.validate and handles inconsistencies in model.validate() 
+	    between versions 0.9.2 - 1.2.2 of Backbone.
+	   */
+
+	  Form.prototype.validateModel = function(options) {
+	    var error, model;
+	    if (options == null) {
+	      options = {};
+	    }
 	    model = this.getModel();
 	    if (model == null) {
 	      return;
@@ -353,32 +462,48 @@ var ReactDatum =
 	    try {
 	      if (!model.isValid()) {
 	        if (model.validationError != null) {
-	          this.onSaveError(model, model.validationError);
-	          return;
+	          return false;
 	        }
 	      }
 	    } catch (error) {
 	      null;
 	    }
-	    try {
-	      return saved = model.save({}, {
-	        success: this.onSaveSuccess,
-	        error: this.onSaveError
-	      });
-	    } catch (error1) {
-	      ex = error1;
-	      return this.onSaveError(model, ex.message);
+	    return true;
+	  };
+
+	  Form.prototype.preceedOriginalCallback = function(obj, attr, newCallback) {
+	    var originalCallback;
+	    originalCallback = obj[attr];
+	    return obj[attr] = function() {
+	      newCallback.apply(this, arguments);
+	      return originalCallback != null ? originalCallback.apply(this, argumentsk) : void 0;
+	    };
+	  };
+
+
+	  /*  
+	    calls Backbone model.save and calls success and error handlers. 
+	    
+	    You should probably call Form.save() above instead.  It will also validate the model 
+	    and datums.
+	   */
+
+	  Form.prototype.saveModel = function(options) {
+	    var model, saved;
+	    if (options == null) {
+	      options = {};
 	    }
+	    model = this.getModel();
+	    if (model == null) {
+	      return;
+	    }
+	    this.preceedOriginalCallback(options, 'success', this.onSaveSuccess);
+	    this.preceedOriginalCallback(options, 'error', this.onSaveError);
+	    return saved = model.save({}, options);
 	  };
 
 	  Form.prototype.onSaveClick = function(evt) {
-	    if (this.getInvalidDatums().length > 0) {
-	      return this.setState({
-	        errorMessage: "Unable to save. Please correct errors and try again."
-	      });
-	    } else {
-	      return this.save();
-	    }
+	    return this.save();
 	  };
 
 	  Form.prototype.onSaveSuccess = function(model, response, options) {
@@ -400,6 +525,7 @@ var ReactDatum =
 	    if (options == null) {
 	      options = {};
 	    }
+	    console.error(this.constructor.displayName + ": error saving model: " + response);
 	    if ((this.props.saveErrorCallback != null) && _.isFunction(this.props.saveErrorCallback)) {
 	      return this.props.saveErrorCallback(model, response, options);
 	    } else {
