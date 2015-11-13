@@ -20,7 +20,7 @@ task 'clean',  'delete all compiled js - doc/examples, dist/react-datum', ->
 
 
 task 'test', 'run all tests in ./test dir', ->
-  util.systemCmd 'scripts/testRunner.coffee'
+  util.systemCmd 'grunt test'
 
 
 task 'watch', 'watch source files and examples and build when changed', ->
@@ -37,4 +37,5 @@ task 'unwatch', 'Stop background watcher spawned via `cake watch`', ->
     util.systemCmd("kill -9 `cat watch.pid`", failOnError: false)
     fs.unlinkSync 'watch.pid'
   else
-    console.log 'not currently watching'
+    console.log "not currently watching or you ran `grunt watch` directly (didn't use `cake watch`). "
+    console.log "In the later case, either close the console that grunt watch is running in or use `kill -9 grunt`"

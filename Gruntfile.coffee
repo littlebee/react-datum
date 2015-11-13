@@ -110,6 +110,8 @@ module.exports = (grunt) ->
         command: 'coffee ./scripts/deployToZukeeper.coffee'
       npmInstall:
         command: 'npm install'
+      test:
+        command: 'coffee scripts/testRunner.coffee'
 
 
     availabletasks:
@@ -137,6 +139,7 @@ module.exports = (grunt) ->
 
 
   # tasks
+  grunt.registerTask 'test', ['build', "shell:test"]
   grunt.registerTask 'distrib', ['cssmin:distrib', 'webpack:distrib', 'webpack:optimize','shell:deploy']
   grunt.registerTask 'examples', ['newer:react:examples', 'newer:cjsx:examples', 'newer:coffee:examples', 'shell:buildExamples']
   grunt.registerTask 'build', ['examples', 'distrib'] # ['newer:cjsx:build', 'newer:coffee:build', 'distrib']

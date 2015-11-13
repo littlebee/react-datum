@@ -24,6 +24,7 @@ mocha = new Mocha(
   reporter: 'spec'
   ui: 'bdd'
   timeout: 999999
+  useColors: true
 )
 
 ##  We don't concern ourselves with building, you should have gotten here from
