@@ -234,7 +234,14 @@ var ReactDatum =
 	  };
 
 	  Form.propTypes = {
+
+	    /* can also accept model instance as context var. prop has precendence */
 	    model: Form.modelOrObject(),
+
+	    /*
+	      no formMode like zform, but we have to support programatic readonly
+	      see also ClickToEditForm component.   readonly should always take precendence
+	     */
 	    readonly: React.PropTypes.bool,
 	    buttonPosition: React.PropTypes.oneOf(['top', 'bottom', 'none']),
 	    className: React.PropTypes.string,
@@ -249,6 +256,8 @@ var ReactDatum =
 	  };
 
 	  Form.contextTypes = {
+
+	    /* can also accept model instance as a prop.  prop has precendence */
 	    model: Form.modelOrObject()
 	  };
 

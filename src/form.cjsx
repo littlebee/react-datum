@@ -62,10 +62,12 @@ module.exports = class Form extends React.Component
 
 
   @propTypes:
-    # can also accept model instance as context var. prop has precendence
+    ### can also accept model instance as context var. prop has precendence ###
     model: @modelOrObject()
-    # no formMode like zform, but we have to support programatic readonly
-    # see also ClickToEditForm component.   readonly should always take precendence
+    ###
+      no formMode like zform, but we have to support programatic readonly
+      see also ClickToEditForm component.   readonly should always take precendence
+    ###
     readonly: React.PropTypes.bool
     # you can style a buttonPossiton: 'top' to float left or right in css.
     buttonPosition: React.PropTypes.oneOf(['top', 'bottom', 'none'])
@@ -90,7 +92,7 @@ module.exports = class Form extends React.Component
 
 
   @contextTypes:
-    # can also accept model instance as a prop.  prop has precendence
+    ### can also accept model instance as a prop.  prop has precendence ###
     model: @modelOrObject()
 
   # we also pass along the model passed to us via prop or context, so you can
