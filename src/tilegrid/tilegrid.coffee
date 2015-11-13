@@ -2,7 +2,6 @@
 _ = require('underscore')
 $ = jQuery = require('jquery')
 Backbone = require('backbone')
-require('../../css/tilegrid.css')
 
 ###
   TileGrid

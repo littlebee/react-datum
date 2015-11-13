@@ -88,7 +88,18 @@ module.exports = (grunt) ->
           dest:'examples'
           ext: '.js'
         ]
-
+        
+    cssmin: {
+      options: {
+        shorthandCompacting: false,
+      },
+      distrib: {
+        files: {
+          'dist/react-datum.css': ['css/**/*.css']
+        }
+      }
+    }      
+    
     shell:
       buildExamples:
         command: 'coffee ./scripts/buildExamples.coffee grunt'
@@ -126,7 +137,7 @@ module.exports = (grunt) ->
 
 
   # tasks
-  grunt.registerTask 'distrib', ['webpack:distrib', 'webpack:optimize','shell:deploy']
+  grunt.registerTask 'distrib', ['cssmin:distrib', 'webpack:distrib', 'webpack:optimize','shell:deploy']
   grunt.registerTask 'examples', ['newer:react:examples', 'newer:cjsx:examples', 'newer:coffee:examples', 'shell:buildExamples']
   grunt.registerTask 'build', ['examples', 'distrib'] # ['newer:cjsx:build', 'newer:coffee:build', 'distrib']
   grunt.registerTask 'default', ['availabletasks']

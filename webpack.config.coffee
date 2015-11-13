@@ -43,10 +43,16 @@ module.exports =
 
   module:
     loaders: [
-        # required to write "require("./style.css")"
-        test: /\.css$/
-        loader: "style-loader!css-loader"
-      ,
+      # 
+      # DON'T USE THIS  if you do a require(`../css/someFile.css`) that file will fail to load in tests
+      # If you need to include CSS for a component of this lib:
+      #   - keep it minimal (let our users style and format)
+      #   - please don't use inline styles as they are difficult for our user to override
+      #   - put the css in a file that is of same or similar name to the components in the css/ dir
+      #
+      #   test: /\.css$/                         # required to write "require("./someFile.css")"
+      #   loader: "style-loader!css-loader"
+      # ,
         # required for bootstrap icons
         test: /\.(woff|woff2)$/
         loader: "url-loader?prefix=font/&limit=5000&mimetype=application/font-woff"

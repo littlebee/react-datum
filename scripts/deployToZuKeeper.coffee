@@ -27,7 +27,7 @@ try
 catch
   # it didn't find it
 
-srcs = 'dist/react-datum.*'    # should capture ...js ...min.js
+srcs = 'dist/react-datum.*'    # should capture ...js ...min.js, .css
 zkRelativeDir = 'app/webroot/js/lib'
 zkRemoteRoot = '/var/www/htdocs/zulily-event-management'
 

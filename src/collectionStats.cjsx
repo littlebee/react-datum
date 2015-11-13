@@ -2,8 +2,6 @@
 React = require('react')
 Backbone = require('backbone')
 
-require('../css/collectionStats.css')
-
 ###
   **CollectionStats** provides information about the items in your collection.
 
