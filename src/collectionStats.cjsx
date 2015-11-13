@@ -55,7 +55,7 @@ module.exports = class CollectionStats extends React.Component
 
     return (
       <span className="found stats fade in">
-        Found {total} {things}
+        Found {@_renderCount(total)} {things}
       </span>
     )
 
@@ -64,7 +64,7 @@ module.exports = class CollectionStats extends React.Component
     return null unless @collection.isSelectable
     return(
       <span className="selected stats fade in">
-        , {@collection.getSelectedModels().length} selected
+        , {@_renderCount(@collection.getSelectedModels().length)} selected
       </span>
     )
 
@@ -73,6 +73,11 @@ module.exports = class CollectionStats extends React.Component
     return null unless @collection.topDisplayIndex? && @collection.bottomDisplayIndex
     return (
       <span className="viewing stats fade in">
-        Viewing {@collection.topDisplayIndex} - {@collection.bottomDisplayIndex}
+        Viewing {@_renderCount(@collection.topDisplayIndex, 'top-index')} - 
+        {@_renderCount(@collection.bottomDisplayIndex, 'bottom-index')}
       </span>
     )
+    
+  _renderCount: (value, addClass="") ->
+    className = ["count", addClass].join(' ')
+    return <span className={className}>{value}</span>

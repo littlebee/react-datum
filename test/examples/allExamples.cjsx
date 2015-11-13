@@ -22,14 +22,13 @@ _.extend global,
   '$': $
   'jQuery': $
   
-# require in the whole distro and it will add ReactDatum global needed by examples
-#global.ReactDatum = require '../../dist/react-datum'
-#global.ReactDatum = window.ReactDatum
 
-#jsdom = require 'jsdom'
-
+# this is a suboptimal way of doing this.  I also tried and failed when using:
+#  - a script tag with a src,  no way to load it synchrously or detect it's load
+#  - wrapping this in another jsDom.env  - i think it ignores if already in a jsDom.env
 loadExample = (exampleScriptFile, done) ->
-  # jsdom.env exampleScriptFile, -> done()
+  # example files all expect to find an element with the id='demo' where they do 
+  # their rendering
   $('body').html """
     <div id="demo"></div>
     <script>#{fs.readFileSync('dist/react-datum.js')}</script>
@@ -39,8 +38,6 @@ loadExample = (exampleScriptFile, done) ->
 
 testExample = (exampleFile) ->
   describe "Example: #{exampleFile}", ->
-          #require "../../" + exampleFile
-    
     it 'should render something', (done) ->
       loadExample exampleFile, ->
         #console.log $('#demo').html()
@@ -55,7 +52,6 @@ testAllExamples = () ->
   
   
 describe 'All examples', ->
-  
   testAllExamples()
   
     

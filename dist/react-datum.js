@@ -1565,7 +1565,7 @@ var ReactDatum =
 	    }).call(this);
 	    return React.createElement("span", {
 	      "className": "found stats fade in"
-	    }, "Found ", total, " ", things);
+	    }, "Found ", this._renderCount(total), " ", things);
 	  };
 
 	  CollectionStats.prototype._renderSelected = function() {
@@ -1574,7 +1574,7 @@ var ReactDatum =
 	    }
 	    return React.createElement("span", {
 	      "className": "selected stats fade in"
-	    }, ", ", (this.collection.getSelectedModels().length), " selected");
+	    }, ", ", this._renderCount(this.collection.getSelectedModels().length), " selected");
 	  };
 
 	  CollectionStats.prototype._renderViewing = function() {
@@ -1583,7 +1583,18 @@ var ReactDatum =
 	    }
 	    return React.createElement("span", {
 	      "className": "viewing stats fade in"
-	    }, "Viewing ", this.collection.topDisplayIndex, " - ", this.collection.bottomDisplayIndex);
+	    }, "Viewing ", this._renderCount(this.collection.topDisplayIndex, 'top-index'), " - ", this._renderCount(this.collection.bottomDisplayIndex, 'bottom-index'));
+	  };
+
+	  CollectionStats.prototype._renderCount = function(value, addClass) {
+	    var className;
+	    if (addClass == null) {
+	      addClass = "";
+	    }
+	    className = ["count", addClass].join(' ');
+	    return React.createElement("span", {
+	      "className": className
+	    }, value);
 	  };
 
 	  return CollectionStats;

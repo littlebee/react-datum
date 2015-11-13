@@ -23,7 +23,9 @@ task 'test', 'run all tests in ./test dir', ->
   util.systemCmd 'grunt test'
 
 
-task 'watch', 'watch source files and examples and build when changed', ->
+# TODO : these two tasks could probably be farmed out to grunt. There is probably a grunt task
+#     for backgrounding and killing other tasks
+task 'watch', 'watch source files and examples in background and build when changed', ->
   invoke 'unwatch'
   invoke 'build'
   # hard to do from within grunt

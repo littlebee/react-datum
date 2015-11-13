@@ -28,7 +28,7 @@ mocha = new Mocha(
 )
 
 ##  We don't concern ourselves with building, you should have gotten here from
-##     `cake test`
+##     `cake test` or `grunt test`
 ##  which would have invoked the build step.  Besides, that every test loads it's
 ##  components under test using node require() which is setup to inline compile
 ##  coffee and cjsx
