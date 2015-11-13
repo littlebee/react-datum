@@ -1,9 +1,10 @@
 
 React = require('react')
+Backbone = require('backbone')
 _ = require('underscore')
 
 ContextualData = require('./contextualData')
-SelectableCollection = require('mixins/SelectableCollection')
+SelectableCollection = require('./mixins/SelectableCollection')
 
 
 ###

@@ -1,5 +1,4 @@
 
-
 var Rd = ReactDatum
 
 // Say you have this model:
@@ -23,7 +22,7 @@ kittenModel.save = function(attrs, options) {
 
 // To make it into a form, just add the <Rd.Form>
 
-var kittenCard = React.createClass({
+var KittenCard = React.createClass({
   displayName:"KittenCard",
   render: function(){
     return (
@@ -44,4 +43,11 @@ var kittenCard = React.createClass({
     )
   }
 })
-ReactDOM.render(React.createElement(kittenCard), document.getElementById('demo'))
+
+// if( module ){
+//   module.exports = {example: KittenCard}
+// } else {
+//   ReactDOM.render(React.createElement(KittenCard), document.getElementById('demo'))
+// }
+
+ReactDOM.render(React.createElement(KittenCard), document.getElementById('demo'))

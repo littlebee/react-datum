@@ -1108,11 +1108,13 @@ var ReactDatum =
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Collection, ContextualData, React, SelectableCollection, _,
+	var Backbone, Collection, ContextualData, React, SelectableCollection, _,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
 	React = __webpack_require__(3);
+
+	Backbone = __webpack_require__(7);
 
 	_ = __webpack_require__(8);
 

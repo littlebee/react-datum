@@ -1,8 +1,9 @@
 
 .code-pane {
   display: inline-block;
-  width: calc(100% - 400px);
+  width: calc(100% - 450px);
   overflow: auto;
+  margin-left: 13px;
 }
 
 .demo-pane {

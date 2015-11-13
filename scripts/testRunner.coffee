@@ -52,6 +52,13 @@ chai.config.includeStack = true   # need stack on exceptions
 # global.ReactTest = require('react-addons-test-utils')
 
 jsdom = require("jsdom");
+
+jsdom.defaultDocumentFeatures = { 
+    FetchExternalResources   : ['script'],
+    ProcessExternalResources : ['script'],
+    MutationEvents           : '2.0',
+};
+
 jsdom.env '<html><body><div id="testBody"></div></body></html>', [], (err, window) ->
   global.window = window
   global.document = window.document
