@@ -92,6 +92,7 @@ module.exports = (grunt) ->
     cssmin: {
       options: {
         shorthandCompacting: false,
+        keepBreaks: true
       },
       distrib: {
         files: {
