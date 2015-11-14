@@ -7,7 +7,7 @@ Th = require '../lib/testHelpers'
 
 Model = require '../../src/model'
 Form = require '../../src/form'
-Text = require '../../src/text'
+Text = require '../../src/datums/text'
 
 KittenModel = require('../lib/kittenModel')
 

@@ -24,8 +24,8 @@ Datum = require('./datum')
 module.exports = class LazyPhoto extends Datum
   @displayName: "react-datum.LazyPhoto"
 
-  notFoundUrl: require("../img/petals.png")
-  loadingUrl: require("../img/blank.jpg")
+  notFoundUrl: require("../../img/petals.png")
+  loadingUrl: require("../../img/blank.jpg")
 
   subClassName: 'fast-fade lazy-image'
 

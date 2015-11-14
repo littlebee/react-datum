@@ -1,7 +1,7 @@
 
 React = require('react')
 ReactDom = require('react-dom')
-Datum = require('./datum')
+Datum = require('./datums/datum')
 Backbone = require('backbone')
 _ = require('underscore')
 

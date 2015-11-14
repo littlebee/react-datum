@@ -10,10 +10,12 @@ module.exports =
   Tilegrid: require './tilegrid'
 
   # datums (in alpha order please)
-  Datum: require './datum'
-  Email: require './email'
-  LazyPhoto: require './lazyPhoto'
-  Link: require './link'
-  Number: require './number'
-  Text: require './text'
-  WholeNumber: require './wholeNumber'
+  Datum: require './datums/datum'
+  Email: require './datums/email'
+  LazyPhoto: require './datums/lazyPhoto'
+  Link: require './datums/link'
+  Number: require './datums/number'
+  Text: require './datums/text'
+  WholeNumber: require './datums/wholeNumber'
+
+

@@ -3,7 +3,7 @@ Backbone = require 'backbone'
 $ = require 'jquery'
 
 Th = require './lib/testHelpers'
-Number = require '../src/number'
+Number = require '../src/datums/number'
 
 
 describe 'Number datum', ->

@@ -1,5 +1,5 @@
 
-Email = require('../src/email')
+Email = require('../src/datums/email')
 
 describe 'Email datum', ->
 
