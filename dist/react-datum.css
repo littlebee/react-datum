@@ -1,3 +1,4 @@
+.collection-picker-display-value{background-color:#f5f5f5;padding:2px 3px;margin-right:4px}
 .collection-stats{overflow:hidden;padding-left:2px}
 .collection-stats .loading-indicator{position:absolute;height:2px;width:31px;top:16px;left:5px}
 .tilegrid{height:100%;position:relative;overflow:auto;background-color:#f5f5f5;text-align:center}

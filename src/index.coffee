@@ -17,5 +17,9 @@ module.exports =
   Number: require './datums/number'
   Text: require './datums/text'
   WholeNumber: require './datums/wholeNumber'
+  
+  # TODO : i think this will eventually go to a separate npm package so that the core doesn't
+  #    have dependency on react-select
+  CollectionPicker: require './datums/collectionPicker/collectionPicker'
 
 

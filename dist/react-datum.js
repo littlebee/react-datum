@@ -66,7 +66,8 @@ var ReactDatum =
 	  Link: __webpack_require__(25),
 	  Number: __webpack_require__(26),
 	  Text: __webpack_require__(27),
-	  WholeNumber: __webpack_require__(28)
+	  WholeNumber: __webpack_require__(28),
+	  CollectionPicker: __webpack_require__(29)
 	};
 
 
@@ -3711,6 +3712,141 @@ var ReactDatum =
 	  return WholeNumber;
 
 	})(Number);
+
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var CollectionPicker, Datum, React,
+	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+	  hasProp = {}.hasOwnProperty;
+
+	React = __webpack_require__(3);
+
+	Datum = __webpack_require__(6);
+
+	module.exports = CollectionPicker = (function(superClass) {
+	  extend(CollectionPicker, superClass);
+
+	  function CollectionPicker() {
+	    return CollectionPicker.__super__.constructor.apply(this, arguments);
+	  }
+
+	  CollectionPicker.displayName = "react-datum.CollectionPicker";
+
+	  CollectionPicker.propTypes = _.extend({}, Datum.propTypes, {
+	    collection: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Collection), React.PropTypes.string, React.PropTypes.array]),
+	    displayAttr: React.PropTypes.string,
+	    displayComponent: React.PropTypes.node,
+	    optionAttr: React.PropTypes.string,
+	    optionComponent: React.PropTypes.node,
+	    multi: React.PropTypes.bool,
+	    asyncLoadCallback: React.PropTypes["function"],
+	    reactSelectProps: React.PropTypes.object
+	  });
+
+	  CollectionPicker.contextTypes = _.extend({}, Datum.contextTypes, {
+	    collection: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Collection), React.PropTypes.string])
+	  });
+
+	  CollectionPicker.prototype.renderInput = function() {
+	    var placeholder, value;
+	    placeholder = this.props.placeholder || "";
+	    value = this.getValueToRender();
+	    return React.createElement("input", {
+	      "type": "text",
+	      "placeholder": placeholder,
+	      "value": value,
+	      "onChange": this.onChange,
+	      "ref": this.onInputRef
+	    });
+	  };
+
+	  CollectionPicker.prototype.getValueToRender = function() {
+	    var collection, modelValues;
+	    collection = this.getCollection();
+	    if (this.props.multi) {
+	      modelValues = this.getModelValues();
+	      return modelValues.map((function(_this) {
+	        return function(modelValue) {
+	          return _this.getCollectionValue(modelValue, collection);
+	        };
+	      })(this));
+	    } else {
+	      return this.getCollectionValue(this.getModelValue(), collection);
+	    }
+	  };
+
+	  CollectionPicker.prototype.renderEllipsizedValue = function(value, options) {
+	    var values;
+	    if (options == null) {
+	      options = {};
+	    }
+	    if (this.props.multi) {
+	      values = value;
+	      if (!_.isArray(values)) {
+	        throw this.constructor.displayName + ": expected value to be an array in multi mode. check also getValueToRender()";
+	      }
+	      return values.map((function(_this) {
+	        return function(v) {
+	          return React.createElement("span", {
+	            "key": v,
+	            "className": "collection-picker-display-value"
+	          }, CollectionPicker.__super__.renderEllipsizedValue.call(_this, v, options));
+	        };
+	      })(this));
+	    } else {
+	      return CollectionPicker.__super__.renderEllipsizedValue.apply(this, arguments);
+	    }
+	  };
+
+	  CollectionPicker.prototype.getCollection = function() {
+	    var collection;
+	    collection = this.props.collection || this.context.collection;
+	    if (collection == null) {
+	      throw this.constructor.displayName + " requires a collection prop or context";
+	    }
+	    if (!(collection instanceof Backbone.Collection)) {
+	      return new Backbone.Collection(collection);
+	    }
+	    return collection;
+	  };
+
+	  CollectionPicker.prototype.getCollectionValue = function(modelId, collection) {
+	    var model, modelValue;
+	    if (collection == null) {
+	      collection = this.getCollection();
+	    }
+	    model = collection.get(modelId, {
+	      add: true
+	    });
+	    if ((model != null) && !_.isFunction(model.toString) && (this.props.displayAttr == null)) {
+	      throw this.constructor.displayName + ": You need to specify a displayAttr prop or model must have toString() method";
+	    }
+	    modelValue = this.props.displayAttr != null ? model != null ? model.get(this.props.displayAttr) : void 0 : model.toString();
+	    return modelValue || "unknown";
+	  };
+
+	  CollectionPicker.prototype.getModelValues = function() {
+	    var modelValue, modelValues;
+	    modelValue = this.getModelValue();
+	    modelValues = (function() {
+	      switch (false) {
+	        case !_.isString(modelValue):
+	          return modelValue.split(',');
+	        case !_.isArray(modelValue):
+	          return modelValue;
+	        default:
+	          return [modelValue];
+	      }
+	    })();
+	    return modelValues;
+	  };
+
+	  return CollectionPicker;
+
+	})(Datum);
 
 
 /***/ }
