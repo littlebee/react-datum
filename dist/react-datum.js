@@ -962,7 +962,7 @@ var ReactDatum =
 	  };
 
 	  Datum.prototype.cancelEdit = function() {
-	    return setState({
+	    return this.setState({
 	      errors: []
 	    });
 	  };

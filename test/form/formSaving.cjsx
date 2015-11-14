@@ -5,7 +5,6 @@ $ = require 'jquery'
 
 Th = require '../lib/testHelpers'
 
-Model = require '../../src/model'
 Form = require '../../src/form'
 Text = require '../../src/datums/text'
 

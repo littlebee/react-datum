@@ -290,7 +290,7 @@ module.exports = class Datum extends React.Component
 
 
   cancelEdit: () ->
-    setState errors: []
+    @setState errors: []
 
 
   addValidations: (validations) =>
