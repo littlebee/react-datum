@@ -77,6 +77,12 @@ module.exports =
         loaders: ["coffee", "cjsx"]
         include: path.join(__dirname, "src")
       ,
+        test: /\.jsx?$/,
+        loader: 'babel-loader',
+        query: {
+          presets: ['es2015', 'react']
+        }        
+      ,
         test: /\.(png|jpg)$/
         loader: 'url-loader?limit=8192' # inline base64 URLs for <=8k images, direct URLs for the rest
 

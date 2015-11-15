@@ -11,6 +11,7 @@ util = require('./lib/util')
 _ = require('underscore')
 
 require('coffee-react/register') #  jit compile .coffee and .cjsx on require
+require("babel-core/register")
 
 testOptions = require('commander')
 .option('--verbose', 'I like lots of output')

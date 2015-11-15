@@ -3,7 +3,7 @@
 ###
   NOTE:  Incomplete.   Work in progress / get back to it one day.  
   
-  What to make it work?  Please do
+  Want to make it work?  Please do and thank you.
 
 ###
 
@@ -47,15 +47,14 @@ HELP = """
           
         super
 
-          
       ###
         This method is called to make the *awesome* happen.  
       ###
       renderAwesomeness: (model, options={}) ->
         @options = _.defaults options,
-          ### will this instance be awesome?   ###
+          # will this instance be awesome?   
           beAwesome: true                   
-          ### push awesomeness outward ###
+          # push awesomeness outward 
           extendAwesomeness: true           
           # can we fake it if all else fails? (this comment will not be picked up)
           forcedAwesome: false              
@@ -74,7 +73,7 @@ HELP = """
     classes: [{
         name: "MyAwesomeClass",
         comment:"\n        This latest bit of my genius is a game changer\n"
-        extends: "MyAwesomeBaseClass"
+        signature: "class MyAwesomeClass extends MyAwesomeBaseClass"
         props: [{
           name: "model",
           comment: "can also accept model instance as context var. prop has precendence",
@@ -125,19 +124,21 @@ HELP = """
 """
 
 
-options = require('commander')
+cliOptions = require('commander')
   .version('0.0.1')
   .option('-o --outputFile [path]', 'output path and file name of file to generate [./documentorData.js]', './documentorData.js')
   .option('-n --name [name]', 'name to add to module in documentor data. defaults to src file path')
+  .option('--raw',  'display unfiltered tokens')
   .on('--help', () -> console.log HELP)
+  
 
 srcDir = null
-options.command('*')
+cliOptions.command('*')
   .description('source dir')
   .action (arg) =>
     srcDir = arg
     # console.log 'arg = "%s"', arg
-options.parse(process.argv)
+cliOptions.parse(process.argv)
 
 unless srcDir
   console.log "fail: This script requires one parameter, the src dir or file to parse comments from.\n " +
@@ -153,9 +154,9 @@ utils = require('./lib/util')
 cjsxCompiler = "node_modules/coffee-react/bin/cjsx"
 coffeeCompiler = "coffee"
 
-COMMENT_PREFIX = "HERECOMMENT"
-CLASS_PREFIX = "CLASS"
-IGNORED_IDENTIFIERS = "module", "exports"
+COMMENT_TOKEN = "HERECOMMENT"
+CLASS_TOKEN = "CLASS"
+SIGNIFICANT_TOKENS = ["IDENTIFIER", 'EXTENDS', CLASS_TOKEN, COMMENT_TOKEN]
 
 currentContainer = null
 unclaimedComment = null
@@ -173,25 +174,24 @@ processFile = (file) ->
     classes: []
     methods: []
   
-  unclaimedComment = findNextComment()
+  console.log tokens
   
-  documentorData.push fileObject
+  # unclaimedComment = findNextComment()
+  # 
+  # documentorData.push fileObject
   
   
-findNextComment: ->
-  loop 
-    token = tokens[tokensIndex]
-    if token.slice
-      
-      TODO : finish this one day
+#findNextComment: ->
+  # loop 
+  #   token = tokens[tokensIndex]
+  #   if token.slice
+  #     #TODO : finish this one day
       
     
 parseClasses = (tokens) ->
   classes = []
   tokenIndex = 0
   
-
-findNextComment
 
 getParseTokens = (file) ->
   ext = path.extname(file)
@@ -202,15 +202,18 @@ getParseTokens = (file) ->
     
   compilerCmd = "#{compiler} --tokens #{file}"
   rawTokens = utils.systemCmd(compilerCmd, showOutput: false).toString()
-  tokenArray = rawTokens[1..-2].split("] [")
+  tokenArray = rawTokens[1..-2].split("] [") 
+  unless cliOptions.raw
+    tokenArray = _.filter tokenArray, (token) -> token.split(' ')[0] in SIGNIFICANT_TOKENS
+    
   return tokenArray
   
 
 createOutputFile = () ->
-  console.log "creating #{options.outputFile}"
+  console.log "creating #{cliOptions.outputFile}"
   output = "base = (typeof module !== 'undefined' && module.exports) ? root : window\n" +
            "base.documentorData = #{JSON.stringify(documentorData, null, "  ")};\n"
-  fs.writeFile options.outputFile, output, (err) ->
+  fs.writeFile cliOptions.outputFile, output, (err) ->
     throw err if(err)
 
 

@@ -4,50 +4,87 @@ Datum = require('../datum')
 _ = require('underscore')
 Backbone = require('backbone')
 
+require("babel-core/register")
 
-# See docs/src/collectionPicker.md
+Select = require('react-select/src/Select')
+
+###!See docs/src/collectionPicker.md###
 module.exports = class CollectionPicker extends Datum
   @displayName: "react-datum.CollectionPicker"
   
   @propTypes: _.extend {}, Datum.propTypes,
-    # can also accept collection instance as context var. prop has precendence
-    # can also be the string name of a shared collection (see ../sharedCollection.cjsx)
-    # can also accept an array of [{lable: "option 1", id: 1}, ...]
+    ###
+      Can also accept collection instance as context var. prop has precendence
+      Can also be the string name of a shared collection (see ../sharedCollection.cjsx)
+      Can also accept an array of [{lable: "option 1", id: 1}, ...]
+    ###
     collection: React.PropTypes.oneOfType([
       React.PropTypes.instanceOf(Backbone.Collection)
       React.PropTypes.string
       React.PropTypes.array
-    ])  
-    #  attribute value from model in lookup collection to render in inputMode='readonly'.
-    #  if not specified, model.toString() will be displayed
+    ])
+    ###  
+      Attribute value from model in lookup collection to render in inputMode='readonly'.
+      if not specified, model.toString() will be displayed
+    ###
     displayAttr: React.PropTypes.string
-    # react component to render when in inputMode='readonly'. 
-    displayComponent: React.PropTypes.node
-    # attribute value from model in lookup collection to render in suggestions when 
-    # in inputMode='edit'.  If not specified, @props.displayAttr is used and if that
-    # is not specified, model.toString() is used
+    ###
+      attribute value from model in lookup collection to render in suggestions when 
+      in inputMode='edit'.  If not specified, @props.displayAttr is used and if that
+      is not specified, model.toString() is used
+    ###
     optionAttr: React.PropTypes.string
-    # react component to render as suggestion option 
-    optionComponent: React.PropTypes.node
-    # can accept and display multiple values.  If this prop is set, we assume that 
-    # value of our @props.model.get(@props.attr) returns the IDs either as an
-    # array or comma separated value.  
+
+    ### react component to render when in inputMode='readonly'. ###
+    displayComponent: React.PropTypes.node
+    
+    ###
+      TODO : tests!
+      Specify a callback to load suggestions asynchronously.  
+      The callback method  should accept the following arguments: 
+        `(collection, userInput, ayncOptions, doneCallback)` 
+      where 
+        `collection` is the value of the collection prop
+        `userInput` is the what the user has entered so far  
+        `doneCallback` is a method to be called with `(error, data)` when data is ready.
+            the first argument, `error` should be false or an error that will be thrown
+            `data` argument should be an array of Backbone.Models or array of 
+                  {label: "string", value: "string"} pairs
+        `asyncOptions` is the options object passed via prop to CollectionPicker 
+
+      Note that internally, CollectionPicker always renders a Select.Async when inputMode='edit' 
+      and provides an internal loadOptions method to pull suggestions from the models in 
+      the lookup collection. 
+      
+      *Where do they all come from?*  
+      
+      We will use the first of these methods to filter suggestions, in order of precedence: 
+        **Collection.filterForPicker()**  - if we find a method on the collection called 
+          'filterForPicker' - it will be called with `(userInput, doneCallback, asyncOptions)`
+          and should return an array of models to render suggestions from 
+        **props.asyncSuggestionCallback** - this prop
+        **Internal filter** (this.filterOptions(userInput, doneCallback)) seaches through the 
+          props.optionAttr of models currently in the collection to find suggestions based on 
+          userInput 
+        
+    ###
+    asyncSuggestionCallback: React.PropTypes.func
+    
+    ###
+      Options above are proprietary to the CollectionPicker component.
+      
+      Remaining options are passed through to react-select, see # [react-select](https://github.com/JedWatson/react-select)
+      
+      You can use any of the options supported by react-select Select and Select.Async, 
+      *except for the loadOptions prop* of Select.Async.  
+
+      see # [react-select](https://github.com/JedWatson/react-select) for additional props    
+       
+      can accept and display multiple values.  If this prop is set, we assume that 
+      value of our @props.model.get(@props.attr) returns the IDs either as an
+      array or comma separated value.  
+    ###
     multi: React.PropTypes.bool
-    # Specify a callback to load suggestions asynchronously.  
-    # The callback method  should accept the following arguments: 
-    #   `(collection, userInput, doneCallback)` 
-    # where 
-    #   `collection` is the value of the collection prop
-    #   `userInput` is the what the user has entered so far 
-    #   `doneCallback` is a method to be called with (error, data) when data is ready.
-    #       the first argument, `error` should be false or an error that will be thrown
-    #       `data` argument should be one of the types of data accepted as the   
-    asyncLoadCallback: React.PropTypes.func
-    # these props are passed to the underlying react-select component. 
-    # Note that we use Select.Async and that the follow props are overridden by
-    # props above: `multi`, 'loadCallback' (see props.asyncLoadCallback), 
-    # `optionComponent`
-    reactSelectProps: React.PropTypes.object
     
     
   @contextTypes: _.extend {}, Datum.contextTypes,
@@ -80,9 +117,12 @@ module.exports = class CollectionPicker extends Datum
 
   #override
   renderInput: ->
-    placeholder = @props.placeholder || ""
-    value = @getValueForInput()
-    <input type="text" placeholder={placeholder} value={value} onChange={@onChange} ref={@onInputRef}/>
+    
+    <Select.Async 
+      placeholder={placeholder} 
+      value={value} 
+      onChange={@onChange} 
+      ref={@onInputRef}/>
 
     
   getCollection: ->
@@ -114,6 +154,16 @@ module.exports = class CollectionPicker extends Datum
         [modelValue]
     
     return modelValues
+    
+    
+  getSelectAsyncOptions: () ->
+    _extend {}, @props, 
+      loadOptions: @onLoadOptions
+      
+  # async callback for react-select      
+  onLoadOptions: (userInput, callback) =>
+    
+    
         
 
     
