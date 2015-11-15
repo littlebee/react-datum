@@ -17,3 +17,7 @@ module.exports = class Text extends Datum
 
   render: ->
     super    # for breakpoint debugging
+
+
+  renderValueForDisplay: ->
+    @renderEllipsizedValue super

@@ -1,14 +1,8 @@
 
 ###
-  This was pillaged from
-  https://github.com/felixhao28/using-coffee-react-for-frontend-dev-walkthrough
+  Unoptimized config makes dist/react-datum.js
 
-  - removed sass loader
-
-
-  TODO:  there has to be a DRYer solution, webpack.production.config.coffee and
-      webpack.config.coffee are almost identical
-
+  See also, https://github.com/felixhao28/using-coffee-react-for-frontend-dev-walkthrough
 ###
 
 webpack = require("webpack")

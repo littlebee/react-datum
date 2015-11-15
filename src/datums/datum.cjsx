@@ -128,8 +128,7 @@ module.exports = class Datum extends React.Component
   # use @addValidations from constructor to add additional validations.
   # See also Number datum
   validations: []
-  errors: []
-
+  
 
   constructor: (props) ->
     super props
@@ -161,14 +160,14 @@ module.exports = class Datum extends React.Component
   ###
 
   render: ->
-    @renderWrapper =>
+    @renderDatumWrapper =>
       if @isEditable()
         @renderForInput()
       else
         @renderForDisplay()
 
 
-  renderWrapper: (contentFn)->
+  renderDatumWrapper: (contentFn)->
     # TODO: add data-zattr attribute for backward compatibility?
     <span className={@getFullClassName()} data-zattr={@props.attr} data-z>
       {contentFn()}
@@ -192,18 +191,23 @@ module.exports = class Datum extends React.Component
 
   renderValueOrPlaceholder: ->
     if @getModelValue()?
-      @renderValue()
+      displayValue = @renderValueForDisplay()
+      @renderWrappedDisplayValue(displayValue)
     else
       @renderPlaceholder()
 
 
-  renderValue: ->
-    value = @getValueToRender()
-    value = @renderEllipsizedValue(value)
-    return @wrapDisplayValue(value)
+  ###
+    In most cases, this is the method you want to override in a custom datum to 
+    alter the way the model attribute is displayed when inputMode='readonly'
+    
+    This method is only called if the model value is not null.  
+  ###
+  renderValueForDisplay: ->
+    return @getValueForDisplay()
 
 
-  wrapDisplayValue: (value)->
+  renderWrappedDisplayValue: (value)->
     <span className="datum-display-value">{value}</span>
 
 
@@ -214,6 +218,8 @@ module.exports = class Datum extends React.Component
 
 
   renderEllipsizedValue: (value, options={}) ->
+    return value unless value?
+    
     ellipsizeAt = @getEllipsizeAt()
 
     # don't try to ellipsize unless the value is a string,  subclass may have sent us
@@ -242,16 +248,20 @@ module.exports = class Datum extends React.Component
     # TODO : data-value is a hack, if the model value changes than the only thing that changes in our render
     #        is the value= passed to the <input> and react ignores changes to just the value, I think?
     #        without this the "Form with model context should respond to model changes" test fails
-    <span className="datum-input" data-value={@getValueToRender()}>
+    <span className="datum-input" data-value={@getValueForInput()}>
       {@renderLabel()}
       {@renderInput()}
       {@renderIcons()}
     </span>
 
 
+  ###
+    In most cases this is the method you want to override to alter the presentation of the datum when
+    inputMode='edit'
+  ###
   renderInput: ->
     placeholder = @props.placeholder || ""
-    value = @getValueToRender()
+    value = @getValueForInput()
     <input type="text" placeholder={placeholder} value={value} onChange={@onChange} ref={@onInputRef}/>
 
 
@@ -304,14 +314,21 @@ module.exports = class Datum extends React.Component
     return @props.inputMode || @context.inputMode || "readonly"
 
 
-  getValueToRender: () ->
+  getValueForDisplay: () ->
     @getModelValue()
 
+
+  getValueForInput: () ->
+    @getModelValue()
+    
 
   getModel: ->
     return @props?.model || @context?.model || new Backbone.Model()
 
 
+  ###
+    do not override this method to return a component element or jsx.  it's bad
+  ###
   getModelValue: ->
     return null unless model = @getModel()
     value = if model instanceof Backbone.Model then model.get(@props.attr) else model[@props.attr]

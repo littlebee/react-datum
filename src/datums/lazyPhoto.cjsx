@@ -35,6 +35,7 @@ module.exports = class LazyPhoto extends Datum
 
   isEditable: -> false
 
+  # override
   renderForDisplay: () ->
     modelValue = @getModelValue()
     if modelValue != @lastModelValue

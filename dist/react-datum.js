@@ -760,8 +760,6 @@ var ReactDatum =
 
 	  Datum.prototype.validations = [];
 
-	  Datum.prototype.errors = [];
-
 	  function Datum(props) {
 	    this.validateRequired = bind(this.validateRequired, this);
 	    this.focus = bind(this.focus, this);
@@ -801,7 +799,7 @@ var ReactDatum =
 	   */
 
 	  Datum.prototype.render = function() {
-	    return this.renderWrapper((function(_this) {
+	    return this.renderDatumWrapper((function(_this) {
 	      return function() {
 	        if (_this.isEditable()) {
 	          return _this.renderForInput();
@@ -812,7 +810,7 @@ var ReactDatum =
 	    })(this));
 	  };
 
-	  Datum.prototype.renderWrapper = function(contentFn) {
+	  Datum.prototype.renderDatumWrapper = function(contentFn) {
 	    return React.createElement("span", {
 	      "className": this.getFullClassName(),
 	      "data-zattr": this.props.attr,
@@ -833,21 +831,28 @@ var ReactDatum =
 	  };
 
 	  Datum.prototype.renderValueOrPlaceholder = function() {
+	    var displayValue;
 	    if (this.getModelValue() != null) {
-	      return this.renderValue();
+	      displayValue = this.renderValueForDisplay();
+	      return this.renderWrappedDisplayValue(displayValue);
 	    } else {
 	      return this.renderPlaceholder();
 	    }
 	  };
 
-	  Datum.prototype.renderValue = function() {
-	    var value;
-	    value = this.getValueToRender();
-	    value = this.renderEllipsizedValue(value);
-	    return this.wrapDisplayValue(value);
+
+	  /*
+	    In most cases, this is the method you want to override in a custom datum to 
+	    alter the way the model attribute is displayed when inputMode='readonly'
+	    
+	    This method is only called if the model value is not null.
+	   */
+
+	  Datum.prototype.renderValueForDisplay = function() {
+	    return this.getValueForDisplay();
 	  };
 
-	  Datum.prototype.wrapDisplayValue = function(value) {
+	  Datum.prototype.renderWrappedDisplayValue = function(value) {
 	    return React.createElement("span", {
 	      "className": "datum-display-value"
 	    }, value);
@@ -868,6 +873,9 @@ var ReactDatum =
 	    var ellipsizeAt, ellipsizedValue, popover;
 	    if (options == null) {
 	      options = {};
+	    }
+	    if (value == null) {
+	      return value;
 	    }
 	    ellipsizeAt = this.getEllipsizeAt();
 	    if (value && _.isString(value) && ellipsizeAt && value.length > ellipsizeAt) {
@@ -897,14 +905,20 @@ var ReactDatum =
 	  Datum.prototype.renderForInput = function() {
 	    return React.createElement("span", {
 	      "className": "datum-input",
-	      "data-value": this.getValueToRender()
+	      "data-value": this.getValueForInput()
 	    }, this.renderLabel(), this.renderInput(), this.renderIcons());
 	  };
+
+
+	  /*
+	    In most cases this is the method you want to override to alter the presentation of the datum when
+	    inputMode='edit'
+	   */
 
 	  Datum.prototype.renderInput = function() {
 	    var placeholder, value;
 	    placeholder = this.props.placeholder || "";
-	    value = this.getValueToRender();
+	    value = this.getValueForInput();
 	    return React.createElement("input", {
 	      "type": "text",
 	      "placeholder": placeholder,
@@ -984,7 +998,11 @@ var ReactDatum =
 	    return this.props.inputMode || this.context.inputMode || "readonly";
 	  };
 
-	  Datum.prototype.getValueToRender = function() {
+	  Datum.prototype.getValueForDisplay = function() {
+	    return this.getModelValue();
+	  };
+
+	  Datum.prototype.getValueForInput = function() {
 	    return this.getModelValue();
 	  };
 
@@ -992,6 +1010,11 @@ var ReactDatum =
 	    var ref, ref1;
 	    return ((ref = this.props) != null ? ref.model : void 0) || ((ref1 = this.context) != null ? ref1.model : void 0) || new Backbone.Model();
 	  };
+
+
+	  /*
+	    do not override this method to return a component element or jsx.  it's bad
+	   */
 
 	  Datum.prototype.getModelValue = function() {
 	    var model, value;
@@ -3293,9 +3316,9 @@ var ReactDatum =
 	    this.addValidations(this.validateEmail);
 	  }
 
-	  Email.prototype.renderValue = function() {
+	  Email.prototype.renderValueForDisplay = function() {
 	    var value;
-	    value = Email.__super__.renderValue.apply(this, arguments);
+	    value = Email.__super__.renderValueForDisplay.apply(this, arguments);
 	    if (this.props.displayLink) {
 	      return React.createElement("a", {
 	        "href": this.getMailToHref(value)
@@ -3479,11 +3502,7 @@ var ReactDatum =
 
 	  Link.prototype.target = '_blank';
 
-	  Link.prototype.render = function() {
-	    return Link.__super__.render.apply(this, arguments);
-	  };
-
-	  Link.prototype.renderValue = function() {
+	  Link.prototype.renderValueForDisplay = function() {
 	    return React.createElement("a", {
 	      "href": this._getHref(),
 	      "target": this.target
@@ -3571,7 +3590,7 @@ var ReactDatum =
 	    return value.match(this.charactersMustMatch);
 	  };
 
-	  Number.prototype.renderValue = function() {
+	  Number.prototype.renderValueForDisplay = function() {
 	    var dataValue, decimal, ref, wholeNumber;
 	    dataValue = this.getModelValue();
 	    switch (this.props.format) {
@@ -3601,7 +3620,7 @@ var ReactDatum =
 	      default:
 	        dataValue;
 	    }
-	    return this.wrapDisplayValue(dataValue);
+	    return dataValue;
 	  };
 
 	  Number.prototype.renderPlaceHolder = function() {
@@ -3677,6 +3696,10 @@ var ReactDatum =
 
 	  Text.prototype.render = function() {
 	    return Text.__super__.render.apply(this, arguments);
+	  };
+
+	  Text.prototype.renderValueForDisplay = function() {
+	    return this.renderEllipsizedValue(Text.__super__.renderValueForDisplay.apply(this, arguments));
 	  };
 
 	  return Text;
@@ -3757,10 +3780,40 @@ var ReactDatum =
 	    collection: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Collection), React.PropTypes.string])
 	  });
 
+	  CollectionPicker.prototype.renderValueForDisplay = function() {
+	    var collection, modelValues;
+	    collection = this.getCollection();
+	    if (this.props.multi) {
+	      modelValues = this.getModelValues();
+	      return modelValues.map((function(_this) {
+	        return function(modelValue) {
+	          return _this.renderCollectionDisplayValue(modelValue, collection);
+	        };
+	      })(this));
+	    } else {
+	      return this.renderCollectionDisplayValue(this.getModelValue(), collection);
+	    }
+	  };
+
+	  CollectionPicker.prototype.renderCollectionDisplayValue = function(modelId, collection) {
+	    var modelValue;
+	    if (collection == null) {
+	      collection = this.getCollection();
+	    }
+	    modelValue = this.getCollectionModelDisplayValue(modelId, collection);
+	    if (modelValue) {
+	      modelValue = this.renderEllipsizedValue(modelValue);
+	    }
+	    return React.createElement("span", {
+	      "key": modelValue,
+	      "className": "collection-picker-display-value"
+	    }, modelValue || this.renderPlaceholder() || "unknown");
+	  };
+
 	  CollectionPicker.prototype.renderInput = function() {
 	    var placeholder, value;
 	    placeholder = this.props.placeholder || "";
-	    value = this.getValueToRender();
+	    value = this.getValueForInput();
 	    return React.createElement("input", {
 	      "type": "text",
 	      "placeholder": placeholder,
@@ -3768,44 +3821,6 @@ var ReactDatum =
 	      "onChange": this.onChange,
 	      "ref": this.onInputRef
 	    });
-	  };
-
-	  CollectionPicker.prototype.getValueToRender = function() {
-	    var collection, modelValues;
-	    collection = this.getCollection();
-	    if (this.props.multi) {
-	      modelValues = this.getModelValues();
-	      return modelValues.map((function(_this) {
-	        return function(modelValue) {
-	          return _this.getCollectionValue(modelValue, collection);
-	        };
-	      })(this));
-	    } else {
-	      return this.getCollectionValue(this.getModelValue(), collection);
-	    }
-	  };
-
-	  CollectionPicker.prototype.renderEllipsizedValue = function(value, options) {
-	    var values;
-	    if (options == null) {
-	      options = {};
-	    }
-	    if (this.props.multi) {
-	      values = value;
-	      if (!_.isArray(values)) {
-	        throw this.constructor.displayName + ": expected value to be an array in multi mode. check also getValueToRender()";
-	      }
-	      return values.map((function(_this) {
-	        return function(v) {
-	          return React.createElement("span", {
-	            "key": v,
-	            "className": "collection-picker-display-value"
-	          }, CollectionPicker.__super__.renderEllipsizedValue.call(_this, v, options));
-	        };
-	      })(this));
-	    } else {
-	      return CollectionPicker.__super__.renderEllipsizedValue.apply(this, arguments);
-	    }
 	  };
 
 	  CollectionPicker.prototype.getCollection = function() {
@@ -3820,19 +3835,22 @@ var ReactDatum =
 	    return collection;
 	  };
 
-	  CollectionPicker.prototype.getCollectionValue = function(modelId, collection) {
-	    var model, modelValue;
-	    if (collection == null) {
-	      collection = this.getCollection();
+	  CollectionPicker.prototype.getCollectionModelDisplayValue = function(modelId, collection) {
+	    var model;
+	    if (!modelId) {
+	      return null;
 	    }
-	    model = collection.get(modelId, {
+	    model = collection != null ? collection.get(modelId, {
 	      add: true
-	    });
+	    }) : void 0;
 	    if ((model != null) && !_.isFunction(model.toString) && (this.props.displayAttr == null)) {
 	      throw this.constructor.displayName + ": You need to specify a displayAttr prop or model must have toString() method";
 	    }
-	    modelValue = this.props.displayAttr != null ? model != null ? model.get(this.props.displayAttr) : void 0 : model.toString();
-	    return modelValue || this.renderPlaceholder() || "unknown";
+	    if (this.props.displayAttr != null) {
+	      return model != null ? model.get(this.props.displayAttr) : void 0;
+	    } else {
+	      return model.toString();
+	    }
 	  };
 
 	  CollectionPicker.prototype.getModelValues = function() {

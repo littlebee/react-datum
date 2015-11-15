@@ -1,14 +1,6 @@
 
 ###
-  This was pillaged from
-  https://github.com/felixhao28/using-coffee-react-for-frontend-dev-walkthrough
-  (which isn't so... yeah)
-
-  - removed sass loader
-  - removed a lot more stuff and dried up with webpack.config
-
-  - I had to prove to myself that the optimizer was stripping comments.  it does :)
-
+  optimized config makes dist/react-datum.min.js
 ###
 
 webpack = require("webpack")

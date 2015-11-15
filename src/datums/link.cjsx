@@ -24,11 +24,8 @@ module.exports = class Link extends Datum
 
   # TODO add validations.
 
-  render: ->
-    super      # for debugging
-
-
-  renderValue: () ->
+  # override
+  renderValueForDisplay: () ->
     <a href={@_getHref()} target={@target}>
       {@_getTagContent()}
     </a>

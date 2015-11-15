@@ -58,38 +58,32 @@ module.exports = class CollectionPicker extends Datum
     ])  
   
   
-  
-  #override
-  renderInput: ->
-    placeholder = @props.placeholder || ""
-    value = @getValueToRender()
-    <input type="text" placeholder={placeholder} value={value} onChange={@onChange} ref={@onInputRef}/>
-
-
-
   #overrirde - if multi, returns an array of values that renderEllipsizeValue wraps in spans
-  getValueToRender: ->
+  renderValueForDisplay: ->
     collection = @getCollection() 
     return if @props.multi
       modelValues = @getModelValues()
-      modelValues.map (modelValue) => @getCollectionValue(modelValue, collection)
+      modelValues.map (modelValue) =>
+        @renderCollectionDisplayValue(modelValue, collection)
     else
-      @getCollectionValue(@getModelValue(), collection)
+      @renderCollectionDisplayValue(@getModelValue(), collection)
     
+
+  renderCollectionDisplayValue: (modelId, collection=@getCollection()) ->
+    modelValue = @getCollectionModelDisplayValue(modelId, collection)
+    modelValue = @renderEllipsizedValue(modelValue) if modelValue
+        
+    return <span key={modelValue} className="collection-picker-display-value">
+      {modelValue || @renderPlaceholder() || "unknown"}
+    </span>
     
-  
-  # override - instead of elipsizing multi values, we ellipsize each if @props.multi and we also add
-  #    wrapper spans around each value in a multi select so the user can optionally style them to
-  #    look however they think tags should look
-  renderEllipsizedValue: (value, options={}) ->
-    return if @props.multi
-      values = value # should be an array from getValueToRender
-      unless _.isArray values
-        throw @constructor.displayName + ": expected value to be an array in multi mode. check also getValueToRender()"
-      values.map (v) => <span key={v} className="collection-picker-display-value">{super(v, options)}</span>
-    else
-      super
-    
+
+  #override
+  renderInput: ->
+    placeholder = @props.placeholder || ""
+    value = @getValueForInput()
+    <input type="text" placeholder={placeholder} value={value} onChange={@onChange} ref={@onInputRef}/>
+
     
   getCollection: ->
     collection = @props.collection || @context.collection
@@ -100,15 +94,16 @@ module.exports = class CollectionPicker extends Datum
     return collection
   
   
-  getCollectionValue: (modelId, collection=@getCollection()) ->
-    model = collection.get(modelId, add: true)
+  getCollectionModelDisplayValue: (modelId, collection) ->
+    return null unless modelId 
+    model = collection?.get(modelId, add: true)
     if model? && !_.isFunction(model.toString) && !@props.displayAttr?
       throw @constructor.displayName + ": You need to specify a displayAttr prop or model must have toString() method"
     
-    modelValue = if @props.displayAttr? then model?.get(@props.displayAttr) else model.toString()
-    return modelValue || @renderPlaceholder() || "unknown"
+    if @props.displayAttr? then model?.get(@props.displayAttr) else model.toString()
     
-    
+
+
   # for multi mode, always returns an array
   getModelValues: () ->
     modelValue = @getModelValue()
