@@ -1,12 +1,12 @@
 React = require('react')
-Datum = require('../datum')
-
-_ = require('underscore')
 Backbone = require('backbone')
+_ = require('underscore')
 
-require("babel-core/register")
+Datum = require('../datum')
+Strhelp = require('../../lib/stringHelpers')
 
 Select = require('react-select/src/Select')
+Select.Async = require('react-select/src/Async')
 
 ###!See docs/src/collectionPicker.md###
 module.exports = class CollectionPicker extends Datum
@@ -33,7 +33,14 @@ module.exports = class CollectionPicker extends Datum
       in inputMode='edit'.  If not specified, @props.displayAttr is used and if that
       is not specified, model.toString() is used
     ###
-    optionAttr: React.PropTypes.string
+    optionDisplayAttr: React.PropTypes.string
+    ### 
+      attribute value from model in lookup collection to set as value on props.attr
+      in props.model
+      
+      default:  "id"
+    ###
+    optionSaveAttr: React.PropTypes.string.isRequired
 
     ### react component to render when in inputMode='readonly'. ###
     displayComponent: React.PropTypes.node
@@ -58,14 +65,14 @@ module.exports = class CollectionPicker extends Datum
       
       *Where do they all come from?*  
       
-      We will use the first of these methods to filter suggestions, in order of precedence: 
+      We will use the returned filtered set of models from the following chain (in order):
         **Collection.filterForPicker()**  - if we find a method on the collection called 
           'filterForPicker' - it will be called with `(userInput, doneCallback, asyncOptions)`
           and should return an array of models to render suggestions from 
         **props.asyncSuggestionCallback** - this prop
         **Internal filter** (this.filterOptions(userInput, doneCallback)) seaches through the 
-          props.optionAttr of models currently in the collection to find suggestions based on 
-          userInput 
+          props.optionDisplayAttr of models currently in the collection to find suggestions based on 
+          userInput and groups results
         
     ###
     asyncSuggestionCallback: React.PropTypes.func
@@ -86,6 +93,10 @@ module.exports = class CollectionPicker extends Datum
     ###
     multi: React.PropTypes.bool
     
+  @defaultProps: _.extend {}, Datum.defaultProps,
+    optionSaveAttr: 'id'
+
+    
     
   @contextTypes: _.extend {}, Datum.contextTypes,
     # see @proptypes.collection above 
@@ -95,7 +106,7 @@ module.exports = class CollectionPicker extends Datum
     ])  
   
   
-  #overrirde - if multi, returns an array of values that renderEllipsizeValue wraps in spans
+  #override - if multi, returns an array of values that renderEllipsizeValue wraps in spans
   renderValueForDisplay: ->
     collection = @getCollection() 
     return if @props.multi
@@ -117,12 +128,7 @@ module.exports = class CollectionPicker extends Datum
 
   #override
   renderInput: ->
-    
-    <Select.Async 
-      placeholder={placeholder} 
-      value={value} 
-      onChange={@onChange} 
-      ref={@onInputRef}/>
+    <Select.Async {... @getSelectAsyncOptions()}/>
 
     
   getCollection: ->
@@ -132,19 +138,44 @@ module.exports = class CollectionPicker extends Datum
       return new Backbone.Collection(collection)
     
     return collection
+    
+    
+  _getCollectionModelById: (modelOrId) ->
+    if _.isNumber modelOrId
+      model = @getCollection()?.get(modelOrId, add: true)
+    else
+      model = modelOrId    
   
   
   getCollectionModelDisplayValue: (modelId, collection) ->
     return null unless modelId 
-    model = collection?.get(modelId, add: true)
+    model = @_getCollectionModelById(modelId)
+      
     if model? && !_.isFunction(model.toString) && !@props.displayAttr?
       throw @constructor.displayName + ": You need to specify a displayAttr prop or model must have toString() method"
     
-    if @props.displayAttr? then model?.get(@props.displayAttr) else model.toString()
+    if @props.displayAttr? then model?.get(@props.displayAttr) else model.toString?()
     
 
+  getOptionDisplayValue: (modelId, collection) ->
+    return null unless modelId
+    model = @_getCollectionModelById(modelId)
+    
+    if model? && !_.isFunction(model.toString) && !@props.optionDisplayAttr?
+      throw @constructor.displayName + ": You need to specify an optionDisplayAttr prop or model must have toString() method"
+    
+    if @props.optionDisplayAttr? then model?.get(@props.optionDisplayAttr) else model.toString?()
+        
 
-  # for multi mode, always returns an array
+  getOptionSaveValue: (modelId, collection) ->
+    model = @_getCollectionModelById(modelId)
+    if model? && !@props.optionsSaveAttr?
+      return model.id 
+    
+    return model?.get(@props.optionSaveAttr)
+    
+
+  # used for multi mode. always returns an array
   getModelValues: () ->
     modelValue = @getModelValue()
     modelValues = switch 
@@ -157,12 +188,84 @@ module.exports = class CollectionPicker extends Datum
     
     
   getSelectAsyncOptions: () ->
-    _extend {}, @props, 
+    collection = @getCollection()
+    value = if @props.multi then @getModelValues() else @getModelValue()
+    return _.extend {}, @props, 
       loadOptions: @onLoadOptions
+      placeholder: @props.placeholder || @renderPlaceholder()
+      value: value
+      onChange: @onChange
+      ref: @onInputRef
+      options: @getOptionValuesForReactSelect(collection.models)
+      labelKey: "label"
+      valueKey: "value"
+      
+    
+  getOptionValuesForReactSelect: (models) =>
+    return [] unless models?
+    _.map models, (m) => return {
+      label: @getCollectionModelDisplayValue(m) 
+      value: @getOptionSaveValue(m)
+    }    
+      
+  
+  # override - react-select returns array of options and not an event    
+  onChange: (optionsSelected) =>
+    values = _.pluck(optionsSelected, 'value')
+    values = values.join(',') unless @props.setAsArray 
+    super {target: {value: values}}
+      
       
   # async callback for react-select      
   onLoadOptions: (userInput, callback) =>
+    collection = @getCollection()
     
+    chainedCallback = (error, models) =>
+      if arguments.length < 2
+        models = error
+        error = false
+      models = @groupSuggestionModels(userInput, models)
+      optionsForReactSelect = @getOptionValuesForReactSelect(models)
+      
+      callback(null, {options: optionsForReactSelect})
+    
+    
+    filteredModels = collection.filterForPicker?(userInput, chainedCallback, @props.asyncOptions)
+    filteredModels ||= @props.asyncSuggestionCallback?(collection, userInput, chainedCallback, @props.asyncOptions)
+    filteredModels ||= @filterSuggestionModels(collection, userInput, chainedCallback, @props.asyncOptions)
+    
+    unless filterModels?
+      chainedCallback(collection.models)
+      return;
+      
+    
+  ### weak string compare userInput to suggestion model's display value ###
+  filterSuggestionModels: (collection, userInput, callback) =>
+    # filter to just those with match anywhere
+    filteredModels = _.filter collection.models, (model) => 
+      Strhelp.weaklyHas(@getOptionDisplayValue(model), userInput)
+
+    # sort all by display value alpha, case insensitive
+    filteredModels = filteredModels.sort (a, b) =>
+      Strhelp.weaklyCompare(@getOptionDisplayValue(a), @getOptionDisplayValue(b))
+
+    callback?(filteredModels)
+    return filteredModels
+    
+    
+  groupSuggestionModels: (userInput, models) =>
+    topHits = []
+    bottomHits = []
+    for model in models
+      if Strhelp.weaklyStartsWith(@getOptionDisplayValue(model), userInput)
+        topHits.push model
+      else
+        bottomHits.push model
+      
+    return topHits.concat(bottomHits)
+    
+      
+      
     
         
 

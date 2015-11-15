@@ -96,7 +96,10 @@ module.exports = (grunt) ->
       },
       distrib: {
         files: {
-          'dist/react-datum.css': ['css/**/*.css']
+          'dist/react-datum.css': [
+            'css/**/*.css', 
+            'node_modules/react-select/dist/react-select.css'
+          ]
         }
       }
     }      

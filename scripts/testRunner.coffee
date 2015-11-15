@@ -10,8 +10,10 @@ glob = require('glob')
 util = require('./lib/util')
 _ = require('underscore')
 
+
 require('coffee-react/register') #  jit compile .coffee and .cjsx on require
-require("babel-core/register")
+#require('node-cjsx').transform()
+
 
 testOptions = require('commander')
 .option('--verbose', 'I like lots of output')
@@ -112,6 +114,16 @@ jsdom.env '<html><body><div id="testBody"></div></body></html>', [], (err, windo
 
 
   runMocha = ->
+    require("babel-core/register")({
+      "presets": [ "react", "es2015" ]
+      "ignore": (fileName) -> 
+        truth = path.extname(fileName).toLowerCase() in ['.cjsx', '.coffee'] ||
+          (fileName.match(/\/node_modules\/.*/) && 
+           !fileName.match(/\/node_modules\/react-select.*/) )
+        #console.log fileName, truth
+        return truth
+    })
+
     runner = mocha.run ->
       console.log 'finished'
       return

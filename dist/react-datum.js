@@ -3744,22 +3744,24 @@ var ReactDatum =
 /* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Backbone, CollectionPicker, Datum, React, Select, _,
+	var Backbone, CollectionPicker, Datum, React, Select, Strhelp, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
 	React = __webpack_require__(3);
 
-	Datum = __webpack_require__(6);
+	Backbone = __webpack_require__(7);
 
 	_ = __webpack_require__(8);
 
-	Backbone = __webpack_require__(7);
+	Datum = __webpack_require__(6);
 
-	__webpack_require__(30);
+	Strhelp = __webpack_require__(30);
 
-	Select = __webpack_require__(32);
+	Select = __webpack_require__(31);
+
+	Select.Async = __webpack_require__(36);
 
 
 	/*!See docs/src/collectionPicker.md */
@@ -3768,7 +3770,11 @@ var ReactDatum =
 	  extend(CollectionPicker, superClass);
 
 	  function CollectionPicker() {
+	    this.groupSuggestionModels = bind(this.groupSuggestionModels, this);
+	    this.filterSuggestionModels = bind(this.filterSuggestionModels, this);
 	    this.onLoadOptions = bind(this.onLoadOptions, this);
+	    this.onChange = bind(this.onChange, this);
+	    this.getOptionValuesForReactSelect = bind(this.getOptionValuesForReactSelect, this);
 	    return CollectionPicker.__super__.constructor.apply(this, arguments);
 	  }
 
@@ -3794,7 +3800,15 @@ var ReactDatum =
 	      in inputMode='edit'.  If not specified, @props.displayAttr is used and if that
 	      is not specified, model.toString() is used
 	     */
-	    optionAttr: React.PropTypes.string,
+	    optionDisplayAttr: React.PropTypes.string,
+
+	    /* 
+	      attribute value from model in lookup collection to set as value on props.attr
+	      in props.model
+	      
+	      default:  "id"
+	     */
+	    optionSaveAttr: React.PropTypes.string.isRequired,
 
 	    /* react component to render when in inputMode='readonly'. */
 	    displayComponent: React.PropTypes.node,
@@ -3819,14 +3833,14 @@ var ReactDatum =
 	      
 	      *Where do they all come from?*  
 	      
-	      We will use the first of these methods to filter suggestions, in order of precedence: 
+	      We will use the returned filtered set of models from the following chain (in order):
 	        **Collection.filterForPicker()**  - if we find a method on the collection called 
 	          'filterForPicker' - it will be called with `(userInput, doneCallback, asyncOptions)`
 	          and should return an array of models to render suggestions from 
 	        **props.asyncSuggestionCallback** - this prop
 	        **Internal filter** (this.filterOptions(userInput, doneCallback)) seaches through the 
-	          props.optionAttr of models currently in the collection to find suggestions based on 
-	          userInput
+	          props.optionDisplayAttr of models currently in the collection to find suggestions based on 
+	          userInput and groups results
 	     */
 	    asyncSuggestionCallback: React.PropTypes.func,
 
@@ -3845,6 +3859,10 @@ var ReactDatum =
 	      array or comma separated value.
 	     */
 	    multi: React.PropTypes.bool
+	  });
+
+	  CollectionPicker.defaultProps = _.extend({}, Datum.defaultProps, {
+	    optionSaveAttr: 'id'
 	  });
 
 	  CollectionPicker.contextTypes = _.extend({}, Datum.contextTypes, {
@@ -3882,12 +3900,7 @@ var ReactDatum =
 	  };
 
 	  CollectionPicker.prototype.renderInput = function() {
-	    return React.createElement(Select.Async, {
-	      "placeholder": placeholder,
-	      "value": value,
-	      "onChange": this.onChange,
-	      "ref": this.onInputRef
-	    });
+	    return React.createElement(Select.Async, React.__spread({}, this.getSelectAsyncOptions()));
 	  };
 
 	  CollectionPicker.prototype.getCollection = function() {
@@ -3902,22 +3915,56 @@ var ReactDatum =
 	    return collection;
 	  };
 
+	  CollectionPicker.prototype._getCollectionModelById = function(modelOrId) {
+	    var model, ref;
+	    if (_.isNumber(modelOrId)) {
+	      return model = (ref = this.getCollection()) != null ? ref.get(modelOrId, {
+	        add: true
+	      }) : void 0;
+	    } else {
+	      return model = modelOrId;
+	    }
+	  };
+
 	  CollectionPicker.prototype.getCollectionModelDisplayValue = function(modelId, collection) {
 	    var model;
 	    if (!modelId) {
 	      return null;
 	    }
-	    model = collection != null ? collection.get(modelId, {
-	      add: true
-	    }) : void 0;
+	    model = this._getCollectionModelById(modelId);
 	    if ((model != null) && !_.isFunction(model.toString) && (this.props.displayAttr == null)) {
 	      throw this.constructor.displayName + ": You need to specify a displayAttr prop or model must have toString() method";
 	    }
 	    if (this.props.displayAttr != null) {
 	      return model != null ? model.get(this.props.displayAttr) : void 0;
 	    } else {
-	      return model.toString();
+	      return typeof model.toString === "function" ? model.toString() : void 0;
 	    }
+	  };
+
+	  CollectionPicker.prototype.getOptionDisplayValue = function(modelId, collection) {
+	    var model;
+	    if (!modelId) {
+	      return null;
+	    }
+	    model = this._getCollectionModelById(modelId);
+	    if ((model != null) && !_.isFunction(model.toString) && (this.props.optionDisplayAttr == null)) {
+	      throw this.constructor.displayName + ": You need to specify an optionDisplayAttr prop or model must have toString() method";
+	    }
+	    if (this.props.optionDisplayAttr != null) {
+	      return model != null ? model.get(this.props.optionDisplayAttr) : void 0;
+	    } else {
+	      return typeof model.toString === "function" ? model.toString() : void 0;
+	    }
+	  };
+
+	  CollectionPicker.prototype.getOptionSaveValue = function(modelId, collection) {
+	    var model;
+	    model = this._getCollectionModelById(modelId);
+	    if ((model != null) && (this.props.optionsSaveAttr == null)) {
+	      return model.id;
+	    }
+	    return model != null ? model.get(this.props.optionSaveAttr) : void 0;
 	  };
 
 	  CollectionPicker.prototype.getModelValues = function() {
@@ -3937,12 +3984,108 @@ var ReactDatum =
 	  };
 
 	  CollectionPicker.prototype.getSelectAsyncOptions = function() {
-	    return _extend({}, this.props, {
-	      loadOptions: this.onLoadOptions
+	    var collection, value;
+	    collection = this.getCollection();
+	    value = this.props.multi ? this.getModelValues() : this.getModelValue();
+	    return _.extend({}, this.props, {
+	      loadOptions: this.onLoadOptions,
+	      placeholder: this.props.placeholder || this.renderPlaceholder(),
+	      value: value,
+	      onChange: this.onChange,
+	      ref: this.onInputRef,
+	      options: this.getOptionValuesForReactSelect(collection.models),
+	      labelKey: "label",
+	      valueKey: "value"
 	    });
 	  };
 
-	  CollectionPicker.prototype.onLoadOptions = function(userInput, callback) {};
+	  CollectionPicker.prototype.getOptionValuesForReactSelect = function(models) {
+	    if (models == null) {
+	      return [];
+	    }
+	    return _.map(models, (function(_this) {
+	      return function(m) {
+	        return {
+	          label: _this.getCollectionModelDisplayValue(m),
+	          value: _this.getOptionSaveValue(m)
+	        };
+	      };
+	    })(this));
+	  };
+
+	  CollectionPicker.prototype.onChange = function(optionsSelected) {
+	    var values;
+	    values = _.pluck(optionsSelected, 'value');
+	    if (!this.props.setAsArray) {
+	      values = values.join(',');
+	    }
+	    return CollectionPicker.__super__.onChange.call(this, {
+	      target: {
+	        value: values
+	      }
+	    });
+	  };
+
+	  CollectionPicker.prototype.onLoadOptions = function(userInput, callback) {
+	    var base, chainedCallback, collection, filteredModels;
+	    collection = this.getCollection();
+	    chainedCallback = (function(_this) {
+	      return function(error, models) {
+	        var optionsForReactSelect;
+	        if (arguments.length < 2) {
+	          models = error;
+	          error = false;
+	        }
+	        models = _this.groupSuggestionModels(userInput, models);
+	        optionsForReactSelect = _this.getOptionValuesForReactSelect(models);
+	        return callback(null, {
+	          options: optionsForReactSelect
+	        });
+	      };
+	    })(this);
+	    filteredModels = typeof collection.filterForPicker === "function" ? collection.filterForPicker(userInput, chainedCallback, this.props.asyncOptions) : void 0;
+	    filteredModels || (filteredModels = typeof (base = this.props).asyncSuggestionCallback === "function" ? base.asyncSuggestionCallback(collection, userInput, chainedCallback, this.props.asyncOptions) : void 0);
+	    filteredModels || (filteredModels = this.filterSuggestionModels(collection, userInput, chainedCallback, this.props.asyncOptions));
+	    if (typeof filterModels === "undefined" || filterModels === null) {
+	      chainedCallback(collection.models);
+	    }
+	  };
+
+
+	  /* weak string compare userInput to suggestion model's display value */
+
+	  CollectionPicker.prototype.filterSuggestionModels = function(collection, userInput, callback) {
+	    var filteredModels;
+	    filteredModels = _.filter(collection.models, (function(_this) {
+	      return function(model) {
+	        return Strhelp.weaklyHas(_this.getOptionDisplayValue(model), userInput);
+	      };
+	    })(this));
+	    filteredModels = filteredModels.sort((function(_this) {
+	      return function(a, b) {
+	        return Strhelp.weaklyCompare(_this.getOptionDisplayValue(a), _this.getOptionDisplayValue(b));
+	      };
+	    })(this));
+	    if (typeof callback === "function") {
+	      callback(filteredModels);
+	    }
+	    return filteredModels;
+	  };
+
+	  CollectionPicker.prototype.groupSuggestionModels = function(userInput, models) {
+	    var bottomHits, i, len, model, topHits;
+	    topHits = [];
+	    bottomHits = [];
+	    for (i = 0, len = models.length; i < len; i++) {
+	      model = models[i];
+	      if (Strhelp.weaklyStartsWith(this.getOptionDisplayValue(model), userInput)) {
+	        topHits.push(model);
+	      } else {
+	        bottomHits.push(model);
+	      }
+	    }
+	    return topHits.concat(bottomHits);
+	  };
 
 	  return CollectionPicker;
 
@@ -3953,27 +4096,71 @@ var ReactDatum =
 /* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	var StringHelpers, _;
 
-	// TODO: eventually deprecate this console.trace("use the `babel-register` package instead of `babel-core/register`");
-	module.exports = __webpack_require__(31);
+	_ = __webpack_require__(8);
+
+	module.exports = StringHelpers = (function() {
+	  function StringHelpers() {}
+
+	  StringHelpers.trim = function(str) {
+	    return str.replace(/^\s+|\s+$/g, "");
+	  };
+
+	  StringHelpers.startsWith = function(str, otherStr) {
+	    return str.slice(0, otherStr.length) === otherStr;
+	  };
+
+	  StringHelpers.weakValue = function(str, options) {
+	    if (options == null) {
+	      options = {};
+	    }
+	    _.defaults(options, {
+	      ignoreCase: true,
+	      useLocale: false,
+	      trim: true
+	    });
+	    if (options.trim) {
+	      str = this.trim(str);
+	    }
+	    if (options.ignoreCase) {
+	      if (options.useLocale) {
+	        return str = str.toLocaleLowerCase();
+	      } else {
+	        return str = str.toLowerCase();
+	      }
+	    }
+	  };
+
+	  StringHelpers.weaklyEqual = function(str, otherStr, options) {
+	    if (options == null) {
+	      options = {};
+	    }
+	    return this.weakValue(str, options) === this.weakValue(otherStr, options);
+	  };
+
+	  StringHelpers.weaklyCompare = function(str, otherStr, options) {
+	    if (options == null) {
+	      options = {};
+	    }
+	    return this.weakValue(str, options).localeCompare(this.weakValue(otherStr, options));
+	  };
+
+	  StringHelpers.weaklyHas = function(str, otherStr) {
+	    return this.weakValue(str).indexOf(this.weakValue(otherStr)) !== -1;
+	  };
+
+	  StringHelpers.weaklyStartsWith = function(str, otherStr) {
+	    return this.startsWith(this.weakValue(str), this.weakValue(otherStr));
+	  };
+
+	  return StringHelpers;
+
+	})();
+
 
 /***/ },
 /* 31 */
-/***/ function(module, exports) {
-
-	// required to safely use babel/register within a browserify codebase
-
-	"use strict";
-
-	exports.__esModule = true;
-
-	exports["default"] = function () {};
-
-	module.exports = exports["default"];
-
-/***/ },
-/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3992,27 +4179,27 @@ var ReactDatum =
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _reactInputAutosize = __webpack_require__(33);
+	var _reactInputAutosize = __webpack_require__(32);
 
 	var _reactInputAutosize2 = _interopRequireDefault(_reactInputAutosize);
 
-	var _classnames = __webpack_require__(34);
+	var _classnames = __webpack_require__(33);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _stripDiacritics = __webpack_require__(36);
+	var _stripDiacritics = __webpack_require__(35);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
-	var _Async = __webpack_require__(37);
+	var _Async = __webpack_require__(36);
 
 	var _Async2 = _interopRequireDefault(_Async);
 
-	var _Option = __webpack_require__(38);
+	var _Option = __webpack_require__(37);
 
 	var _Option2 = _interopRequireDefault(_Option);
 
-	var _Value = __webpack_require__(39);
+	var _Value = __webpack_require__(38);
 
 	var _Value2 = _interopRequireDefault(_Value);
 
@@ -4660,7 +4847,7 @@ var ReactDatum =
 	exports.default = Select;
 
 /***/ },
-/* 33 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4782,7 +4969,7 @@ var ReactDatum =
 	module.exports = AutosizeInput;
 
 /***/ },
-/* 34 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -4828,7 +5015,7 @@ var ReactDatum =
 
 		if (typeof module !== 'undefined' && module.exports) {
 			module.exports = classNames;
-		} else if ("function" === 'function' && _typeof(__webpack_require__(35)) === 'object' && __webpack_require__(35)) {
+		} else if ("function" === 'function' && _typeof(__webpack_require__(34)) === 'object' && __webpack_require__(34)) {
 			// register as 'classnames', consistent with npm package name
 			!(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
 				return classNames;
@@ -4839,7 +5026,7 @@ var ReactDatum =
 	})();
 
 /***/ },
-/* 35 */
+/* 34 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
@@ -4847,7 +5034,7 @@ var ReactDatum =
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ },
-/* 36 */
+/* 35 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4862,7 +5049,7 @@ var ReactDatum =
 	};
 
 /***/ },
-/* 37 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4873,11 +5060,11 @@ var ReactDatum =
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Select = __webpack_require__(32);
+	var _Select = __webpack_require__(31);
 
 	var _Select2 = _interopRequireDefault(_Select);
 
-	var _stripDiacritics = __webpack_require__(36);
+	var _stripDiacritics = __webpack_require__(35);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
@@ -5031,7 +5218,7 @@ var ReactDatum =
 	module.exports = Async;
 
 /***/ },
-/* 38 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5040,7 +5227,7 @@ var ReactDatum =
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(34);
+	var _classnames = __webpack_require__(33);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -5110,7 +5297,7 @@ var ReactDatum =
 	module.exports = Option;
 
 /***/ },
-/* 39 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5119,7 +5306,7 @@ var ReactDatum =
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(34);
+	var _classnames = __webpack_require__(33);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
