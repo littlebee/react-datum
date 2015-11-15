@@ -1,6 +1,10 @@
 React = require('react')
 Datum = require('../datum')
 
+_ = require('underscore')
+Backbone = require('backbone')
+
+
 # See docs/src/collectionPicker.md
 module.exports = class CollectionPicker extends Datum
   @displayName: "react-datum.CollectionPicker"
@@ -38,7 +42,7 @@ module.exports = class CollectionPicker extends Datum
     #   `doneCallback` is a method to be called with (error, data) when data is ready.
     #       the first argument, `error` should be false or an error that will be thrown
     #       `data` argument should be one of the types of data accepted as the   
-    asyncLoadCallback: React.PropTypes.function
+    asyncLoadCallback: React.PropTypes.func
     # these props are passed to the underlying react-select component. 
     # Note that we use Select.Async and that the follow props are overridden by
     # props above: `multi`, 'loadCallback' (see props.asyncLoadCallback), 
@@ -102,7 +106,7 @@ module.exports = class CollectionPicker extends Datum
       throw @constructor.displayName + ": You need to specify a displayAttr prop or model must have toString() method"
     
     modelValue = if @props.displayAttr? then model?.get(@props.displayAttr) else model.toString()
-    return modelValue || "unknown"
+    return modelValue || @renderPlaceholder() || "unknown"
     
     
   # for multi mode, always returns an array

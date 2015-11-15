@@ -856,6 +856,9 @@ var ReactDatum =
 	  Datum.prototype.renderPlaceholder = function() {
 	    var placeholder;
 	    placeholder = this.props.placeholder;
+	    if (placeholder == null) {
+	      return null;
+	    }
 	    return React.createElement("span", {
 	      "className": "placeholder"
 	    }, placeholder);
@@ -3718,13 +3721,17 @@ var ReactDatum =
 /* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CollectionPicker, Datum, React,
+	var Backbone, CollectionPicker, Datum, React, _,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
 	React = __webpack_require__(3);
 
 	Datum = __webpack_require__(6);
+
+	_ = __webpack_require__(8);
+
+	Backbone = __webpack_require__(7);
 
 	module.exports = CollectionPicker = (function(superClass) {
 	  extend(CollectionPicker, superClass);
@@ -3742,7 +3749,7 @@ var ReactDatum =
 	    optionAttr: React.PropTypes.string,
 	    optionComponent: React.PropTypes.node,
 	    multi: React.PropTypes.bool,
-	    asyncLoadCallback: React.PropTypes["function"],
+	    asyncLoadCallback: React.PropTypes.func,
 	    reactSelectProps: React.PropTypes.object
 	  });
 
@@ -3825,7 +3832,7 @@ var ReactDatum =
 	      throw this.constructor.displayName + ": You need to specify a displayAttr prop or model must have toString() method";
 	    }
 	    modelValue = this.props.displayAttr != null ? model != null ? model.get(this.props.displayAttr) : void 0 : model.toString();
-	    return modelValue || "unknown";
+	    return modelValue || this.renderPlaceholder() || "unknown";
 	  };
 
 	  CollectionPicker.prototype.getModelValues = function() {

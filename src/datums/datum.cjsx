@@ -209,6 +209,7 @@ module.exports = class Datum extends React.Component
 
   renderPlaceholder: ->
     placeholder = @props.placeholder
+    return null unless placeholder?
     <span className="placeholder">{placeholder}</span>
 
 

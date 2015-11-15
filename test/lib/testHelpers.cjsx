@@ -1,6 +1,6 @@
 ###
   utilities for writing tests and aliases for long ass, no fucking way I'm typing
-  that out React methods
+  that out, React methods
 ###
 
 React = require 'react'
