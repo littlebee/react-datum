@@ -1,12 +1,139 @@
 
+#Contributing to react-datum
+
+Thank you!  We welcome your ideas and suggestions via the (react-datum Github issues)[https://github.com/zulily/react-datum/issues] page.  And, more importantly, your pull requests!
+
+We strive to build great software and welcome **everyone** to participate.  
+
+This project adheres to the (Contributor Covenant 1.2)[http://contributor-covenant.org/version/1/2/0]. By participating, you are expected to uphold this code. Any issues, discussion posts or code comments not adhering to those guidelines will be removed with notice to the author.
+
+##Getting started (public contributor)
+*Note to Zulily teammates, skip this section.  See the section that follows for setup and special instructions to build and test react-datum in zuKeeper.
+
+Clone that repo!  
+
+`git clone https://github.com/zulily/react-datum.git`
+
+Yes, it's all written in coffee script.  Install coffeescript globally:
+
+`sudo npm install -g coffee-script`
+
+You will need the Grunt cli to build
+
+`sudo npm install -g grunt-cli`
+
+Run npm install to install the remaining packages needed.
+
+`npm install`
+
+Test it out:
+
+'grunt test'
+
+The test task will run the build task first.  If you want to build without running tests (you might want to always run tests tho, just saying):
+
+`grunt build`
+
+The watch task can be used to pick up changes and build automagically:
+
+`grunt watch`
+
+will watch all the source and tests and distribution relevant files and rebuild as necessary.  It will not run the tests.
+
+##Getting started (zuKeeper developer):
+We eat our own produce and react-datum is a core piece of our zuKeeper React UI.  It's super easy for you to contribute and test your changes to react-datum in zuKeeper. 
+
+From your local htdoc_ems root (if you have multiple clones of htdocs_ems, use the one that you are currently working most in):
+
+`cake react-datum` 
+
+will clone the gitlab hosted repository of react-datum into a sibling directory of htdocs_ems/ if it isn't already. It will also save the full path of your current htdocs_ems dir in .zukeeperRoot file in the root of react-datum.  It will also try to open a terminal tab, but this only works if you are running terminal or iterm2 on osx.  Otherwise it will print a console message telling which directory (react-datum) to cd to get started.  See scripts/deployToZukeeper.coffee for more details. 
+
+As part of `grunt build` and `grunt watch`, scripts/deployToZuKeeper.coffee is executed which, if it sees the .zukeeperRoot file or an ../htdocs_ems dir that exists, it will copy dist/react-datum* to that dir + app/webroot/js/lib.  It will also try to scp the dist files into place on your emsweb-01.vps machine.   You should be able to make a change in the react-datum code and instantly test it on your vps without committing to either repo and doing nothing more than `grunt build` in the react-datum directory.
+
+**Gitlab vs. Github  (TODO: remove this after public)**
+
+For now we commit and stage first to Gitlab internally and then periodically push builds to Github.  This was to enable easy early participation among the team.  We will probably do away with the Gitlab fork when we go public.  (soon)
+ 
 
 
 
+## Tests
 
-### CSS
+Testing is fun!   No, really, it's not too bad.  We use Mocha + Chai + a few chai addons to make the job easy.   Here are some pertinent links: 
+
+[Mocha.js test framework](http://visionmedia.github.io/mocha) 
+ _for `describe, it, before, after`_
+
+[Chai Assertion Library](http://chaijs.com) 
+_for `should, expect, assert`. Note we are using the BDD style_ 
+
+[Sinon.JS Test Spies, Stubs and Mocks](http://sinonjs.org/docs/) plus 
+[Sinon Chai itegration](https://github.com/domenic/sinon-chai) 
+ _for things like `mySpy.calledWith("foo").should.be.ok`;_ 
+ 
+[Chai Changes](https://github.com/matthijsgroen/chai-changes) 
+_for things like `(->result).should.change.by(3).when -> result += 3`_
+
+Also take a look at test/lib/testHelpers.cjsx.  You should include this in your test src file that you want to debug whether you use the convienience methods or not.  
+
+All tests should be in .cjsx.  Thank you.
+  
+
+#### Debugging tests
+
+Using node-inspector, you can debug tests in V8 using chrome.  
+
+`sudo npm install -g node-inspector`
+
+and then
+
+`node-inspector`
+
+will launch a server that you can connect chrome to for debugging. Point chrome at the url displayed in the console after starting node-inspector.  It should always be the same so go ahead and bookmark that.
+
+and then run a test.  You can bypass grunt which just shells out to scripts/testRunner.coffee.  The advantage of using the testRunner script directly is that you can pass an individual file to it for testing or debugging.  So if you just want to see the results of the test that you're working on you don't have to wait for the others to run.  To debug that test:
+
+`coffee --nodejs --debug-brk scripts/testRunner.coffee test/collectionPicker/readonly.cjsx`   
+
+Refresh the Chrome tab pointed at local node-inspector and wait for it to load.  It will first stop at the coffeescript loader. No other files are loaded yet though so press the run button and it will next stop at the `debugger` line intensionally left in test/lib/testHelpers.cjsx.  At this point your test file should be loaded and most or all of it's components.  Set breakpoints and let it fly!
+
+Both cake and grunt have tasks for running test.  Cake is probably going away, and doesn't display the stdout from testRunner until it has completely run.   To run all tests: 
+
+`grunt test`
+
+from project root.
+
+
+## Source
+
+Source should be in coffeescript or cjsx.  Examples (see below) are the exception.  Coffeescript provides the OO glue that makes the react-datum components easily extensible.  I buried a why_coffeescript.md in the src tree if you want a break from unopinionated. 
+
+
+## Examples
+
+Examples should be able to run standalone (from a file://... url in browser) in order for us to host on github.io pages.  
+
+*All examples should be written in ES5 + JSX javascript*.  No coffeescript or ES6 with the exception of one example each on how to extend react-datum components. (There are some .coffee haters out there)[https://ponyfoo.com/articles/we-dont-want-your-coffee])
+
+The examples in src/examples will be picked up by the grunt build and watch and compiled to docs/examples.  Each src file in src/examples is assumed to be a single contained example, needing nothing but the base dependencies:
+```
+<script src="../../../dist/vendor/jquery.js"></script>
+<script src="../../../dist/vendor/react.js"></script>
+<script src="../../../dist/vendor/react-dom.js"></script>
+<script src="../../../dist/vendor/underscore.js"></script>
+<script src="../../../dist/vendor/backbone.js"></script>
+<script src="../../../dist/react-datum.js"></script>
+```
+If you need a vendor.js that isn't in that set, go ahead and add it to scripts/lib/exampleFile.tpl.  Each example is wrapped in a self contained .html file that shows the source file code (with highlighting) on the left and a demo div on the right where the code is expected to render.  The source is compiled from JSX down to JS and also placed in the docs/examples folder.  To compile the examples just run the usual:
+
+`grunt build`
+ 
+ 
+## CSS
 
 If you need to include CSS for a component of this lib:
-  - keep it minimal.  let our users style and format
+  - keep it minimal.  **let our users style** and be unopinionated. 
   - keep it specific. use the classname of the component. no rules on common tags
   - please don't use inline styles as they are difficult for our user to override
   - put the css in a file that is of same or similar name to the components in the css/ dir
@@ -21,4 +148,5 @@ all in node.
 
 I instead opted to build a separate combined css file in dist that the user can than optionally
 decide not to use at all.    
+
 

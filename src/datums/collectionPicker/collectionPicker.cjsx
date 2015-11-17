@@ -8,15 +8,17 @@ Strhelp = require('../../lib/stringHelpers')
 Select = require('react-select/src/Select')
 Select.Async = require('react-select/src/Async')
 
-###!See docs/src/collectionPicker.md###
+###!See ./collectionPicker.md ###
 module.exports = class CollectionPicker extends Datum
   @displayName: "react-datum.CollectionPicker"
   
   @propTypes: _.extend {}, Datum.propTypes,
     ###
-      Can also accept collection instance as context var. prop has precendence
-      Can also be the string name of a shared collection (see ../sharedCollection.cjsx)
-      Can also accept an array of [{lable: "option 1", id: 1}, ...]
+      TBD: Can also be the string name of a shared collection (see ../sharedCollection.cjsx)
+      TBD: Can also accept an array of [{lable: "option 1", id: 1}, ...]
+      
+      Can also accept collection instance as context var via ReactDatum.Collection component. 
+        prop has precendence
     ###
     collection: React.PropTypes.oneOfType([
       React.PropTypes.instanceOf(Backbone.Collection)
@@ -93,9 +95,9 @@ module.exports = class CollectionPicker extends Datum
     ###
     multi: React.PropTypes.bool
     
+    
   @defaultProps: _.extend {}, Datum.defaultProps,
     optionSaveAttr: 'id'
-
     
     
   @contextTypes: _.extend {}, Datum.contextTypes,
@@ -199,6 +201,7 @@ module.exports = class CollectionPicker extends Datum
       options: @getOptionValuesForReactSelect(collection.models)
       labelKey: "label"
       valueKey: "value"
+      ref: "reactSelect"
       
     
   getOptionValuesForReactSelect: (models) =>
@@ -211,9 +214,12 @@ module.exports = class CollectionPicker extends Datum
   
   # override - react-select returns array of options and not an event    
   onChange: (optionsSelected) =>
-    values = _.pluck(optionsSelected, 'value')
-    values = values.join(',') unless @props.setAsArray 
-    super {target: {value: values}}
+    if @props.multi
+      values = _.pluck(optionsSelected, 'value')
+      values = values.join(',') unless @props.setAsArray 
+      super {target: {value: values}}
+    else
+      super {target: {value: optionsSelected.value}}
       
       
   # async callback for react-select      

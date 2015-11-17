@@ -3764,7 +3764,7 @@ var ReactDatum =
 	Select.Async = __webpack_require__(36);
 
 
-	/*!See docs/src/collectionPicker.md */
+	/*!See ./collectionPicker.md */
 
 	module.exports = CollectionPicker = (function(superClass) {
 	  extend(CollectionPicker, superClass);
@@ -3783,9 +3783,11 @@ var ReactDatum =
 	  CollectionPicker.propTypes = _.extend({}, Datum.propTypes, {
 
 	    /*
-	      Can also accept collection instance as context var. prop has precendence
-	      Can also be the string name of a shared collection (see ../sharedCollection.cjsx)
-	      Can also accept an array of [{lable: "option 1", id: 1}, ...]
+	      TBD: Can also be the string name of a shared collection (see ../sharedCollection.cjsx)
+	      TBD: Can also accept an array of [{lable: "option 1", id: 1}, ...]
+	      
+	      Can also accept collection instance as context var via ReactDatum.Collection component. 
+	        prop has precendence
 	     */
 	    collection: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Collection), React.PropTypes.string, React.PropTypes.array]),
 
@@ -3995,7 +3997,8 @@ var ReactDatum =
 	      ref: this.onInputRef,
 	      options: this.getOptionValuesForReactSelect(collection.models),
 	      labelKey: "label",
-	      valueKey: "value"
+	      valueKey: "value",
+	      ref: "reactSelect"
 	    });
 	  };
 
@@ -4015,15 +4018,23 @@ var ReactDatum =
 
 	  CollectionPicker.prototype.onChange = function(optionsSelected) {
 	    var values;
-	    values = _.pluck(optionsSelected, 'value');
-	    if (!this.props.setAsArray) {
-	      values = values.join(',');
-	    }
-	    return CollectionPicker.__super__.onChange.call(this, {
-	      target: {
-	        value: values
+	    if (this.props.multi) {
+	      values = _.pluck(optionsSelected, 'value');
+	      if (!this.props.setAsArray) {
+	        values = values.join(',');
 	      }
-	    });
+	      return CollectionPicker.__super__.onChange.call(this, {
+	        target: {
+	          value: values
+	        }
+	      });
+	    } else {
+	      return CollectionPicker.__super__.onChange.call(this, {
+	        target: {
+	          value: optionsSelected.value
+	        }
+	      });
+	    }
 	  };
 
 	  CollectionPicker.prototype.onLoadOptions = function(userInput, callback) {
