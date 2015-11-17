@@ -1,5 +1,5 @@
 
-#Contributing to react-datum
+# Contributing to react-datum
 
 Thank you!  We welcome your ideas and suggestions via the (react-datum Github issues)[https://github.com/zulily/react-datum/issues] page.  And, more importantly, your pull requests!
 
@@ -7,7 +7,7 @@ We strive to build great software and welcome **everyone** to participate.
 
 This project adheres to the (Contributor Covenant 1.2)[http://contributor-covenant.org/version/1/2/0]. By participating, you are expected to uphold this code. Any issues, discussion posts or code comments not adhering to those guidelines will be removed with notice to the author.
 
-##Getting started (public contributor)
+## Getting started (public contributor)
 *Note to Zulily teammates, skip this section.  See the section that follows for setup and special instructions to build and test react-datum in zuKeeper.
 
 Clone that repo!  
@@ -40,7 +40,7 @@ The watch task can be used to pick up changes and build automagically:
 
 will watch all the source and tests and distribution relevant files and rebuild as necessary.  It will not run the tests.
 
-##Getting started (zuKeeper developer):
+## Getting started (zuKeeper developer):
 We eat our own produce and react-datum is a core piece of our zuKeeper React UI.  It's super easy for you to contribute and test your changes to react-datum in zuKeeper. 
 
 From your local htdoc_ems root (if you have multiple clones of htdocs_ems, use the one that you are currently working most in):
