@@ -49,7 +49,11 @@ From your local htdoc_ems root (if you have multiple clones of htdocs_ems, use t
 
 will clone the gitlab hosted repository of react-datum into a sibling directory of htdocs_ems/ if it isn't already. It will also save the full path of your current htdocs_ems dir in .zukeeperRoot file in the root of react-datum.  It will also try to open a terminal tab, but this only works if you are running terminal or iterm2 on osx.  Otherwise it will print a console message telling which directory (react-datum) to cd to get started.  See scripts/deployToZukeeper.coffee for more details. 
 
-As part of `grunt build` and `grunt watch`, scripts/deployToZuKeeper.coffee is executed which, if it sees the .zukeeperRoot file or an ../htdocs_ems dir that exists, it will copy dist/react-datum* to that dir + app/webroot/js/lib.  It will also try to scp the dist files into place on your emsweb-01.vps machine.   You should be able to make a change in the react-datum code and instantly test it on your vps without committing to either repo and doing nothing more than `grunt build` in the react-datum directory.
+As part of `grunt build` and `grunt watch`, scripts/deployToZuKeeper.coffee is executed which, if it sees the .zukeeperRoot file or an ../htdocs_ems dir that exists, it will copy dist/react-datum* to that dir + app/webroot/js/lib.  It will also try to scp the dist files into place on your emsweb-01.vps machine.   
+
+You should be able to make a change in the react-datum code and instantly test it on your vps without committing to either repo and doing nothing more than `grunt build` in the react-datum directory.
+
+After you have written a test for you changes (come on, I swear it's easy:), you can commit them in the react-datum branch and, if deployToZukeeper worked on build, you can go over and commit the dist files there.  Easy as -cake-, er, grunt!
 
 **Gitlab vs. Github  (TODO: remove this after public)**
 
