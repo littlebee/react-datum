@@ -1897,11 +1897,10 @@ var ReactDatum =
 	/*
 	  this extension of the tilegrid allows the use of ReactComponents as the tile template.
 
-	  See views/widgets/react/tilegrid for tile grid that can be used as a React component
+	  See src/tilegrid for tile grid that can be used as a React component
 	  from JSX
 
-	  Don't pull in to widgets.Tilegrid until we decide to go all in with React.   React is requied
-	  above which adds 135KB to download the minified version.
+	  TODO : fold this functionality into ./tilegrid.coffee
 	 */
 
 	module.exports = TilegridReact = (function(superClass) {
@@ -1942,17 +1941,16 @@ var ReactDatum =
 	      element = React.createElement(Model, {
 	        'model': model
 	      }, template);
-	      return {
-	        reactComponent: ReactDom.render(element, $tile[0])
-	      };
+	      return ReactDom.render(element, $tile[0]);
 	    } else {
 	      return TilegridReact.__super__._renderTileTemplate.apply(this, arguments);
 	    }
 	  };
 
 	  TilegridReact.prototype._renderDerenderedPlaceholder = function($tile) {
-	    var result;
-	    result = ReactDom.unmountComponentAtNode($tile[0]);
+	    if (this.isReactTemplate()) {
+	      ReactDom.unmountComponentAtNode($tile[0]);
+	    }
 	    return TilegridReact.__super__._renderDerenderedPlaceholder.apply(this, arguments);
 	  };
 

@@ -9,11 +9,10 @@ Model = require('../model')
 ###
   this extension of the tilegrid allows the use of ReactComponents as the tile template.
 
-  See views/widgets/react/tilegrid for tile grid that can be used as a React component
+  See src/tilegrid for tile grid that can be used as a React component
   from JSX
 
-  Don't pull in to widgets.Tilegrid until we decide to go all in with React.   React is requied
-  above which adds 135KB to download the minified version.
+  TODO : fold this functionality into ./tilegrid.coffee
 ###
 
 module.exports = class TilegridReact extends Tilegrid
@@ -27,7 +26,7 @@ module.exports = class TilegridReact extends Tilegrid
 
 
   isReactTemplate: (template = @_getTileTemplate()) =>
-    # TODO : a better way of making this determination. as of 0.14 this is the best I've got
+    # TODO : a better way of making this determination. as of React 0.14 this is the best I've got
     template = template[0] if _.isArray(template)
     _.intersection(['props', 'type', 'key'], _.keys(template)).length == 3 ||
       template.prototype instanceof React.Component
@@ -37,16 +36,17 @@ module.exports = class TilegridReact extends Tilegrid
   _renderTileTemplate: ($tile, model) =>
     template = @_getTileTemplate($tile, model)
     if @isReactTemplate(template)
-      # wraps react components in a contextual model object for model associated with this tile
+      # Model below is our Model class in src/model.  Tilegrid wraps react tile
+      # components in a contextual model object for model associated with this tile
       element = React.createElement(Model, {'model': model}, template)
-      reactComponent: ReactDom.render(element, $tile[0])
+      ReactDom.render(element, $tile[0])
     else
       super
 
 
   # extends super - need to unmount react model
   _renderDerenderedPlaceholder: ($tile) =>
-    result = ReactDom.unmountComponentAtNode($tile[0])
+    ReactDom.unmountComponentAtNode($tile[0]) if @isReactTemplate()
     super
 
 
