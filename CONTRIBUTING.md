@@ -53,7 +53,7 @@ As part of `grunt build` and `grunt watch`, scripts/deployToZuKeeper.coffee is e
 
 You should be able to make a change in the react-datum code and instantly test it on your vps without committing to either repo and doing nothing more than `grunt build` in the react-datum directory.
 
-After you have written a test for you changes (come on, I swear it's easy:), you can commit them in the react-datum branch and, if deployToZukeeper worked on build, you can go over and commit the dist files there.  Easy as -cake-, er, grunt!
+After you have written a test for your changes (come on, I swear it's really easy), you can commit them in the react-datum branch and, if deployToZukeeper worked on build, you can go over and commit the dist files there.  Easy as -cake-, er, grunt!
 
 **Gitlab vs. Github  (TODO: remove this after public)**
 
@@ -113,10 +113,14 @@ from project root.
 
 Source should be in coffeescript or cjsx.  Examples (see below) are the exception.  Coffeescript provides the OO glue that makes the react-datum components easily extensible.  I buried a why_coffeescript.md in the src tree if you want a break from unopinionated. 
 
+Use the Node.js/CommonJS require syntax for requires internally. For example: `Datum = require('./datum')`.  Examples are the exception, as they only expected to run in the browser and loaded via `<script>` tag.  We use webpack to bundle our dist/react-datum*.js files and it understands CommonJS requires and correctly orders the load of components based on the dependency tree.
+   
 
 ## Examples
 
 Examples should be able to run standalone (from a file://... url in browser) in order for us to host on github.io pages.  
+
+Assume that we will be script tag loaded.  Do NOT use require() to load dependencies.  When react-datum is script tag loaded it, like jQuery, React, .... will add itself as ReactDatum in the global namespace.  You shouldn't need to require any other internal things.
 
 *All examples should be written in ES5 + JSX javascript*.  No coffeescript or ES6 with the exception of one example each on how to extend react-datum components. (There are some .coffee haters out there)[https://ponyfoo.com/articles/we-dont-want-your-coffee])
 
@@ -152,5 +156,23 @@ all in node.
 
 I instead opted to build a separate combined css file in dist that the user can than optionally
 decide not to use at all.    
+
+## Using jQuery
+
+I love jQuery.  There I said it.  But... I hate that we have to insist people install it as a dependency.   
+
+In the React community, I think the general feeling is that you shouldn't be reaching directly into the DOM, or need to.  However, that said, we work in the real world which jQuery has been a huge part of for a really long time.   Our tilegrid component does a great job of directly manipulating the DOM for optimal performance with collections of thousands.  We are not going to see jQuery go away over night.  And, as you will see with many of the tests, jQuery still does a great job of reducing the noise of constantly calling methods like `document.getElementById('#someID')` and `document.querySelector('#')`  
+
+For tests, continue to use jQuery. Those should be as easy to write as possible to incetivize.  
+
+For the components except **ReactDatum.Tilegrid**, let's not use jQuery and try doing things the React Way (whatever).  
+
+For **ReactDatum.Tilegrid**, I think it will continue using jQuery for some time and I can see it being reimagined in a React way in the future, but not now.  And besides, our internal experience using it, as it currently is, has been pretty good over the last year.  We may setup a seperate dist file or perhaps a seperate repo / npm package in the nearer future and achieve the same objective of removing jQuery dependence of the react-datum core components.  
+
+We should also consider splitting out src/datums/collectionPicker as well.  It doesn't rely on jQuery, but it does pull an additional 30k of source from react-select.  If it were it's own component, and Tilegrid were on it's own, the react-datum.min.js file size would be 60Kb less (estimate).  As of 11.2015 react-datum.min.js is 100Kb.
+
+
+ 
+
 
 

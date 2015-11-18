@@ -27,7 +27,7 @@ module.exports = class LazyPhoto extends Datum
   notFoundUrl: require("../../img/petals.png")
   loadingUrl: require("../../img/blank.jpg")
 
-  subClassName: 'fast-fade lazy-image'
+  subClassName: 'lazy-image'
 
   # these are updated as events are fired
   notFound: false

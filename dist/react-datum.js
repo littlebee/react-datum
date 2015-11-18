@@ -3391,7 +3391,7 @@ var ReactDatum =
 
 	  LazyPhoto.prototype.loadingUrl = __webpack_require__(24);
 
-	  LazyPhoto.prototype.subClassName = 'fast-fade lazy-image';
+	  LazyPhoto.prototype.subClassName = 'lazy-image';
 
 	  LazyPhoto.prototype.notFound = false;
 
