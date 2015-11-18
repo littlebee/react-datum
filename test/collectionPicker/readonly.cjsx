@@ -65,7 +65,7 @@ describe 'CollectionPicker inputMode=readonly as single select', ->
     it 'should render name from model in nameCollection without model.toString', -> 
       $(domNode).find('.datum-display-value').text().should.be.equal(nameCollection.get(22).get('name'))
     # model.get(@prop.displayAttr) should have precedence over model to string
-    it 'should still render name when model.toString() is available', ->
+    it 'should not use model.toString() (props.attr should have precedence)', ->
       addToStringAndTest(component, 22, false)
       
       
