@@ -765,8 +765,7 @@ var ReactDatum =
 	  Datum.prototype.renderDatumWrapper = function(contentFn) {
 	    return React.createElement("span", {
 	      "className": this.getFullClassName(),
-	      "data-zattr": this.props.attr,
-	      "data-z": true
+	      "data-zattr": this.props.attr
 	    }, contentFn());
 	  };
 
@@ -3820,6 +3819,8 @@ var ReactDatum =
 	  CollectionPicker.contextTypes = _.extend({}, Datum.contextTypes, {
 	    collection: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Collection), React.PropTypes.string])
 	  });
+
+	  CollectionPicker.prototype.subClassName = "collection-picker";
 
 	  CollectionPicker.prototype.renderValueForDisplay = function() {
 	    var collection, modelValues;

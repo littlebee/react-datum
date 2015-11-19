@@ -107,6 +107,8 @@ module.exports = class CollectionPicker extends Datum
       React.PropTypes.string
     ])  
   
+  subClassName: "collection-picker"
+  
   
   #override - if multi, returns an array of values that renderEllipsizeValue wraps in spans
   renderValueForDisplay: ->

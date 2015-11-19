@@ -119,7 +119,7 @@ module.exports = class Datum extends React.Component
 
   renderDatumWrapper: (contentFn)->
     # TODO: add data-zattr attribute for backward compatibility?
-    <span className={@getFullClassName()} data-zattr={@props.attr} data-z>
+    <span className={@getFullClassName()} data-zattr={@props.attr}>
       {contentFn()}
     </span>
 
