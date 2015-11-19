@@ -33,6 +33,8 @@ module.exports = class Number extends Datum
     minValue: React.PropTypes.number
     maxValue: React.PropTypes.number
 
+  # TODO : push down this feature to Datum? with default to all   
+  # will not allow characters to be entered that do not match this pattern
   charactersMustMatch: /^\-?[0-9]*\.?[0-9]*$/
 
   constructor: (props) ->

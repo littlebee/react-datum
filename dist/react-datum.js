@@ -672,55 +672,7 @@ var ReactDatum =
 
 
 	/*
-	  This is base class of all display+input components that render presentation
-	  of an attribute from a Backbone.Model or Javascript object.
-
-	  There is one required prop, 'attr' - the model attribute name.
-
-	  The backbone model or javascript object to get and set attributes on is
-	  specified in the @props.model or @context.model. Note that
-	  @props.model has precendence.
-
-	  TODO :  Better Examples
-
-	  Display an attribute from a javascript object
-
-	  ```coffeescript
-	  render: () ->
-	    user = new UsersModel("id24153GSA")
-	    user.fetch()
-
-	     * you don't need to wait for the fetch to complete because we are using
-	     * the **Model** contextual data component below which will rerender when
-	     * the model triggers 'sync'
-
-	    return (
-	      <Model model="UserModelClass">
-	        <Datum attr="firstName" label="FirstName"/>
-	        <Datum attr="firstName" label="LastName"/>
-	        <Datum attr="title"/>
-	      </Model>
-	    )
-	  ```
-
-	  Note that for clarity we have provided the **Text** datum.  You should probably
-	  use that instead of using **Datum** directly like the example above.  e.g.
-	  ```
-	    <Text attr="firstName" label="FirstName"/>
-	  ```
-
-	  *Validations*
-
-	  Datums support validations.  All validation methods should return either true or an
-	  error message.  All datums should support 'required' validation prop.
-
-	  To make a datum required, simply add the required prop to the component.  Ex:
-	  ```
-	    <Text attr="name" required>
-	  ```
-	  Validations are run at time of change and the datum element will get an invalid class
-	  for optional styling.  An exclamation icon is rendered in red and has a popup that
-	  will show all errors for that input.
+	  see ./datum.md
 	 */
 
 	module.exports = Datum = (function(superClass) {
