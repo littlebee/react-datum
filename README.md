@@ -21,7 +21,7 @@ Install using Bower:
 Install from the web:  Copy file at (TODO: add link to checked in min dist file here)
 
 ## Usage:
-<img alt="Screenshot from doc/examples/model/model.html" src="https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_model-example.png" align="right"/>
+<img alt="Screenshot from doc/examples/model/model.html" src="https://github.com/zulily/react-datum/blob/master/img/react-datum_model-example.png" align="right"/>
 ```javascript
 var Rd = ReactDatum
 
@@ -69,7 +69,7 @@ In the example above, the comment field, having the `inputMode="edit"` prop, ren
 
 Adding the **ReactDatum.Form** component, you can easily convert the above into a editable form with save and cancel buttons:
 
-<img alt="Screenshot from doc/examples/form/form.html" src="https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_form-example.png" align="right"/>
+<img alt="Screenshot from doc/examples/form/form.html" src="https://github.com/zulily/react-datum/blob/master/img/" align="right"/>
 ```javascript
 var kittenCard = React.createClass({
   displayName:"KittenCard",
