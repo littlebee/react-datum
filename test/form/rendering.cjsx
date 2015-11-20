@@ -53,7 +53,6 @@ describe 'Form when rendering', ->
     withAndWithoutModelContext(component, model)
 
     it 'should not respond to model changes', ->
-      debugger
       model.set('name', 'Foofoo')
       domNode = Th.domNodeByClass(component, 'datum')
       expect(domNode.innerHTML).to.not.contain('Foofoo')
@@ -103,6 +102,19 @@ describe 'Form when rendering', ->
 
     it 'form node should not have zform class', ->
       expect($(formNode).hasClass('zform')).to.equal(false)
+      
+      
+  describe "with buttonPosition='top' prop", ->
+    model = new KittenModel()
+    testForm = simpleTestForm(model: model, buttonPosition: "top")  
+    component = Th.render(
+      <div>{testForm}</div>
+    )
+    formNode = Th.domNode(component).children[0]
+    console.log formNode.outerHTML
+    
+    it 'should render buttons before content', ->
+      $(formNode).find('.form-buttons').prev('.form-content').length.should.be.equal(0)
       
       
     
