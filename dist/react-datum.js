@@ -2361,20 +2361,24 @@ var ReactDatum =
 	  };
 
 	  Tilegrid.prototype._onEnsureComplete = function(first, last) {
-	    var i, index, ref, ref1;
+	    var appendTileDidFail, i, index, ref, ref1;
 	    for (index = i = ref = first, ref1 = last; ref <= ref1 ? i < ref1 : i > ref1; index = ref <= ref1 ? ++i : --i) {
-	      if (index >= this.getTotalItems()) {
-	        this._endOfData();
+	      appendTileDidFail = !this.appendTile(index);
+	      if (index >= this.getTotalItems() || appendTileDidFail) {
 	        break;
 	      }
-	      this.appendTile(index);
+	    }
+	    if (index >= this.getTotalItems() || appendTileDidFail) {
+	      this._endOfData();
 	    }
 	    return typeof options.success === "function" ? options.success() : void 0;
 	  };
 
 	  Tilegrid.prototype.getTotalItems = function() {
-	    var ref;
-	    return ((ref = this.collection) != null ? ref.totalRows : void 0) || this.data.length;
+	    if (this.collection == null) {
+	      return 0;
+	    }
+	    return this.collection.getLength() || this.collection.length || this.data.length;
 	  };
 
 	  Tilegrid.prototype.appendTile = function(index) {
@@ -2384,13 +2388,14 @@ var ReactDatum =
 	    }
 	    model = this.getItemData(index);
 	    if (model == null) {
-	      return;
+	      return false;
 	    }
 	    this.lastRenderedIndex = index;
 	    $tile = this._cloneTileTemplate();
 	    $tile.attr('data-index', index);
 	    this.$loadingIndicator.before($tile);
-	    return this.renderTile($tile, model);
+	    this.renderTile($tile, model);
+	    return true;
 	  };
 
 	  Tilegrid.prototype._cloneTileTemplate = function() {

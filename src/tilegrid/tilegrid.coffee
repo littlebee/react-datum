@@ -305,26 +305,29 @@ module.exports = class Tilegrid
   
   _onEnsureComplete: (first, last) =>
     for index in [first...last]
-      if index >= @getTotalItems()
-        @_endOfData()
+      appendTileDidFail = !@appendTile(index)
+      if index >= @getTotalItems() || appendTileDidFail
         break;
-      @appendTile(index)
-
+    
+    @_endOfData() if index >= @getTotalItems() || appendTileDidFail
+          
     options.success?()
 
 
   getTotalItems: () =>
-    @collection?.totalRows || @data.length
+    return 0 unless @collection?
+    @collection.getLength() || @collection.length || @data.length
 
 
   appendTile: (index = @lastRenderedIndex + 1) =>
     model = @getItemData(index)
-    return unless model?
+    return false unless model?
     @lastRenderedIndex = index
     $tile = @_cloneTileTemplate()
     $tile.attr('data-index', index)
     @$loadingIndicator.before $tile
     @renderTile($tile, model)
+    return true
 
 
   _cloneTileTemplate: () =>
