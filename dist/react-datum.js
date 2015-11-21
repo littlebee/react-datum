@@ -61,13 +61,13 @@ var ReactDatum =
 	  SelectedModel: __webpack_require__(14),
 	  Tilegrid: __webpack_require__(15),
 	  Datum: __webpack_require__(6),
-	  Email: __webpack_require__(21),
-	  LazyPhoto: __webpack_require__(22),
-	  Link: __webpack_require__(25),
-	  Number: __webpack_require__(26),
-	  Text: __webpack_require__(27),
-	  WholeNumber: __webpack_require__(28),
-	  CollectionPicker: __webpack_require__(29)
+	  Email: __webpack_require__(22),
+	  LazyPhoto: __webpack_require__(23),
+	  Link: __webpack_require__(26),
+	  Number: __webpack_require__(27),
+	  Text: __webpack_require__(28),
+	  WholeNumber: __webpack_require__(29),
+	  CollectionPicker: __webpack_require__(30)
 	};
 
 
@@ -118,7 +118,7 @@ var ReactDatum =
 	    }
 	    return React.createElement("button", {
 	      "key": "edit",
-	      "className": "btn-primary",
+	      "className": "btn btn-primary",
 	      "onClick": this.onEditClick
 	    }, "Edit");
 	  };
@@ -1756,7 +1756,7 @@ var ReactDatum =
 
 	SingleSelect = __webpack_require__(19);
 
-	MultiSelect = __webpack_require__(20);
+	MultiSelect = __webpack_require__(21);
 
 	module.exports = Tilegrid = (function(superClass) {
 	  extend(Tilegrid, superClass);
@@ -2038,6 +2038,7 @@ var ReactDatum =
 	    this._initializeCollection();
 	    this._renderGrid();
 	    this.reset();
+	    this.render();
 	    return (ref1 = this.$tilegrid) != null ? ref1.data('tilegrid', this) : void 0;
 	  };
 
@@ -2166,17 +2167,14 @@ var ReactDatum =
 	  };
 
 	  Tilegrid.prototype._initializeCollection = function() {
-	    var ref, ref1, ref2;
 	    if (this.data instanceof Backbone.Collection) {
 	      this.collection || (this.collection = this.data);
 	    }
-	    if ((ref = this.collection) != null) {
-	      ref.on('reset', this._onCollectionReset);
+	    if (typeof collection !== "undefined" && collection !== null) {
+	      this.collection.on('reset', this._onCollectionReset);
+	      this.collection.on('sync', this._onCollectionSync);
+	      return this.collection.on('add', this._onCollectionAdd);
 	    }
-	    if ((ref1 = this.collection) != null) {
-	      ref1.on('sync', this._onCollectionSync);
-	    }
-	    return (ref2 = this.collection) != null ? ref2.on('add', this._onCollectionAdd) : void 0;
 	  };
 
 	  Tilegrid.prototype._renderGrid = function() {
@@ -2197,7 +2195,8 @@ var ReactDatum =
 	  };
 
 	  Tilegrid.prototype._renderViewport = function() {
-	    if (!((this.collection == null) || this.collection.lastFetched)) {
+	    if (this.collection == null) {
+	      this._endOfData();
 	      return;
 	    }
 	    if (this._loadingInWindow()) {
@@ -2266,10 +2265,10 @@ var ReactDatum =
 	  };
 
 	  Tilegrid.prototype.getItemData = function(index) {
-	    var ref;
-	    return ((ref = this.collection) != null ? ref.getItem(index, {
+	    var ref, ref1;
+	    return ((ref = this.collection) != null ? typeof ref.getItem === "function" ? ref.getItem(index, {
 	      warn: true
-	    }) : void 0) || this.data[index];
+	    }) : void 0 : void 0) || ((ref1 = this.collection) != null ? ref1.models[index] : void 0) || this.data[index];
 	  };
 
 	  Tilegrid.prototype._findTopIndex = function(startingAt) {
@@ -2360,8 +2359,11 @@ var ReactDatum =
 	    }
 	  };
 
-	  Tilegrid.prototype._onEnsureComplete = function(first, last) {
+	  Tilegrid.prototype._onEnsureComplete = function(first, last, options) {
 	    var appendTileDidFail, i, index, ref, ref1;
+	    if (options == null) {
+	      options = {};
+	    }
 	    for (index = i = ref = first, ref1 = last; ref <= ref1 ? i < ref1 : i > ref1; index = ref <= ref1 ? ++i : --i) {
 	      appendTileDidFail = !this.appendTile(index);
 	      if (index >= this.getTotalItems() || appendTileDidFail) {
@@ -2375,10 +2377,11 @@ var ReactDatum =
 	  };
 
 	  Tilegrid.prototype.getTotalItems = function() {
+	    var ref, ref1;
 	    if (this.collection == null) {
 	      return 0;
 	    }
-	    return this.collection.getLength() || this.collection.length || this.data.length;
+	    return ((ref = this.collection) != null ? typeof ref.getLength === "function" ? ref.getLength() : void 0 : void 0) || ((ref1 = this.collection) != null ? ref1.length : void 0) || this.data.length;
 	  };
 
 	  Tilegrid.prototype.appendTile = function(index) {
@@ -2612,6 +2615,8 @@ var ReactDatum =
 
 	$ = jQuery = __webpack_require__(17);
 
+	__webpack_require__(20);
+
 	SelectableCollection = __webpack_require__(11);
 
 
@@ -2750,7 +2755,7 @@ var ReactDatum =
 	      $newActive = this.tilegrid.findTileAt(index);
 	      if ($newActive && $newActive.length > 0 && !$newActive.is($prevActive)) {
 	        $prevActive.removeClass('active');
-	        this._scrollIntoView($newActive.addClass('active'), $newActive.scrollParent(), this.options.scrollOptions);
+	        this._scrollIntoView($newActive.addClass('active'), $newActive.closest(':hasScroll'), this.options.scrollOptions);
 	      }
 	    } else {
 	      $prevActive.removeClass('active');
@@ -2963,9 +2968,6 @@ var ReactDatum =
 
 	  SingleSelect.prototype._scrollIntoView = function($tile, $parent, options) {
 	    var $tileHeight, $tileLeft, $tileTop, $tileWidth, attrs, isAbove, isBelow, isLeft, isRight, parentHeight, parentLeft, parentScrollTop, parentTop, parentWidth;
-	    if ($parent == null) {
-	      $parent = this.scrollParent();
-	    }
 	    if (options == null) {
 	      options = {};
 	    }
@@ -3034,6 +3036,62 @@ var ReactDatum =
 
 /***/ },
 /* 20 */
+/***/ function(module, exports) {
+
+	
+	/*
+	  Thanks stackoverflow!   This allows the tilegrid to determine the scroll parent of the tiles
+	  http://codereview.stackexchange.com/questions/13338/hasscroll-function-checking-if-a-scrollbar-is-visible-in-an-element
+
+	  You can then use this in any jQuery selector, such as:
+	  ```
+	    $('div:hasScroll') //all divs that have scrollbars
+	    $('div').filter(':hasScroll') //same but better
+	    $(this).closest(':hasScroll(y)') //find the parent with the vert scrollbar
+	    $list.is(':hasScroll(x)') //are there any horizontal scrollbars in the list?
+	  ```
+	 */
+	var hasScroll;
+
+	hasScroll = function(el, index, match) {
+	  var $el, axis, hidden, sX, sY, scroll, visible;
+	  $el = $(el);
+	  sX = $el.css('overflow-x');
+	  sY = $el.css('overflow-y');
+	  hidden = 'hidden';
+	  visible = 'visible';
+	  scroll = 'scroll';
+	  axis = match[3];
+	  if (!axis) {
+	    if (sX === sY && (sY === hidden || sY === visible)) {
+	      return false;
+	    }
+	    if (sX === scroll || sY === scroll) {
+	      return true;
+	    }
+	  } else if (axis === 'x') {
+	    if (sX === hidden || sX === visible) {
+	      return false;
+	    }
+	    if (sX === scroll) {
+	      return true;
+	    }
+	  } else if (axis === 'y') {
+	    if (sY === hidden || sY === visible) {
+	      return false;
+	    }
+	    if (sY === scroll) {
+	      return true;
+	    }
+	  }
+	  return $el.innerHeight() < el.scrollHeight || $el.innerWidth() < el.scrollWidth;
+	};
+
+	$.expr[':'].hasScroll = hasScroll;
+
+
+/***/ },
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var $, MultiSelect, SingleSelect, _, jQuery,
@@ -3231,7 +3289,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Email, React, _,
@@ -3299,7 +3357,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, LazyPhoto, React,
@@ -3341,9 +3399,9 @@ var ReactDatum =
 
 	  LazyPhoto.displayName = "react-datum.LazyPhoto";
 
-	  LazyPhoto.prototype.notFoundUrl = __webpack_require__(23);
+	  LazyPhoto.prototype.notFoundUrl = __webpack_require__(24);
 
-	  LazyPhoto.prototype.loadingUrl = __webpack_require__(24);
+	  LazyPhoto.prototype.loadingUrl = __webpack_require__(25);
 
 	  LazyPhoto.prototype.subClassName = 'lazy-image';
 
@@ -3404,19 +3462,19 @@ var ReactDatum =
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports) {
 
 	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABoCAYAAAAHIFUvAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NEZCNjk5NUI5RjE2MTFFMkE2MjE4QzNGRDJGMzREOEQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NEZCNjk5NUM5RjE2MTFFMkE2MjE4QzNGRDJGMzREOEQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo0RkI2OTk1OTlGMTYxMUUyQTYyMThDM0ZEMkYzNEQ4RCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0RkI2OTk1QTlGMTYxMUUyQTYyMThDM0ZEMkYzNEQ4RCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PmtML+gAAA1VSURBVHja7F09cttK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"
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports) {
 
 	module.exports = "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAaCAYAAABctMd+AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAAtSURBVHja7MxBDQAACAQgtX/nM4UPNwhAJ6krU4fkcrlcLpfLv+QLAAD//wMANGkDMYhC/1cAAAAASUVORK5CYII="
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Link, React, _,
@@ -3431,12 +3489,7 @@ var ReactDatum =
 
 
 	/*
-	  For rendering links like <a href="...">.
-
-	  The 'attr' prop should return a url from the model and is the href of the link.
-
-	  Optionally, a 'nameAttr' prop can also be specified to display between the <a></a>
-	  tags.  If 'nameAttr' prop is not specified, the children of the link are rendered
+	  see ./link.md
 	 */
 
 	module.exports = Link = (function(superClass) {
@@ -3449,17 +3502,20 @@ var ReactDatum =
 	  Link.displayName = "react-datum.Link";
 
 	  Link.propTypes = _.extend({}, Datum.propTypes, {
-	    nameAttr: React.PropTypes.string
+	    nameAttr: React.PropTypes.string,
+	    target: React.PropTypes.string
+	  });
+
+	  Link.defaultProps = _.extend({}, Datum.defaultProps, {
+	    target: '_blank'
 	  });
 
 	  Link.prototype.subClassName = 'link';
 
-	  Link.prototype.target = '_blank';
-
 	  Link.prototype.renderValueForDisplay = function() {
 	    return React.createElement("a", {
 	      "href": this._getHref(),
-	      "target": this.target
+	      "target": this.props.target
 	    }, this._getTagContent());
 	  };
 
@@ -3471,7 +3527,7 @@ var ReactDatum =
 	    if (this.props.nameAttr != null) {
 	      return this.getModel().get(this.props.nameAttr);
 	    } else if (this.props.children && this.props.children.length > 0) {
-	      return this.props.children;
+	      return React.createElement("span", null, this.props.children);
 	    } else {
 	      return this.getModelValue();
 	    }
@@ -3483,7 +3539,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Number, ONE_MILLION, ONE_THOUSAND, React, _,
@@ -3618,7 +3674,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, React, Text, _,
@@ -3662,7 +3718,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Number, React, WholeNumber,
@@ -3671,7 +3727,7 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	Number = __webpack_require__(26);
+	Number = __webpack_require__(27);
 
 
 	/*
@@ -3695,7 +3751,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, CollectionPicker, Datum, React, Select, Strhelp, _,
@@ -3711,11 +3767,11 @@ var ReactDatum =
 
 	Datum = __webpack_require__(6);
 
-	Strhelp = __webpack_require__(30);
+	Strhelp = __webpack_require__(31);
 
-	Select = __webpack_require__(31);
+	Select = __webpack_require__(32);
 
-	Select.Async = __webpack_require__(36);
+	Select.Async = __webpack_require__(37);
 
 
 	/*!See ./collectionPicker.md */
@@ -4060,7 +4116,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var StringHelpers, _;
@@ -4127,7 +4183,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4146,27 +4202,27 @@ var ReactDatum =
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _reactInputAutosize = __webpack_require__(32);
+	var _reactInputAutosize = __webpack_require__(33);
 
 	var _reactInputAutosize2 = _interopRequireDefault(_reactInputAutosize);
 
-	var _classnames = __webpack_require__(33);
+	var _classnames = __webpack_require__(34);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _stripDiacritics = __webpack_require__(35);
+	var _stripDiacritics = __webpack_require__(36);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
-	var _Async = __webpack_require__(36);
+	var _Async = __webpack_require__(37);
 
 	var _Async2 = _interopRequireDefault(_Async);
 
-	var _Option = __webpack_require__(37);
+	var _Option = __webpack_require__(38);
 
 	var _Option2 = _interopRequireDefault(_Option);
 
-	var _Value = __webpack_require__(38);
+	var _Value = __webpack_require__(39);
 
 	var _Value2 = _interopRequireDefault(_Value);
 
@@ -4814,7 +4870,7 @@ var ReactDatum =
 	exports.default = Select;
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4936,7 +4992,7 @@ var ReactDatum =
 	module.exports = AutosizeInput;
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -4982,7 +5038,7 @@ var ReactDatum =
 
 		if (typeof module !== 'undefined' && module.exports) {
 			module.exports = classNames;
-		} else if ("function" === 'function' && _typeof(__webpack_require__(34)) === 'object' && __webpack_require__(34)) {
+		} else if ("function" === 'function' && _typeof(__webpack_require__(35)) === 'object' && __webpack_require__(35)) {
 			// register as 'classnames', consistent with npm package name
 			!(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
 				return classNames;
@@ -4993,7 +5049,7 @@ var ReactDatum =
 	})();
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
@@ -5001,7 +5057,7 @@ var ReactDatum =
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -5016,7 +5072,7 @@ var ReactDatum =
 	};
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5027,11 +5083,11 @@ var ReactDatum =
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Select = __webpack_require__(31);
+	var _Select = __webpack_require__(32);
 
 	var _Select2 = _interopRequireDefault(_Select);
 
-	var _stripDiacritics = __webpack_require__(35);
+	var _stripDiacritics = __webpack_require__(36);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
@@ -5185,7 +5241,7 @@ var ReactDatum =
 	module.exports = Async;
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5194,7 +5250,7 @@ var ReactDatum =
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(33);
+	var _classnames = __webpack_require__(34);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -5264,7 +5320,7 @@ var ReactDatum =
 	module.exports = Option;
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5273,7 +5329,7 @@ var ReactDatum =
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(33);
+	var _classnames = __webpack_require__(34);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 

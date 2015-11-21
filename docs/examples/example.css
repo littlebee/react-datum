@@ -1,17 +1,30 @@
 
+html, body {
+  height: 99%;
+}
+
+h3 button {
+  margin-left: 50px;
+  margin-top: -6px;
+}
+
+label {
+  font-size: 12px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.45);
+}
+    
 .code-pane {
-  display: inline-block;
-  width: calc(100% - 450px);
+  margin-left: 4% !important;
+  width: 90%;
   overflow: auto;
   margin-left: 13px;
 }
 
 .demo-pane {
-  display: inline-block;
-  width: 390px;
   vertical-align: top;
-  margin-left: 5px;
-
+  width: 400px;
+  margin-left: 4%;
 }
 
 #demo {
@@ -44,7 +57,90 @@
   color: green;
 }
 
+.more {
+  display: none;
+  position: absolute;
+  left: 40%;
+  margin-top: 10px;
+  z-index: 2;
+}
+
 button {
   margin-right: 5px;
 
+}
+
+h3 {
+  margin: 0px;
+  line-height: 40px;
+}
+
+body[data-examplefile="/tilegrid/tilegrid.jsx"] {
+  overflow: hidden;
+}
+
+body[data-examplefile="/tilegrid/tilegrid.jsx"] .demo-pane {
+  width: 90%;
+  height: calc(100% - 75px);
+  overflow: hidden;
+  transition: height 0.15s ease-out
+}
+
+body[data-examplefile="/tilegrid/tilegrid.jsx"] .code-pane {
+  height: 75px;
+  overflow: auto;
+  transition: height 0.15s ease-out
+}
+
+body[data-examplefile="/tilegrid/tilegrid.jsx"] .code-pane .more {
+  display: inline-block;
+}
+
+body[data-examplefile="/tilegrid/tilegrid.jsx"][data-showmore="code"] .demo-pane .more {
+  display: inline-block;
+}
+
+body[data-examplefile="/tilegrid/tilegrid.jsx"][data-showmore="code"] .code-pane .more {
+  display: none;
+}
+
+body[data-examplefile="/tilegrid/tilegrid.jsx"][data-showmore="code"] .demo-pane {
+  height: 40%;
+}
+
+body[data-examplefile="/tilegrid/tilegrid.jsx"][data-showmore="code"] .code-pane {
+  height: 60%;
+}
+
+body[data-examplefile="/tilegrid/tilegrid.jsx"] #demo {
+  height: calc(100% - 52px);
+}
+
+body[data-examplefile="/tilegrid/tilegrid.jsx"] .demo,
+body[data-examplefile="/tilegrid/tilegrid.jsx"] .collection,
+body[data-examplefile="/tilegrid/tilegrid.jsx"] .grid {
+  height: 100%;
+}
+
+body[data-examplefile="/tilegrid/tilegrid.jsx"] .tilegrid-react {
+  height: calc(100% - 24px);
+}
+
+body[data-examplefile="/tilegrid/tilegrid.jsx"] .grid {
+  display: inline-block;
+  width: calc(90% - 308px);
+}
+
+body[data-examplefile="/tilegrid/tilegrid.jsx"] .preview {
+  display: inline-block;
+  vertical-align: top;
+  padding-top: 20px;
+  margin-left: 5px;
+  width: 380px;
+}
+body[data-examplefile="/tilegrid/tilegrid.jsx"] .preview .lazy-image {
+  min-height: 140px;
+}
+body[data-examplefile="/tilegrid/tilegrid.jsx"] .preview img {
+  max-width: 100px;
 }

@@ -7,6 +7,8 @@ _ = require 'underscore'
 
 Th = require '../lib/testHelpers'
 
+KITTEN_DATA = require '../lib/kittenData'
+
 fs = require 'fs'
 glob = require 'glob'
 
@@ -21,6 +23,7 @@ _.extend global,
   '_': _
   '$': $
   'jQuery': $
+  KITTEN_DATA: KITTEN_DATA
   
 
 # this is a suboptimal way of doing this.  I also tried and failed when using:
@@ -34,6 +37,9 @@ loadExample = (exampleScriptFile, done) ->
     <script>#{fs.readFileSync('dist/react-datum.js')}</script>
     <script>#{fs.readFileSync(exampleScriptFile)}</script>
   """
+  # basically it dumps the whole contents of the reactDatum lib and the compiled example into
+  # two static script tags in the dom and that makes the code instantly load and run
+  # and at this point we can be assured that we are...
   done()
 
 testExample = (exampleFile) ->

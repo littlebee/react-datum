@@ -6,27 +6,31 @@ Datum = require('./datum')
 
 
 ###
-  For rendering links like <a href="...">.
-
-  The 'attr' prop should return a url from the model and is the href of the link.
-
-  Optionally, a 'nameAttr' prop can also be specified to display between the <a></a>
-  tags.  If 'nameAttr' prop is not specified, the children of the link are rendered
+  see ./link.md
 ###
 module.exports = class Link extends Datum
   @displayName: "react-datum.Link"
 
+
   @propTypes: _.extend {}, Datum.propTypes,
+    # attribute on model to display as the <a> content. if null ReactDatum.Link will 
+    # render the children enclosed in an <a></a>
     nameAttr: React.PropTypes.string
+    # passed to <a> as the target
+    target: React.PropTypes.string
+    
+    
+  @defaultProps: _.extend {}, Datum.defaultProps,
+    target: '_blank'
+    
 
   subClassName: 'link'
-  target: '_blank'
 
   # TODO add validations.
 
   # override
   renderValueForDisplay: () ->
-    <a href={@_getHref()} target={@target}>
+    <a href={@_getHref()} target={@props.target}>
       {@_getTagContent()}
     </a>
 
@@ -35,11 +39,12 @@ module.exports = class Link extends Datum
 
   _getHref: ->
     @getModelValue()
+    
 
   _getTagContent: ->
     if @props.nameAttr?
       return @getModel().get(@props.nameAttr)
     else if @props.children && @props.children.length > 0
-      return @props.children
+      return <span>{@props.children}</span>
     else
       return @getModelValue()

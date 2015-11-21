@@ -70,6 +70,7 @@ module.exports = class Tilegrid
     @_initializeCollection()
     @_renderGrid()
     @reset()
+    @render()
 
     @$tilegrid?.data('tilegrid', @)
 
@@ -170,9 +171,10 @@ module.exports = class Tilegrid
 
   _initializeCollection: () =>
     @collection ||= @data if @data instanceof Backbone.Collection
-    @collection?.on 'reset', @_onCollectionReset
-    @collection?.on 'sync', @_onCollectionSync
-    @collection?.on 'add', @_onCollectionAdd
+    if collection?
+      @collection.on 'reset', @_onCollectionReset
+      @collection.on 'sync', @_onCollectionSync
+      @collection.on 'add', @_onCollectionAdd
 
 
   _renderGrid: () =>
@@ -194,7 +196,10 @@ module.exports = class Tilegrid
 
 
   _renderViewport: () =>
-    return unless !@collection? || @collection.lastFetched
+    if !@collection? 
+      @_endOfData();
+      return
+      
     if @_loadingInWindow()
       # recurse until the loading indicator is out of view. this causes us to pull and render one page size
       # at a time and fill in the very large displays without setting off a stampede
@@ -246,7 +251,7 @@ module.exports = class Tilegrid
 
 
   getItemData: (index) =>
-    @collection?.getItem(index, warn: true) || @data[index]
+    @collection?.getItem?(index, warn: true) || @collection?.models[index] || @data[index]
 
 
   _findTopIndex: (startingAt=0) =>
@@ -303,7 +308,7 @@ module.exports = class Tilegrid
       @_onEnsureComplete(first, last)
 
   
-  _onEnsureComplete: (first, last) =>
+  _onEnsureComplete: (first, last, options={}) =>
     for index in [first...last]
       appendTileDidFail = !@appendTile(index)
       if index >= @getTotalItems() || appendTileDidFail
@@ -316,7 +321,7 @@ module.exports = class Tilegrid
 
   getTotalItems: () =>
     return 0 unless @collection?
-    @collection.getLength() || @collection.length || @data.length
+    @collection?.getLength?() || @collection?.length || @data.length
 
 
   appendTile: (index = @lastRenderedIndex + 1) =>

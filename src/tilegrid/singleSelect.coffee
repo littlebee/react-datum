@@ -2,6 +2,8 @@
 _ = require('underscore')
 $ = jQuery = require('jquery')
 
+require('../lib/jqueryHelpers')
+
 SelectableCollection = require('../mixins/SelectableCollection')
 
 ###
@@ -91,7 +93,7 @@ module.exports = class SingleSelect
       $newActive = @tilegrid.findTileAt(index)
       if $newActive && $newActive.length > 0 && !$newActive.is($prevActive)
         $prevActive.removeClass('active')
-        @_scrollIntoView $newActive.addClass('active'), $newActive.scrollParent(), @options.scrollOptions
+        @_scrollIntoView $newActive.addClass('active'), $newActive.closest(':hasScroll'), @options.scrollOptions
     else
       $prevActive.removeClass('active')
 
@@ -294,7 +296,7 @@ module.exports = class SingleSelect
     return $tile
 
 
-  _scrollIntoView: ($tile, $parent = this.scrollParent(), options={}) =>
+  _scrollIntoView: ($tile, $parent, options={}) =>
     options = _.defaults options,
       cushion: {}
       duration: 100

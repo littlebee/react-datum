@@ -111,7 +111,7 @@ describe 'Form when rendering', ->
       <div>{testForm}</div>
     )
     formNode = Th.domNode(component).children[0]
-    console.log formNode.outerHTML
+    #console.log formNode.outerHTML
     
     it 'should render buttons before content', ->
       $(formNode).find('.form-buttons').prev('.form-content').length.should.be.equal(0)
