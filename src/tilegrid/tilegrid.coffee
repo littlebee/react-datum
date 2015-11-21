@@ -171,7 +171,7 @@ module.exports = class Tilegrid
 
   _initializeCollection: () =>
     @collection ||= @data if @data instanceof Backbone.Collection
-    if collection?
+    if @collection?
       @collection.on 'reset', @_onCollectionReset
       @collection.on 'sync', @_onCollectionSync
       @collection.on 'add', @_onCollectionAdd

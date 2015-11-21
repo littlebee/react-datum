@@ -2170,7 +2170,7 @@ var ReactDatum =
 	    if (this.data instanceof Backbone.Collection) {
 	      this.collection || (this.collection = this.data);
 	    }
-	    if (typeof collection !== "undefined" && collection !== null) {
+	    if (this.collection != null) {
 	      this.collection.on('reset', this._onCollectionReset);
 	      this.collection.on('sync', this._onCollectionSync);
 	      return this.collection.on('add', this._onCollectionAdd);
