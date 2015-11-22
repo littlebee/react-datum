@@ -378,10 +378,6 @@ module.exports = class Tilegrid
     model.on "remove", @_onModelRemove
     @_renderTileTemplate($tile, model)
 
-    # we added height and width to this tile when it was derendered, remove them to let tile
-    # size naturally to it's potentially new data
-    $tile.removeAttr('style');
-
     $tile.toggleClass("selected", model.selected==true)
     $tile.addClass("rendered")
     $tile.attr('data-id', model.id)
@@ -494,7 +490,6 @@ module.exports = class Tilegrid
   _derenderTile: ($tile) =>
     return unless $tile && $tile.length > 0
 
-    # figure out how to do this without killing performance
     $tile.css
       height: $tile.height()
       width: $tile.width()

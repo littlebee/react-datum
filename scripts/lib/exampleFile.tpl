@@ -17,14 +17,14 @@
 
 <body data-exampleFile="<%=relativeFile%>">
   <div class='demo-pane'>
-    <button class="more btn" data-which="demo">Show More Demo!</button>
+    <button class="more btn btn-primary" data-which="demo">Show More Demo!</button>
     <h3>The Demo:</h3> 
     <div id="demo">
       <!--  Example code uses this to render output -->
     </div>
   </div>
   <div class='code-pane'>
-    <button class="more btn" data-which="code">Show More Code!</button>
+    <button class="more btn btn-primary" data-which="code">Show More Code!</button>
     <h3>The Code:</h3> 
     <%= sourceCode %>
   </div>
