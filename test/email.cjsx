@@ -22,6 +22,6 @@ describe 'Email datum', ->
     
   it 'should render as link if asked nicely', ->
     component = Th.render <Email attr='email' model={model} displayAsLink/>
-    console.log $(Th.domNode(component)).html()
+    #console.log $(Th.domNode(component)).html()
     $(Th.domNode(component)).find('a').length.should.equal(1)
     
