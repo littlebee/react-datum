@@ -70,11 +70,13 @@ module.exports = class CollectionStats extends React.Component
 
 
   _renderViewing: ->
-    return null unless @collection.topDisplayIndex? && @collection.bottomDisplayIndex
+    topIndex = @collection.topDisplayIndex || @collection.statsModel?.get('topDisplayIndex')
+    bottomIndex = @collection.bottomDisplayIndex || @collection.statsModel?.get('bottomDisplayIndex')
+    return null unless topIndex? && bottomIndex
     return (
       <span className="viewing stats fade in">
-        Viewing {@_renderCount(@collection.topDisplayIndex, 'top-index')} - 
-        {@_renderCount(@collection.bottomDisplayIndex, 'bottom-index')}
+        Viewing {@_renderCount(topIndex, 'top-index')} - 
+        {@_renderCount(bottomIndex, 'bottom-index')}
       </span>
     )
     

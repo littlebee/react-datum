@@ -22,16 +22,15 @@ var TilegridDisplay = React.createClass({
         <div className="preview">
           <Rd.SelectedModel placeholder="Select a kitten to see information here">
             <Rd.LazyPhoto attr="imageUrl"/>
-            <h3>Adopt <Rd.Text attr="name" readonly/> Today!</h3>
-            <Rd.link attr="petfinderUrl">Show <Rd.Text attr="name" readonly/> on Petfinder.com</Rd.link>
-            <Rd.email attr="contactEmail" label="Email contact" displayAsLink readonly/>
+            <div className='top-right'>
+              <h3>Adopt <Rd.Text attr="name" readonly/> Today!</h3>
+              <div><Rd.Link attr="petfinderUrl">Show <Rd.Text attr="name" readonly/> on Petfinder.com</Rd.Link></div>
+              <div><Rd.Email attr="contactEmail" label="Email now:" displayAsLink readonly/></div>
+            </div>
             <Rd.ClickToEditForm className='kitten-form'>
-              <div><Rd.Text attr="name" label="Name:" setOnChange required/></div>
-              <label>Say something about <Rd.Text attr="name" ellipsize={false} readonly/>: </label>
-              <div><Rd.Text attr="description" className="wide-input"/></div>
-              <div><Rd.Email attr="sponsorEmail" label="Adoption Sponsor:" displayLink/></div>
-              <label>Leave a Comment!</label>
-              <div><Rd.Text attr="comment" className="wide-input"/></div>
+              <div><Rd.Text attr="name" label="Name: " setOnChange required/></div>
+              <div><Rd.Text attr="description" className="wide-input" ellipsizeAt={false} displayAsHtml/></div>
+              <div><Rd.Email attr="contactEmail" label="Sponsor Email: " displayLink/></div>
             </Rd.ClickToEditForm>
           </Rd.SelectedModel>
         </div>

@@ -44,9 +44,6 @@ input.tilegrid-focus-sink {
     color: rgba(128, 128, 128, 0.8);
 }
 
-
-
-
 .tilegrid .disabled {
     background: -webkit-linear-gradient(50deg, rgba(255, 0, 0, 0.3) 10%,
     rgba(0, 0, 0, 0.01) 11%, rgba(0, 0, 0, 0.01) 24%, rgba(255, 10, 10, 0.2) 25%, rgba(255, 10, 10, 0.2) 34%,
@@ -54,3 +51,4 @@ input.tilegrid-focus-sink {
     rgba(0, 0, 0, 0.01) 61%, rgba(0, 0, 0, 0.01) 74%, rgba(255, 10, 10, 0.2) 75%, rgba(255, 10, 10, 0.2) 85%,
     rgba(0, 0, 0, 0.01) 86%);
 }
+

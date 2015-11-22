@@ -138,9 +138,19 @@ body[data-examplefile="/tilegrid/tilegrid.jsx"] .preview {
   margin-left: 5px;
   width: 380px;
 }
+
 body[data-examplefile="/tilegrid/tilegrid.jsx"] .preview .lazy-image {
   min-height: 140px;
+  display: inline-block;
 }
+
 body[data-examplefile="/tilegrid/tilegrid.jsx"] .preview img {
-  max-width: 100px;
+  width: 100px;
 }
+
+body[data-examplefile="/tilegrid/tilegrid.jsx"] .preview .top-right {
+  display: inline-block;
+  width: calc(100% - 113px);
+  vertical-align: top;
+  margin-left: 7px;
+} 

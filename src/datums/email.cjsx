@@ -17,7 +17,7 @@ module.exports = class Email extends Datum
   @displayName: "react-datum.Email"
 
   @propTypes: _.extend {}, Datum.propTypes,
-    displayLink: React.PropTypes.bool
+    displayAsLink: React.PropTypes.bool
 
   constructor: (props) ->
     super
@@ -26,7 +26,7 @@ module.exports = class Email extends Datum
 
   renderValueForDisplay: ->
     value = super
-    return if @props.displayLink
+    return if @props.displayAsLink
       <a href={@getMailToHref(value)}>{value}</a>
     else
       value

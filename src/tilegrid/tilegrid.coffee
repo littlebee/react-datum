@@ -17,8 +17,8 @@ Backbone = require('backbone')
 module.exports = class Tilegrid
   $tilegridTemplate: $("""
     <div class="tilegrid">
-        <div class="tilegrid-loading fade">
-            <div class="placeholder">
+        <div class="tilegrid-loading">
+            <div class="placeholder fade in">
                 ... more to come ...
                 &nbsp;
             </div>
@@ -44,10 +44,6 @@ module.exports = class Tilegrid
       hideFunction: null
 
     @setTileTemplate(@tileTemplate)
-
-    # array of {top: #{$tile.offset.top()}, bottom: #{$tile.offset().top + $tile.height()}}
-    # indexed by tile index  used to find visible tiles
-    @tileOffsets = []
 
     # you can pass in an array of objects or models instead of a collection
     unless _.isArray(@data) || @data instanceof Backbone.Collection
@@ -92,9 +88,8 @@ module.exports = class Tilegrid
       @lastRenderedIndex = -1
       @$element.find('.tile').remove()
 
-    @$loadingIndicator.addClass('in')
+    @$loadingIndicator.show()
     # don't do initial render yet, wait for someone to do initial fetch on collection
-    @_resetTileOffsets()
     return @
 
 
@@ -146,26 +141,20 @@ module.exports = class Tilegrid
     _.values @_$tilesByModelId
 
 
-  updateCollectionViewStats:  (options={}) =>
+  updateCollectionViewStats:  (stats) =>
     return unless @collection?
+    totalRows = @getTotalItems()  # returns totalRows (number of search results)
+    if totalRows <= 0
+      _.extend stats, 
+        topDisplayIndex: 0
+        bottomDisplayIndex: 0
+
     # has collection stats mixin
     if @collection.hasStats
-      options = _.defaults options,
-        topDisplayIndex: @_findTopIndex()
-        bottomDisplayIndex: @_findBottomIndex()
-
-      totalRows = @collection.getLength()  # returns totalRows (number of search results)
-      if totalRows <= 0
-        @collection.updateStats
-          topDisplayIndex:  0
-          bottomDisplayIndex: 0
-      else
-        @collection.updateStats options
-
-      @$emptyIndicator?.toggle(totalRows <= 0)
+        @collection.updateStats stats
     else
-      @collection.topDisplayIndex = @_findTopIndex()
-      @collection.bottomDisplayIndex = @_findBottomIndex()
+      @collection.topDisplayIndex = stats.topDisplayIndex
+      @collection.bottomDisplayIndex = stats.bottomDisplayIndex
       @collection.trigger?('viewStatsChanged')
 
 
@@ -211,10 +200,9 @@ module.exports = class Tilegrid
   _ensureViewport: () =>
     return if @options.ignoreViewport
 
-    $topTile = @_findTopTile()
-    topIndex = $topTile?.data('index')
-    $bottomTile = @_findBottomTile()
-    bottomIndex = $bottomTile?.data('index')
+    viewStats = @getViewingStats()
+    topIndex = viewStats.topDisplayIndex
+    bottomIndex = viewStats.bottomDisplayIndex
 
     return unless topIndex? && bottomIndex?
     @updateCollectionViewStats topDisplayIndex: topIndex + 1, bottomDisplayIndex: bottomIndex + 1
@@ -223,7 +211,6 @@ module.exports = class Tilegrid
     @bottomRenderIndex = (bottomIndex || 0) + @options.pageSize
 
     # console.log "TileGrid: ensuring viewport rows #{@topRenderIndex}-#{@bottomRenderIndex}"
-
     if @collection? && _.isFunction @collection.ensureRows
       @collection.ensureRows @topRenderIndex, @bottomRenderIndex, complete: @_onEnsureRowsComplete
     else
@@ -253,42 +240,81 @@ module.exports = class Tilegrid
   getItemData: (index) =>
     @collection?.getItem?(index, warn: true) || @collection?.models[index] || @data[index]
 
+  
+  # returns {topDisplayIndex: int, bottomDisplayIndex: int}
+  getViewingStats: () =>
+    gridScrollDims = @_getGridScrollDims()
+    $visibleTile = @_findTileInViewport(gridScrollDims)
+    $topTile = $bottomTile = $visibleTile
+    unless $visibleTile?.length > 0 
+      return {topDisplayIndex: 0, bottomDisplayIndex: 0} 
 
-  _findTopIndex: (startingAt=0) =>
-    $tile = @_findTopTile(startingAt)
-    $tile?.data('index')
+    loop
+      $prev = $topTile.prev('.tile')
+      break if $prev.length <= 0 || !@_isInViewPort(@_getTileDims($prev), gridScrollDims)
+      $topTile = $prev
+    loop
+      $next = $bottomTile.next('.tile')
+      break if $next.length <= 0 || !@_isInViewPort(@_getTileDims($next), gridScrollDims)
+      $bottomTile = $next
+    return {
+      topDisplayIndex: $topTile.data('index'), 
+      bottomDisplayIndex: $bottomTile.data('index')
+    }
+      
 
 
-  _findTopTile: (startingAt=0) =>
+  _getGridScrollDims: =>
     gridTop = @$tilegrid.scrollTop()
-    for index in [startingAt...@tileOffsets.length]
-      tileOffset = @tileOffsets[index]
-      continue unless tileOffset?
-      break if tileOffset.bottom > gridTop
+    gridLeft = @$tilegrid.scrollLeft()
+    h = @$tilegrid.height()
+    w = @$tilegrid.width()
+    return {
+      top: gridTop
+      left: gridLeft
+      bottom: gridTop + h
+      right: gridLeft + w
+      height: h
+      width: w
+    }
 
-    $tile = @findTileAt(index)
+    
+  _getTileDims: ($tile)=>
+    tilePosition = $tile.offset()
+    _.extend tilePosition,
+      bottom: tilePosition.top + $tile.height()
+      right: tilePosition.left + $tile.width()
+    return tilePosition
+
+
+  # uses a binary search to find a tile partially visible in the view port. 
+  # returns the first found (probably not top left or bottom right visible. see getViewStats)
+  _findTileInViewport: (gridScrollDims=@_getGridScrollDims()) =>
+    $tiles = @$tilegrid.find('.tile')
+    
+    $tile = null
+    half = $tiles.length / 2
+    lastOffset = 0
+    while (absHalf = Math.abs(half)) >= 2
+      offset = Math.min(Math.max(0, lastOffset + half), $tiles.length - 1)
+      $tile = $($tiles[offset])
+      break if $tile.length <= 0 
+      tileDims = @_getTileDims($tile)
+      break if @_isInViewPort(tileDims, gridScrollDims)
+      half = Math.floor(absHalf / 2)
+      half *= -1 if tileDims.left > gridScrollDims.width || tileDims.top > gridScrollDims.height
+      lastOffset = offset
+            
     return $tile
-
-
-  _findBottomIndex: (startingAt=0) =>
-    $tile = @_findBottomTile(startingAt)
-    $tile?.data('index')
-
-
-  _findBottomTile: (startingAt=0) =>
-    gridBottom = @$tilegrid.scrollTop() + @$tilegrid.height()
-    for index in [startingAt...@tileOffsets.length]
-      tileOffset = @tileOffsets[index]
-      # Waffled back and forth, what is the last visible tile? the last partially visible
-      # tile (tileOffset.top > gridBottom)-1  or the last wholly visible tile (tileOffset.bottom > gridBottom)-1  ?
-      continue unless tileOffset?
-      break if tileOffset.top > gridBottom
-
-    # -1 becasue loop above stops at first tile below the viewport
-    $tile = @findTileAt(index - 1)
-    return $tile
-
-
+    
+  
+  _isInViewPort: (tileDims, gridScrollDims=@_getGridScrollDims()) =>
+    horzVisible =    tileDims.right > 0 && tileDims.left < gridScrollDims.width
+    vertVisible =    tileDims.bottom > 0 && tileDims.top < gridScrollDims.height
+    
+    return horzVisible && vertVisible
+    
+     
   # - only use this method if you are sure all of the models are in the collection or array and you don't need it
   # to paginate.
   # - only use this method for very light weight stuff
@@ -370,7 +396,6 @@ module.exports = class Tilegrid
 
     @trigger 'tileRendered', $tile, model
     # give triggered code a chance to update the tile's dom before capturing position info
-    _.defer () => @_setTileOffsets($tile)
 
 
   _renderTileTemplate: ($tile, model) =>
@@ -379,20 +404,6 @@ module.exports = class Tilegrid
 
   _getTileTemplate: ($tile, model) =>
     return @$tileTemplate.html()
-
-
-  _resetTileOffsets: () =>
-    @tileOffsets = []
-    @_setTileOffsets($(tile)) for tile in @$element.find('.tile')
-
-
-  # Tilegrid tracks tops and bottoms of tiles so that it can know what tiles are visible in the viewport
-  _setTileOffsets: ($tile) =>
-    tileIndex = parseInt($tile.data('index'))
-    tileTop = $tile.position().top
-    @tileOffsets[tileIndex] =
-      top: @$tilegrid.scrollTop() + tileTop
-      bottom: @$tilegrid.scrollTop() + tileTop + $tile.outerHeight()
 
 
   # this method doesn't return derendered tiles
@@ -411,16 +422,12 @@ module.exports = class Tilegrid
 
 
   _endOfData: (options={}) =>
-    @$loadingIndicator.removeClass('in')
-    #@$loadingIndicator.hide()
+    @$loadingIndicator.hide()
 
 
   # returns true if loading indicator is visible or nearly
   _loadingInWindow: () =>
     # the effect of this is to hide the loading indicator until we actually start displaying data
-    unless @$loadingIndicator.hasClass('in')
-      return false;
-
     # this will not work (always return true) unless the @$element is visible on the page
     return false unless @$element.is(':visible') && @$loadingIndicator.is(':visible')
 
@@ -464,7 +471,6 @@ module.exports = class Tilegrid
 
 
   _onResize: () =>
-    @_resetTileOffsets()
     @_renderViewport()
 
 
@@ -472,7 +478,7 @@ module.exports = class Tilegrid
     evt.preventDefault()        # prevent default if the user clicks outside of a tile but in the grid
 
 
-  _derenderOutsideTiles: (topTileIndex=@_findTopIndex(), bottomTileIndex=@_findBottomIndex()) =>
+  _derenderOutsideTiles: (topTileIndex, bottomTileIndex) =>
     numInView = bottomTileIndex - topTileIndex
     for tile in @$element.find('.tile.rendered')
       $tile = $(tile)

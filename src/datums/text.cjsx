@@ -6,14 +6,25 @@ Datum = require('./datum')
 
 
 ###
-  For like text!  See also Datum
-
-  the Datum base class does most of the work by default of handling text, but for JSX
-  beauty, let's create an extension specifically for text data
+  see ./text.md
 ###
 module.exports = class Text extends Datum
   @displayName: "react-datum.Text"
 
+  
+  @propTypes: _.extend {}, Datum.propTypes,
+    displayAsHtml: React.PropTypes.bool
+    # set ellipsizeAt to false to display whole value. Only effects 'readonly' display
+    # values displayed in 'edit' mode are never truncated.
+    ellipsizeAt: React.PropTypes.oneOfType([
+      React.PropTypes.number
+      React.PropTypes.bool
+    ])
+
+  @defaultProps: _.extend {}, Datum.defaultProps,
+    # ellipsizeAt is defaulted to prevent really long strings from breaking layouts
+    ellipsizeAt: 35
+    
 
   render: ->
     super    # for breakpoint debugging
@@ -21,3 +32,14 @@ module.exports = class Text extends Datum
 
   renderValueForDisplay: ->
     @renderEllipsizedValue super
+
+  
+  renderWrappedDisplayValue: (value)->
+    if @props.displayAsHtml
+      <span className="datum-display-value" dangerouslySetInnerHTML={@getMarkup(value)}/>
+    else
+      super
+      
+
+  getMarkup: (value) ->
+    return {__html: value}

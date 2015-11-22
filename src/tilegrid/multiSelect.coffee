@@ -65,8 +65,9 @@ module.exports = class MultiSelect extends SingleSelect
 
 
     # stretch the rows we are ensuring to cover the viewport
-    firstTileIndex = if activeIndex > index then @tilegrid._findTopIndex() else activeIndex
-    lastTileIndex = if activeIndex < index then @tilegrid._findBottomIndex() else index
+    viewStats = @tilegrid.getViewingStats()
+    firstTileIndex = if activeIndex > index then viewStats.topDisplayIndex else activeIndex
+    lastTileIndex = if activeIndex < index then viewStats.bottomDisplayIndex else index
     if _.isFunction(@collection.ensureRows)
       @collection.ensureRows firstTileIndex, lastTileIndex,
         complete: onEnsureComplete

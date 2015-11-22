@@ -820,6 +820,14 @@ var ReactDatum =
 	    }, placeholder);
 	  };
 
+
+	  /*
+	    Note that this method is not called by Datum directly.  It is 
+	    provided here so that any Datum extensions can ellipsize whatever
+	    part of their rendering neccessary and have a consistent prop and 
+	    method for doing so.
+	   */
+
 	  Datum.prototype.renderEllipsizedValue = function(value, options) {
 	    var ellipsizeAt, ellipsizedValue, popover;
 	    if (options == null) {
@@ -1565,12 +1573,15 @@ var ReactDatum =
 	  };
 
 	  CollectionStats.prototype._renderViewing = function() {
-	    if (!((this.collection.topDisplayIndex != null) && this.collection.bottomDisplayIndex)) {
+	    var bottomIndex, ref, ref1, topIndex;
+	    topIndex = this.collection.topDisplayIndex || ((ref = this.collection.statsModel) != null ? ref.get('topDisplayIndex') : void 0);
+	    bottomIndex = this.collection.bottomDisplayIndex || ((ref1 = this.collection.statsModel) != null ? ref1.get('bottomDisplayIndex') : void 0);
+	    if (!((topIndex != null) && bottomIndex)) {
 	      return null;
 	    }
 	    return React.createElement("span", {
 	      "className": "viewing stats fade in"
-	    }, "Viewing ", this._renderCount(this.collection.topDisplayIndex, 'top-index'), " - ", this._renderCount(this.collection.bottomDisplayIndex, 'bottom-index'));
+	    }, "Viewing ", this._renderCount(topIndex, 'top-index'), " - ", this._renderCount(bottomIndex, 'bottom-index'));
 	  };
 
 	  CollectionStats.prototype._renderCount = function(value, addClass) {
@@ -1954,7 +1965,7 @@ var ReactDatum =
 	 */
 
 	module.exports = Tilegrid = (function() {
-	  Tilegrid.prototype.$tilegridTemplate = $("<div class=\"tilegrid\">\n    <div class=\"tilegrid-loading fade\">\n        <div class=\"placeholder\">\n            ... more to come ...\n            &nbsp;\n        </div>\n    </div>\n</div>");
+	  Tilegrid.prototype.$tilegridTemplate = $("<div class=\"tilegrid\">\n    <div class=\"tilegrid-loading\">\n        <div class=\"placeholder fade in\">\n            ... more to come ...\n            &nbsp;\n        </div>\n    </div>\n</div>");
 
 	  function Tilegrid(selector, data, tileTemplate1, options) {
 	    this.selector = selector;
@@ -1978,8 +1989,6 @@ var ReactDatum =
 	    this.tileFor = bind(this.tileFor, this);
 	    this.findTileAt = bind(this.findTileAt, this);
 	    this.tileAt = bind(this.tileAt, this);
-	    this._setTileOffsets = bind(this._setTileOffsets, this);
-	    this._resetTileOffsets = bind(this._resetTileOffsets, this);
 	    this._getTileTemplate = bind(this._getTileTemplate, this);
 	    this._renderTileTemplate = bind(this._renderTileTemplate, this);
 	    this.renderTile = bind(this.renderTile, this);
@@ -1990,10 +1999,11 @@ var ReactDatum =
 	    this._onEnsureComplete = bind(this._onEnsureComplete, this);
 	    this._renderNextPage = bind(this._renderNextPage, this);
 	    this.renderAllTiles = bind(this.renderAllTiles, this);
-	    this._findBottomTile = bind(this._findBottomTile, this);
-	    this._findBottomIndex = bind(this._findBottomIndex, this);
-	    this._findTopTile = bind(this._findTopTile, this);
-	    this._findTopIndex = bind(this._findTopIndex, this);
+	    this._isInViewPort = bind(this._isInViewPort, this);
+	    this._findTileInViewport = bind(this._findTileInViewport, this);
+	    this._getTileDims = bind(this._getTileDims, this);
+	    this._getGridScrollDims = bind(this._getGridScrollDims, this);
+	    this.getViewingStats = bind(this.getViewingStats, this);
 	    this.getItemData = bind(this.getItemData, this);
 	    this._onEnsureRowsComplete = bind(this._onEnsureRowsComplete, this);
 	    this._ensureViewport = bind(this._ensureViewport, this);
@@ -2019,7 +2029,6 @@ var ReactDatum =
 	      hideFunction: null
 	    });
 	    this.setTileTemplate(this.tileTemplate);
-	    this.tileOffsets = [];
 	    if (!(_.isArray(this.data) || this.data instanceof Backbone.Collection)) {
 	      throw "Tilegrid expects @data constructor arg to be either and array or a Collection";
 	    }
@@ -2066,8 +2075,7 @@ var ReactDatum =
 	      this.lastRenderedIndex = -1;
 	      this.$element.find('.tile').remove();
 	    }
-	    this.$loadingIndicator.addClass('in');
-	    this._resetTileOffsets();
+	    this.$loadingIndicator.show();
 	    return this;
 	  };
 
@@ -2136,32 +2144,23 @@ var ReactDatum =
 	    return _.values(this._$tilesByModelId);
 	  };
 
-	  Tilegrid.prototype.updateCollectionViewStats = function(options) {
-	    var base, ref, totalRows;
-	    if (options == null) {
-	      options = {};
-	    }
+	  Tilegrid.prototype.updateCollectionViewStats = function(stats) {
+	    var base, totalRows;
 	    if (this.collection == null) {
 	      return;
 	    }
-	    if (this.collection.hasStats) {
-	      options = _.defaults(options, {
-	        topDisplayIndex: this._findTopIndex(),
-	        bottomDisplayIndex: this._findBottomIndex()
+	    totalRows = this.getTotalItems();
+	    if (totalRows <= 0) {
+	      _.extend(stats, {
+	        topDisplayIndex: 0,
+	        bottomDisplayIndex: 0
 	      });
-	      totalRows = this.collection.getLength();
-	      if (totalRows <= 0) {
-	        this.collection.updateStats({
-	          topDisplayIndex: 0,
-	          bottomDisplayIndex: 0
-	        });
-	      } else {
-	        this.collection.updateStats(options);
-	      }
-	      return (ref = this.$emptyIndicator) != null ? ref.toggle(totalRows <= 0) : void 0;
+	    }
+	    if (this.collection.hasStats) {
+	      return this.collection.updateStats(stats);
 	    } else {
-	      this.collection.topDisplayIndex = this._findTopIndex();
-	      this.collection.bottomDisplayIndex = this._findBottomIndex();
+	      this.collection.topDisplayIndex = stats.topDisplayIndex;
+	      this.collection.bottomDisplayIndex = stats.bottomDisplayIndex;
 	      return typeof (base = this.collection).trigger === "function" ? base.trigger('viewStatsChanged') : void 0;
 	    }
 	  };
@@ -2213,14 +2212,13 @@ var ReactDatum =
 	  };
 
 	  Tilegrid.prototype._ensureViewport = function() {
-	    var $bottomTile, $topTile, bottomIndex, topIndex;
+	    var bottomIndex, topIndex, viewStats;
 	    if (this.options.ignoreViewport) {
 	      return;
 	    }
-	    $topTile = this._findTopTile();
-	    topIndex = $topTile != null ? $topTile.data('index') : void 0;
-	    $bottomTile = this._findBottomTile();
-	    bottomIndex = $bottomTile != null ? $bottomTile.data('index') : void 0;
+	    viewStats = this.getViewingStats();
+	    topIndex = viewStats.topDisplayIndex;
+	    bottomIndex = viewStats.bottomDisplayIndex;
 	    if (!((topIndex != null) && (bottomIndex != null))) {
 	      return;
 	    }
@@ -2271,60 +2269,99 @@ var ReactDatum =
 	    }) : void 0 : void 0) || ((ref1 = this.collection) != null ? ref1.models[index] : void 0) || this.data[index];
 	  };
 
-	  Tilegrid.prototype._findTopIndex = function(startingAt) {
-	    var $tile;
-	    if (startingAt == null) {
-	      startingAt = 0;
+	  Tilegrid.prototype.getViewingStats = function() {
+	    var $bottomTile, $next, $prev, $topTile, $visibleTile, gridScrollDims;
+	    gridScrollDims = this._getGridScrollDims();
+	    $visibleTile = this._findTileInViewport(gridScrollDims);
+	    $topTile = $bottomTile = $visibleTile;
+	    if (!(($visibleTile != null ? $visibleTile.length : void 0) > 0)) {
+	      return {
+	        topDisplayIndex: 0,
+	        bottomDisplayIndex: 0
+	      };
 	    }
-	    $tile = this._findTopTile(startingAt);
-	    return $tile != null ? $tile.data('index') : void 0;
+	    while (true) {
+	      $prev = $topTile.prev('.tile');
+	      if ($prev.length <= 0 || !this._isInViewPort(this._getTileDims($prev), gridScrollDims)) {
+	        break;
+	      }
+	      $topTile = $prev;
+	    }
+	    while (true) {
+	      $next = $bottomTile.next('.tile');
+	      if ($next.length <= 0 || !this._isInViewPort(this._getTileDims($next), gridScrollDims)) {
+	        break;
+	      }
+	      $bottomTile = $next;
+	    }
+	    return {
+	      topDisplayIndex: $topTile.data('index'),
+	      bottomDisplayIndex: $bottomTile.data('index')
+	    };
 	  };
 
-	  Tilegrid.prototype._findTopTile = function(startingAt) {
-	    var $tile, gridTop, i, index, ref, ref1, tileOffset;
-	    if (startingAt == null) {
-	      startingAt = 0;
-	    }
+	  Tilegrid.prototype._getGridScrollDims = function() {
+	    var gridLeft, gridTop, h, w;
 	    gridTop = this.$tilegrid.scrollTop();
-	    for (index = i = ref = startingAt, ref1 = this.tileOffsets.length; ref <= ref1 ? i < ref1 : i > ref1; index = ref <= ref1 ? ++i : --i) {
-	      tileOffset = this.tileOffsets[index];
-	      if (tileOffset == null) {
-	        continue;
-	      }
-	      if (tileOffset.bottom > gridTop) {
+	    gridLeft = this.$tilegrid.scrollLeft();
+	    h = this.$tilegrid.height();
+	    w = this.$tilegrid.width();
+	    return {
+	      top: gridTop,
+	      left: gridLeft,
+	      bottom: gridTop + h,
+	      right: gridLeft + w,
+	      height: h,
+	      width: w
+	    };
+	  };
+
+	  Tilegrid.prototype._getTileDims = function($tile) {
+	    var tilePosition;
+	    tilePosition = $tile.offset();
+	    _.extend(tilePosition, {
+	      bottom: tilePosition.top + $tile.height(),
+	      right: tilePosition.left + $tile.width()
+	    });
+	    return tilePosition;
+	  };
+
+	  Tilegrid.prototype._findTileInViewport = function(gridScrollDims) {
+	    var $tile, $tiles, absHalf, half, lastOffset, offset, tileDims;
+	    if (gridScrollDims == null) {
+	      gridScrollDims = this._getGridScrollDims();
+	    }
+	    $tiles = this.$tilegrid.find('.tile');
+	    $tile = null;
+	    half = $tiles.length / 2;
+	    lastOffset = 0;
+	    while ((absHalf = Math.abs(half)) >= 2) {
+	      offset = Math.min(Math.max(0, lastOffset + half), $tiles.length - 1);
+	      $tile = $($tiles[offset]);
+	      if ($tile.length <= 0) {
 	        break;
 	      }
+	      tileDims = this._getTileDims($tile);
+	      if (this._isInViewPort(tileDims, gridScrollDims)) {
+	        break;
+	      }
+	      half = Math.floor(absHalf / 2);
+	      if (tileDims.left > gridScrollDims.width || tileDims.top > gridScrollDims.height) {
+	        half *= -1;
+	      }
+	      lastOffset = offset;
 	    }
-	    $tile = this.findTileAt(index);
 	    return $tile;
 	  };
 
-	  Tilegrid.prototype._findBottomIndex = function(startingAt) {
-	    var $tile;
-	    if (startingAt == null) {
-	      startingAt = 0;
+	  Tilegrid.prototype._isInViewPort = function(tileDims, gridScrollDims) {
+	    var horzVisible, vertVisible;
+	    if (gridScrollDims == null) {
+	      gridScrollDims = this._getGridScrollDims();
 	    }
-	    $tile = this._findBottomTile(startingAt);
-	    return $tile != null ? $tile.data('index') : void 0;
-	  };
-
-	  Tilegrid.prototype._findBottomTile = function(startingAt) {
-	    var $tile, gridBottom, i, index, ref, ref1, tileOffset;
-	    if (startingAt == null) {
-	      startingAt = 0;
-	    }
-	    gridBottom = this.$tilegrid.scrollTop() + this.$tilegrid.height();
-	    for (index = i = ref = startingAt, ref1 = this.tileOffsets.length; ref <= ref1 ? i < ref1 : i > ref1; index = ref <= ref1 ? ++i : --i) {
-	      tileOffset = this.tileOffsets[index];
-	      if (tileOffset == null) {
-	        continue;
-	      }
-	      if (tileOffset.top > gridBottom) {
-	        break;
-	      }
-	    }
-	    $tile = this.findTileAt(index - 1);
-	    return $tile;
+	    horzVisible = tileDims.right > 0 && tileDims.left < gridScrollDims.width;
+	    vertVisible = tileDims.bottom > 0 && tileDims.top < gridScrollDims.height;
+	    return horzVisible && vertVisible;
 	  };
 
 	  Tilegrid.prototype.renderAllTiles = function(options) {
@@ -2432,12 +2469,7 @@ var ReactDatum =
 	    if (this.options.hideFunction && this.options.hideFunction(model)) {
 	      $tile.addClass('hidden');
 	    }
-	    this.trigger('tileRendered', $tile, model);
-	    return _.defer((function(_this) {
-	      return function() {
-	        return _this._setTileOffsets($tile);
-	      };
-	    })(this));
+	    return this.trigger('tileRendered', $tile, model);
 	  };
 
 	  Tilegrid.prototype._renderTileTemplate = function($tile, model) {
@@ -2446,28 +2478,6 @@ var ReactDatum =
 
 	  Tilegrid.prototype._getTileTemplate = function($tile, model) {
 	    return this.$tileTemplate.html();
-	  };
-
-	  Tilegrid.prototype._resetTileOffsets = function() {
-	    var i, len, ref, results, tile;
-	    this.tileOffsets = [];
-	    ref = this.$element.find('.tile');
-	    results = [];
-	    for (i = 0, len = ref.length; i < len; i++) {
-	      tile = ref[i];
-	      results.push(this._setTileOffsets($(tile)));
-	    }
-	    return results;
-	  };
-
-	  Tilegrid.prototype._setTileOffsets = function($tile) {
-	    var tileIndex, tileTop;
-	    tileIndex = parseInt($tile.data('index'));
-	    tileTop = $tile.position().top;
-	    return this.tileOffsets[tileIndex] = {
-	      top: this.$tilegrid.scrollTop() + tileTop,
-	      bottom: this.$tilegrid.scrollTop() + tileTop + $tile.outerHeight()
-	    };
 	  };
 
 	  Tilegrid.prototype.tileAt = function(index) {
@@ -2488,14 +2498,11 @@ var ReactDatum =
 	    if (options == null) {
 	      options = {};
 	    }
-	    return this.$loadingIndicator.removeClass('in');
+	    return this.$loadingIndicator.hide();
 	  };
 
 	  Tilegrid.prototype._loadingInWindow = function() {
 	    var inWindow, loadingTop, scrollBottom, scrollHeight, scrollTop;
-	    if (!this.$loadingIndicator.hasClass('in')) {
-	      return false;
-	    }
 	    if (!(this.$element.is(':visible') && this.$loadingIndicator.is(':visible'))) {
 	      return false;
 	    }
@@ -2537,7 +2544,6 @@ var ReactDatum =
 	  };
 
 	  Tilegrid.prototype._onResize = function() {
-	    this._resetTileOffsets();
 	    return this._renderViewport();
 	  };
 
@@ -2547,12 +2553,6 @@ var ReactDatum =
 
 	  Tilegrid.prototype._derenderOutsideTiles = function(topTileIndex, bottomTileIndex) {
 	    var $tile, bottomAcceptable, i, index, len, numInView, ref, results, tile, topAcceptable;
-	    if (topTileIndex == null) {
-	      topTileIndex = this._findTopIndex();
-	    }
-	    if (bottomTileIndex == null) {
-	      bottomTileIndex = this._findBottomIndex();
-	    }
 	    numInView = bottomTileIndex - topTileIndex;
 	    ref = this.$element.find('.tile.rendered');
 	    results = [];
@@ -3163,7 +3163,7 @@ var ReactDatum =
 	  };
 
 	  MultiSelect.prototype.selectExtend = function(index) {
-	    var $activeTile, $tile, activeIndex, firstTileIndex, lastTileIndex, onEnsureComplete;
+	    var $activeTile, $tile, activeIndex, firstTileIndex, lastTileIndex, onEnsureComplete, viewStats;
 	    $activeTile = this.getActiveTile();
 	    activeIndex = $activeTile.data('index');
 	    $tile = $activeTile;
@@ -3190,8 +3190,9 @@ var ReactDatum =
 	        return _this.setActiveTile(lastIndex);
 	      };
 	    })(this);
-	    firstTileIndex = activeIndex > index ? this.tilegrid._findTopIndex() : activeIndex;
-	    lastTileIndex = activeIndex < index ? this.tilegrid._findBottomIndex() : index;
+	    viewStats = this.tilegrid.getViewingStats();
+	    firstTileIndex = activeIndex > index ? viewStats.topDisplayIndex : activeIndex;
+	    lastTileIndex = activeIndex < index ? viewStats.bottomDisplayIndex : index;
 	    if (_.isFunction(this.collection.ensureRows)) {
 	      this.collection.ensureRows(firstTileIndex, lastTileIndex, {
 	        complete: onEnsureComplete
@@ -3319,7 +3320,7 @@ var ReactDatum =
 	  Email.displayName = "react-datum.Email";
 
 	  Email.propTypes = _.extend({}, Datum.propTypes, {
-	    displayLink: React.PropTypes.bool
+	    displayAsLink: React.PropTypes.bool
 	  });
 
 	  function Email(props) {
@@ -3331,7 +3332,7 @@ var ReactDatum =
 	  Email.prototype.renderValueForDisplay = function() {
 	    var value;
 	    value = Email.__super__.renderValueForDisplay.apply(this, arguments);
-	    if (this.props.displayLink) {
+	    if (this.props.displayAsLink) {
 	      return React.createElement("a", {
 	        "href": this.getMailToHref(value)
 	      }, value);
@@ -3689,10 +3690,7 @@ var ReactDatum =
 
 
 	/*
-	  For like text!  See also Datum
-
-	  the Datum base class does most of the work by default of handling text, but for JSX
-	  beauty, let's create an extension specifically for text data
+	  see ./text.md
 	 */
 
 	module.exports = Text = (function(superClass) {
@@ -3704,12 +3702,38 @@ var ReactDatum =
 
 	  Text.displayName = "react-datum.Text";
 
+	  Text.propTypes = _.extend({}, Datum.propTypes, {
+	    displayAsHtml: React.PropTypes.bool,
+	    ellipsizeAt: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.bool])
+	  });
+
+	  Text.defaultProps = _.extend({}, Datum.defaultProps, {
+	    ellipsizeAt: 35
+	  });
+
 	  Text.prototype.render = function() {
 	    return Text.__super__.render.apply(this, arguments);
 	  };
 
 	  Text.prototype.renderValueForDisplay = function() {
 	    return this.renderEllipsizedValue(Text.__super__.renderValueForDisplay.apply(this, arguments));
+	  };
+
+	  Text.prototype.renderWrappedDisplayValue = function(value) {
+	    if (this.props.displayAsHtml) {
+	      return React.createElement("span", {
+	        "className": "datum-display-value",
+	        "dangerouslySetInnerHTML": this.getMarkup(value)
+	      });
+	    } else {
+	      return Text.__super__.renderWrappedDisplayValue.apply(this, arguments);
+	    }
+	  };
+
+	  Text.prototype.getMarkup = function(value) {
+	    return {
+	      __html: value
+	    };
 	  };
 
 	  return Text;

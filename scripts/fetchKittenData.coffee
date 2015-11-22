@@ -12,6 +12,10 @@ getImageUrl = (pet) ->
   for photo in pet.media.photos.photo
     return photo.$t if photo['@size'] == 'pn'
   return null
+  
+getDescription = (pet) ->
+  raw = pet.description.$t || ""
+  return raw.replace('\n\n', '<br><br>').replace('\n', '<br><br>')
       
 
 # for a single request, petfinder api will return at most count=1000 results
@@ -41,12 +45,13 @@ fetchForZip = (zipCode) ->
       adoptable: pet.status.$t == "A"
       contactEmail: pet.contact.email.$t
       contactCity: pet.contact.city.$t
-      description: pet.description.$t
+      description: getDescription(pet)
       sex: pet.sex.$t
       size: pet.size.$t
       imageUrl: getImageUrl(pet)
       lastUpdate: pet.lastUpdate.$t
       shelterId: pet.shelterId.$t
+      petfinderUrl: "https://www.petfinder.com/petdetail/#{pet.id.$t}"
     }
   
 

@@ -167,6 +167,12 @@ module.exports = class Datum extends React.Component
     <span className="placeholder">{placeholder}</span>
 
 
+  ###
+    Note that this method is not called by Datum directly.  It is 
+    provided here so that any Datum extensions can ellipsize whatever
+    part of their rendering neccessary and have a consistent prop and 
+    method for doing so.
+  ###
   renderEllipsizedValue: (value, options={}) ->
     return value unless value?
     

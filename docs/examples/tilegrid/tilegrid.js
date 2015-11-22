@@ -22,16 +22,15 @@ var TilegridDisplay = React.createClass({
         React.createElement("div", {className: "preview"}, 
           React.createElement(Rd.SelectedModel, {placeholder: "Select a kitten to see information here"}, 
             React.createElement(Rd.LazyPhoto, {attr: "imageUrl"}), 
-            React.createElement("h3", null, "Adopt ", React.createElement(Rd.Text, {attr: "name", readonly: true}), " Today!"), 
-            React.createElement(Rd.link, {attr: "petfinderUrl"}, "Show ", React.createElement(Rd.Text, {attr: "name", readonly: true}), " on Petfinder.com"), 
-            React.createElement(Rd.email, {attr: "contactEmail", label: "Email contact", displayAsLink: true, readonly: true}), 
+            React.createElement("div", {className: "top-right"}, 
+              React.createElement("h3", null, "Adopt ", React.createElement(Rd.Text, {attr: "name", readonly: true}), " Today!"), 
+              React.createElement("div", null, React.createElement(Rd.Link, {attr: "petfinderUrl"}, "Show ", React.createElement(Rd.Text, {attr: "name", readonly: true}), " on Petfinder.com")), 
+              React.createElement("div", null, React.createElement(Rd.Email, {attr: "contactEmail", label: "Email now:", displayAsLink: true, readonly: true}))
+            ), 
             React.createElement(Rd.ClickToEditForm, {className: "kitten-form"}, 
-              React.createElement("div", null, React.createElement(Rd.Text, {attr: "name", label: "Name:", setOnChange: true, required: true})), 
-              React.createElement("label", null, "Say something about ", React.createElement(Rd.Text, {attr: "name", ellipsize: false, readonly: true}), ": "), 
-              React.createElement("div", null, React.createElement(Rd.Text, {attr: "description", className: "wide-input"})), 
-              React.createElement("div", null, React.createElement(Rd.Email, {attr: "sponsorEmail", label: "Adoption Sponsor:", displayLink: true})), 
-              React.createElement("label", null, "Leave a Comment!"), 
-              React.createElement("div", null, React.createElement(Rd.Text, {attr: "comment", className: "wide-input"}))
+              React.createElement("div", null, React.createElement(Rd.Text, {attr: "name", label: "Name: ", setOnChange: true, required: true})), 
+              React.createElement("div", null, React.createElement(Rd.Text, {attr: "description", className: "wide-input", ellipsizeAt: false, displayAsHtml: true})), 
+              React.createElement("div", null, React.createElement(Rd.Email, {attr: "contactEmail", label: "Sponsor Email: ", displayLink: true}))
             )
           )
         )
