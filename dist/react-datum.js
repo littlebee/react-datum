@@ -2663,7 +2663,6 @@ var ReactDatum =
 	    this._onSelectionsChanged = bind(this._onSelectionsChanged, this);
 	    this._onTileMouseUp = bind(this._onTileMouseUp, this);
 	    this._onTileMouseDown = bind(this._onTileMouseDown, this);
-	    this._onTileRendered = bind(this._onTileRendered, this);
 	    this._onFocusSinkFocus = bind(this._onFocusSinkFocus, this);
 	    this._initializeKeyboard = bind(this._initializeKeyboard, this);
 	    this._initializeCollection = bind(this._initializeCollection, this);
@@ -2671,6 +2670,7 @@ var ReactDatum =
 	    this.focus = bind(this.focus, this);
 	    this.getNextTile = bind(this.getNextTile, this);
 	    this.getPreviousTile = bind(this.getPreviousTile, this);
+	    this.updateTileStates = bind(this.updateTileStates, this);
 	    this.setActiveTile = bind(this.setActiveTile, this);
 	    this.getActiveTile = bind(this.getActiveTile, this);
 	    this.resetActiveTile = bind(this.resetActiveTile, this);
@@ -2753,11 +2753,8 @@ var ReactDatum =
 	    if (index != null) {
 	      $newActive = this.tilegrid.findTileAt(index);
 	      if ($newActive && $newActive.length > 0 && !$newActive.is($prevActive)) {
-	        $prevActive.removeClass('active');
-	        this._scrollIntoView($newActive.addClass('active'), $newActive.closest(':hasScroll'), this.options.scrollOptions);
+	        this._scrollIntoView($newActive, $newActive.closest(':hasScroll'), this.options.scrollOptions);
 	      }
-	    } else {
-	      $prevActive.removeClass('active');
 	    }
 	    if (($prevActive && !$newActive) || (!$prevActive && $newActive) || !($newActive != null ? $newActive.is($prevActive) : void 0)) {
 	      this.collection.setActiveIndex(index);
@@ -2766,7 +2763,22 @@ var ReactDatum =
 	      }
 	      this.tilegrid.trigger('activeTileChanged', $newActive, $prevActive);
 	    }
+	    this.updateTileStates($prevActive);
+	    this.updateTileStates($newActive);
 	    return $newActive;
+	  };
+
+	  SingleSelect.prototype.updateTileStates = function($tile) {
+	    var model;
+	    if ($tile == null) {
+	      return;
+	    }
+	    model = this.collection.get($tile.attr('data-id'));
+	    if (model == null) {
+	      return;
+	    }
+	    $tile.toggleClass('selected', model.selected);
+	    return $tile.toggleClass('active', model.active);
 	  };
 
 	  SingleSelect.prototype.getPreviousTile = function() {
@@ -2782,7 +2794,6 @@ var ReactDatum =
 	  };
 
 	  SingleSelect.prototype._initializeTilegrid = function() {
-	    this.tilegrid.on("tileRendered", this._onTileRendered);
 	    this.tilegrid.$element.on("mousedown.SingleSelect", ".tile", this._onTileMouseDown);
 	    this.tilegrid.$element.on("mouseup.SingleSelect", ".tile", this._onTileMouseUp);
 	    return this.tilegrid.selections = this;
@@ -2802,17 +2813,6 @@ var ReactDatum =
 	  };
 
 	  SingleSelect.prototype._onFocusSinkFocus = function() {};
-
-	  SingleSelect.prototype._onTileRendered = function($tile, model) {
-	    if (model.selected) {
-	      if ($tile != null) {
-	        $tile.addClass('selected');
-	      }
-	    }
-	    if (model.active) {
-	      return $tile != null ? $tile.addClass('active') : void 0;
-	    }
-	  };
 
 	  SingleSelect.prototype._onTileMouseDown = function(evt) {
 	    var index, ref;

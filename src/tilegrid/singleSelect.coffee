@@ -59,6 +59,8 @@ module.exports = class SingleSelect
       @setActiveTile(index)
     else
       @collection.selectModelByIndex(index, selected, options)
+      
+    
 
 
 
@@ -85,25 +87,34 @@ module.exports = class SingleSelect
     @tilegrid.$element.find('.tile.active')
 
 
+   # call with null to set active tile to nothing
   setActiveTile: (index) =>
     # console.log "setActiveTile", index
     $prevActive = @getActiveTile()
     $newActive = null
-    if index?                 # call with null to set active tile to nothing
+    if index?                
       $newActive = @tilegrid.findTileAt(index)
       if $newActive && $newActive.length > 0 && !$newActive.is($prevActive)
-        $prevActive.removeClass('active')
-        @_scrollIntoView $newActive.addClass('active'), $newActive.closest(':hasScroll'), @options.scrollOptions
-    else
-      $prevActive.removeClass('active')
+        @_scrollIntoView $newActive, $newActive.closest(':hasScroll'), @options.scrollOptions
 
     # only trigger changed event if something changed
     if ($prevActive && !$newActive) || (!$prevActive && $newActive) || !$newActive?.is($prevActive)
       @collection.setActiveIndex(index)
       @collection.selectModelByIndex(index) if index?
       @tilegrid.trigger 'activeTileChanged', $newActive, $prevActive
+      
+    @updateTileStates($prevActive)
+    @updateTileStates($newActive)
 
     return $newActive
+    
+  
+  updateTileStates: ($tile) =>
+    return unless $tile?
+    model = @collection.get($tile.attr('data-id'))
+    return unless model? 
+    $tile.toggleClass('selected', model.selected)
+    $tile.toggleClass('active', model.active)
 
 
   getPreviousTile: () =>   # from active tile
@@ -119,7 +130,6 @@ module.exports = class SingleSelect
 
 
   _initializeTilegrid: () =>
-    @tilegrid.on "tileRendered", @_onTileRendered
     @tilegrid.$element.on "mousedown.SingleSelect", ".tile", @_onTileMouseDown
     @tilegrid.$element.on "mouseup.SingleSelect", ".tile", @_onTileMouseUp
 
@@ -146,13 +156,6 @@ module.exports = class SingleSelect
     #     smarter idea would be to set the first visible selected active
     # unless @getActiveTile().length > 0
     #  @selectOnlyOne(0)
-
-
-  _onTileRendered: ($tile, model) =>
-    if model.selected
-      $tile?.addClass('selected')
-    if model.active
-      $tile?.addClass('active')
 
 
   _onTileMouseDown: (evt) =>
