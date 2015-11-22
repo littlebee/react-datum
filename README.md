@@ -45,15 +45,15 @@ var kittenCard = React.createClass({
   render: function(){
     return (
       <div className='kitten-card'>
-        <ReactDatum.Model model={kittenModel}>
-          <h3>Adopt <ReactDatum.Text attr="name"/> Today!</h3>
-          <div><ReactDatum.LazyPhoto attr="imgUrl"/></div>
-          <div><ReactDatum.Text attr="name" label="Name"/> (<ReactDatum.Text attr="title"/>)</div>
-          <div><ReactDatum.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/></div>
-          <ReactDatum.Text attr="description"/>
+        <Rd.Model model={kittenModel}>
+          <h3>Adopt <Rd.Text attr="name"/> Today!</h3>
+          <div><Rd.LazyPhoto attr="imgUrl"/></div>
+          <div><Rd.Text attr="name" label="Name"/> (<Rd.Text attr="title"/>)</div>
+          <div><Rd.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/></div>
+          <Rd.Text attr="description"/>
           <h5>Leave a comment</h5>
-          <ReactDatum.Text attr="comment" inputMode="edit"/>
-        </ReactDatum.Model>
+          <Rd.Text attr="comment" inputMode="edit"/>
+        </Rd.Model>
       </div>
     )
   }
@@ -75,18 +75,18 @@ var kittenCard = React.createClass({
   render: function(){
     return (
       <div className='kitten-card'>
-        <ReactDatum.Model model={kittenModel}>
-          <h3>Adopt <ReactDatum.Text attr="name"/> Today!</h3>
-          <ReactDatum.Form>
-            <div><ReactDatum.LazyPhoto attr="imgUrl"/></div>
-            <div><ReactDatum.Text attr="name" label="Name" setOnChange/> (<ReactDatum.Text attr="title"/>)</div>
-            <label>Say something about <ReactDatum.Text attr="name" readonly/>: </label>
-            <div><ReactDatum.Text attr="description" className="wide-input"/></div>
-            <div><ReactDatum.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/></div>
+        <Rd.Model model={kittenModel}>
+          <h3>Adopt <Rd.Text attr="name"/> Today!</h3>
+          <Rd.Form>
+            <div><Rd.LazyPhoto attr="imgUrl"/></div>
+            <div><Rd.Text attr="name" label="Name" setOnChange/> (<Rd.Text attr="title"/>)</div>
+            <label>Say something about <Rd.Text attr="name" readonly/>: </label>
+            <div><Rd.Text attr="description" className="wide-input"/></div>
+            <div><Rd.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/></div>
             <label>Leave a Comment!</label>
-            <div><ReactDatum.Text attr="comment" className="wide-input"/></div>
-          </ReactDatum.Form>
-        </ReactDatum.Model>
+            <div><Rd.Text attr="comment" className="wide-input"/></div>
+          </Rd.Form>
+        </Rd.Model>
       </div>
     )
   }
@@ -103,7 +103,6 @@ By wrapping the datums in the **ReactDatum.Form** tag, they implicitedly recieve
 *and you do realize that the plural of "datum" is "data", don't you?*
 
 Datums are the presentation of attributes from a Backbone model.  All are object oriented extentions of the Datum class that provide a display `inputMode='readonly'` (default) and optionally an input presentation `inputMode='edit'`.  
-
 Datums interact with the model only by .get() and .set().  Datums do not directly listen to any model events.  The **ReactDatum.Model** component is what causes the datums to rerender in reponse to model changes.  
 
 #### *Shhhh, don't call it "2 way data-binding"*

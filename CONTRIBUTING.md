@@ -53,28 +53,26 @@ As part of `grunt build` and `grunt watch`, scripts/deployToZuKeeper.coffee is e
 
 You should be able to make a change in the react-datum code and instantly test it on your vps without committing to either repo and doing nothing more than `grunt build` in the react-datum directory.
 
-After you have written a test for your changes (come on, I swear it's really easy), you can commit them in the react-datum branch and, if deployToZukeeper worked on build, you can go over and commit the dist files there.  Easy as -cake-, er, grunt!
+After you have written a test for your changes (come on, I swear it's really easy), you can commit them in the react-datum branch and, if deployToZukeeper worked on build, you can go over and commit the dist files in htdocs_ems.  Easy as -cake-, er, grunt!
 
 **Gitlab vs. Github  (TODO: remove this after public)**
 
 For now we commit and stage first to Gitlab internally and then periodically push builds to Github.  This was to enable easy early participation among the team.  We will probably do away with the Gitlab fork when we go public.  (soon)
  
 
-
-
 ## Tests
 
 Testing is fun!   No, really, it's not too bad.  We use Mocha + Chai + a few chai addons to make the job easy.   Here are some pertinent links: 
 
 [Mocha.js test framework](http://visionmedia.github.io/mocha) 
- _for `describe, it, before, after`_
+_for `describe, it, before, after`_
 
 [Chai Assertion Library](http://chaijs.com) 
 _for `should, expect, assert`. Note we are using the BDD style_ 
 
 [Sinon.JS Test Spies, Stubs and Mocks](http://sinonjs.org/docs/) plus 
 [Sinon Chai itegration](https://github.com/domenic/sinon-chai) 
- _for things like `mySpy.calledWith("foo").should.be.ok`;_ 
+_for things like `mySpy.calledWith("foo").should.be.ok`;_ 
  
 [Chai Changes](https://github.com/matthijsgroen/chai-changes) 
 _for things like `(->result).should.change.by(3).when -> result += 3`_
@@ -161,13 +159,15 @@ decide not to use at all.
 
 I love jQuery.  There I said it.  But... I hate that we have to insist people install it as a dependency.   
 
-In the React community, I think the general feeling is that you shouldn't be reaching directly into the DOM, or need to.  However, that said, we work in the real world which jQuery has been a huge part of for a really long time.   Our tilegrid component does a great job of directly manipulating the DOM for optimal performance with collections of thousands.  We are not going to see jQuery go away over night.  And, as you will see with many of the tests, jQuery still does a great job of reducing the noise of constantly calling methods like `document.getElementById('#someID')` and `document.querySelector('#')`  
+In the React community, I think the general feeling is that you shouldn't be reaching directly into the DOM, or need to.  However, that said, we work in the real world which jQuery has been a huge part of for a really long time.   Our tilegrid component does a great job of directly manipulating the DOM for optimal performance with collections of thousands.  
 
-For tests, continue to use jQuery. Those should be as easy to write as possible to incetivize.  
+We are not going to see jQuery go away over night.  And, as you will see with many of the tests, jQuery still does a great job of reducing the noise of constantly calling methods like `document.getElementById('#someID')` and `document.querySelector({fully qualified path})`  
 
-For the components except **ReactDatum.Tilegrid**, let's not use jQuery and try doing things the React Way (whatever).  
+For tests, continue to use jQuery. Those should be as easy to write as possible (so people will).  
 
-For **ReactDatum.Tilegrid**, I think it will continue using jQuery for some time and I can see it being reimagined in a React way in the future, but not now.  And besides, our internal experience using it, as it currently is, has been pretty good over the last year.  We may setup a seperate dist file or perhaps a seperate repo / npm package in the nearer future and achieve the same objective of removing jQuery dependence of the react-datum core components.  
+For the components except **ReactDatum.Tilegrid**, let's not use jQuery and try doing things the React Way (whatever that means).  
+
+For **ReactDatum.Tilegrid**, I think it will continue using jQuery for some time.  I can see it being reimagined in a React way in the future, but not now.  And besides, our internal experience using it, as it currently is, has been pretty good over the last year.  We may setup a seperate dist file or perhaps a seperate repo / npm package in the nearer future and achieve the same objective of removing jQuery dependence from the react-datum core components.  
 
 We should also consider splitting out src/datums/collectionPicker as well.  It doesn't rely on jQuery, but it does pull an additional 30k of source from react-select.  If it were it's own component, and Tilegrid were on it's own, the react-datum.min.js file size would be 60Kb less (estimate).  As of 11.2015 react-datum.min.js is 100Kb.
 
