@@ -29,5 +29,9 @@ describe "Collection", ->
       component = Th.render <Collection collection={testCollection} fetch={true}/>
       testCollection.fetch.restore()
       fetchStub.should.have.been.called
-      
     
+    it "should have mixed in collection selection tracking methods", ->
+      for method in ['getSelectedModels', 'selectModel', 'selectModelById', 'selectNone']
+        testCollection.should.respondTo(method, "expected collection to have #{method} method")  
+    
+  
