@@ -15,8 +15,8 @@ var TilegridDisplay = React.createClass({
           React.createElement(Rd.CollectionStats, {itemDisplayName: "Kittens"}), 
           React.createElement(Rd.Tilegrid, null, 
             React.createElement(Rd.LazyPhoto, {attr: "imageUrl"}), 
-            React.createElement("h5", null, React.createElement(Rd.Text, {attr: "name"})), 
-            React.createElement(Rd.Email, {attr: "contactEmail", label: "Contact Email: "})
+            React.createElement("h4", null, React.createElement(Rd.Text, {attr: "name"})), 
+            React.createElement(Rd.Email, {attr: "breed"})
           )
         ), 
         React.createElement("div", {className: "preview"}, 
@@ -29,8 +29,8 @@ var TilegridDisplay = React.createClass({
             ), 
             React.createElement(Rd.ClickToEditForm, {className: "kitten-form"}, 
               React.createElement("div", null, React.createElement(Rd.Text, {attr: "name", label: "Name: ", setOnChange: true, required: true})), 
-              React.createElement("div", null, React.createElement(Rd.Text, {attr: "description", className: "wide-input", ellipsizeAt: false, displayAsHtml: true})), 
-              React.createElement("div", null, React.createElement(Rd.Email, {attr: "contactEmail", label: "Sponsor Email: ", displayLink: true}))
+              React.createElement("div", null, React.createElement(Rd.Email, {attr: "contactEmail", label: "Sponsor Email: "})), 
+              React.createElement("div", null, React.createElement(Rd.Text, {attr: "description", className: "wide-input", ellipsizeAt: false, displayAsHtml: true}))
             )
           )
         )

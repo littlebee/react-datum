@@ -15,8 +15,8 @@ var TilegridDisplay = React.createClass({
           <Rd.CollectionStats itemDisplayName="Kittens"/>
           <Rd.Tilegrid>
             <Rd.LazyPhoto attr="imageUrl"/>
-            <h5><Rd.Text attr="name"/></h5>
-            <Rd.Email attr="contactEmail" label="Contact Email: "/>
+            <h4><Rd.Text attr="name"/></h4>
+            <Rd.Email attr="breed"/>
           </Rd.Tilegrid>
         </div>
         <div className="preview">
@@ -29,8 +29,8 @@ var TilegridDisplay = React.createClass({
             </div>
             <Rd.ClickToEditForm className='kitten-form'>
               <div><Rd.Text attr="name" label="Name: " setOnChange required/></div>
+              <div><Rd.Email attr="contactEmail" label="Sponsor Email: "/></div>
               <div><Rd.Text attr="description" className="wide-input" ellipsizeAt={false} displayAsHtml/></div>
-              <div><Rd.Email attr="contactEmail" label="Sponsor Email: " displayLink/></div>
             </Rd.ClickToEditForm>
           </Rd.SelectedModel>
         </div>
