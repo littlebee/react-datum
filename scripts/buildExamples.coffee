@@ -21,7 +21,7 @@ moment = require('moment')
 
 ###
 
-EXAMPLE_SRC_DIR = 'src/examples'
+EXAMPLE_SRC_DIR = 'src/docs/examples'
 EXAMPLE_TARGET_DIR = 'docs/examples'
 
 rawTemplate = fs.readFileSync('scripts/lib/exampleFile.tpl')

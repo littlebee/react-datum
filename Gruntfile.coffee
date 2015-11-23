@@ -7,7 +7,10 @@
 
 ###
 
-EXAMPLE_SRC = 'src/examples'
+DOCS_SRC = 'src/docs'
+DOCS_DEST = 'docs'
+
+EXAMPLE_SRC = 'src/docs/examples'
 EXAMPLE_DEST = 'docs/examples'
 
 module.exports = (grunt) ->
@@ -32,9 +35,9 @@ module.exports = (grunt) ->
       distrib:
         ["dist/react-datum.*"]
 
-      # all examples need to be .jsx or .csx
+      # all examples need to be compiled to .js to be statically available to gh-pages
       examples:
-        ["docs/examples/**/*.js", "docs/examples/**/*.html"]
+        ["#{EXAMPLE_DEST}/**/*.js", "#{EXAMPLE_DEST}/**/*.html"]
 
 
     react:
@@ -48,18 +51,6 @@ module.exports = (grunt) ->
         ]
 
     coffee:
-      # build isn't really used right now (examples is) because webpack takes
-      # care of pipelining coffeescript and cjsx
-      build:
-        options:
-          header: true
-        files: [
-          expand: true
-          cwd: 'src'
-          src: ['**/*.coffee', '!examples/*']
-          dest: 'build'
-          ext: '.js'
-        ]
       examples:
         files: [
           expand: true
@@ -70,50 +61,42 @@ module.exports = (grunt) ->
         ]
 
     cjsx:
-      # build isn't really used right now (examples is) because webpack takes
-      # care of pipelining coffeescript and cjsx
-      build:
-        files: [
-          expand: true
-          cwd: 'src'
-          src: ['**/*.cjsx', '!examples/*']
-          dest: 'build'
-          ext: '.js'
-        ]
       examples:
         files: [
           expand: true
-          cwd: 'examples'
+          cwd: EXAMPLE_SRC
           src: [ '**/*.cjsx' ]
-          dest:'examples'
+          dest:EXAMPLE_DEST
           ext: '.js'
         ]
+    
         
-    cssmin: {
-      options: {
+    cssmin: 
+      options: 
         shorthandCompacting: false,
         keepBreaks: true
-      },
-      distrib: {
-        files: {
+      
+      distrib: 
+        files: 
           'dist/react-datum.css': [
             'css/**/*.css', 
             'node_modules/react-select/dist/react-select.css'
           ]
-        }
-      }
-    }      
+       
     
     shell:
       buildExamples:
         command: 'coffee ./scripts/buildExamples.coffee grunt'
+      
       deploy:
         options:
           # should gracefully fail if it doesn't find zukeeper src.  see comment at top of the script
           failOnError: false
         command: 'coffee ./scripts/deployToZukeeper.coffee'
+      
       npmInstall:
         command: 'npm install'
+      
       test:
         command: 'coffee scripts/testRunner.coffee'
 
@@ -122,16 +105,23 @@ module.exports = (grunt) ->
       tasks:
         options:
           filter: 'include'
-          tasks: ['build', 'watch']
-
+          tasks: ['build', 'test', 'watch',  'clean', 'docs']
+          descriptions: 
+            build: "Builds everything including docs, examples"
+            test: "Builds everything and then run tests in /test"
+            watch: "Watch for changing files and calls build. Also watches examples and docs"
+            docs: "Build the docs. To publish to github.io, you must pull master into gh-pages"
+            clean: "Remove all compiled files. Use `grunt clean build` to rebuild everything from scratch"
 
     watch:
       examplesDeps:
         files: ["scripts/lib/exampleFile.tpl", "scripts/buildExamples.coffee"]
         tasks: ["clean:examples", "examples"]
+      
       examples:
         files: ["src/examples/**/*", "scripts/lib/exampleFile.tpl"]
         tasks: ["examples"]
+      
       distrib:
         files: ["src/**/*", "!src/examples/*", "css/**/*", "webpack.config.coffee"]
         tasks: ["distrib"]
@@ -145,6 +135,7 @@ module.exports = (grunt) ->
   # tasks
   grunt.registerTask 'test', ['build', "shell:test"]
   grunt.registerTask 'distrib', ['cssmin:distrib', 'webpack:distrib', 'webpack:optimize','shell:deploy']
+  grunt.registerTask 'docs',  ['examples']
   grunt.registerTask 'examples', ['newer:react:examples', 'newer:cjsx:examples', 'newer:coffee:examples', 'shell:buildExamples']
   grunt.registerTask 'build', ['examples', 'distrib'] # ['newer:cjsx:build', 'newer:coffee:build', 'distrib']
   grunt.registerTask 'default', ['availabletasks']

@@ -1,0 +1,40 @@
+
+body > header {
+  background-color: #B7BED0;
+  height: 110px;
+  padding-top: 7px;
+  position: relative;
+  overflow: hidden;
+}
+
+body > header img {
+  float: left;
+}
+
+body > header em {
+  position: absolute;
+  top: 19px;
+  right: 20px;
+}
+
+body > header .main-menu {
+  position: absolute;
+  bottom: 0px;
+  left: 142px;
+  min-width: 705px;
+}
+
+body > header .main-menu-item {
+  margin-right: 30px;
+  padding: 4px 7px;
+  border: solid 1px transparent;
+  cursor: pointer;
+}
+
+body > header .main-menu-item.selected {
+  background-color: #e9f6c6;
+}
+
+body > header .main-menu-item:hover {
+  border: solid 1px black;
+}

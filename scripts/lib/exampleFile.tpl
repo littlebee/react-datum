@@ -4,9 +4,9 @@
   <meta http-equiv="content-type" content="text/html;charset=UTF-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <meta name="viewport" content="width=device-width">
-  <link rel="stylesheet" type="text/css" href="../bootstrap-light.css">
-  <link rel="stylesheet" type="text/css" href="../syntaxHighlight.css">
-  <link rel="stylesheet" type="text/css" href="../example.css">
+  <link rel="stylesheet" type="text/css" href="../css/bootstrap-light.css">
+  <link rel="stylesheet" type="text/css" href="../css/syntaxHighlight.css">
+  <link rel="stylesheet" type="text/css" href="../css/example.css">
   <link rel="stylesheet" type="text/css" href="../../../dist/react-datum.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
@@ -34,6 +34,7 @@
   <script src="../../../dist/vendor/underscore.js"></script>
   <script src="../../../dist/vendor/backbone.js"></script>
   <script src="../../../dist/react-datum.js"></script>
+  
   <script src="../../../test/lib/kittenData.js"></script>
   
   <script src="<%= sourceFile %>"></script>
