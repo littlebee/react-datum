@@ -61,7 +61,7 @@ var kittenCard = React.createClass({
 ReactDOM.render(React.createElement(kittenCard), document.getElementById('demo'))
 
 ```
-<img alt="Screenshot from doc/examples/model/model.html" src="https://github.com/zulily/react-datum/blob/master/img/react-datum_model-example.png"/>
+<img alt="Screenshot from doc/examples/model/model.html" src="http://zulily.github.io/react-datum/docs/img/react-datum_model-example.png"/>
 
 ## For Display and Input!
 
@@ -92,7 +92,7 @@ var kittenCard = React.createClass({
   }
 })
 ```
-<img alt="Screenshot from doc/examples/form/form.html" src="https://github.com/zulily/react-datum/blob/master/img/react-datum_form-example.png"/>
+<img alt="Screenshot from doc/examples/form/form.html" src="http://zulily.github.io/react-datum/docs/img/react-datum_form-example.png"/>
 
 
 When the user presses save, model.save() is called.   All of the attributes were set() when the user entered new values.  If cancel is clicked, the model and subsequently, the form are reset back to the state of the last model.save().

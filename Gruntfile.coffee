@@ -87,6 +87,9 @@ module.exports = (grunt) ->
     shell:
       buildExamples:
         command: 'coffee ./scripts/buildExamples.coffee grunt'
+
+      buildDocIndex:
+        command: 'coffee ./scripts/buildDocIndex.coffee grunt'
       
       deploy:
         options:
@@ -135,7 +138,7 @@ module.exports = (grunt) ->
   # tasks
   grunt.registerTask 'test', ['build', "shell:test"]
   grunt.registerTask 'distrib', ['cssmin:distrib', 'webpack:distrib', 'webpack:optimize','shell:deploy']
-  grunt.registerTask 'docs',  ['examples']
+  grunt.registerTask 'docs',  ['shell:buildDocIndex', 'examples']
   grunt.registerTask 'examples', ['newer:react:examples', 'newer:cjsx:examples', 'newer:coffee:examples', 'shell:buildExamples']
-  grunt.registerTask 'build', ['examples', 'distrib'] # ['newer:cjsx:build', 'newer:coffee:build', 'distrib']
+  grunt.registerTask 'build', ['docs', 'distrib'] # ['newer:cjsx:build', 'newer:coffee:build', 'distrib']
   grunt.registerTask 'default', ['availabletasks']
