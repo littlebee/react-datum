@@ -4,12 +4,13 @@ fs = require('fs')
 path = require('path')
 _ = require('underscore')
 marked = require('marked')
-highlight = require('highlight.js')
+nsh = require('node-syntaxhighlighter')
+language =  require('jsx-syntaxhighlighter')
 
 # marked is a markdown to html converter
 marked.setOptions(
   highlight: (code) ->
-    return highlight.highlightAuto(code).value;
+    nsh.highlight(code, language) 
 )
 
 ### 
@@ -22,11 +23,30 @@ DOCS_TARGET_DIR = 'docs'
 indexTemplate = _.template(fs.readFileSync('src/docs/index.tpl').toString())
 headerTemplate = _.template(fs.readFileSync('src/docs/header.tpl').toString())
 
+demoTemplate = _.template """
+  <div id="<%= whichDemo %>Demo" class="inline-demo"></div>
+  <script>
+    $(function() {
+      // window.Demo expected to be set by by sourceFile
+      ReactDOM.render(React.createElement(<%= demoClass %>), $('#<%= whichDemo %>Demo')[0]);
+    })
+  </script>
+  <em> go ahead, you know you want to try it </em>
+"""
+
 unless 'grunt' in process.argv
   throw "You should probably use `grunt docs` instead"
 
 readmeHtml = marked(fs.readFileSync('README.md').toString())
+debugger
+# we can do better than static images when running on github.io pages :)
+readmeHtml = readmeHtml.replace /\<img.*model.*\.png.*\/\>/g,
+  demoTemplate(whichDemo: 'model', demoClass: 'KittenCard')
+readmeHtml = readmeHtml.replace /\<img.*form.*\.png.*\/\>/g, 
+  demoTemplate(whichDemo: 'form', demoClass: 'KittenForm')
+
 headerHtml = headerTemplate(relativeRoot: '..', selectedItem: 0)
+
 indexHtml = indexTemplate(
   relativeRoot: '..'
   header: headerHtml

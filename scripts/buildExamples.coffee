@@ -25,7 +25,6 @@ EXAMPLE_SRC_DIR = 'src/docs/examples'
 EXAMPLE_TARGET_DIR = 'docs/examples'
 
 exampleTemplate = _.template(fs.readFileSync('src/docs/exampleFile.tpl').toString())
-headerTemplate = _.template(fs.readFileSync('src/docs/header.tpl').toString())
 
 
 unless 'grunt' in process.argv
@@ -40,8 +39,8 @@ processFile = (file) ->
   relativePath = path.dirname(file).slice(EXAMPLE_SRC_DIR.length)
   relativeFile = path.join(relativePath, simpleName + ext)
   
-  relativeRoot = ""
-  relativeRoot += "../" for dir in relativePath.split('/')
+  relativeRoot = ".."
+  relativeRoot += "/.." for dir in relativePath.split('/')
 
   return unless ext in [".coffee", ".js", ".jsx", ".cjsx"]
 
@@ -57,7 +56,7 @@ processFile = (file) ->
     sourceFile: simpleName + '.js'
     relativeFile: relativeFile
     simpleName: simpleName
-    header: headerTemplate selectedItem: 1, relativeRoot: relativeRoot
+    relativeRoot: relativeRoot
     
 
   fullOutPath = path.join(EXAMPLE_TARGET_DIR, relativePath, simpleName + '.html')

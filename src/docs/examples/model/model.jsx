@@ -18,7 +18,7 @@ var kittenModel = new Backbone.Model({
 
 // To create the card on the right:
 
-var kittenCard = React.createClass({
+KittenCard = React.createClass({
   displayName:"KittenCard",
   render: function(){
     return (
@@ -36,4 +36,4 @@ var kittenCard = React.createClass({
     )
   }
 })
-ReactDOM.render(React.createElement(kittenCard), document.getElementById('demo'))
+window.Demo = KittenCard

@@ -22,7 +22,7 @@ kittenModel.save = function(attrs, options) {
 
 // To make it into a form, just add the <Rd.Form>
 
-var KittenCard = React.createClass({
+KittenForm = React.createClass({
   displayName:"KittenCard",
   render: function(){
     return (
@@ -44,10 +44,4 @@ var KittenCard = React.createClass({
   }
 })
 
-// if( module ){
-//   module.exports = {example: KittenCard}
-// } else {
-//   ReactDOM.render(React.createElement(KittenCard), document.getElementById('demo'))
-// }
-
-ReactDOM.render(React.createElement(KittenCard), document.getElementById('demo'))
+window.Demo = KittenForm

@@ -75,7 +75,6 @@
     "grunt-shell": "^1.1.2",
     "grunt-sync": "^0.4.1",
     "grunt-webpack": "^1.0.11",
-    "highlight.js": "^8.9.1",
     "imports-loader": "^0.6.5",
     "jest-cli": "^0.7.1",
     "jquery": ">=2.0.0",

@@ -8,6 +8,7 @@ body > header {
   width: 100%;
   top: 0;
   left: 0;
+  z-index: 1000;
 }
 
 body > header img {
@@ -42,17 +43,33 @@ body > header .main-menu-item:hover {
   border: solid 1px black;
 }
 
+.syntaxhighlighter .gutter .line {
+    border-right: 3px solid #d4d0c8 !important;
+    margin-right: 17px;
+}
+
 .main-content {
   margin-top: 117px; 
   padding-left: 45px;
 }
 
+.inline-demo {
+  border: 1px solid black;
+  border-radius: 3px;
+  width: 375px;
+  padding: 7px 15px;
+}
+
+
+
 /* 
-  for intro page, which is just the Readme, pull the top up and out of site so as not 
+  for intro page only, which is just the Readme, pull the top up and out of site so as not 
   to repeat information and links in the header
 */
 body.docs-index .main-content {
   margin-top: -78px;
   
 }
+
+
 

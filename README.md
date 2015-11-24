@@ -20,7 +20,7 @@ Install using Bower:
 
 Install from the web:  Copy file at (TODO: add link to checked in min dist file here)
 
-## Usage:
+## Usage
 ```javascript
 var Rd = ReactDatum
 
