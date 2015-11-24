@@ -4,7 +4,7 @@ react-datum
 A set of [React](https://facebook.github.io/react/) components for interacting with Backbone collections and models.
 
 ## Demo & Examples
-*comming soon!*
+(http://zulily.github.io/react-datum/docs/examples/)
 
 ## Installation
 
