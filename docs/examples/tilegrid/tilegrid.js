@@ -39,4 +39,4 @@ var TilegridDisplay = React.createClass({
   }
 })
 
-ReactDOM.render(React.createElement(TilegridDisplay), document.getElementById('demo'))
+window.Demo = TilegridDisplay

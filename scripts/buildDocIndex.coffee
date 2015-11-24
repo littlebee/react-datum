@@ -27,7 +27,6 @@ demoTemplate = _.template """
   <div id="<%= whichDemo %>Demo" class="inline-demo"></div>
   <script>
     $(function() {
-      // window.Demo expected to be set by by sourceFile
       ReactDOM.render(React.createElement(<%= demoClass %>), $('#<%= whichDemo %>Demo')[0]);
     })
   </script>

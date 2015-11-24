@@ -23,14 +23,17 @@ var examplesCollection = new Backbone.Collection([{
   name: "Big Kittens Demo!",
   relativePath: "tilegrid/tilegrid.html",
   description: "This demo shows the pieces all come together to make a function CRUD app. " +
-    "with Kittens!",
+    "<br>...with Kittens!",
 },{
   id: "examplesView",
-  name: "Demos within Demos",
+  name: "Demos Within Demos",
   relativePath: "examplesView.html",
-  description: "This demo is this demo viewer (how fucking meta and deep is that shit?!?). " +
-    "The demo viewer you are looking at is really just a ReactDatum.Tilegrid and custom iframe component. " +
-    "Be careful you don't fall in the rabbit hole by clicking too deep. :)",
+  description: "<p>This demo is this demo viewer (how fucking meta and deep is that shit?!?).</p> " +
+    "<p>The demo viewer you are looking at right now, is really just a ReactDatum.Tilegrid, a few "+
+    "datums and a custom iframe component.  If you scroll past the the static data, you "+
+    "can see a nice example of how to make use of a contextually provided model in a custom "+
+    "react component</p> " +
+    "<p>Be careful you don't fall in the rabbit hole by clicking too deep. :)</p>",
 }])
 
 var DemoIframe = React.createClass({

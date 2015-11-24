@@ -79,6 +79,7 @@ processFile = (file) ->
   if exists
     srcMtime = moment(fs.statSync(file).mtime)
     targetMtime = moment(fs.statSync(fullOutPath).mtime)
+  
   if !exists || srcMtime.isAfter(targetMtime)
     console.log "processing file: " + file
     fs.writeFileSync fullOutPath, exampleTemplate(templateArgs)
