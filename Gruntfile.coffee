@@ -38,6 +38,9 @@ module.exports = (grunt) ->
       # all examples need to be compiled to .js to be statically available to gh-pages
       examples:
         ["#{EXAMPLE_DEST}/**/*.js", "#{EXAMPLE_DEST}/**/*.html"]
+        
+      docIndex:
+        ["#{DOCS_DEST}/index.html"]
 
 
     react:
@@ -118,13 +121,13 @@ module.exports = (grunt) ->
 
     watch:
       examplesDeps:
-        files: ["scripts/lib/exampleFile.tpl", "scripts/buildExamples.coffee"]
-        tasks: ["clean:examples", "examples"]
+        files: ["src/docs/exampleFile.tpl", "scripts/buildExamples.coffee"]
+        tasks: ["clean:examples"]
       
-      examples:
-        files: ["src/examples/**/*", "scripts/lib/exampleFile.tpl"]
-        tasks: ["examples"]
-      
+      docs:
+        files: ["src/docs/**/*", "scripts/buildDocIndex.coffee", "scripts/documentor.coffee"]
+        tasks: ["docs"]
+              
       distrib:
         files: ["src/**/*", "!src/examples/*", "css/**/*", "webpack.config.coffee"]
         tasks: ["distrib"]

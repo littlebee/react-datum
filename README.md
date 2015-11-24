@@ -18,7 +18,10 @@ Install using Bower:
 TBD:  ...
 ```
 
-Old school install from the web:  Copy development (.js) or optimized (.min.js) distribution file from (https://github.com/zulily/react-datum/tree/master/dist) in with your other vendor js and use a script tag or AMD to load it.  
+
+Old school install from the web:  
+
+Copy development (.js) or optimized (.min.js) distribution file from (https://github.com/zulily/react-datum/tree/master/dist) in with your other vendor js and use a script tag or AMD to load it.  
 
 
 

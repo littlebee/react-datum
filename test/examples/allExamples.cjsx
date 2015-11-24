@@ -35,8 +35,10 @@ loadExample = (exampleScriptFile, done) ->
   $('body').html """
     <div id="demo"></div>
     <script>#{fs.readFileSync('dist/react-datum.js')}</script>
-    <script>#{fs.readFileSync(exampleScriptFile)}</script>
+    <script id="exampleScript">#{fs.readFileSync(exampleScriptFile)}</script>
+    <script>ReactDOM.render(React.createElement(window.Demo), document.getElementById('demo'))</script>
   """
+
   # basically it dumps the whole contents of the reactDatum lib and the compiled example into
   # two static script tags in the dom and that makes the code instantly load and run
   # and at this point we can be assured that we are...
