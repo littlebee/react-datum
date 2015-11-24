@@ -10,15 +10,17 @@ A set of [React](https://facebook.github.io/react/) components for interacting w
 
 Install from NPM:
 ```bash
-npm install react-datum --save
+TBD:  npm install react-datum --save
 ```
 
 Install using Bower:
 ```bash
-# comming soon
+TBD:  ...
 ```
 
-Install from the web:  Copy file at (TODO: add link to checked in min dist file here)
+Old school install from the web:  Copy development (.js) or optimized (.min.js) distribution file from (https://github.com/zulily/react-datum/tree/master/dist) in with your other vendor js and use a script tag or AMD to load it.  
+
+
 
 ## Usage
 ```javascript
@@ -82,7 +84,7 @@ var kittenCard = React.createClass({
             <div><Rd.Text attr="name" label="Name" setOnChange/> (<Rd.Text attr="title"/>)</div>
             <label>Say something about <Rd.Text attr="name" readonly/>: </label>
             <div><Rd.Text attr="description" className="wide-input"/></div>
-            <div><Rd.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/></div>
+            <div><Rd.Email attr="sponsorEmail" label="Adoption Sponsor"/></div>
             <label>Leave a Comment!</label>
             <div><Rd.Text attr="comment" className="wide-input"/></div>
           </Rd.Form>
