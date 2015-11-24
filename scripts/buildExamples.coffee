@@ -25,13 +25,28 @@ EXAMPLE_SRC_DIR = 'src/docs/examples'
 EXAMPLE_TARGET_DIR = 'docs/examples'
 
 exampleTemplate = _.template(fs.readFileSync('src/docs/exampleFile.tpl').toString())
+indexTemplate = _.template(fs.readFileSync('src/docs/index.tpl').toString())
 
+headerTemplate = _.template(fs.readFileSync('src/docs/header.tpl').toString())
+headerHtml = headerTemplate(relativeRoot: '../..', selectedItem: 1)
+
+contentHtml = fs.readFileSync('src/docs/examplesContent.tpl')
 
 unless 'grunt' in process.argv
   throw "You should probably use `grunt examples` instead - which first builds the example " +
     "source into docs/examples.  this only creates the .html file for the examples"
 
 
+createIndex = () ->
+  indexHtml = indexTemplate(
+    relativeRoot: '../..'
+    header: headerHtml
+    content: contentHtml
+    bodyClass: 'examples-index'
+  )
+  fs.writeFileSync(path.join(EXAMPLE_TARGET_DIR, 'index.html'), indexHtml)
+
+  
 
 processFile = (file) ->
   ext = path.extname(file)
@@ -68,6 +83,6 @@ processFile = (file) ->
     console.log "processing file: " + file
     fs.writeFileSync fullOutPath, exampleTemplate(templateArgs)
 
-
+createIndex()
 files = glob.sync(EXAMPLE_SRC_DIR + '/**/*', {nodir: true})
 files.forEach(processFile)

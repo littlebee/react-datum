@@ -154,3 +154,44 @@ body[data-examplefile="/tilegrid/tilegrid.jsx"] .preview .top-right {
   vertical-align: top;
   margin-left: 7px;
 } 
+
+body.examples-index .main-content {
+  height: calc(100% - 100px);
+}
+
+#examplesView {
+  padding: 7px 5px;
+  height: 100%;
+}
+
+#examplesView .collection,
+#examplesView .model {
+  height: 100%;
+}
+
+#examplesView iframe {
+  height: 100%;
+  width: 100%;
+}
+
+#examplesView .tilegrid-react {
+  text-align: left;
+  width: 380px;
+  display: inline-block;
+  heigth: 100%;
+  overflow: auto;
+}
+
+#examplesView .tile img {
+  float: left;
+  height: 100px;
+}
+
+#examplesView .content-pane {
+  display: inline-block;
+  width: calc(100% - 400px);
+  vertical-align: top;
+  height: 100%;
+  position: relative;
+}
+

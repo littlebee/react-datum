@@ -38,7 +38,7 @@ unless 'grunt' in process.argv
   throw "You should probably use `grunt docs` instead"
 
 readmeHtml = marked(fs.readFileSync('README.md').toString())
-debugger
+
 # we can do better than static images when running on github.io pages :)
 readmeHtml = readmeHtml.replace /\<img.*model.*\.png.*\/\>/g,
   demoTemplate(whichDemo: 'model', demoClass: 'KittenCard')

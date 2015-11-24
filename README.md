@@ -102,7 +102,8 @@ By wrapping the datums in the **ReactDatum.Form** tag, they implicitedly recieve
 ## What are "Datums"
 *and you do realize that the plural of "datum" is "data", don't you?*
 
-Datums are the presentation of attributes from a Backbone model.  All are object oriented extentions of the Datum class that provide a display `inputMode='readonly'` (default) and optionally an input presentation `inputMode='edit'`.  
+Datums are the presentation of attributes from a Backbone model.  All are object oriented extentions of the Datum class that provide a display `inputMode='readonly'` (default) and optionally an input presentation `inputMode='edit'`.
+
 Datums interact with the model only by .get() and .set().  Datums do not directly listen to any model events.  The **ReactDatum.Model** component is what causes the datums to rerender in reponse to model changes.  
 
 #### *Shhhh, don't call it "2 way data-binding"*
