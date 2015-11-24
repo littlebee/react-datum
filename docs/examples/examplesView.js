@@ -28,7 +28,7 @@ var examplesCollection = new Backbone.Collection([{
   id: "examplesView",
   name: "Demos Within Demos",
   relativePath: "examplesView.html",
-  description: "<p>This demo is this demo viewer (how fucking meta and deep is that shit?!?).</p> " +
+  description: "<p>This demo is this demo viewer!</p> " +
     "<p>The demo viewer you are looking at right now, is really just a ReactDatum.Tilegrid, a few "+
     "datums and a custom iframe component.  If you scroll past the the static data, you "+
     "can see a nice example of how to make use of a contextually provided model in a custom "+
