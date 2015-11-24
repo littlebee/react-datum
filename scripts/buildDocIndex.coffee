@@ -27,8 +27,15 @@ unless 'grunt' in process.argv
 
 readmeHtml = marked(fs.readFileSync('README.md').toString())
 headerHtml = headerTemplate(relativeRoot: '..', selectedItem: 0)
-indexHtml = indexTemplate(relativeRoot: '..', header: headerHtml, readme: readmeHtml)
+indexHtml = indexTemplate(
+  relativeRoot: '..'
+  header: headerHtml
+  content: readmeHtml
+  bodyClass: 'docs-index'
+)
+
 outPath = path.join(DOCS_TARGET_DIR, 'index.html')
+
 console.log "creating #{outPath}"
 fs.writeFileSync outPath, indexHtml
 

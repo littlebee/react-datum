@@ -3,8 +3,11 @@ body > header {
   background-color: #B7BED0;
   height: 110px;
   padding-top: 7px;
-  position: relative;
   overflow: hidden;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
 }
 
 body > header img {
@@ -38,3 +41,18 @@ body > header .main-menu-item.selected {
 body > header .main-menu-item:hover {
   border: solid 1px black;
 }
+
+.main-content {
+  margin-top: 117px; 
+  padding-left: 45px;
+}
+
+/* 
+  for intro page, which is just the Readme, pull the top up and out of site so as not 
+  to repeat information and links in the header
+*/
+body.docs-index .main-content {
+  margin-top: -78px;
+  
+}
+
