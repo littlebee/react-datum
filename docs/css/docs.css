@@ -24,7 +24,7 @@ body > header em {
 body > header .main-menu {
   position: absolute;
   bottom: 0px;
-  left: 142px;
+  left: 220px;
   min-width: 705px;
 }
 
@@ -34,7 +34,7 @@ body > header .main-menu-item {
   border: solid 1px grey;
   cursor: pointer;
   border-radius: 6px;
-  color: ##00965A;
+  color: #DAF398;
 }
 
 body > header .main-menu-item.selected {
