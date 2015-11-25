@@ -31,12 +31,16 @@ body > header .main-menu {
 body > header .main-menu-item {
   margin-right: 30px;
   padding: 4px 7px;
-  border: solid 1px transparent;
+  border: solid 1px grey;
   cursor: pointer;
+  border-radius: 6px;
+  color: ##00965A;
 }
 
 body > header .main-menu-item.selected {
   background-color: #e9f6c6;
+  text-decoration: none;
+  color: #0099ff;
 }
 
 body > header .main-menu-item:hover {

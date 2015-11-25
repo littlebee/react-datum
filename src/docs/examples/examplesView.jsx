@@ -55,7 +55,6 @@ var DemoIframe = React.createClass({
 
 
 ExamplesView = React.createClass({
-  
   render: function() {
     return (
       <Rd.Collection collection={examplesCollection}>

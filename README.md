@@ -8,21 +8,26 @@ A set of [React](https://facebook.github.io/react/) components for interacting w
 
 ## Installation
 
-Install from NPM:
+**Install from NPM:**
 ```bash
 TBD:  npm install react-datum --save
 ```
 
-Install using Bower:
+**Install using Bower:**
 ```bash
 TBD:  ...
 ```
 
-
-Old school install from the web:  
+** Install like grandpa: ** (from the web)  
 
 Copy development (.js) or optimized (.min.js) distribution file from (https://github.com/zulily/react-datum/tree/master/dist) in with your other vendor js and use a script tag or AMD to load it.  
 
+## What are "Datums"
+*and you do realize that the plural of "datum" is "data", don't you?*
+
+Datums are the presentation of attributes from a Backbone model.  All are object oriented extentions of the Datum class that provide a display `inputMode='readonly'` (default) and optionally an input presentation `inputMode='edit'`. Datums interact with the model only by .get() and .set().  Datums do not directly listen to any model events.  
+
+The ReactDatum Collection, Model, SelectedModel, Form, Tilegrid, ... components provide a context for the datums within.  These components listen for changes in models, which model is selected, etc and cause the datums to rerender in reponse to changes. 
 
 
 ## Usage
@@ -103,14 +108,7 @@ var kittenCard = React.createClass({
 When the user presses save, model.save() is called.   All of the attributes were set() when the user entered new values.  If cancel is clicked, the model and subsequently, the form are reset back to the state of the last model.save().
 
 By wrapping the datums in the **ReactDatum.Form** tag, they implicitedly recieve `inputMode='edit'` props that make them all render as inputs.  Almost all.  Some Datums, like **ReactDatum.LazyPhoto**, only have a display presentation, no update.  If given an `inputMode='edit'` they will ignore, and continue showing their display (`inputMode='readonly'``) representation.  
-
-## What are "Datums"
-*and you do realize that the plural of "datum" is "data", don't you?*
-
-Datums are the presentation of attributes from a Backbone model.  All are object oriented extentions of the Datum class that provide a display `inputMode='readonly'` (default) and optionally an input presentation `inputMode='edit'`.
-
-Datums interact with the model only by .get() and .set().  Datums do not directly listen to any model events.  The **ReactDatum.Model** component is what causes the datums to rerender in reponse to model changes.  
-
+ 
 #### *Shhhh, don't call it "2 way data-binding"*
 
 In the form example above, the **ReactDatum.Text** input component labeled "Name" in the form was given a 'setOnChange' prop.  When the name input is changed by the user, every character entered causes `kittenModel.set('name', userEnteredValue)` to be called.  The difference of `setOnChange` is the lack of `{silent: true}` on model set().  Since all descendants of the **ReactDatum.model** component virtually rerender on every triggered event, the form updates as you type and the two other references to the 'name' attribute in labels on the form are updated as you type.  Pretty cool, but mostly just a parlor trick.  The reasoning behind using `{silent: true}` on set() by default is that, in most cases, users will get confused as to the saved state of the data. Since `model.save()` is not called until the user presses the 'Save' button, a table or grid cell changing as you type in the edit form is probably not what you want because it may imply that the changes have been saved.   

@@ -55,7 +55,6 @@ var DemoIframe = React.createClass({displayName: "DemoIframe",
 
 
 ExamplesView = React.createClass({displayName: "ExamplesView",
-  
   render: function() {
     return (
       React.createElement(Rd.Collection, {collection: examplesCollection}, 

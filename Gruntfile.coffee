@@ -125,7 +125,7 @@ module.exports = (grunt) ->
         tasks: ["clean:examples"]
       
       docs:
-        files: ["src/docs/**/*", "scripts/buildDocIndex.coffee", "scripts/documentor.coffee"]
+        files: ["src/docs/**/*", "scripts/buildDocIndex.coffee", "scripts/documentor.coffee", "README.md"]
         tasks: ["docs"]
               
       distrib:

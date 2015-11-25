@@ -15,15 +15,14 @@ label {
 }
     
 .code-pane {
-  margin-left: 4% !important;
   width: 90%;
   overflow: auto;
-  margin-left: 13px;
+  margin: 9px 18px;
 }
 
 .demo-pane {
   vertical-align: top;
-  margin-left: 4%;
+  margin: 9px 18px;
 }
 
 #demo {
@@ -88,10 +87,11 @@ body[data-examplefile="/tilegrid/tilegrid.jsx"] {
 }
 
 body[data-examplefile="/tilegrid/tilegrid.jsx"] .demo-pane {
-  width: 90%;
+  width: 98%;
   height: calc(100% - 75px);
   overflow: hidden;
-  transition: height 0.15s ease-out
+  transition: height 0.15s ease-out;
+  margin-left: 12px;
 }
 
 body[data-examplefile="/tilegrid/tilegrid.jsx"] .code-pane {
@@ -182,6 +182,8 @@ body.examples-index .main-content {
 body[data-examplefile="examplesView.jsx"] .tile,
 #examplesView .tile {
   text-align: left;
+  width: 85%;
+  margin-bottom: 14px;
 }
 
 body[data-examplefile="examplesView.jsx"] .tile h4,
@@ -215,6 +217,7 @@ body[data-examplefile="examplesView.jsx"] .tilegrid-react,
 body[data-examplefile="examplesView.jsx"] .tilegrid,
 #examplesView .tilegrid {
     background-color: #B7BED0;
+    height: calc(100% - 25px);
 }
 
 body[data-examplefile="examplesView.jsx"] .tile img,
@@ -228,9 +231,13 @@ body[data-examplefile="examplesView.jsx"] .content-pane,
   display: inline-block;
   width: calc(100% - 400px);
   vertical-align: top;
-  height: 100%;
+  height: calc(100% - 25px);
   position: relative;
   margin-top: 10px;
   background-color: white;
+}
+
+body[data-examplefile="examplesView.jsx"] .content-pane {
+  height: 1000px;
 }
 
