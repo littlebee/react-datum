@@ -1329,6 +1329,11 @@ var ReactDatum =
 	    this.selectModel = bind(this.selectModel, this);
 	  }
 
+
+	  /*
+	    This method is used to mix SelectableCollection features into a Backbone Collection
+	   */
+
 	  SelectableCollection.mixInto = function(collection) {
 	    if (this.hasSelectableCollectionMixin) {
 	      return;
@@ -3797,7 +3802,7 @@ var ReactDatum =
 	Select.Async = __webpack_require__(37);
 
 
-	/*!See ./collectionPicker.md */
+	/* !See ./collectionPicker.md */
 
 	module.exports = CollectionPicker = (function(superClass) {
 	  extend(CollectionPicker, superClass);

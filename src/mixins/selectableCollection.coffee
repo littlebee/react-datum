@@ -30,9 +30,11 @@ _ = require('underscore')
     activeModelChanged      - function(activeModel){} triggered on active change
 
 ###
-
 module.exports = class SelectableCollection
 
+  ###
+    This method is used to mix SelectableCollection features into a Backbone Collection
+  ###
   @mixInto: (collection) ->
     # escape hatch if we or someone else has grabbed this reponsibility.   If you want to have
     # you own compatible selectable collection functionality, you can set
