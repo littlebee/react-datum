@@ -7,32 +7,40 @@ HELP = """
 """
 MORE_HELP = """
   Example  (src/somefile.coffee):
-    | # if I want to show something like the delaration of constant, e.g.
-    | HELP = "this is a really neat script that does bla"
-    | # I can just put it above the block comment and it will get sucked up into
-    | # that thing's declaration (these single # comments also get sucked up).
-    | ###
-    |   This block comment will be associated with the file it could be empty
-    |   if for example you wanted to just document that the file existed
-    | ###
-    |
-    | class myAwesomeClass extends myAwesomeBaseClass
-    |   ###
-    |     This block comment gets associated with the class
-    |   ###
-    |
-    |   constructor: (options={}) =>
-    |     @options = _.defaults options,
-    |       beAwesome: true                   # will this instance be awesome?
-    |       extendAwesomeness: true           # push awesomeness outward
-    |       forcedAwesome: false              # can we fake it if all else fails?
-    |       awesomeIcon: "/img/awesome.icon"
-    |     ###
-    |       this block comment gets associated with the constructor method.  putting it after
-    |       the defaulting of options makes the options self documenting no?
-    |     ###
+    
+  ###
+    This block comment gets associated with the class
+  ###
+  class myAwesomeClass extends myAwesomeBaseClass
+    
+    @propTypes:
+      # additional css classes (space seperated) to add to wrapper div
+      className: React.PropTypes.string
+      # can also accept model instance as context var. prop has precendence
+      model: React.PropTypes.oneOfType([
+        React.PropTypes.instanceOf(Backbone.Model)
+        React.PropTypes.object
+      ])
+        
+    
+    @defaultProps:   
+      # ellipsizeAt is defaulted to prevent really long strings from breaking layouts
+      ellipsizeAt: 35
+    
+    ###
+      this block comment gets associated with the constructor method.  putting it after
+      the defaulting of options makes the options self documenting no?
+    ###
+    constructor: (options={}) =>
+      @options = _.defaults options,
+        # everything from this comment down will be associated with the constructor 
+        # method as "defaultOptions"
+        beAwesome: true                   # will this instance be awesome?
+        extendAwesomeness: true           # push awesomeness outward
+        forcedAwesome: false              # can we fake it if all else fails?
+        awesomeIcon: "/img/awesome.icon"
 
-  From the root notjs directory:
+  From the root directory:
 
     |  scripts/documentor.coffee ./src
 
@@ -100,13 +108,19 @@ moduleData =
   "classes": []
   "methods": []
 
+debugger
+
 class Documentor 
   # comments get handled first, if we are in a comment, then 
   commentRegex: /\#\#\#/g
   methodRegex: /^\s*((this\.|\@)*[\w\.]*)\s*[\:\=]\s*\((.*)\).*/
   classRegex: /^.*class\s*([\w\.]+)\s*(extends(.*))?\s*$/
-
-
+  propTypesRegex: /^(\s*).*[\@\.]propTypes.*$/
+  contextTypesRegex: /^(\s*).*[\@\.]contextTypes.*$/
+  defaultPropsRegex: /^(\s*).*[\@\.]defaultProps.*$/
+  defaultOptionsRegex: /^.*\_\.defaults.*options.*$/
+  
+  
   processFile: (file) =>
     console.log "Processing #{file}..."
 
@@ -119,12 +133,18 @@ class Documentor
     @inComment = false
     @lastComments = []
     
+    @inBlock = null  # whould be which block by name
+    
     lines = fs.readFileSync(file).toString().split("\n");
     for line, lineNumber in lines
       continue unless line?
+      continue if @handlePropTypes(line)
+      continue if @handleDefaultProps(line)
+      continue if @handleContextTypes(line)
       continue if @handleComment(line)
       continue if @handleClass(line, lineNumber, file)
-      @handleMethod(line, lineNumber, file)
+      continue if @handleMethod(line, lineNumber, file)
+      continue if @handleDefaultOptions(line)
       
   
   # returns the last unclaimed comment found
@@ -152,13 +172,62 @@ class Documentor
       
     return false
     
+      
+  handlePropTypes: (line) =>
+    if @currentClass 
+      return @_handleBlockType(line, @propTypesRegex, @currentClass, 'propTypes')
+    return false
+    
+    
+  handleDefaultProps: (line) =>
+    if @currentClass 
+      return @_handleBlockType(line, @defaultPropsRegex, @currentClass, 'defaultProps')
+    return false
+    
+    
+  handleContextTypes: (line) =>
+    if @currentClass 
+      return @_handleBlockType(line, @contextTypesRegex, @currentClass, 'contextTypes')
+    return false
+    
+    
+  handleDefaultOptions: (line) =>
+    if @currentMethod 
+      return @_handleBlockType(line, @defaultOptionsRegex, @currentMethod, 'defaultOptions')
+    return false
+    
+    
+    
+  _handleBlockType: (line, regex, storageObj, type) =>
+    if @inBlock == type
+      matches = line.match /^(\s*).*$/
+      return true unless matches?.length > 1
+      whitespace = matches[1]
+      if whitespace.length > (@currentWhiteSpace?.length || 0)
+        storageObj[type] ||= []
+        storageObj[type].push line
+      else
+        @inBlock = null
+        @currentWhitespace = null
+        return false
+        
+      return true;
+    
+    else 
+      matches = line.match(regex)
+      if matches?.length > 0
+        @inBlock = type
+        @currentWhiteSpace = matches[1]
+        return true
+    
+    return false
+    
     
   handleClass: (line, lineNumber, file) =>
     matches = line.match(@classRegex)
     return false unless matches?.length > 0
     comment = @claimComment()
-    if options.allClasses || comment.length > 0 
-      @createClassRecord(matches[1], matches[3], comment, line, lineNumber, file)
+    @createClassRecord(matches[1], matches[3], comment, line, lineNumber, file)
     
     
   handleMethod: (line, lineNumber, file) =>
@@ -166,8 +235,7 @@ class Documentor
     name = matches?[1]
     return false unless matches?.length > 0 && name[0] != '_' 
     comment = @claimComment()
-    if options.allMethods || comment.length > 0
-      @createMethodRecord(name, comment, line, lineNumber, file)
+    @createMethodRecord(name, comment, line, lineNumber, file)
     
 
   createClassRecord: (name, superClass, comment, line, lineNumber, file) =>
@@ -184,7 +252,7 @@ class Documentor
 
 
   createMethodRecord: (name, comment, line, lineNumber, file) =>
-    method =
+    @currentMethod =
       id: _.uniqueId("dd_")
       name: name
       comment: comment
@@ -193,9 +261,9 @@ class Documentor
       signature: line
       
     if @currentClass
-      @currentClass.methods.push method
+      @currentClass.methods.push @currentMethod
     else 
-      moduleData.methods.push method
+      moduleData.methods.push @currentMethod
 
 
 updateDocumentorData = () =>
@@ -204,10 +272,22 @@ updateDocumentorData = () =>
     _.extend module, moduleData
   else
     documentorData.push moduleData
+    
 
+filterDocumentorData = () =>
+  for module in documentorData
+    unless options.allClasses
+      module.classes = _.filter module.classes, (c) -> c.comment.length > 0
+    for klass in module.classes
+      unless options.allMethods
+        klass.methods = _.filter klass.methods, (m) -> m.comment.length > 0
+      
+            
 createOutputFile = () =>
   updateDocumentorData()
+  filterDocumentorData()
   console.log "creating #{options.outputFile}"
+  
   output = "base = (typeof module !== 'undefined' && module.exports) ? root : window\n" +
            "base.documentorData = #{JSON.stringify(documentorData, null, "  ")};\n"
   fs.writeFile options.outputFile, output, (err) ->

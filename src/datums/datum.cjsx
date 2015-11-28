@@ -35,7 +35,7 @@ module.exports = class Datum extends React.Component
     # TODO : add back support of 'inlineEdit'?
     # 'readonly' = render for display;
     # 'edit' = render for input;
-    inputMode: React.PropTypes.oneOf(['readonly', 'edit'])  # 'inlineEdit'])
+    inputMode: React.PropTypes.oneOf(['readonly', 'edit'])  
     # set to true to not render a popover on ellipsized values
     noPopover: React.PropTypes.bool
     # set to true to set the model value on change. this defaults to true if inputMode = inlineEdit

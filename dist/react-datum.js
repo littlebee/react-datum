@@ -1972,6 +1972,15 @@ var ReactDatum =
 	module.exports = Tilegrid = (function() {
 	  Tilegrid.prototype.$tilegridTemplate = $("<div class=\"tilegrid\">\n    <div class=\"tilegrid-loading\">\n        <div class=\"placeholder fade in\">\n            ... more to come ...\n            &nbsp;\n        </div>\n    </div>\n</div>");
 
+
+	  /* 
+	    constructs a Tilegrid instance
+	    
+	    selector        - jquery compatible selector
+	    data            - can be an array or a Collection child
+	    tileTemplate    - can be a selector, jquery obj or html
+	   */
+
 	  function Tilegrid(selector, data, tileTemplate1, options) {
 	    this.selector = selector;
 	    this.data = data;
