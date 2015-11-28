@@ -3,11 +3,11 @@ React = require('react')
 Backbone = require('backbone')
 _ = require('underscore')
 
-###
-  This is an abstract base class for contextual data components like
-  widgets.react.Collection and widgets.react.Model that provide a
-  single contextual data element
-###
+# (<- by using line quotes this class is undocumented )
+#
+#  This is an abstract base class for contextual data components like
+#  widgets.react.Collection and widgets.react.Model that provide a
+#  single contextual data element
 module.exports = class ContextualData extends React.Component
   #  don't forget your display name so you get semi-intelligent errors from react
   #@displayName: "react-datum.Model"

@@ -3,17 +3,7 @@ _ = require('underscore')
 $ = jQuery = require('jquery')
 Backbone = require('backbone')
 
-###
-  TileGrid
-
-  has one element that it renders...
-      one template that is lazily rendered once per model in..
-      one Collection or an array of models or other objects
-
-  triggers events:
-    tileRendered:  ($newTile, model)   # triggered after a tile is rendered into dom (attach event handlers, etc)
-
-###
+# see ../tilegrid.md
 module.exports = class Tilegrid
   $tilegridTemplate: $("""
     <div class="tilegrid">

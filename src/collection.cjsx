@@ -7,16 +7,7 @@ ContextualData = require('./contextualData')
 SelectableCollection = require('./mixins/SelectableCollection')
 
 
-###
-  Collection component
-  - provides a collection context to all children
-  - rerenders children on collection changes
-  - adds SelectableCollection mixin to collection if it doesn't already have it
-  - will optionally fetch the collection
-  - can accept either a Collection class (which will be instantiated) or a
-  collection instance variable to another collection or Collection component
-
-###
+# see ./collection.md
 module.exports = class Collection extends ContextualData
   @displayName: "react-datum.Collection"
 
@@ -27,6 +18,10 @@ module.exports = class Collection extends ContextualData
 
 
   @propTypes: _.extend {}, ContextualData.propTypes,
+    # can only accept collection via prop.  Collection component should
+    # not interfere with any parent Collection commponent or other that
+    # would provide a collection context, but it will become the provider
+    # of collection context for all of it's children
     collection: React.PropTypes.oneOfType([
       React.PropTypes.instanceOf(Backbone.Collection)
       React.PropTypes.func

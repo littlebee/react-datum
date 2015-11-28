@@ -32,7 +32,7 @@ var examplesCollection = new Backbone.Collection([{
     "<p>The demo viewer you are looking at right now, is really just a ReactDatum Tilegrid, a few "+
     "datums and a custom iframe component.</p>"+
     "<p>Be careful you don't fall in the rabbit hole by clicking too deep. :)</p>" + 
-    "<p>All joking and parlor tricks asside, if you scroll past the the static data, you "+
+    "<p>All joking and parlor tricks aside, if you scroll past the the static data, you "+
     "can see a nice example of how to make use of a contextually provided model in a custom "+
     "react component</p> ",
 }])
@@ -71,6 +71,17 @@ ExamplesView = React.createClass({displayName: "ExamplesView",
         )
       )
     )
+  },
+  componentDidMount: function() {
+    if( window && window.location && window.location.hash ){
+      idToSelect = window.location.hash.slice(1)
+      _.delay(function(){examplesCollection.selectModelById(idToSelect)}, 1000)
+    }
+    examplesCollection.on('selectionsChanged', function(){
+      model = examplesCollection.getSelectedModels()[0]
+      window.location.hash = model && model.id || ""
+    })
+
   }
   
 })

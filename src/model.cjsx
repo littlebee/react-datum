@@ -6,9 +6,7 @@ _ = require('underscore')
 ContextualData = require('./contextualData')
 
 
-###
-  Model react component provides a model context to all children
-###
+# see ./model.md
 module.exports = class Model extends ContextualData
   @displayName: "react-datum.Model"
 

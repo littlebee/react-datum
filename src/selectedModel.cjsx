@@ -3,22 +3,7 @@ React = require('react')
 Backbone = require('backbone')
 ContextualData = require('./contextualData')
 
-
-###
-  Contextual data component that accepts a collection as a prop or context arg, and
-  provides a context arg called 'model' to all children that is the first selected
-  model in the collection.
-
-  Example
-  ```jsx
-    <Collection collection={KittensCollectionClass} fetch={true}>
-      <SelectedModel>
-        <Text label="Name of selected model" attr="name"/>
-      </SelectedModel>
-    <Collection>
-  ```
-
-###
+# see ./selectedModel.md
 module.exports = class SelectedModel extends ContextualData
   @displayName: "react-datum.SelectedModel"
 

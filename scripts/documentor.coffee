@@ -76,6 +76,7 @@ options = require('commander')
   .option('-n --name [name]', 'name to add to module in documentor data. defaults to src file path')
   .option('-c --allClasses)', 'add undocumented classes to documentorData')
   .option('-m --allMethods)', 'add undocumented methods to documentorData')
+  .option('-v --verbose', 'I like lots of output')
   .on('--help', () -> console.log HELP)
 
 srcDir = null
@@ -92,6 +93,7 @@ unless srcDir
 
 _ = require('underscore')
 fs = require('fs')
+path = require('path')
 glob = require('glob')
 
 # documentor only creates and updates modules in the existing file...
@@ -135,6 +137,8 @@ class Documentor
     
     @inBlock = null  # whould be which block by name
     
+    @handleSideFileComments(file)
+    
     lines = fs.readFileSync(file).toString().split("\n");
     for line, lineNumber in lines
       continue unless line?
@@ -149,11 +153,21 @@ class Documentor
   
   # returns the last unclaimed comment found
   claimComment: () =>
-    comments = @lastComments.join("\n")
+    comments = @lastComments
     @lastComments = []
     return comments
     
     
+  # the first class comment in file can be pulled in from a file of the same
+  # name with the .md extension
+  handleSideFileComments: (file) =>
+    ext = path.extname(file)
+    mdFile = file.slice(0, -1 * ext.length) + ".md"
+    if fs.existsSync(mdFile)
+      console.log("found sidefile comments: #{mdFile}") if options.verbose
+      @lastComments = fs.readFileSync(mdFile).toString().split("\n")
+      
+      
   handleComment: (line) =>
     matches = line.match(@commentRegex)
     if @inComment

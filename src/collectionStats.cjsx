@@ -2,12 +2,7 @@
 React = require('react')
 Backbone = require('backbone')
 
-###
-  **CollectionStats** provides information about the items in your collection.
-
-  Requires either a 'collection' context or prop.  And displays counts of
-  items found, selected (if SelectableCollection) and viewing.
-###
+# see ./collectionStats.md
 module.exports = class CollectionStats extends React.Component
   @displayName: "react-datum.CollectionStats"
 

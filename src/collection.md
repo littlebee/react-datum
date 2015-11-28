@@ -1,6 +1,13 @@
 ### ReactDatum.Collection
 
 This react-datum component provides datums with a Backbone collection and rerenders descendants on collection changes.  
+- provides a collection context to all children
+- rerenders children on collection changes
+- adds SelectableCollection mixin to collection if it doesn't already have it
+- will optionally fetch the collection
+- can accept either a Collection class (which will be instantiated) or a
+collection instance variable to another collection or Collection component
+
 
 Any descendant datum or react-datum based components like (ReactDatum.TileGrid)[TODO: add a link do doc page], or the (ReactDatum.SelectedModel)[TODO: add link to doc page] that accept a `collection` context or prop, can be wrapped in a ReactDatum.Collection component and will respond to changes in the collection.  
 

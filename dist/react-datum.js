@@ -84,18 +84,6 @@ var ReactDatum =
 
 	Form = __webpack_require__(4);
 
-
-	/*
-	  **ClickToEditForm** is an extension of **Form** that initially presents an
-	  "Edit" button that the user can click to switch between display and input.
-
-	  **Datum** children are initialized readonly, when the user clicks edit, the
-	  'inputMode' context variable is set to 'edit' and all children are rerendered.
-
-	  See react-datum **Form** component for more props.  All **Form&& properties are
-	  supported by **ClickToEditForm**
-	 */
-
 	module.exports = ClickToEditForm = (function(superClass) {
 	  extend(ClickToEditForm, superClass);
 
@@ -180,50 +168,6 @@ var ReactDatum =
 	Backbone = __webpack_require__(7);
 
 	_ = __webpack_require__(8);
-
-
-	/*
-
-	 * ReactDatum.Form 
-
-	## This component provides a form context to all of the datums within.  
-
-	    Adding the **ReactDatum.Form** component, you can easily convert a group of datums into an 
-	    editable form with save and cancel buttons:
-
-	    <img alt="Screenshot from doc/examples/form/form.html" src="https://gitlab.corp.zulily.com/bwilkerson/react-datum/raw/master/img/react-datum_form-example.png" align="right"/>
-	    ```javascript
-	    var kittenCard = React.createClass({
-	      displayName:"KittenCard",
-	      render: function(){
-	        return (
-	          <div className='kitten-card'>
-	            <ReactDatum.Model model={kittenModel}>
-	              <h3>Adopt <ReactDatum.Text attr="name"/> Today!</h3>
-	              <ReactDatum.Form>
-	                <div><ReactDatum.LazyPhoto attr="imgUrl"/></div>
-	                <div><ReactDatum.Text attr="name" label="Name" setOnChange/> (<ReactDatum.Text attr="title"/>)</div>
-	                <label>Say something about <ReactDatum.Text attr="name" readonly/>: </label>
-	                <div><ReactDatum.Text attr="description" className="wide-input"/></div>
-	                <div><ReactDatum.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/></div>
-	                <label>Leave a Comment!</label>
-	                <div><ReactDatum.Text attr="comment" className="wide-input"/></div>
-	              </ReactDatum.Form>
-	            </ReactDatum.Model>
-	          </div>
-	        )
-	      }
-	    })
-	    ```
-
-	    When the user presses save, model.save() is called.   All of the attributes were set() when the user entered new values.  
-	    If cancel is clicked, the model and subsequently, the form are reset back to the state of the last model.save().
-
-	    By wrapping the datums in the **ReactDatum.Form** tag, they implicitedly recieve `inputMode='edit'` props that make 
-	    them all render as inputs.  Almost all.  Some Datums, like **ReactDatum.LazyPhoto**, only have a display presentation, 
-	    no update.  If given an `inputMode='edit'` they will ignore, and continue showing their display (`inputMode='readonly'``) 
-	    representation.
-	 */
 
 	module.exports = Form = (function(superClass) {
 	  extend(Form, superClass);
@@ -1117,17 +1061,6 @@ var ReactDatum =
 
 	SelectableCollection = __webpack_require__(11);
 
-
-	/*
-	  Collection component
-	  - provides a collection context to all children
-	  - rerenders children on collection changes
-	  - adds SelectableCollection mixin to collection if it doesn't already have it
-	  - will optionally fetch the collection
-	  - can accept either a Collection class (which will be instantiated) or a
-	  collection instance variable to another collection or Collection component
-	 */
-
 	module.exports = Collection = (function(superClass) {
 	  extend(Collection, superClass);
 
@@ -1176,13 +1109,6 @@ var ReactDatum =
 	Backbone = __webpack_require__(7);
 
 	_ = __webpack_require__(8);
-
-
-	/*
-	  This is an abstract base class for contextual data components like
-	  widgets.react.Collection and widgets.react.Model that provide a
-	  single contextual data element
-	 */
 
 	module.exports = ContextualData = (function(superClass) {
 	  extend(ContextualData, superClass);
@@ -1509,14 +1435,6 @@ var ReactDatum =
 
 	Backbone = __webpack_require__(7);
 
-
-	/*
-	  **CollectionStats** provides information about the items in your collection.
-
-	  Requires either a 'collection' context or prop.  And displays counts of
-	  items found, selected (if SelectableCollection) and viewing.
-	 */
-
 	module.exports = CollectionStats = (function(superClass) {
 	  extend(CollectionStats, superClass);
 
@@ -1621,11 +1539,6 @@ var ReactDatum =
 
 	ContextualData = __webpack_require__(10);
 
-
-	/*
-	  Model react component provides a model context to all children
-	 */
-
 	module.exports = Model = (function(superClass) {
 	  extend(Model, superClass);
 
@@ -1666,22 +1579,6 @@ var ReactDatum =
 	Backbone = __webpack_require__(7);
 
 	ContextualData = __webpack_require__(10);
-
-
-	/*
-	  Contextual data component that accepts a collection as a prop or context arg, and
-	  provides a context arg called 'model' to all children that is the first selected
-	  model in the collection.
-
-	  Example
-	  ```jsx
-	    <Collection collection={KittensCollectionClass} fetch={true}>
-	      <SelectedModel>
-	        <Text label="Name of selected model" attr="name"/>
-	      </SelectedModel>
-	    <Collection>
-	  ```
-	 */
 
 	module.exports = SelectedModel = (function(superClass) {
 	  extend(SelectedModel, superClass);
@@ -1956,18 +1853,6 @@ var ReactDatum =
 	$ = jQuery = __webpack_require__(17);
 
 	Backbone = __webpack_require__(7);
-
-
-	/*
-	  TileGrid
-
-	  has one element that it renders...
-	      one template that is lazily rendered once per model in..
-	      one Collection or an array of models or other objects
-
-	  triggers events:
-	    tileRendered:  ($newTile, model)   # triggered after a tile is rendered into dom (attach event handlers, etc)
-	 */
 
 	module.exports = Tilegrid = (function() {
 	  Tilegrid.prototype.$tilegridTemplate = $("<div class=\"tilegrid\">\n    <div class=\"tilegrid-loading\">\n        <div class=\"placeholder fade in\">\n            ... more to come ...\n            &nbsp;\n        </div>\n    </div>\n</div>");
@@ -2621,8 +2506,7 @@ var ReactDatum =
 /***/ function(module, exports, __webpack_require__) {
 
 	var $, SelectableCollection, SingleSelect, _, jQuery,
-	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 	_ = __webpack_require__(8);
 
@@ -2848,18 +2732,19 @@ var ReactDatum =
 	  SingleSelect.prototype._onTileMouseUp = function(evt) {};
 
 	  SingleSelect.prototype._onSelectionsChanged = function() {
-	    var $tile, i, len, ref, ref1, results, selectedIndexes, tile;
-	    selectedIndexes = _.pluck(this.collection.getSelectedModels(), "index");
-	    if (selectedIndexes.length <= 0) {
-	      this.resetActiveTile();
-	      return this.tilegrid.$element.find('.rendered.selected').removeClass('selected');
+	    var $tile, i, len, model, modelIndex, results, selectedModels;
+	    selectedModels = this.collection.getSelectedModels();
+	    this.tilegrid.$element.find('>.tilegrid>.tile.selected').removeClass('selected');
+	    if (selectedModels.length <= 0) {
+	      return this.resetActiveTile();
 	    } else {
-	      ref = this.tilegrid.$element.find('.rendered');
 	      results = [];
-	      for (i = 0, len = ref.length; i < len; i++) {
-	        tile = ref[i];
-	        $tile = $(tile);
-	        results.push($tile.toggleClass('selected', (ref1 = $tile.data('index'), indexOf.call(selectedIndexes, ref1) >= 0)));
+	      for (i = 0, len = selectedModels.length; i < len; i++) {
+	        model = selectedModels[i];
+	        modelIndex = model.index != null ? model.index : this.collection.indexOf(model);
+	        $tile = this.tilegrid.$element.find(">.tilegrid>.tile[data-index='" + modelIndex + "']");
+	        $tile.addClass('selected');
+	        results.push($tile.toggleClass('active', model.active));
 	      }
 	      return results;
 	    }

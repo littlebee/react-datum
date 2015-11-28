@@ -176,14 +176,16 @@ module.exports = class SingleSelect
 
 
   _onSelectionsChanged: () =>
-    selectedIndexes = _.pluck @collection.getSelectedModels(), "index"
-    if selectedIndexes.length <= 0
+    selectedModels = @collection.getSelectedModels()
+    @tilegrid.$element.find('>.tilegrid>.tile.selected').removeClass('selected')
+    if selectedModels.length <= 0
       @resetActiveTile()
-      @tilegrid.$element.find('.rendered.selected').removeClass('selected')
     else
-      for tile in @tilegrid.$element.find('.rendered')
-        $tile = $(tile)
-        $tile.toggleClass 'selected', ($tile.data('index') in selectedIndexes)
+      for model in selectedModels
+        modelIndex = if model.index? then model.index else this.collection.indexOf(model)
+        $tile = @tilegrid.$element.find(">.tilegrid>.tile[data-index='#{modelIndex}']")
+        $tile.addClass 'selected'
+        $tile.toggleClass 'active', model.active
 
 
   _onSelectAll: () =>
