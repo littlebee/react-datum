@@ -4,7 +4,7 @@
   </div>
   <div class='main-menu'>
     <a class='main-menu-item' href="<%=relativeRoot%>/docs">Introduction and Getting Started </a>
-    <a class='main-menu-item' href="<%=relativeRoot%>/docs/examples">Examples and Demo</a>
+    <a class='main-menu-item' href="<%=relativeRoot%>/docs/examples">Live Demo &amp; Examples</a>
     <a class='main-menu-item' href="<%=relativeRoot%>/docs/api">API Docs</a>
     <a class='main-menu-item' href="https://github.com/zulily/react-datum" target="blank">
       View on Github

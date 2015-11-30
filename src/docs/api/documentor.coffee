@@ -1,6 +1,7 @@
 _ = require('underscore')
 fs = require('fs')
 path = require('path')
+glob = require('glob')
 
 module.exports = class Documentor 
   # comments get handled first, if we are in a comment, then 
@@ -17,25 +18,23 @@ module.exports = class Documentor
     @options = _.defaults options,
       verbose: false
 
-  
-  processFile: (file, moduleData, options={}) =>
-    options = _.defaults options,
-      moduleName: file
+
+  processFiles: (srcDir, moduleData) ->
+    if fs.lstatSync(srcDir).isDirectory()
+      files = glob.sync(srcDir + "/**/*", nodir: true)
+      for file in files
+        moduleData = @processFile(file, moduleData)
+    else
+      moduleData = @processFile(srcDir, moduleData)
       
-    console.log "Processing #{file}..."
+    return moduleData
 
-    @currentFile = null
-    @currentClass = null
+  
+  processFile: (file, moduleData) =>
+    @reset()  
 
-    @lastClassIndex = null
-    @lastMethodIndex = null
-    
-    @inComment = false
-    @lastComments = []
-    
-    @inBlock = null  # whould be which block by name
-    
-    @moduleData = _.extend {}, @_getDefaultModuleData(options.moduleName), moduleData
+    console.log "Processing #{file}..." if @options.verbose
+    @moduleData = _.extend {}, @_getDefaultModuleData(), moduleData
     
     @handleSideFileComments(file)
     
@@ -51,10 +50,23 @@ module.exports = class Documentor
       continue if @handleDefaultOptions(line)
       
     return @moduleData
-      
+  
+  reset: ->
+    @currentFile = null
+    @currentClass = null
+
+    @lastClassIndex = null
+    @lastMethodIndex = null
+    
+    @inComment = false
+    @lastComments = []
+    
+    @inBlock = null  # whould be which block by name
+    
   ###
         IMPLEMENTATION
   ###
+  
   
   # returns the last unclaimed comment found
   claimComment: () =>
@@ -187,7 +199,6 @@ module.exports = class Documentor
 
   _getDefaultModuleData: (moduleName) => 
     "id": _.uniqueId("dd_")
-    "name": moduleName
     "files": []
     "classes": []
     "methods": []

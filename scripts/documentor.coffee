@@ -129,17 +129,11 @@ scripts/buildApiDocs.coffee which builds the online docs
 """
 utils.pressAnyKeyToContinue ->
 
+  moduleData = {name: "react-datum"};
+
   Documentor = require('../src/docs/api/documentor')
   documentor = new Documentor(verbose: options.verbose)
-  
-  moduleData = {name: "react-datum"};
-  if fs.lstatSync(srcDir).isDirectory()
-    files = glob.sync(srcDir + "/**/*", nodir: true)
-    for file in files
-      moduleData = documentor.processFile(file, moduleData)
-  else
-    moduleData = documentor.processFile(srcDir, moduleData)
-
+  moduleData = documentor.processFiles(srcDir, moduleData)
   createOutputFile(moduleData)
   process.exit 0
   
