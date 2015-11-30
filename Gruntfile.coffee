@@ -93,6 +93,9 @@ module.exports = (grunt) ->
 
       buildDocIndex:
         command: 'coffee ./scripts/buildDocIndex.coffee grunt'
+        
+      buildApiDocs: 
+        command: 'coffee ./scripts/documentor -o docs/api/documentorData.js src'
       
       deploy:
         options:
@@ -120,17 +123,9 @@ module.exports = (grunt) ->
             clean: "Remove all compiled files. Use `grunt clean build` to rebuild everything from scratch"
 
     watch:
-      examplesDeps:
-        files: ["src/docs/exampleFile.tpl", "scripts/buildExamples.coffee"]
-        tasks: ["clean:examples"]
-      
-      docs:
-        files: ["src/docs/**/*", "scripts/buildDocIndex.coffee", "scripts/documentor.coffee", "README.md"]
-        tasks: ["docs"]
-              
-      distrib:
-        files: ["src/**/*", "!src/examples/*", "css/**/*", "webpack.config.coffee"]
-        tasks: ["distrib"]
+      build:
+        files: ["src/**/*", "css/**/*", "lib/**/*", "scripts/**/*", "webpack.config.coffee"]
+        tasks: ["build"]
 
 
     webpack:

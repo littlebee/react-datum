@@ -37,6 +37,10 @@ var examplesCollection = new Backbone.Collection([{
     "react component</p> ",
 }])
 
+
+// Each of the demos are wrapped in their own .html which is generated using /src/docs/exampleFile.tpl  
+// It makes each of them individually debuggable.  
+
 var DemoIframe = React.createClass({displayName: "DemoIframe",
   propTypes: {
     model: React.PropTypes.instanceOf(Backbone.Model)
