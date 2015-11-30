@@ -4,10 +4,9 @@ HELP = """
   This script walks a tree of coffeescript and pulls out any ### comments and
   associates them with the next indent level out and up.  A .js file containing
   an array with the structure below is produced.
-"""
-MORE_HELP = """
+
   Example  (src/somefile.coffee):
-    
+  ```coffeescript  
   ###
     This block comment gets associated with the class
   ###
@@ -39,28 +38,31 @@ MORE_HELP = """
         extendAwesomeness: true           # push awesomeness outward
         forcedAwesome: false              # can we fake it if all else fails?
         awesomeIcon: "/img/awesome.icon"
-
+  ```
   From the root directory:
-
-    |  scripts/documentor.coffee ./src
+  ```
+    scripts/documentor.coffee ./src
+  ```
 
   generates documentorData.js file in current directory that contains:
-
-    |  var documentorData = [
-    |    {
-    |      "moduleName": "optional name given when running documentor or the path given to document",
-    |      // both files and classes only have information in here if they are documented (have ###
-    |      // comments at the same indentation level
+  ```javascript
+    var documentorData = [
+      {
+        "moduleName": "optional name given when running documentor or the path given to document",
+        // both files and classes only have information in here if they are documented (have ###
+        // comments at the same indentation level
     ...
-
+  ```
   the output js file can then be loaded for a documentation page and a notjs script can pick it up and spit out the
   API documentation (see index.html in notjs root)
+
+  
 
   Developer's note:  I really wanted to generate JSON data and pull that in from the script on the page,
   but then the documentation would only be viewable if served up remotely and I'd really like people to be
   able to view the API docs locally via a file:// url
 
-  see --help output for options
+
 """
 
 ###
@@ -68,7 +70,7 @@ MORE_HELP = """
   Generates docs/documentorData.js  
 
 ###
-
+utils = require('./lib/util')
 
 options = require('commander')
   .version('0.0.1')
@@ -96,225 +98,51 @@ fs = require('fs')
 path = require('path')
 glob = require('glob')
 
-# documentor only creates and updates modules in the existing file...
-if fs.existsSync(options.outputFile)
-  require(fs.realpathSync(options.outputFile))
-else
-  root.documentorData = []
-
-moduleName = options.name || srcDir
-moduleData =
-  "id": _.uniqueId("dd_")
-  "name":  moduleName
-  "files": []
-  "classes": []
-  "methods": []
-
 debugger
 
-class Documentor 
-  # comments get handled first, if we are in a comment, then 
-  commentRegex: /\#\#\#/g
-  methodRegex: /^\s*((this\.|\@)*[\w\.]*)\s*[\:\=]\s*\((.*)\).*/
-  classRegex: /^.*class\s*([\w\.]+)\s*(extends(.*))?\s*$/
-  propTypesRegex: /^(\s*).*[\@\.]propTypes.*$/
-  contextTypesRegex: /^(\s*).*[\@\.]contextTypes.*$/
-  defaultPropsRegex: /^(\s*).*[\@\.]defaultProps.*$/
-  defaultOptionsRegex: /^.*\_\.defaults.*options.*$/
+
+# filters out classes without comments (block comment) and methods without comment
+filterDocumentorData = (moduleData) =>
+  unless options.allClasses
+    moduleData.classes = _.filter moduleData.classes, (c) -> c.comment.length > 0
   
-  
-  processFile: (file) =>
-    console.log "Processing #{file}..."
-
-    @currentFile = null
-    @currentClass = null
-
-    @lastClassIndex = null
-    @lastMethodIndex = null
-    
-    @inComment = false
-    @lastComments = []
-    
-    @inBlock = null  # whould be which block by name
-    
-    @handleSideFileComments(file)
-    
-    lines = fs.readFileSync(file).toString().split("\n");
-    for line, lineNumber in lines
-      continue unless line?
-      continue if @handlePropTypes(line)
-      continue if @handleDefaultProps(line)
-      continue if @handleContextTypes(line)
-      continue if @handleComment(line)
-      continue if @handleClass(line, lineNumber, file)
-      continue if @handleMethod(line, lineNumber, file)
-      continue if @handleDefaultOptions(line)
-      
-  
-  # returns the last unclaimed comment found
-  claimComment: () =>
-    comments = @lastComments
-    @lastComments = []
-    return comments
-    
-    
-  # the first class comment in file can be pulled in from a file of the same
-  # name with the .md extension
-  handleSideFileComments: (file) =>
-    ext = path.extname(file)
-    mdFile = file.slice(0, -1 * ext.length) + ".md"
-    if fs.existsSync(mdFile)
-      console.log("found sidefile comments: #{mdFile}") if options.verbose
-      @lastComments = fs.readFileSync(mdFile).toString().split("\n")
-      
-      
-  handleComment: (line) =>
-    matches = line.match(@commentRegex)
-    if @inComment
-      if matches?.length > 0
-        @inComment = false
-      else
-        @lastComments.push line
-      return true
-    else if matches?.length > 0
-      # if there are opening and closing block comment on same line
-      if matches.length > 1
-        @lastComments.push line.replace(/\#\#\#/g, '')
-      else
-        @inComment = true
-      return true
-      
-    return false
-    
-      
-  handlePropTypes: (line) =>
-    if @currentClass 
-      return @_handleBlockType(line, @propTypesRegex, @currentClass, 'propTypes')
-    return false
-    
-    
-  handleDefaultProps: (line) =>
-    if @currentClass 
-      return @_handleBlockType(line, @defaultPropsRegex, @currentClass, 'defaultProps')
-    return false
-    
-    
-  handleContextTypes: (line) =>
-    if @currentClass 
-      return @_handleBlockType(line, @contextTypesRegex, @currentClass, 'contextTypes')
-    return false
-    
-    
-  handleDefaultOptions: (line) =>
-    if @currentMethod 
-      return @_handleBlockType(line, @defaultOptionsRegex, @currentMethod, 'defaultOptions')
-    return false
-    
-    
-    
-  _handleBlockType: (line, regex, storageObj, type) =>
-    if @inBlock == type
-      matches = line.match /^(\s*).*$/
-      return true unless matches?.length > 1
-      whitespace = matches[1]
-      if whitespace.length > (@currentWhiteSpace?.length || 0)
-        storageObj[type] ||= []
-        storageObj[type].push line
-      else
-        @inBlock = null
-        @currentWhitespace = null
-        return false
-        
-      return true;
-    
-    else 
-      matches = line.match(regex)
-      if matches?.length > 0
-        @inBlock = type
-        @currentWhiteSpace = matches[1]
-        return true
-    
-    return false
-    
-    
-  handleClass: (line, lineNumber, file) =>
-    matches = line.match(@classRegex)
-    return false unless matches?.length > 0
-    comment = @claimComment()
-    @createClassRecord(matches[1], matches[3], comment, line, lineNumber, file)
-    
-    
-  handleMethod: (line, lineNumber, file) =>
-    matches = line.match(@methodRegex)
-    name = matches?[1]
-    return false unless matches?.length > 0 && name[0] != '_' 
-    comment = @claimComment()
-    @createMethodRecord(name, comment, line, lineNumber, file)
-    
-
-  createClassRecord: (name, superClass, comment, line, lineNumber, file) =>
-    @currentClass =
-      id: _.uniqueId("dd_")
-      name:    name
-      comment: comment
-      lineNumber: lineNumber
-      file: file
-      signature: line
-      superClass: superClass
-      methods: []
-    moduleData.classes.push @currentClass
-
-
-  createMethodRecord: (name, comment, line, lineNumber, file) =>
-    @currentMethod =
-      id: _.uniqueId("dd_")
-      name: name
-      comment: comment
-      lineNumber: lineNumber
-      file: file
-      signature: line
-      
-    if @currentClass
-      @currentClass.methods.push @currentMethod
-    else 
-      moduleData.methods.push @currentMethod
-
-
-updateDocumentorData = () =>
-  module = _.find documentorData, (m) -> m.name == moduleName
-  if module
-    _.extend module, moduleData
-  else
-    documentorData.push moduleData
-    
-
-filterDocumentorData = () =>
-  for module in documentorData
-    unless options.allClasses
-      module.classes = _.filter module.classes, (c) -> c.comment.length > 0
-    for klass in module.classes
-      unless options.allMethods
-        klass.methods = _.filter klass.methods, (m) -> m.comment.length > 0
+  for klass in moduleData.classes
+    unless options.allMethods
+      klass.methods = _.filter klass.methods, (m) -> m.comment.length > 0
       
             
-createOutputFile = () =>
-  updateDocumentorData()
-  filterDocumentorData()
+createOutputFile = (moduleData) =>
+  filterDocumentorData(moduleData)
   console.log "creating #{options.outputFile}"
   
-  output = "base = (typeof module !== 'undefined' && module.exports) ? root : window\n" +
-           "base.documentorData = #{JSON.stringify(documentorData, null, "  ")};\n"
-  fs.writeFile options.outputFile, output, (err) ->
-    throw err if(err)
+  output = "base = (typeof moduleData !== 'undefined' && moduleData.exports) ? root : window\n" +
+           "base.documentorData = #{JSON.stringify(moduleData, null, "  ")};\n"
+  fs.writeFileSync options.outputFile, output
 
-documentor = new Documentor()
 
-if fs.lstatSync(srcDir).isDirectory()
-  files = glob.sync(srcDir + "/**/*", nodir: true)
-  for file in files
-    documentor.processFile(file)
-else
-  documentor.processFile(srcDir)
+console.log """
+For debugging only. This script and it's output file are not currently used by the 
+build or by the online docs.  
 
-createOutputFile()
+See src/docs/api/documentor.coffee for the common class used by this cli tool and 
+scripts/buildApiDocs.coffee which builds the online docs
+"""
+utils.pressAnyKeyToContinue ->
+
+  Documentor = require('../src/docs/api/documentor')
+  documentor = new Documentor(verbose: options.verbose)
+  
+  moduleData = {name: "react-datum"};
+  if fs.lstatSync(srcDir).isDirectory()
+    files = glob.sync(srcDir + "/**/*", nodir: true)
+    for file in files
+      moduleData = documentor.processFile(file, moduleData)
+  else
+    moduleData = documentor.processFile(srcDir, moduleData)
+
+  createOutputFile(moduleData)
+  process.exit 0
+  
+  
+  
 

@@ -111,9 +111,18 @@ openTerminalTab = (cdPath = './', cmd='')->
     else
       console.log "Sorry... unknown terminal type: #{process.env.TERM_PROGRAM}"
 
+
+pressAnyKeyToContinue = (method) ->
+  console.log "\nPress any key to continue..."
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+  process.stdin.on('data', method);
+  
+
 module.exports =
   systemCmd: systemCmd
   handleError: handleError
   npmInstall: npmInstall
   installNodePackage: installNodePackage
   openTerminalTab: openTerminalTab
+  pressAnyKeyToContinue: pressAnyKeyToContinue
