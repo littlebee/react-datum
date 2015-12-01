@@ -19,7 +19,7 @@ TocListItems = React.createClass
     lis = []
     for klass in @props.listComponents
       lis.push <li key={klass.id}>
-        <a href={'#' + klass.id}>{klass.name}</a>
+        <a href={'#' + klass.name}>{klass.name}</a>
       </li>
     
     return (
@@ -72,9 +72,9 @@ DocSection = React.createClass
     contents = []
     for klass in @props.listComponents
       contents.push( 
-        <div className="component-doc" id={klass.id} key={klass.id}>
+        <div className="component-doc" id={klass.name} key={klass.id}>
           <div className="signature">{klass.signature}</div>
-          <h3 className="followMeBar">{klass.name}</h3>
+          <h3>{klass.name}</h3>
           <div className="content">
             <Markdown content={klass.comment}/>
             <Markdown className="no-gutter" label="#{klass.name} propTypes: " content={klass.propTypes}/>
