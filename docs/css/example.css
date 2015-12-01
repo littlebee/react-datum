@@ -178,6 +178,7 @@ body.examples-index {
 
 body.examples-index .main-content {
   margin-left: 0px;
+  overflow: hidden;
 }
 
 
