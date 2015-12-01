@@ -173,6 +173,12 @@ body.examples-index {
   overflow: hidden;
 }
 
+
+body.examples-index .main-content {
+  margin-left: 0px;
+}
+
+
 #examplesView {
   height: 100%;
 }
@@ -180,8 +186,8 @@ body.examples-index {
 body[data-examplefile="examplesView.jsx"] .tile,
 #examplesView .tile {
   text-align: left;
-  width: 85%;
   margin-bottom: 14px;
+  margin-left: -5px;
 }
 
 body[data-examplefile="examplesView.jsx"] .tile h4,
@@ -215,7 +221,7 @@ body[data-examplefile="examplesView.jsx"] .tilegrid-react,
 body[data-examplefile="examplesView.jsx"] .tilegrid,
 #examplesView .tilegrid {
   height: calc(100% - 25px);
-  padding-top: 13px;
+  padding: 13px;
 }
 
 body[data-examplefile="examplesView.jsx"] .tile img,

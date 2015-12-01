@@ -82,8 +82,8 @@ body > header .main-menu-item:hover {
   position: relative;
   top: 88px;
   margin-top: 0px;
+  margin-left: 12px;
   overflow: auto;
-  padding-left: 7px;
 }
 
 .inline-demo {
