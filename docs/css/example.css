@@ -149,6 +149,8 @@ body[data-examplefile="/tilegrid/tilegrid.jsx"] .preview {
   padding-top: 20px;
   margin-left: 5px;
   width: 380px;
+  height: calc(100% - 24px);
+  overflow: auto;
 }
 
 body[data-examplefile="/tilegrid/tilegrid.jsx"] .preview .lazy-image {
