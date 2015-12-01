@@ -44,10 +44,11 @@ createIndex = () ->
     content: contentHtml
     bodyClass: 'examples-index'
   )
-  fs.writeFileSync(path.join(EXAMPLE_TARGET_DIR, 'index.html'), indexHtml)
+  outFile = path.join(EXAMPLE_TARGET_DIR, 'index.html')
+  console.log "creating #{outFile}"
+  fs.writeFileSync(outFile, indexHtml)
 
   
-
 processFile = (file) ->
   ext = path.extname(file)
   simpleName = path.basename(file, ext)

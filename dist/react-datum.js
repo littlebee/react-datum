@@ -179,14 +179,7 @@ var ReactDatum =
 	  };
 
 	  Form.propTypes = {
-
-	    /* can also accept model instance as context var. prop has precendence */
 	    model: Form.modelOrObject(),
-
-	    /*
-	      no formMode like zform, but we have to support programatic readonly
-	      see also ClickToEditForm component.   readonly should always take precendence
-	     */
 	    readonly: React.PropTypes.bool,
 	    buttonPosition: React.PropTypes.oneOf(['top', 'bottom', 'none']),
 	    className: React.PropTypes.string,
@@ -3205,12 +3198,11 @@ var ReactDatum =
 
 
 	/*
-	  For rendering and input of email addresses mailto: links like <a href="mailto:">.
-
-	  *Props*
-
-	  attr  - attribute on model should return an email address from the model
-	  displayLink - if true a mailto:// link is rendered for display
+	  For rendering and input of email addresses.  Can render mailto: links like 
+	  `<a href="mailto:">` in display mode
+	  
+	  Validates that email address is a semi valid email based on matching 
+	  `/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/`
 	 */
 
 	module.exports = Email = (function(superClass) {
@@ -3277,13 +3269,9 @@ var ReactDatum =
 	  blank image is downloaded and rendered first and then onLoad the real image src is used and
 	  rerender.
 
-	  On error a notFoundUrl is set as the image src to prevent broken image display
+	  On error a notFoundUrl is set as the image src to prevent broken image display.
 
-	  TODO : figure out how to make this detect when it's in view within the scroll parent
-	  before setting src to real url when in view and back to blank when going out of view
-	  for for realz lazy loading
-
-	  The model attribute should specified in @props.attr should return a fully qualified
+	  The model attribute specified in @props.attr should return a fully qualified
 	  url.  The image is only rendered if it's visible and in view. Otherwise the placeholder
 	  image is rendered.
 	 */
@@ -3461,18 +3449,7 @@ var ReactDatum =
 	/*
 	  For real numbers.
 
-	  *props
-	  format - one of
-	    'abbreviate' - Add M and K to numbers greater than 1 million and
-	      1 thousand respectively
-	    'money' - display dollar sign and two decimal places zero filled
-	    'comma' - add comma separators at thousands
-
-	  minValue - validate value must be at least this value on change
-	  maxValue - validate value must be at most this value on change
-
-
-	  Only allows /[0-9\-\.]/ on input
+	  Only allows `/^\-?[0-9]*\.?[0-9]*$/` on input
 	 */
 
 	module.exports = Number = (function(superClass) {
@@ -3714,85 +3691,12 @@ var ReactDatum =
 	  CollectionPicker.displayName = "react-datum.CollectionPicker";
 
 	  CollectionPicker.propTypes = _.extend({}, Datum.propTypes, {
-
-	    /*
-	      TBD: Can also be the string name of a shared collection (see ../sharedCollection.cjsx)
-	      TBD: Can also accept an array of [{lable: "option 1", id: 1}, ...]
-	      
-	      Can also accept collection instance as context var via ReactDatum.Collection component. 
-	        prop has precendence
-	     */
 	    collection: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Collection), React.PropTypes.string, React.PropTypes.array]),
-
-	    /*  
-	      Attribute value from model in lookup collection to render in inputMode='readonly'.
-	      if not specified, model.toString() will be displayed
-	     */
 	    displayAttr: React.PropTypes.string,
-
-	    /*
-	      attribute value from model in lookup collection to render in suggestions when 
-	      in inputMode='edit'.  If not specified, @props.displayAttr is used and if that
-	      is not specified, model.toString() is used
-	     */
 	    optionDisplayAttr: React.PropTypes.string,
-
-	    /* 
-	      attribute value from model in lookup collection to set as value on props.attr
-	      in props.model
-	      
-	      default:  "id"
-	     */
 	    optionSaveAttr: React.PropTypes.string.isRequired,
-
-	    /* react component to render when in inputMode='readonly'. */
 	    displayComponent: React.PropTypes.node,
-
-	    /*
-	      TODO : tests!
-	      Specify a callback to load suggestions asynchronously.  
-	      The callback method  should accept the following arguments: 
-	        `(collection, userInput, ayncOptions, doneCallback)` 
-	      where 
-	        `collection` is the value of the collection prop
-	        `userInput` is the what the user has entered so far  
-	        `doneCallback` is a method to be called with `(error, data)` when data is ready.
-	            the first argument, `error` should be false or an error that will be thrown
-	            `data` argument should be an array of Backbone.Models or array of 
-	                  {label: "string", value: "string"} pairs
-	        `asyncOptions` is the options object passed via prop to CollectionPicker 
-	    
-	      Note that internally, CollectionPicker always renders a Select.Async when inputMode='edit' 
-	      and provides an internal loadOptions method to pull suggestions from the models in 
-	      the lookup collection. 
-	      
-	      *Where do they all come from?*  
-	      
-	      We will use the returned filtered set of models from the following chain (in order):
-	        **Collection.filterForPicker()**  - if we find a method on the collection called 
-	          'filterForPicker' - it will be called with `(userInput, doneCallback, asyncOptions)`
-	          and should return an array of models to render suggestions from 
-	        **props.asyncSuggestionCallback** - this prop
-	        **Internal filter** (this.filterOptions(userInput, doneCallback)) seaches through the 
-	          props.optionDisplayAttr of models currently in the collection to find suggestions based on 
-	          userInput and groups results
-	     */
 	    asyncSuggestionCallback: React.PropTypes.func,
-
-	    /*
-	      Options above are proprietary to the CollectionPicker component.
-	      
-	      Remaining options are passed through to react-select, see # [react-select](https://github.com/JedWatson/react-select)
-	      
-	      You can use any of the options supported by react-select Select and Select.Async, 
-	      *except for the loadOptions prop* of Select.Async.  
-	    
-	      see # [react-select](https://github.com/JedWatson/react-select) for additional props    
-	       
-	      can accept and display multiple values.  If this prop is set, we assume that 
-	      value of our @props.model.get(@props.attr) returns the IDs either as an
-	      array or comma separated value.
-	     */
 	    multi: React.PropTypes.bool
 	  });
 

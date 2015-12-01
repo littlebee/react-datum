@@ -95,7 +95,7 @@ module.exports = (grunt) ->
         command: 'coffee ./scripts/buildDocIndex.coffee grunt'
         
       buildApiDocs: 
-        command: 'coffee ./scripts/documentor -o docs/api/documentorData.js src'
+        command: 'coffee ./scripts/buildApiDocs.coffee'
       
       deploy:
         options:
@@ -136,7 +136,7 @@ module.exports = (grunt) ->
   # tasks
   grunt.registerTask 'test', ['build', "shell:test"]
   grunt.registerTask 'distrib', ['cssmin:distrib', 'webpack:distrib', 'webpack:optimize','shell:deploy']
-  grunt.registerTask 'docs',  ['shell:buildDocIndex', 'examples']
+  grunt.registerTask 'docs',  ['shell:buildDocIndex', 'shell:buildApiDocs', 'examples']
   grunt.registerTask 'examples', ['newer:react:examples', 'newer:cjsx:examples', 'newer:coffee:examples', 'shell:buildExamples']
   grunt.registerTask 'build', ['docs', 'distrib'] # ['newer:cjsx:build', 'newer:coffee:build', 'distrib']
   grunt.registerTask 'default', ['availabletasks']

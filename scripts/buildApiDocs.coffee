@@ -12,6 +12,8 @@ marked = require('marked')
 nsh = require('node-syntaxhighlighter')
 language =  require('jsx-syntaxhighlighter')
 
+TARGET = "docs/api/index.html"
+
 # marked is a markdown to html converter
 marked.setOptions(
   highlight: (code) ->
@@ -40,6 +42,6 @@ indexHtml = indexTemplate(
   )
   bodyClass: 'api-index'
 )
-
-fs.writeFileSync "docs/api/index.html", indexHtml
+console.log "creating #{TARGET}"
+fs.writeFileSync TARGET, indexHtml
 
