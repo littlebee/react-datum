@@ -38,7 +38,7 @@ TocSection = React.createClass
     
 Toc = React.createClass 
   render: ->
-    <div className="toc">
+    <div className="toc no-print">
       <TocSection label="Datum Components" listComponents={@props.datumClasses}/>
       <TocSection label="Contextual Components" listComponents={@props.otherClasses}/>
     </div>

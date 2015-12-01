@@ -7,7 +7,7 @@
     
     <link rel="stylesheet" type="text/css" href="<%= relativeRoot %>/docs/css/bootstrap-light.css">
     <link rel="stylesheet" type="text/css" href="<%= relativeRoot %>/docs/css/syntaxHighlight.css">
-    <link rel="stylesheet" type="text/css" href="<%= relativeRoot %>/docs/css/docs.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="<%= relativeRoot %>/docs/css/docs.css">
     <link rel="stylesheet" type="text/css" href="<%= relativeRoot %>/docs/css/print.css" media="print">
     
     <title>react-datum</title>
