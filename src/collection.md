@@ -1,4 +1,3 @@
-### ReactDatum.Collection
 
 This react-datum component provides datums with a Backbone collection and rerenders descendants on collection changes.  
 - provides a collection context to all children
@@ -36,17 +35,12 @@ In order for the components such as ReactDatum.Tilegrid and ReactDatum.SelectedM
 
 Once used with the ReactDatum.Collection component, your Backbone collection instance will be given the following methods:
 
-- `getSelectedModels()`  returns array of currently selected models
-
-- `selectModel(model, selected=true, options={})`  selects the model. default options: {silent: false}
-
-- `selectModelById(id, selected=true, options={})`  see selectModel()
-
-- `selectModelByIndex(index, selected=true, options={})`  see selectModel()
-
-- `selectAll(options={})` default options: {silent: false}
-
-- `selectNone(options{})` default options: {silent: false}
+  * `getSelectedModels()`  returns array of currently selected models
+  * `selectModel(model, selected=true, options={})`  selects the model. default options: {silent: false}
+  * `selectModelById(id, selected=true, options={})`  see selectModel()
+  * `selectModelByIndex(index, selected=true, options={})`  see selectModel()
+  * `selectAll(options={})` default options: {silent: false}
+  * `selectNone(options{})` default options: {silent: false}
 
 A console warning will be issued if any of the methods above already exist on a collection without this.hasSelectableCollectionMixin==true.   
 

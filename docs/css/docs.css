@@ -5,7 +5,6 @@ html {
 
 body {
   height: 99%;
-  overflow: auto;
 }
 
 
@@ -33,7 +32,7 @@ body > header em {
 
 body > header .main-menu {
   position: absolute;
-  bottom: -10px;
+  bottom: 0px;
   left: 22%;
   min-width: 710px;
 }
@@ -78,8 +77,13 @@ body > header .main-menu-item:hover {
 }
 
 .main-content {
-  margin-top: 88px; 
-  padding-left: 45px;
+  height: calc(100% - 88px);
+  padding: 0px;
+  position: relative;
+  top: 88px;
+  margin-top: 0px;
+  overflow: auto;
+  padding-left: 7px;
 }
 
 .inline-demo {
@@ -89,16 +93,80 @@ body > header .main-menu-item:hover {
   padding: 7px 15px;
 }
 
+.toc {
+  height: calc(100% - 100px);
+  width: 220px;
+  position: fixed;
+  top: 94px;
+  background-color: whitesmoke;
+  overflow: auto;
+}
 
+.doc-content {
+  position: relative;
+  left: 235px;
+  width: calc(100% - 235px);
+  max-width: 900px;
+  overflow: auto;
+}
+
+.no-gutter .syntaxhighlighter .gutter {
+  display: none;
+}
+
+.no-gutter .syntaxhighlighter .code {
+  padding-left: 18px;
+}
+
+.no-gutter .syntaxhighlighter code.plain {
+  color: #2a00ff !important;
+}
+
+.component-doc h3 {
+  background: linear-gradient(to right, #B7BED0, white);
+  padding-left: 7px;
+}
+
+/* from  http://codepen.io/chrissp26/pen/gBrdo */
+.followMeBar.fixed {
+  position: fixed;
+  width: 100%;
+  top: 100px;
+  max-width: 900px;
+}
+
+.followMeBar.fixed.absolute {
+  position: absolute;
+}
+
+
+
+.component-doc .signature {
+  float: right;
+  margin-top: 4px;
+  margin-right: 35px;
+}
+
+
+.doc-content h2 {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.component-doc .content {
+  margin-right: 20px;
+}
 
 /* 
   for intro page only, which is just the Readme, pull the top up and out of site so as not 
   to repeat information and links in the header
 */
 body.docs-index .main-content {
-  margin-top: -30px;
-  
+  margin-top: -115px;
+  height: calc(100% + 50px);
 }
+
+
 
 
 

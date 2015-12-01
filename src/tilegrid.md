@@ -1,6 +1,4 @@
 
-### ReactDatum.TileGrid
-
 The Tilegrid component renders a tile containing it's children for each model in the collection.  
 
 - supports single select 

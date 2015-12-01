@@ -1,4 +1,3 @@
-### CollectionStats
 
   - provides information about the items in your collection.
 

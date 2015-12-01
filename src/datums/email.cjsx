@@ -5,18 +5,17 @@ _ = require('underscore')
 Datum = require('./datum')
 
 ###
-  For rendering and input of email addresses mailto: links like <a href="mailto:">.
-
-  *Props*
-
-  attr  - attribute on model should return an email address from the model
-  displayLink - if true a mailto:// link is rendered for display
-
+  For rendering and input of email addresses.  Can render mailto: links like 
+  `<a href="mailto:">` in display mode
+  
+  Validates that email address is a semi valid email based on matching 
+  `/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/` 
 ###
 module.exports = class Email extends Datum
   @displayName: "react-datum.Email"
 
   @propTypes: _.extend {}, Datum.propTypes,
+    # If true, display as mailto address link when `inputMode='readonly'`
     displayAsLink: React.PropTypes.bool
 
   constructor: (props) ->

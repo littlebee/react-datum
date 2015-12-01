@@ -13,7 +13,9 @@ module.exports = class Text extends Datum
 
   
   @propTypes: _.extend {}, Datum.propTypes,
+    # set to true if rendering known, safe, html.  see https://facebook.github.io/react/tips/dangerously-set-inner-html.html. 
     displayAsHtml: React.PropTypes.bool
+    
     # set ellipsizeAt to false to display whole value. Only effects 'readonly' display
     # values displayed in 'edit' mode are never truncated.
     ellipsizeAt: React.PropTypes.oneOfType([

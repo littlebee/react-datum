@@ -1,4 +1,3 @@
-### ClickToEditForm
 
 This component is an extension of **Form** that initially presents an
 "Edit" button that the user can click to switch between display and input.

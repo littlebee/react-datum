@@ -17,7 +17,6 @@
 
   <body class="<%= bodyClass %>">
     <script src='<%=relativeRoot %>/dist/vendor/jquery.js'></script>
-
     <%= header %>
     
     <div class="main-content">

@@ -1,6 +1,5 @@
-### ReactDatum.SelectedModel
 
-This react-datum component provides datums with a Backbone model that is selected model in the collection.  It also  rerenders descendants on collection selection changes.  
+This react-datum contextual component provides datums with a Backbone model that is selected model in the collection.  It also  rerenders descendants on collection selection changes.  
 
 Any descendant datum that accept a `model` context or prop, can be wrapped in a **ReactDatum.SelectedModel** component and will respond to changes in the model and on changes to the selected model in the collection.
 

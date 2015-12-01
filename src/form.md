@@ -1,7 +1,5 @@
 
-### ReactDatum.Form 
-
- - provides a form context to all of the datums within.  
+This contextual component provides a form context to all of the datums within.  
 
 Adding the **ReactDatum.Form** component, you can easily convert a group of datums into an editable form with save and cancel buttons.  By default, when children of a Form component all datums will render in their input presentation `inputMode='edit'`.
 

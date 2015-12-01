@@ -1,6 +1,4 @@
 
-### ReactDatum.Link
-
 For rendering links like `<a href="...">`.
 
 Example: 

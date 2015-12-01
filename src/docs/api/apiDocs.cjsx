@@ -1,5 +1,6 @@
     
 React = require('react')
+_ = require('underscore')
 
 marked = require('marked')
 nsh = require('node-syntaxhighlighter')
@@ -11,15 +12,6 @@ marked.setOptions(
     nsh.highlight(code, language) 
 )
 
-
-Markdown = React.createClass
-  render: ->
-    content = @props.content
-    content = @props.content.join("\n") if _.isArray(@props.content)
-    markdown = marked(content)
-    <div className="markdown">
-      {markdown}
-    </div>
 
     
 TocListItems = React.createClass
@@ -52,6 +44,23 @@ Toc = React.createClass
     </div>
 
 
+Markdown = React.createClass
+  render: ->
+    content = @props.content
+    return null unless content?
+    content = @props.content.join("\n") if _.isArray(@props.content)
+    label = if @props.label then <h4>{@props.label}</h4> else null
+    markdown = <span dangerouslySetInnerHTML={{__html: marked(content)}}/>
+    
+    return (
+      className = "markdown " + @props.className
+      <div className={className}>
+        {label}
+        {markdown}
+      </div>
+    )
+    
+    
 DocSection = React.createClass
   render: ->
     <section>
@@ -62,17 +71,19 @@ DocSection = React.createClass
   renderComponentDocs: ->
     contents = []
     for klass in @props.listComponents
-      contents.push <div className="component-doc" id={klass.id} key={klass.id}>
-        <h3>{klass.name}</h3>
-        <div>{klass.signature}</div>
-        <Markdown content={klass.comment}/>
-        <h4>propTypes:</h4>
-        <Markdown content={klass.propTypes}/>
-        <h4>defaultProps:</h4>
-        <Markdown content={klass.defaultProps}/>
-        <h4>defaultProps:</h4>
-        <Markdown content={klass.defaultProps}/>
-      </div>      
+      contents.push( 
+        <div className="component-doc" id={klass.id} key={klass.id}>
+          <div className="signature">{klass.signature}</div>
+          <h3 className="followMeBar">{klass.name}</h3>
+          <div className="content">
+            <Markdown content={klass.comment}/>
+            <Markdown className="no-gutter" label="#{klass.name} propTypes: " content={klass.propTypes}/>
+            <Markdown className="no-gutter" label="#{klass.name} defaultProps: " content={klass.defaultProps}/>
+            <Markdown className="no-gutter" label="#{klass.name} contextTypes: " content={klass.contextTypes}/>
+          </div>
+        </div>      
+      )
+    return contents
       
 
 DocContent = React.createClass 
@@ -85,7 +96,7 @@ DocContent = React.createClass
     
 module.exports = ApiDocs = React.createClass 
   render: ->
-    <div className='sidebar'>
+    <div className='api-docs'>
       <Toc {...@props}/>
       <DocContent {...@props}/>
     </div>

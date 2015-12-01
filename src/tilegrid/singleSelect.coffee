@@ -33,6 +33,7 @@ module.exports = class SingleSelect
     @options = _.defaults options,
       # when set to false, will just change active cell if the user clicks on an already selected cell
       selectOneOnSelected: true
+      scrollElement: @tilegrid.$element
       scrollOptions:
         duration: 0,
         cushion: {top: 40, bottom: 40}

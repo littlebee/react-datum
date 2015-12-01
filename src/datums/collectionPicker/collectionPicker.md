@@ -1,4 +1,3 @@
-### ReactDatum.CollectionPicker
 
 This react-datum component provides a selector (picker) based on react-select.  That looks up an ID, such
 as maybe a userID on a model in another collection such as a Users collection.
@@ -39,7 +38,6 @@ Use the asyncLoadCallback prop to load suggestions asynchronously from a server:
     asyncLoadCallback={loadData} 
   />
 ```
-
 #### Custom display
 
 By default the CollectionPicker will display the value of props.model.get(props.displayAttr),

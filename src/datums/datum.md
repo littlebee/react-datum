@@ -1,6 +1,4 @@
 
-### ReactDatum.Datum
-
 This is base class of all display+input components that render presentation of an attribute from a Backbone.Model or Javascript object.
 
 There is one required prop, 'attr' - the model attribute name.

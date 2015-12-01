@@ -27,17 +27,9 @@ indexTemplate = _.template(fs.readFileSync('src/docs/api/index.tpl').toString())
 headerTemplate = _.template(fs.readFileSync('src/docs/header.tpl').toString())
 
 documentor = new Documentor()
-moduleData = documentor.processFiles('src/')
+datumClasses = documentor.processFiles('src/datums/').classes
+otherClasses = documentor.processFiles('src/', {}, {recursive: false}).classes
 
-datumClasses = []
-otherClasses = []
-
-for klass in moduleData.classes
-  if klass.file? && strHelp.startsWith(klass.file, "src/datums/")
-    datumClasses.push klass
-  else
-    otherClasses.push klass
-    
 headerHtml = headerTemplate(relativeRoot: '../..', selectedItem: 2)
 
 indexHtml = indexTemplate(

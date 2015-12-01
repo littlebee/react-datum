@@ -17,31 +17,41 @@ module.exports = class Datum extends React.Component
   @propTypes:
     # additional css classes (space seperated) to add to wrapper div
     className: React.PropTypes.string
+    
     # can also accept model instance as context var. prop has precendence
     model: React.PropTypes.oneOfType([
       React.PropTypes.instanceOf(Backbone.Model)
       React.PropTypes.object
     ])
+    
     # the backbone attribute on the model to get and set
     attr: React.PropTypes.string.isRequired
+    
     label: React.PropTypes.string
+    
     # set ellipsizeAt to false to display whole value. Only effects 'readonly' display
     # values displayed in 'edit' mode are never truncated.
     ellipsizeAt: React.PropTypes.oneOfType([
       React.PropTypes.number
       React.PropTypes.bool
     ])
+    
     placeholder: React.PropTypes.string
+    
     # TODO : add back support of 'inlineEdit'?
     # 'readonly' = render for display;
     # 'edit' = render for input;
     inputMode: React.PropTypes.oneOf(['readonly', 'edit'])  
+    
     # set to true to not render a popover on ellipsized values
     noPopover: React.PropTypes.bool
+    
     # set to true to set the model value on change. this defaults to true if inputMode = inlineEdit
     setOnChange: React.PropTypes.bool
+    
     # make this input readonly regardless of context or inputMode prop
     readonly: React.PropTypes.bool
+    
     # make this input required and give it required class and invalid class when invalid
     required: React.PropTypes.bool
 
@@ -59,8 +69,10 @@ module.exports = class Datum extends React.Component
       React.PropTypes.instanceOf(Backbone.Model)
       React.PropTypes.object
     ])
+    
     # note that the readonly prop takes precendence
     inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit'])
+    
     # if there is a form context, we will register with it so that it can
     # interact with us
     form: React.PropTypes.object

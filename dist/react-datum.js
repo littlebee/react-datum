@@ -2579,6 +2579,7 @@ var ReactDatum =
 	    this.initialize = bind(this.initialize, this);
 	    this.options = _.defaults(options, {
 	      selectOneOnSelected: true,
+	      scrollElement: this.tilegrid.$element,
 	      scrollOptions: {
 	        duration: 0,
 	        cushion: {

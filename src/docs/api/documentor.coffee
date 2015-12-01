@@ -7,7 +7,7 @@ module.exports = class Documentor
   # comments get handled first, if we are in a comment, then 
   commentRegex: /\#\#\#/g
   methodRegex: /^\s*((this\.|\@)*[\w\.]*)\s*[\:\=]\s*\((.*)\).*/
-  classRegex: /^.*class\s*([\w\.]+)\s*(extends(.*))?\s*$/
+  classRegex: /^.*class\s+([\w\.]+)\s*(extends(.*))?\s*$/
   propTypesRegex: /^(\s*).*[\@\.]propTypes.*$/
   contextTypesRegex: /^(\s*).*[\@\.]contextTypes.*$/
   defaultPropsRegex: /^(\s*).*[\@\.]defaultProps.*$/
@@ -19,13 +19,19 @@ module.exports = class Documentor
       verbose: false
 
 
-  processFiles: (srcDir, moduleData) ->
-    if fs.lstatSync(srcDir).isDirectory()
-      files = glob.sync(srcDir + "/**/*", nodir: true)
-      for file in files
-        moduleData = @processFile(file, moduleData)
-    else
-      moduleData = @processFile(srcDir, moduleData)
+  processFiles: (srcDirs, moduleData, options={}) ->
+    options = _.defaults options,
+      recursive: true
+      
+    postfix = if options.recursive then "/**/*" else "/*"
+    srcDirs = [srcDirs] unless _.isArray srcDirs
+    for srcDir in srcDirs
+      if fs.lstatSync(srcDir).isDirectory()
+        files = glob.sync(srcDir + postfix, nodir: true)
+        for file in files
+          moduleData = @processFile(file, moduleData)
+      else
+        moduleData = @processFile(srcDir, moduleData)
       
     return moduleData
 
