@@ -2,8 +2,6 @@
 React = require('react')
 Datum = require('./datum')
 
-
-
 ###
   This is a lazy loading image.
 
@@ -11,13 +9,9 @@ Datum = require('./datum')
   blank image is downloaded and rendered first and then onLoad the real image src is used and
   rerender.
 
-  On error a notFoundUrl is set as the image src to prevent broken image display
+  On error a notFoundUrl is set as the image src to prevent broken image display.
 
-  TODO : figure out how to make this detect when it's in view within the scroll parent
-  before setting src to real url when in view and back to blank when going out of view
-  for for realz lazy loading
-
-  The model attribute should specified in @props.attr should return a fully qualified
+  The model attribute specified in @props.attr should return a fully qualified
   url.  The image is only rendered if it's visible and in view. Otherwise the placeholder
   image is rendered.
 ###

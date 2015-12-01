@@ -19,22 +19,25 @@ module.exports = class Form extends React.Component
 
 
   @propTypes:
-    ### can also accept model instance as context var. prop has precendence ###
+    # can also accept model instance as context var. prop has precendence 
     model: @modelOrObject()
-    ###
-      no formMode like zform, but we have to support programatic readonly
-      see also ClickToEditForm component.   readonly should always take precendence
-    ###
+    
+    #  no formMode like zform, but we have to support programatic readonly
+    #  see also ClickToEditForm component.   readonly should always take precendence
     readonly: React.PropTypes.bool
+    
     # you can style a buttonPossiton: 'top' to float left or right in css.
     buttonPosition: React.PropTypes.oneOf(['top', 'bottom', 'none'])
+    
     # specify className of form element
     className: React.PropTypes.string
+    
     # on save success this method, if specified, will be called with the standard
     # Backbone success callback arguments (model, response, options)
     # If you don't specify a saveSuccessCallback, a small success message will be rerendered
     # below the form button after successfully saving the form
     saveSuccessCallback: React.PropTypes.func
+    
     # on save error this method, if specified, will be called with the standard
     # Backbone error callback arguments (model, response, options)
     # If you don't specify a saveErrorCallback, an error message will be rerendered
@@ -52,9 +55,7 @@ module.exports = class Form extends React.Component
     ### can also accept model instance as a prop.  prop has precendence ###
     model: @modelOrObject()
 
-  # we also pass along the model passed to us via prop or context, so you can
-  # be in the context of another model and have the form interact with an
-  # an outside model by means of passing the model instance as a prop.
+  
   @childContextTypes:
     # we pass along the model (make it contextually available) so you can
     # say `<Rz.Form model={this.ourModel}>` and change the model context
@@ -65,7 +66,6 @@ module.exports = class Form extends React.Component
     # datums will register with us through the addDatum method when they mount
     # and remove themselves when they unmount
     form: React.PropTypes.object
-
 
   # default input mode for all datums that don't have 'readonly' or 'inputMode props
   datumInputMode:  'edit'
