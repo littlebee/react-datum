@@ -33,28 +33,43 @@ body > header em {
 
 body > header .main-menu {
   position: absolute;
-  bottom: 0px;
-  left: 220px;
-  min-width: 705px;
+  bottom: -10px;
+  left: 22%;
+  min-width: 710px;
 }
 
 body > header .main-menu-item {
-  margin-right: 30px;
-  padding: 4px 7px;
-  border: solid 1px grey;
-  cursor: pointer;
-  border-radius: 6px;
-  color: #DAF398;
+  padding: 5px;
+  background-color: lightgrey;
+  border-radius: 5px 5px 0 0;
+  border: 1px solid lightgrey;
+  float: none;
+  display: inline-block;
+  margin-right: 5px;
+  font-size: 18px;
+  color: grey;
+}
+
+body > header .github-link {
+  position: absolute;
+  top: 34px;
+  right: 20px;
 }
 
 body > header .main-menu-item.selected {
-  background-color: #e9f6c6;
+  color: #555555;
+  cursor: default;
+  background-color: white;
+  border: 1px solid white;
   text-decoration: none;
-  color: #0099ff;
+  
 }
 
 body > header .main-menu-item:hover {
-  border: solid 1px black;
+  background-color: whitesmoke;
+  border: 1px solid grey;
+  border-bottom-color: white;
+  color: #0099ff;
 }
 
 .syntaxhighlighter .gutter .line {
