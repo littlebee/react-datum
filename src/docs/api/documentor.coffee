@@ -8,9 +8,9 @@ module.exports = class Documentor
   commentRegex: /\#\#\#/g
   methodRegex: /^\s*((this\.|\@)*[\w\.]*)\s*[\:\=]\s*\((.*)\).*/
   classRegex: /^.*class\s+([\w\.]+)\s*(extends(.*))?\s*$/
-  propTypesRegex: /^(\s*).*[\@\.]propTypes.*$/
-  contextTypesRegex: /^(\s*).*[\@\.]contextTypes.*$/
-  defaultPropsRegex: /^(\s*).*[\@\.]defaultProps.*$/
+  propTypesRegex: /^(\s*)[^\#]*[\@\.]propTypes.*$/
+  contextTypesRegex: /^(\s*)[^\#]*[\@\.]contextTypes.*$/
+  defaultPropsRegex: /^(\s*)[^\#]*[\@\.]defaultProps.*$/
   defaultOptionsRegex: /^.*\_\.defaults.*options.*$/
   
 

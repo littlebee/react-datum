@@ -8,7 +8,7 @@ Strhelp = require('../../lib/stringHelpers')
 Select = require('react-select/src/Select')
 Select.Async = require('react-select/src/Async')
 
-### !See ./collectionPicker.md ###
+# See ./collectionPicker.md 
 module.exports = class CollectionPicker extends Datum
   @displayName: "react-datum.CollectionPicker"
   

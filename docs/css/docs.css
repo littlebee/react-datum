@@ -161,15 +161,6 @@ body > header .main-menu-item:hover {
   margin-right: 20px;
 }
 
-/* 
-  for intro page only, which is just the Readme, pull the top up and out of site so as not 
-  to repeat information and links in the header
-*/
-body.docs-index .main-content {
-  margin-top: -115px;
-  height: calc(100% + 50px);
-}
-
 
 
 

@@ -30,6 +30,7 @@ TocListItems = React.createClass
     
 TocSection = React.createClass
   render: ->
+    return null unless @props.listComponents?.length > 0
     <section>
       <h4>{@props.label}</h4>
       <TocListItems {...@props}/>
@@ -96,6 +97,7 @@ DocSection = React.createClass
     </section>
     
   renderComponentDocs: ->
+    return null unless @props.listComponents?.length > 0
     contents = []
     for klass in @props.listComponents
       contents.push( 

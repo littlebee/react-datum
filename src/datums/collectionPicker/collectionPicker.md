@@ -1,21 +1,37 @@
 
-This react-datum component provides a selector (picker) based on react-select.  That looks up an ID, such
-as maybe a userID on a model in another collection such as a Users collection.
+This react-datum component provides a selector (picker) based on [react-select](https://jedwatson.github.io/react-select/).  
 
-simple example:
+The `props.attr` on `props.model` should return and id or other key that is used to find a model in a collection and display a value from the lookup model.   
+
+Say for example, you have a model like this:
+```javascript
+  var kittenModel = new Backbone.Model({
+    name: "Fluffy",
+    title: "His Royal Cuteness",
+    updatedByUserId: 905793
+  });
+```
+and a collection of users like this:
+```javascript
+  var usersCollection = new Backbone.Collection([{
+    id: 905793
+    fullName: "Jane Doe"
+  },{
+    ...
+  }])
+```
+To display the user's full name instead of the id:
 ```jsx
   <ReactDatum.CollectionPicker 
-    attr="userId"   
-    model={myModel}
+    attr="updatedByUserId"   
+    model={kittenModel}
     collection={usersCollection}
     displayAttr="fullName"/>
 ```
 
-In display mode, the CollectionPicker above will display the fullName from a model with ID matching
-myModel.get('userId') from usersCollection instance var.   
+In `inputModel='readonly'`, the CollectionPicker above will display the fullName from a model in the usersCollection with id matching kittenModel.get('updatedByUserId') from usersCollection instance var.   
 
-In inputMode='edit', the suggestions would also render the displayAttr because we didn't specify a 
-suggestionAttr prop
+In `inputMode='edit'`, the suggestions would also render the displayAttr because we didn't specify a suggestionAttr prop
 
 #### Asynchronous suggestions
 
@@ -46,11 +62,7 @@ or model.toString() (if it exists and no displayAttr specified).
 You can provide custom rendering via the the `optionComponent`, `valueComponent` and 
 `displayComponent` props.  
 
-The optionComponent and valueComponent are passed throught to 
-[react-select](http://jedwatson.github.io/react-select/).  For optionComponent, you are 
-required to handle and pass events back through the props given. Providing a custom option 
-render, is a little longish, but value display is easy. The GravatarOption and GravatarValue
-components below were taken directly from the [CustomComponents example](https://github.com/JedWatson/react-select/blob/master/examples/src/components/CustomComponents.js)
+The optionComponent and valueComponent are passed throught to [react-select](http://jedwatson.github.io/react-select/).  For optionComponent, you are required to handle and pass events back through the props given. Providing a custom option render, is a little longish, but value display is easy. The GravatarOption and GravatarValue components below were taken directly from the  [react-select CustomComponents example](https://github.com/JedWatson/react-select/blob/master/examples/src/components/CustomComponents.js)
 
 To provide a custom option (suggestion) display:
 

@@ -31,8 +31,14 @@ indexTemplate = _.template(fs.readFileSync('src/docs/api/index.tpl').toString())
 headerTemplate = _.template(fs.readFileSync('src/docs/header.tpl').toString())
 
 documentor = new Documentor()
-datumClasses = documentor.processFiles('src/datums/').classes
-otherClasses = documentor.processFiles('src/', {}, {recursive: false}).classes
+
+# For debugging, you can specify a single file to process
+if process.argv.length > 2
+  datumClasses = documentor.processFiles(process.argv.slice(2)).classes
+  otherClass = []
+else
+  datumClasses = documentor.processFiles('src/datums/').classes
+  otherClasses = documentor.processFiles('src/', {}, {recursive: false}).classes
 
 headerHtml = headerTemplate(relativeRoot: '../..', selectedItem: 2)
 
