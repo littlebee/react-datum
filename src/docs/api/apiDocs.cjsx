@@ -54,11 +54,38 @@ Markdown = React.createClass
     
     return (
       className = "markdown " + @props.className
-      <div className={className}>
+      <div id={@props.id} className={className}>
         {label}
         {markdown}
       </div>
     )
+    
+    
+ClassVariable = React.createClass
+  render: ->
+    code = @props.klass[@props.attr]
+    return null unless code?.length > 0
+    
+    <div id="#{@props.klass.name}-#{@props.attr}">
+        <h4>{@props.klass.name} {@props.attr}:</h4>
+        {@renderLinks(code, @props.attr)}
+        <Markdown className="no-gutter" content={code.slice(1)} />
+    </div>
+    
+  renderLinks: (code, attr)->
+    # pull out any extends to show "see also link to other api doc"
+    matches = code[0].match(/^[^\:]*\:\s*(\_\.extend[^\,]*\,\s*([^\,]*)?\,?\s*([^\,]*)?\,?\s*([^\,]*))?/)
+    links = []
+    for extendedClassVar, index in matches.slice(2) 
+      if extendedClassVar?.length > 0
+        links.push <a href="##{extendedClassVar.replace('.', '-')}" key="#{attr}-#{index}">{extendedClassVar}</a>
+    
+    return null unless links.length > 0
+    
+    <div className='classvar-reference'>
+      <label>See Also: </label>
+      {links}
+    </div>
     
     
 DocSection = React.createClass
@@ -77,9 +104,9 @@ DocSection = React.createClass
           <h3>{klass.name}</h3>
           <div className="content">
             <Markdown content={klass.comment}/>
-            <Markdown className="no-gutter" label="#{klass.name} propTypes: " content={klass.propTypes}/>
-            <Markdown className="no-gutter" label="#{klass.name} defaultProps: " content={klass.defaultProps}/>
-            <Markdown className="no-gutter" label="#{klass.name} contextTypes: " content={klass.contextTypes}/>
+            <ClassVariable klass={klass} attr="propTypes"/>
+            <ClassVariable klass={klass} attr="defaultProps"/>
+            <ClassVariable klass={klass} attr="contextTypes"/>
           </div>
         </div>      
       )

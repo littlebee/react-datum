@@ -155,6 +155,8 @@ module.exports = class Documentor
       if matches?.length > 0
         @inBlock = type
         @currentWhiteSpace = matches[1]
+        storageObj[type] ||= []
+        storageObj[type].push line
         return true
     
     return false

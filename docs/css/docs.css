@@ -127,6 +127,10 @@ body > header .main-menu-item:hover {
   padding-left: 7px;
 }
 
+.classvar-reference {
+  margin-bottom: 10px;
+}
+
 /* from  http://codepen.io/chrissp26/pen/gBrdo */
 .followMeBar.fixed {
   position: fixed;

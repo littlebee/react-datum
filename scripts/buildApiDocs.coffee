@@ -23,6 +23,8 @@ marked.setOptions(
 Documentor = require('../src/docs/api/documentor')
 ApiDocs = require('../src/docs/api/apiDocs')
 
+debugger
+
 strHelp = require('../src/lib/stringHelpers')
 
 indexTemplate = _.template(fs.readFileSync('src/docs/api/index.tpl').toString())
