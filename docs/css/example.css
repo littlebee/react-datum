@@ -231,6 +231,7 @@ body[data-examplefile="examplesView.jsx"] .tile img,
 #examplesView .tile img {
   float: left;
   height: 100px;
+  margin-right: 7px;
 }
 
 body[data-examplefile="examplesView.jsx"] .content-pane,

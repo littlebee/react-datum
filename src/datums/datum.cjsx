@@ -245,13 +245,13 @@ module.exports = class Datum extends React.Component
 
         return (
           <OverlayTrigger trigger={['hover','focus']} placement="bottom" overlay={popover}>
-            <span className="error"><i className='icon-exclamation-sign'/></span>
+            <span className="error validation">!</span>
           </OverlayTrigger>
         )
       else
         errors = @state.errors.join('\n')
         return (
-          <span className="error" title={errors}><i className='icon-exclamation-sign fa fa-exclamation-triangle'/></span>
+          <span className="error validation" title={errors}>!</span>
         )
 
     return null

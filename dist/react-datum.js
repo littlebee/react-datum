@@ -843,18 +843,14 @@ var ReactDatum =
 	          "placement": "bottom",
 	          "overlay": popover
 	        }, React.createElement("span", {
-	          "className": "error"
-	        }, React.createElement("i", {
-	          "className": 'icon-exclamation-sign'
-	        })));
+	          "className": "error validation"
+	        }, "!"));
 	      } else {
 	        errors = this.state.errors.join('\n');
 	        return React.createElement("span", {
-	          "className": "error",
+	          "className": "error validation",
 	          "title": errors
-	        }, React.createElement("i", {
-	          "className": 'icon-exclamation-sign fa fa-exclamation-triangle'
-	        }));
+	        }, "!");
 	      }
 	    }
 	    return null;
@@ -1103,6 +1099,17 @@ var ReactDatum =
 
 	_ = __webpack_require__(8);
 
+
+	/*
+	  This is an abstract base class for contextual data components like ReactDatum.Collection 
+	  and ReactDatum.Model that provide a single contextual data element.
+	  
+	  The ReactDatum.ContextualData base class also provides the listener to model or collection
+	  events and rendering of child components on changes.
+	  
+	  You shouldn't need to use this class directly.
+	 */
+
 	module.exports = ContextualData = (function(superClass) {
 	  extend(ContextualData, superClass);
 
@@ -1116,9 +1123,6 @@ var ReactDatum =
 	  ContextualData.prototype.dataType = null;
 
 	  ContextualData.prototype.contextKey = null;
-
-
-	  /* end of pure virtuals */
 
 	  ContextualData.propTypes = {
 	    fetch: React.PropTypes.bool,
@@ -3304,8 +3308,8 @@ var ReactDatum =
 	  LazyPhoto.prototype.renderForDisplay = function() {
 	    var modelValue, source;
 	    modelValue = this.getModelValue();
-	    if (modelValue !== this.lastModelValue) {
-	      this.notFound = this.initialLoadComplete = false;
+	    if (!modelValue || modelValue !== this.lastModelValue) {
+	      this.notFound = this.initialLoadComplete = !((modelValue != null ? modelValue.length : void 0) > 0);
 	      this.lastModelValue = modelValue;
 	    }
 	    source = (function() {
@@ -3672,9 +3676,6 @@ var ReactDatum =
 	Select = __webpack_require__(32);
 
 	Select.Async = __webpack_require__(37);
-
-
-	/* !See ./collectionPicker.md */
 
 	module.exports = CollectionPicker = (function(superClass) {
 	  extend(CollectionPicker, superClass);

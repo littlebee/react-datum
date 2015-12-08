@@ -5,8 +5,6 @@
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <meta name="viewport" content="width=device-width">
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-
   <link rel="stylesheet" type="text/css" href="<%= relativeRoot %>/docs/css/bootstrap-light.css">
   <link rel="stylesheet" type="text/css" href="<%= relativeRoot %>/docs/css/syntaxHighlight.css">
   <link rel="stylesheet" type="text/css" href="<%= relativeRoot %>/dist/react-datum.css">

@@ -6,6 +6,12 @@ var Rd = ReactDatum
 //    that gets loaded via script tag for the examples
 kittenCollection = new Backbone.Collection(KITTEN_DATA)
 
+// Stub out Model.save and mock a success reponse for static examples
+Backbone.Model.save = function(attrs, options={}) {
+  options.success(this);
+  return true
+} 
+
 var TilegridDisplay = React.createClass({
   displayName:"TilegridDisplay",
   render: function(){

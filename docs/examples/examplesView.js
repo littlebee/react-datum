@@ -23,7 +23,8 @@ var examplesCollection = new Backbone.Collection([{
   name: "Big Kittens Demo!",
   relativePath: "tilegrid/tilegrid.html",
   description: "This demo shows the pieces all come together to make a function CRUD app. " +
-    "<br>...with Kittens!",
+    "<br>...with Kittens!<br><br>Try maximizing your browser or zooming out.  The " +
+    "tiles can be variable height and width or fixed via css.",
 },{
   id: "examplesView",
   name: "Demos Within Demos",

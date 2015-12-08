@@ -18,6 +18,7 @@ Datum = require('./datum')
 module.exports = class LazyPhoto extends Datum
   @displayName: "react-datum.LazyPhoto"
 
+  # notFoundUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABoCAYAAAAHIFUvAAAAGXRFW…dk7GCMERBgUpCgmqJbQEcPxlgBIVDohNbFrwJGR/8XYAA/IBnrVTxJagAAAABJRU5ErkJggg=="
   notFoundUrl: require("../../img/petals.png")
   loadingUrl: require("../../img/blank.jpg")
 
@@ -32,10 +33,10 @@ module.exports = class LazyPhoto extends Datum
   # override
   renderForDisplay: () ->
     modelValue = @getModelValue()
-    if modelValue != @lastModelValue
-      @notFound = @initialLoadComplete = false
+    if !modelValue || modelValue != @lastModelValue
+      @notFound = @initialLoadComplete = !(modelValue?.length > 0)
       @lastModelValue = modelValue
-
+    
     source = switch
       when @notFound then @notFoundUrl
       when @initialLoadComplete then modelValue
