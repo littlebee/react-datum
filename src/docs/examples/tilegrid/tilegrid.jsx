@@ -2,15 +2,25 @@
 
 var Rd = ReactDatum
 
+var KittenModel = Backbone.Model.extend({
+  save: function(attrs, options){ 
+    options.success(this)
+    return true
+  }
+})
 // KITTEN_DATA is a static array of data from petfinder api
 //    that gets loaded via script tag for the examples
-kittenCollection = new Backbone.Collection(KITTEN_DATA)
+var KittenCollection = Backbone.Collection.extend({
+  model: KittenModel
+})
 
-// Stub out Model.save and mock a success reponse for static examples
-Backbone.Model.save = function(attrs, options={}) {
-  options.success(this);
-  return true
-} 
+var kittenCollection = new KittenCollection(KITTEN_DATA)
+
+// The above is all backbone setup that you would probably do 
+// elsewhere or wouldn't need to do, like stub out model save
+
+// Below is really most of what you need for a basic list
+// left, form right type view.  All in 30 lines of code!
 
 var TilegridDisplay = React.createClass({
   displayName:"TilegridDisplay",
