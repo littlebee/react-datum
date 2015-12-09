@@ -121,7 +121,7 @@ body[data-examplefile="/tilegrid/tilegrid.jsx"][data-showmore="code"] .demo-pane
 }
 
 body[data-examplefile="/tilegrid/tilegrid.jsx"][data-showmore="code"] .code-pane {
-  height: 60%;
+  height: 57%;
 }
 
 body[data-examplefile="/tilegrid/tilegrid.jsx"] #demo {
@@ -239,7 +239,7 @@ body[data-examplefile="examplesView.jsx"] .content-pane,
   display: inline-block;
   width: calc(100% - 400px);
   vertical-align: top;
-  height: calc(100% - 25px);
+  height: calc(100% - 11px);
   position: relative;
   margin-top: 10px;
   background-color: white;
