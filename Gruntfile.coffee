@@ -13,6 +13,14 @@ DOCS_DEST = 'docs'
 EXAMPLE_SRC = 'src/docs/examples'
 EXAMPLE_DEST = 'docs/examples'
 
+BUMBLE_DOCS_SCRIPTS = './node_modules/bumble-docs/scripts/'
+
+Path = require('path')
+
+bumbleScriptCommand = (scriptFile, args="")-> 
+  return "coffee #{Path.join(BUMBLE_DOCS_SCRIPTS, scriptFile)} #{args}"
+
+
 module.exports = (grunt) ->
   # load plugins
   # this loads all of the grunt-... packages in package.json.  clever
@@ -26,53 +34,18 @@ module.exports = (grunt) ->
     pkg: pkg
 
     # args to initConfig method are the tasks
-
-    # TODO : add sourcemaps and clean them eg: "app/webroot/less/**/*.css.map"]
     clean:
-      coffee:
-        ["build/**/*.js"]
-
-      distrib:
-        ["dist/react-datum.*"]
-
-      # all examples need to be compiled to .js to be statically available to gh-pages
-      examples:
-        ["#{EXAMPLE_DEST}/**/*.js", "#{EXAMPLE_DEST}/**/*.html"]
-        
-      docIndex:
-        ["#{DOCS_DEST}/index.html"]
-
-
-    react:
-      examples:
-        files: [
-          expand: true
-          cwd: EXAMPLE_SRC
-          src: [ '**/*.jsx' ]
-          dest: EXAMPLE_DEST
-          ext: '.js'
-        ]
-
-    coffee:
-      examples:
-        files: [
-          expand: true
-          cwd: EXAMPLE_SRC
-          src: [ '**/*.coffee' ]
-          dest: EXAMPLE_DEST
-          ext: '.js'
-        ]
-
-    cjsx:
-      examples:
-        files: [
-          expand: true
-          cwd: EXAMPLE_SRC
-          src: [ '**/*.cjsx' ]
-          dest:EXAMPLE_DEST
-          ext: '.js'
-        ]
-    
+      distrib: ["dist/react-datum.*"]
+      
+      # these are the things created by bumble-docs/scripts
+      docs: [
+        "#{DOCS_DEST}/index.html"
+        "#{DOCS_DEST}/api/**/*"
+        "#{DOCS_DEST}/examples/**/*"
+        "#{DOCS_DEST}/css/**/*"
+        "#{DOCS_DEST}/vendor/**/*"
+      ]
+      
         
     cssmin: 
       options: 
@@ -89,13 +62,14 @@ module.exports = (grunt) ->
     
     shell:
       buildExamples:
-        command: 'coffee ./scripts/buildExamples.coffee grunt'
+        command: bumbleScriptCommand('buildExamples.coffee')
 
       buildDocIndex:
-        command: 'coffee ./scripts/buildDocIndex.coffee grunt'
+        command: bumbleScriptCommand('buildDocIndex.coffee')
         
       buildApiDocs: 
-        command: 'coffee ./scripts/buildApiDocs.coffee'
+        command: bumbleScriptCommand('buildApiDocs.coffee', 
+          '--paths "Datum Components:src/datums/**/*,Contextual Components:src/*"')
       
       deploy:
         options:
@@ -136,7 +110,6 @@ module.exports = (grunt) ->
   # tasks
   grunt.registerTask 'test', ['build', "shell:test"]
   grunt.registerTask 'distrib', ['cssmin:distrib', 'webpack:distrib', 'webpack:optimize','shell:deploy']
-  grunt.registerTask 'docs',  ['shell:buildDocIndex', 'shell:buildApiDocs', 'examples']
-  grunt.registerTask 'examples', ['newer:react:examples', 'newer:cjsx:examples', 'newer:coffee:examples', 'shell:buildExamples']
-  grunt.registerTask 'build', ['docs', 'distrib'] # ['newer:cjsx:build', 'newer:coffee:build', 'distrib']
+  grunt.registerTask 'docs',  ['shell:buildDocIndex', 'shell:buildApiDocs', 'shell:buildExamples']
+  grunt.registerTask 'build', ['docs', 'distrib'] 
   grunt.registerTask 'default', ['availabletasks']

@@ -1,9 +1,9 @@
 React = require('react')
 Backbone = require('backbone')
 _ = require('underscore')
+Strhelp = require('bumble-strings')
 
 Datum = require('../datum')
-Strhelp = require('../../lib/stringHelpers')
 
 Select = require('react-select/src/Select')
 Select.Async = require('react-select/src/Async')

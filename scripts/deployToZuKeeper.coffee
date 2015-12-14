@@ -4,7 +4,7 @@ fs = require 'fs'
 path = require 'path'
 _ = require 'underscore'
 
-util = require './lib/util'
+util = require '../src/lib/util'
 
 ###
   This script is run from grunt as part of the build process.

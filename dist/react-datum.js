@@ -52,7 +52,10 @@ var ReactDatum =
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	module.exports = {
+	  // contextual components
 	  ClickToEditForm: __webpack_require__(2),
 	  Collection: __webpack_require__(9),
 	  CollectionStats: __webpack_require__(12),
@@ -67,9 +70,12 @@ var ReactDatum =
 	  Number: __webpack_require__(27),
 	  Text: __webpack_require__(28),
 	  WholeNumber: __webpack_require__(29),
-	  CollectionPicker: __webpack_require__(30)
-	};
 
+	  // TODO : i think this will eventually go to a separate npm package so that the core doesn't
+	  //    have dependency on react-select
+	  CollectionPicker: __webpack_require__(30)
+
+	};
 
 /***/ },
 /* 2 */
@@ -3669,13 +3675,13 @@ var ReactDatum =
 
 	_ = __webpack_require__(8);
 
-	Datum = __webpack_require__(6);
-
 	Strhelp = __webpack_require__(31);
 
-	Select = __webpack_require__(32);
+	Datum = __webpack_require__(6);
 
-	Select.Async = __webpack_require__(37);
+	Select = __webpack_require__(33);
+
+	Select.Async = __webpack_require__(38);
 
 	module.exports = CollectionPicker = (function(superClass) {
 	  extend(CollectionPicker, superClass);
@@ -3947,6 +3953,14 @@ var ReactDatum =
 /* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	module.exports = __webpack_require__(32);
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var StringHelpers, _;
 
 	_ = __webpack_require__(8);
@@ -3960,6 +3974,10 @@ var ReactDatum =
 
 	  StringHelpers.startsWith = function(str, otherStr) {
 	    return str.slice(0, otherStr.length) === otherStr;
+	  };
+
+	  StringHelpers.has = function(str, otherStr) {
+	    return str.indexOf(otherStr) !== -1;
 	  };
 
 	  StringHelpers.weakValue = function(str, options) {
@@ -4011,7 +4029,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4030,27 +4048,27 @@ var ReactDatum =
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _reactInputAutosize = __webpack_require__(33);
+	var _reactInputAutosize = __webpack_require__(34);
 
 	var _reactInputAutosize2 = _interopRequireDefault(_reactInputAutosize);
 
-	var _classnames = __webpack_require__(34);
+	var _classnames = __webpack_require__(35);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _stripDiacritics = __webpack_require__(36);
+	var _stripDiacritics = __webpack_require__(37);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
-	var _Async = __webpack_require__(37);
+	var _Async = __webpack_require__(38);
 
 	var _Async2 = _interopRequireDefault(_Async);
 
-	var _Option = __webpack_require__(38);
+	var _Option = __webpack_require__(39);
 
 	var _Option2 = _interopRequireDefault(_Option);
 
-	var _Value = __webpack_require__(39);
+	var _Value = __webpack_require__(40);
 
 	var _Value2 = _interopRequireDefault(_Value);
 
@@ -4112,6 +4130,7 @@ var ReactDatum =
 			searchable: _react2.default.PropTypes.bool, // whether to enable searching feature or not
 			simpleValue: _react2.default.PropTypes.bool, // pass the value to onChange as a simple value (legacy pre 1.0 mode), defaults to false
 			style: _react2.default.PropTypes.object, // optional style to apply to the control
+			tabIndex: _react2.default.PropTypes.string, // optional tab index of the control
 			value: _react2.default.PropTypes.any, // initial field value
 			valueComponent: _react2.default.PropTypes.func, // value component to render
 			valueKey: _react2.default.PropTypes.string, // path of the label value in option objects
@@ -4194,6 +4213,7 @@ var ReactDatum =
 
 			// for the non-searchable select, toggle the menu
 			if (!this.props.searchable) {
+				this.focus();
 				return this.setState({
 					isOpen: !this.state.isOpen
 				});
@@ -4230,7 +4250,8 @@ var ReactDatum =
 		closeMenu: function closeMenu() {
 			this.setState({
 				isOpen: false,
-				isPseudoFocused: this.state.isFocused && !this.props.multi
+				isPseudoFocused: this.state.isFocused && !this.props.multi,
+				inputValue: ''
 			});
 		},
 		handleInputFocus: function handleInputFocus(event) {
@@ -4337,7 +4358,7 @@ var ReactDatum =
 			if (this.props.multi) {
 				if (typeof value === 'string') value = value.split(this.props.delimiter);
 				if (!Array.isArray(value)) {
-					if (!value) return [];
+					if (value === null || value === undefined) return [];
 					value = [value];
 				}
 				return value.map(this.expandValue).filter(function (i) {
@@ -4519,12 +4540,13 @@ var ReactDatum =
 		renderInput: function renderInput(valueArray) {
 			var className = (0, _classnames2.default)('Select-input', this.props.inputProps.className);
 			if (this.props.disabled || !this.props.searchable) {
-				if (this.props.multi && valueArray.length) return;
-				return _react2.default.createElement(
-					'div',
-					{ className: className },
-					' '
-				);
+				return _react2.default.createElement('div', _extends({}, this.props.inputProps, {
+					className: className,
+					tabIndex: this.props.tabIndex || 0,
+					onBlur: this.handleInputBlur,
+					onFocus: this.handleInputFocus,
+					ref: 'input',
+					style: { border: 0, width: 1, display: 'inline-block' } }));
 			}
 			return _react2.default.createElement(_reactInputAutosize2.default, _extends({}, this.props.inputProps, {
 				className: className,
@@ -4698,7 +4720,7 @@ var ReactDatum =
 	exports.default = Select;
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4721,7 +4743,7 @@ var ReactDatum =
 		return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
 			window.setTimeout(callback, 1000 / 60);
 		};
-	})() : undefined; // If window is undefined, then we can't define a nextFrame function
+	})().bind(window) : undefined; // If window is undefined, then we can't define a nextFrame function
 
 	var AutosizeInput = React.createClass({
 		displayName: 'AutosizeInput',
@@ -4820,10 +4842,10 @@ var ReactDatum =
 	module.exports = AutosizeInput;
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 
 	function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
@@ -4866,18 +4888,18 @@ var ReactDatum =
 
 		if (typeof module !== 'undefined' && module.exports) {
 			module.exports = classNames;
-		} else if ("function" === 'function' && _typeof(__webpack_require__(35)) === 'object' && __webpack_require__(35)) {
+		} else if ("function" === 'function' && _typeof(__webpack_require__(36)) === 'object' && __webpack_require__(36)) {
 			// register as 'classnames', consistent with npm package name
-			!(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
 				return classNames;
-			}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 		} else {
 			window.classNames = classNames;
 		}
 	})();
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
@@ -4885,7 +4907,7 @@ var ReactDatum =
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4900,7 +4922,7 @@ var ReactDatum =
 	};
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4911,11 +4933,11 @@ var ReactDatum =
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Select = __webpack_require__(32);
+	var _Select = __webpack_require__(33);
 
 	var _Select2 = _interopRequireDefault(_Select);
 
-	var _stripDiacritics = __webpack_require__(36);
+	var _stripDiacritics = __webpack_require__(37);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
@@ -4939,7 +4961,7 @@ var ReactDatum =
 
 	function getFromCache(cache, input) {
 		if (!cache) return;
-		for (var i = 0; i <= input.length; i++) {
+		for (var i = input.length; i >= 0; --i) {
 			var cacheKey = input.slice(0, i);
 			if (cache[cacheKey] && (input === cacheKey || cache[cacheKey].complete)) {
 				return cache[cacheKey];
@@ -4949,7 +4971,7 @@ var ReactDatum =
 
 	function thenPromise(promise, callback) {
 		if (!promise || typeof promise.then !== 'function') return;
-		promise.then(function (data) {
+		return promise.then(function (data) {
 			callback(null, data);
 		}, function (err) {
 			callback(err);
@@ -5042,7 +5064,7 @@ var ReactDatum =
 				isLoading: true
 			});
 			var responseHandler = this.getResponseHandler(input);
-			thenPromise(this.props.loadOptions(input, responseHandler), responseHandler);
+			return thenPromise(this.props.loadOptions(input, responseHandler), responseHandler);
 		},
 		render: function render() {
 			var noResultsText = this.props.noResultsText;
@@ -5069,7 +5091,7 @@ var ReactDatum =
 	module.exports = Async;
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5078,7 +5100,7 @@ var ReactDatum =
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(34);
+	var _classnames = __webpack_require__(35);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -5148,7 +5170,7 @@ var ReactDatum =
 	module.exports = Option;
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5157,7 +5179,7 @@ var ReactDatum =
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(34);
+	var _classnames = __webpack_require__(35);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -5206,7 +5228,7 @@ var ReactDatum =
 			var className = 'Select-value-label';
 			return this.props.onClick || this.props.value.href ? _react2.default.createElement(
 				'a',
-				{ className: className, href: this.props.value.href, target: this.props.value.target, onMouseDown: this.handleMouseDown, onTouchEnd: this.props.handleMouseDown },
+				{ className: className, href: this.props.value.href, target: this.props.value.target, onMouseDown: this.handleMouseDown, onTouchEnd: this.handleMouseDown },
 				this.props.children
 			) : _react2.default.createElement(
 				'span',

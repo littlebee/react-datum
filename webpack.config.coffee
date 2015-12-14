@@ -73,9 +73,11 @@ module.exports =
       #   loaders: ["react-hot", "jsx-loader?insertPragma=React.DOM"]
       #   include: path.join(__dirname, "src")
       # ,
-        test: /\.(cjsx|coffee)$/
-        loaders: ["coffee", "cjsx"]
-        include: path.join(__dirname, "src")
+        test: /\.cjsx$/
+        loaders: ['coffee', 'cjsx']
+      ,
+        test: /\.coffee$/ 
+        loader: 'coffee-loader' 
       ,
         test: /\.jsx?$/,
         loader: 'babel-loader',
