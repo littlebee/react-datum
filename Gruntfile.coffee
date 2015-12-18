@@ -68,8 +68,7 @@ module.exports = (grunt) ->
         command: bumbleScriptCommand('buildDocIndex.coffee')
         
       buildApiDocs: 
-        command: bumbleScriptCommand('buildApiDocs.coffee', 
-          '--paths "Datum Components:src/datums/**/*,Contextual Components:src/*"')
+        command: bumbleScriptCommand('buildApiDocs.coffee')
       
       deploy:
         options:

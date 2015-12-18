@@ -8,7 +8,7 @@ var Rd = ReactDatum
 
 // EXAMPLES_METADATA is loaded by the index.html from ./examplesMetadata.js which is generated
 // by bumble-docs/scripts/buildExamples.coffee
-var examplesCollection = new Backbone.Collection(EXAMPLES_METADATA)
+var examplesCollection = new Backbone.Collection(EXAMPLES_METADATA.demos)
 
 
 // Each of the demos are wrapped in their own .html which is generated using /src/docs/exampleFile.tpl  
@@ -37,15 +37,17 @@ var DemoIframe = React.createClass({displayName: "DemoIframe",
 ExamplesView = React.createClass({displayName: "ExamplesView",
   render: function() {
     return (
-      React.createElement(Rd.Collection, {collection: examplesCollection}, 
-        React.createElement(Rd.Tilegrid, null, 
-          React.createElement(Rd.LazyPhoto, {attr: "thumbnailUrl"}), 
-          React.createElement("h4", null, React.createElement(Rd.Text, {attr: "name"})), 
-          React.createElement("div", null, React.createElement(Rd.Text, {attr: "description", ellipsizeAt: false, displayAsHtml: true}))
-        ), 
-        React.createElement("div", {className: "content-pane"}, 
-          React.createElement(Rd.SelectedModel, {placeholder: "Select a demo from the list on the left"}, 
-            React.createElement(DemoIframe, null)
+      React.createElement("div", {id: "examplesView"}, 
+        React.createElement(Rd.Collection, {collection: examplesCollection}, 
+          React.createElement(Rd.Tilegrid, null, 
+            React.createElement(Rd.LazyPhoto, {attr: "thumbnailUrl"}), 
+            React.createElement("h4", null, React.createElement(Rd.Text, {attr: "name"})), 
+            React.createElement("div", null, React.createElement(Rd.Text, {attr: "description", ellipsizeAt: false, displayAsHtml: true}))
+          ), 
+          React.createElement("div", {className: "content-pane"}, 
+            React.createElement(Rd.SelectedModel, {placeholder: "Select a demo from the list on the left"}, 
+              React.createElement(DemoIframe, null)
+            )
           )
         )
       )
@@ -65,4 +67,7 @@ ExamplesView = React.createClass({displayName: "ExamplesView",
   
 })
 
-window.Demo = ExamplesView
+if( window )
+  window.Demo = ExamplesView
+else if ( module )
+  module.exports = ExamplesView

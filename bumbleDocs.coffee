@@ -1,10 +1,21 @@
 
-module.exports = {
+module.exports = 
+  
   logo: "docs/img/react-datum.logo.png",
 
-  exampleRoot: 'src/examples'
+  apiDocs: {
+    sections: [{
+      label: "Datum Components" 
+      path: "src/datums/**/*"
+    },{
+      label: "Contextual Components" 
+      path: "src/*"
+    }]
+  }
 
-  examples: [{
+  examples: 
+    root: 'src/examples'
+    demos: [{
       id: "model",
       name: "Model Demo",
       path: "model/model.jsx",
@@ -35,6 +46,4 @@ module.exports = {
         "<p>All joking and parlor tricks aside, if you scroll past the the static data, you "+
         "can see a nice example of how to make use of a contextually provided model in a custom "+
         "react component</p> ",
-    }
-  ]    
-}
+    }]    
