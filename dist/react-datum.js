@@ -1,5 +1,14 @@
-var ReactDatum =
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory(require("React"), require("ReactDOM"), require("Backbone"), require("_"));
+	else if(typeof define === 'function' && define.amd)
+		define(["React", "ReactDOM", "Backbone", "_"], factory);
+	else if(typeof exports === 'object')
+		exports["React-datum"] = factory(require("React"), require("ReactDOM"), require("Backbone"), require("_"));
+	else
+		root["React-datum"] = factory(root["React"], root["ReactDOM"], root["Backbone"], root["_"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_7__, __WEBPACK_EXTERNAL_MODULE_8__) {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 
@@ -35,7 +44,7 @@ var ReactDatum =
 /******/ 	__webpack_require__.c = installedModules;
 
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "/dist/";
+/******/ 	__webpack_require__.p = "dist/";
 
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
@@ -62,18 +71,17 @@ var ReactDatum =
 	  Form: __webpack_require__(4),
 	  Model: __webpack_require__(13),
 	  SelectedModel: __webpack_require__(14),
-	  Tilegrid: __webpack_require__(15),
 	  Datum: __webpack_require__(6),
-	  Email: __webpack_require__(22),
-	  LazyPhoto: __webpack_require__(23),
-	  Link: __webpack_require__(26),
-	  Number: __webpack_require__(27),
-	  Text: __webpack_require__(28),
-	  WholeNumber: __webpack_require__(29),
+	  Email: __webpack_require__(15),
+	  LazyPhoto: __webpack_require__(16),
+	  Link: __webpack_require__(19),
+	  Number: __webpack_require__(20),
+	  Text: __webpack_require__(21),
+	  WholeNumber: __webpack_require__(22),
 
 	  // TODO : i think this will eventually go to a separate npm package so that the core doesn't
 	  //    have dependency on react-select
-	  CollectionPicker: __webpack_require__(30)
+	  CollectionPicker: __webpack_require__(23)
 
 	};
 
@@ -153,7 +161,7 @@ var ReactDatum =
 /* 3 */
 /***/ function(module, exports) {
 
-	module.exports = React;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
 /***/ },
 /* 4 */
@@ -589,7 +597,7 @@ var ReactDatum =
 /* 5 */
 /***/ function(module, exports) {
 
-	module.exports = ReactDOM;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_5__;
 
 /***/ },
 /* 6 */
@@ -1030,13 +1038,13 @@ var ReactDatum =
 /* 7 */
 /***/ function(module, exports) {
 
-	module.exports = Backbone;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_7__;
 
 /***/ },
 /* 8 */
 /***/ function(module, exports) {
 
-	module.exports = _;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_8__;
 
 /***/ },
 /* 9 */
@@ -1660,1541 +1668,6 @@ var ReactDatum =
 /* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var MultiSelect, React, ReactDom, SingleSelect, Tilegrid, TilegridReact,
-	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-	  hasProp = {}.hasOwnProperty;
-
-	React = __webpack_require__(3);
-
-	ReactDom = __webpack_require__(5);
-
-	TilegridReact = __webpack_require__(16);
-
-	SingleSelect = __webpack_require__(19);
-
-	MultiSelect = __webpack_require__(21);
-
-	module.exports = Tilegrid = (function(superClass) {
-	  extend(Tilegrid, superClass);
-
-	  function Tilegrid() {
-	    return Tilegrid.__super__.constructor.apply(this, arguments);
-	  }
-
-	  Tilegrid.displayName = "react-datum.Tilegrid";
-
-	  Tilegrid.propTypes = {
-	    collection: React.PropTypes.any,
-	    tileTemplate: React.PropTypes.node,
-	    tilegridClass: React.PropTypes.func,
-	    tilegridOptions: React.PropTypes.object,
-	    tilegridSelectionClass: React.PropTypes.func,
-	    tilegridSelectOptions: React.PropTypes.object
-	  };
-
-	  Tilegrid.defaultProps = {
-	    tilegridClass: TilegridReact,
-	    tileTemplate: null,
-	    tilegridOptions: {},
-	    tilegridSelectionClass: SingleSelect
-	  };
-
-	  Tilegrid.contextTypes = {
-	    collection: React.PropTypes.any
-	  };
-
-	  Tilegrid.prototype.render = function() {
-	    return React.createElement("div", {
-	      "className": 'tilegrid-react'
-	    });
-	  };
-
-	  Tilegrid.prototype.componentDidMount = function() {
-	    this.node = ReactDom.findDOMNode(this);
-	    this.collection = this.props.collection || this.context.collection;
-	    this.tileTemplate = this._getTileTemplate();
-	    this.tilegrid = new this.props.tilegridClass(this.node, this.collection, this.tileTemplate, this.props.tilegridOptions);
-	    if (this.props.tilegridSelectionClass != null) {
-	      return new this.props.tilegridSelectionClass(this.tilegrid, this.props.tilegridSelectOptions);
-	    }
-	  };
-
-	  Tilegrid.prototype.componentWillUnmount = function() {
-	    React.unmountComponentAtNode(this.node);
-	    return this.tilegrid.destroy();
-	  };
-
-	  Tilegrid.prototype.componentWillReceiveProps = function() {
-	    return this.tilegrid.refresh();
-	  };
-
-	  Tilegrid.prototype._getTileTemplate = function() {
-	    return this.props.tileTemplate || this._findTileChild();
-	  };
-
-	  Tilegrid.prototype._findTileChild = function() {
-	    return this.props.children;
-	  };
-
-	  return Tilegrid;
-
-	})(React.Component);
-
-
-/***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var $, Model, React, ReactDom, Tilegrid, TilegridReact, jQuery,
-	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-	  hasProp = {}.hasOwnProperty;
-
-	React = __webpack_require__(3);
-
-	ReactDom = __webpack_require__(5);
-
-	$ = jQuery = __webpack_require__(17);
-
-	Tilegrid = __webpack_require__(18);
-
-	Model = __webpack_require__(13);
-
-
-	/*
-	  this extension of the tilegrid allows the use of ReactComponents as the tile template.
-
-	  See src/tilegrid for tile grid that can be used as a React component
-	  from JSX
-
-	  TODO : fold this functionality into ./tilegrid.coffee
-	 */
-
-	module.exports = TilegridReact = (function(superClass) {
-	  extend(TilegridReact, superClass);
-
-	  function TilegridReact() {
-	    this._cloneTileTemplate = bind(this._cloneTileTemplate, this);
-	    this._getTileTemplate = bind(this._getTileTemplate, this);
-	    this._renderDerenderedPlaceholder = bind(this._renderDerenderedPlaceholder, this);
-	    this._renderTileTemplate = bind(this._renderTileTemplate, this);
-	    this.isReactTemplate = bind(this.isReactTemplate, this);
-	    this.setTileTemplate = bind(this.setTileTemplate, this);
-	    return TilegridReact.__super__.constructor.apply(this, arguments);
-	  }
-
-	  TilegridReact.prototype.setTileTemplate = function(tileTemplate) {
-	    if (this.isReactTemplate(tileTemplate)) {
-	      return this.$tileTemplate = tileTemplate;
-	    } else {
-	      return TilegridReact.__super__.setTileTemplate.apply(this, arguments);
-	    }
-	  };
-
-	  TilegridReact.prototype.isReactTemplate = function(template) {
-	    if (template == null) {
-	      template = this._getTileTemplate();
-	    }
-	    if (_.isArray(template)) {
-	      template = template[0];
-	    }
-	    return _.intersection(['props', 'type', 'key'], _.keys(template)).length === 3 || template.prototype instanceof React.Component;
-	  };
-
-	  TilegridReact.prototype._renderTileTemplate = function($tile, model) {
-	    var element, template;
-	    template = this._getTileTemplate($tile, model);
-	    if (this.isReactTemplate(template)) {
-	      element = React.createElement(Model, {
-	        'model': model
-	      }, template);
-	      return ReactDom.render(element, $tile[0]);
-	    } else {
-	      return TilegridReact.__super__._renderTileTemplate.apply(this, arguments);
-	    }
-	  };
-
-	  TilegridReact.prototype._renderDerenderedPlaceholder = function($tile) {
-	    if (this.isReactTemplate()) {
-	      ReactDom.unmountComponentAtNode($tile[0]);
-	    }
-	    return TilegridReact.__super__._renderDerenderedPlaceholder.apply(this, arguments);
-	  };
-
-	  TilegridReact.prototype._getTileTemplate = function($tile, model) {
-	    return this.$tileTemplate;
-	  };
-
-	  TilegridReact.prototype._cloneTileTemplate = function() {
-	    if (this.isReactTemplate()) {
-	      return $("<div class='tile'></div>");
-	    } else {
-	      return TilegridReact.__super__._cloneTileTemplate.apply(this, arguments);
-	    }
-	  };
-
-	  return TilegridReact;
-
-	})(Tilegrid);
-
-
-/***/ },
-/* 17 */
-/***/ function(module, exports) {
-
-	module.exports = jQuery;
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var $, Backbone, Tilegrid, _, jQuery,
-	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-	_ = __webpack_require__(8);
-
-	$ = jQuery = __webpack_require__(17);
-
-	Backbone = __webpack_require__(7);
-
-	module.exports = Tilegrid = (function() {
-	  Tilegrid.prototype.$tilegridTemplate = $("<div class=\"tilegrid\">\n    <div class=\"tilegrid-loading\">\n        <div class=\"placeholder fade in\">\n            ... more to come ...\n            &nbsp;\n        </div>\n    </div>\n</div>");
-
-
-	  /* 
-	    constructs a Tilegrid instance
-	    
-	    selector        - jquery compatible selector
-	    data            - can be an array or a Collection child
-	    tileTemplate    - can be a selector, jquery obj or html
-	   */
-
-	  function Tilegrid(selector, data, tileTemplate1, options) {
-	    this.selector = selector;
-	    this.data = data;
-	    this.tileTemplate = tileTemplate1;
-	    if (options == null) {
-	      options = {};
-	    }
-	    this._renderDerenderedPlaceholder = bind(this._renderDerenderedPlaceholder, this);
-	    this._derenderTile = bind(this._derenderTile, this);
-	    this._derenderOutsideTiles = bind(this._derenderOutsideTiles, this);
-	    this._onTileGridClick = bind(this._onTileGridClick, this);
-	    this._onResize = bind(this._onResize, this);
-	    this._onScroll = bind(this._onScroll, this);
-	    this._onModelRemove = bind(this._onModelRemove, this);
-	    this._onCollectionAdd = bind(this._onCollectionAdd, this);
-	    this._onCollectionSync = bind(this._onCollectionSync, this);
-	    this._onCollectionReset = bind(this._onCollectionReset, this);
-	    this._loadingInWindow = bind(this._loadingInWindow, this);
-	    this._endOfData = bind(this._endOfData, this);
-	    this.tileFor = bind(this.tileFor, this);
-	    this.findTileAt = bind(this.findTileAt, this);
-	    this.tileAt = bind(this.tileAt, this);
-	    this._getTileTemplate = bind(this._getTileTemplate, this);
-	    this._renderTileTemplate = bind(this._renderTileTemplate, this);
-	    this.renderTile = bind(this.renderTile, this);
-	    this.renderTileAt = bind(this.renderTileAt, this);
-	    this._cloneTileTemplate = bind(this._cloneTileTemplate, this);
-	    this.appendTile = bind(this.appendTile, this);
-	    this.getTotalItems = bind(this.getTotalItems, this);
-	    this._onEnsureComplete = bind(this._onEnsureComplete, this);
-	    this._renderNextPage = bind(this._renderNextPage, this);
-	    this.renderAllTiles = bind(this.renderAllTiles, this);
-	    this._isInViewPort = bind(this._isInViewPort, this);
-	    this._findTileInViewport = bind(this._findTileInViewport, this);
-	    this._getTileDims = bind(this._getTileDims, this);
-	    this._getGridScrollDims = bind(this._getGridScrollDims, this);
-	    this.getViewingStats = bind(this.getViewingStats, this);
-	    this.getItemData = bind(this.getItemData, this);
-	    this._onEnsureRowsComplete = bind(this._onEnsureRowsComplete, this);
-	    this._ensureViewport = bind(this._ensureViewport, this);
-	    this._renderViewport = bind(this._renderViewport, this);
-	    this._renderGrid = bind(this._renderGrid, this);
-	    this._initializeCollection = bind(this._initializeCollection, this);
-	    this.updateCollectionViewStats = bind(this.updateCollectionViewStats, this);
-	    this.getRenderedTiles = bind(this.getRenderedTiles, this);
-	    this.setActiveTileFor = bind(this.setActiveTileFor, this);
-	    this.setActiveTile = bind(this.setActiveTile, this);
-	    this.getActiveTile = bind(this.getActiveTile, this);
-	    this.setTileTemplate = bind(this.setTileTemplate, this);
-	    this.focus = bind(this.focus, this);
-	    this.render = bind(this.render, this);
-	    this.refresh = bind(this.refresh, this);
-	    this.reset = bind(this.reset, this);
-	    this.destroy = bind(this.destroy, this);
-	    this.initialize = bind(this.initialize, this);
-	    this.options = _.defaults(options, {
-	      pageSize: 50,
-	      preloadCushion: 400,
-	      ignoreViewport: false,
-	      hideFunction: null
-	    });
-	    this.setTileTemplate(this.tileTemplate);
-	    if (!(_.isArray(this.data) || this.data instanceof Backbone.Collection)) {
-	      throw "Tilegrid expects @data constructor arg to be either and array or a Collection";
-	    }
-	    this.debouncedRefresh = _.debounce(this.refresh, 200);
-	    this.debouncedRender = _.debounce(this.render, 200);
-	    this.initialize();
-	  }
-
-	  Tilegrid.prototype.initialize = function() {
-	    var ref, ref1;
-	    this.$element = $(this.selector);
-	    _.extend(this, Backbone.Events);
-	    if (!(((ref = this.$element) != null ? ref.length : void 0) > 0)) {
-	      throw "Dev: error: " + this.$element.selector + " not found in DOM";
-	    }
-	    this._initializeCollection();
-	    this._renderGrid();
-	    this.reset();
-	    this.render();
-	    return (ref1 = this.$tilegrid) != null ? ref1.data('tilegrid', this) : void 0;
-	  };
-
-	  Tilegrid.prototype.destroy = function() {
-	    var ref;
-	    return (ref = this.$tilegrid) != null ? ref.data('tilegrid', null) : void 0;
-	  };
-
-	  Tilegrid.prototype.reset = function(options) {
-	    var i, len, ref, tileEl;
-	    if (options == null) {
-	      options = {};
-	    }
-	    options = _.defaults(options, {
-	      soft: false
-	    });
-	    this._$tilesByModelId = {};
-	    if (options.soft) {
-	      ref = this.$element.find('.tile');
-	      for (i = 0, len = ref.length; i < len; i++) {
-	        tileEl = ref[i];
-	        this._derenderTile($(tileEl));
-	      }
-	    } else {
-	      this.lastRenderedIndex = -1;
-	      this.$element.find('.tile').remove();
-	    }
-	    this.$loadingIndicator.show();
-	    return this;
-	  };
-
-	  Tilegrid.prototype.refresh = function() {
-	    this.reset({
-	      soft: true
-	    });
-	    return this._ensureViewport();
-	  };
-
-	  Tilegrid.prototype.render = function() {
-	    this._renderViewport();
-	    return this;
-	  };
-
-	  Tilegrid.prototype.focus = function() {
-	    var base;
-	    if (this.selections != null) {
-	      return typeof (base = this.selections).focus === "function" ? base.focus() : void 0;
-	    } else {
-	      return _.delay(((function(_this) {
-	        return function() {
-	          return _this.$tilegrid.focus();
-	        };
-	      })(this)), 100);
-	    }
-	  };
-
-	  Tilegrid.prototype.setTileTemplate = function(tileTemplate) {
-	    this.$tileTemplate = $(tileTemplate);
-	    if (this.$tileTemplate.length <= 0) {
-	      throw "dev error: Invalid template in TileGrid construction:<br>" + tileTemplate;
-	    }
-	  };
-
-	  Tilegrid.prototype.getActiveTile = function() {
-	    var ref;
-	    return (ref = this.selections) != null ? typeof ref.getActiveTile === "function" ? ref.getActiveTile() : void 0 : void 0;
-	  };
-
-	  Tilegrid.prototype.setActiveTile = function(index) {
-	    var ref;
-	    return (ref = this.selections) != null ? typeof ref.setActiveTile === "function" ? ref.setActiveTile(index) : void 0 : void 0;
-	  };
-
-	  Tilegrid.prototype.setActiveTileFor = function(model) {
-	    var $tile, index, ref;
-	    if (model == null) {
-	      return null;
-	    }
-	    $tile = this.tileFor(model);
-	    if (!(($tile != null ? $tile.length : void 0) > 0)) {
-	      return null;
-	    }
-	    index = $tile.data('index');
-	    if (index == null) {
-	      throw "dev: unexpected: tile for model " + model.id + " has no index attribute";
-	    }
-	    if ((ref = this.selections) != null) {
-	      ref.setActiveTile(index);
-	    }
-	    return $tile;
-	  };
-
-	  Tilegrid.prototype.getRenderedTiles = function() {
-	    return _.values(this._$tilesByModelId);
-	  };
-
-	  Tilegrid.prototype.updateCollectionViewStats = function(stats) {
-	    var base, totalRows;
-	    if (this.collection == null) {
-	      return;
-	    }
-	    totalRows = this.getTotalItems();
-	    if (totalRows <= 0) {
-	      _.extend(stats, {
-	        topDisplayIndex: 0,
-	        bottomDisplayIndex: 0
-	      });
-	    }
-	    if (this.collection.hasStats) {
-	      return this.collection.updateStats(stats);
-	    } else {
-	      this.collection.topDisplayIndex = stats.topDisplayIndex;
-	      this.collection.bottomDisplayIndex = stats.bottomDisplayIndex;
-	      return typeof (base = this.collection).trigger === "function" ? base.trigger('viewStatsChanged') : void 0;
-	    }
-	  };
-
-	  Tilegrid.prototype._initializeCollection = function() {
-	    if (this.data instanceof Backbone.Collection) {
-	      this.collection || (this.collection = this.data);
-	    }
-	    if (this.collection != null) {
-	      this.collection.on('reset', this._onCollectionReset);
-	      this.collection.on('sync', this._onCollectionSync);
-	      return this.collection.on('add', this._onCollectionAdd);
-	    }
-	  };
-
-	  Tilegrid.prototype._renderGrid = function() {
-	    if (this.$tilegrid && this.$tilegrid.length > 0) {
-	      return this.$tilegrid;
-	    }
-	    this.$tilegrid = this.$tilegridTemplate.clone();
-	    this.$element.html(this.$tilegrid);
-	    this.$loadingIndicator = this.$element.find('.tilegrid-loading');
-	    if (!this.options.ignoreViewport) {
-	      this._debouncedOnScroll = _.debounce(this._onScroll, 100);
-	      this._debouncedOnResize = _.debounce(this._onResize, 100);
-	      this.$tilegrid.on('scroll', this._debouncedOnScroll);
-	      this.$tilegrid.on('resize', this._debouncedOnResize);
-	    }
-	    this.$tilegrid.on('click', this._onTilegridClick);
-	    return this.$tilegrid;
-	  };
-
-	  Tilegrid.prototype._renderViewport = function() {
-	    if (this.collection == null) {
-	      this._endOfData();
-	      return;
-	    }
-	    if (this._loadingInWindow()) {
-	      return this._renderNextPage({
-	        success: (function(_this) {
-	          return function() {
-	            return _.defer(_this._renderViewport);
-	          };
-	        })(this)
-	      });
-	    } else {
-	      return this._ensureViewport();
-	    }
-	  };
-
-	  Tilegrid.prototype._ensureViewport = function() {
-	    var bottomIndex, topIndex, viewStats;
-	    if (this.options.ignoreViewport) {
-	      return;
-	    }
-	    viewStats = this.getViewingStats();
-	    topIndex = viewStats.topDisplayIndex;
-	    bottomIndex = viewStats.bottomDisplayIndex;
-	    if (!((topIndex != null) && (bottomIndex != null))) {
-	      return;
-	    }
-	    this.updateCollectionViewStats({
-	      topDisplayIndex: topIndex + 1,
-	      bottomDisplayIndex: bottomIndex + 1
-	    });
-	    this.topRenderIndex = Math.max(topIndex - this.options.pageSize, 0);
-	    this.bottomRenderIndex = (bottomIndex || 0) + this.options.pageSize;
-	    if ((this.collection != null) && _.isFunction(this.collection.ensureRows)) {
-	      return this.collection.ensureRows(this.topRenderIndex, this.bottomRenderIndex, {
-	        complete: this._onEnsureRowsComplete
-	      });
-	    } else {
-	      return this._onEnsureRowsComplete();
-	    }
-	  };
-
-	  Tilegrid.prototype._onEnsureRowsComplete = function() {
-	    var $nextTile, $tile, index, model;
-	    $tile = this.findTileAt(this.topRenderIndex);
-	    index = this.topRenderIndex;
-	    while (true) {
-	      if (!($tile && $tile.length > 0)) {
-	        break;
-	      }
-	      if (index != null) {
-	        model = this.getItemData(index);
-	      }
-	      $nextTile = $tile.next('.tile');
-	      if (model != null) {
-	        this.renderTile($tile, model);
-	      } else {
-	        $tile.remove();
-	      }
-	      $tile = $nextTile;
-	      if ((index += 1) > this.bottomRenderIndex) {
-	        break;
-	      }
-	    }
-	    return this._derenderOutsideTiles(this.topRenderIndex, this.bottomRenderIndex);
-	  };
-
-	  Tilegrid.prototype.getItemData = function(index) {
-	    var ref, ref1;
-	    return ((ref = this.collection) != null ? typeof ref.getItem === "function" ? ref.getItem(index, {
-	      warn: true
-	    }) : void 0 : void 0) || ((ref1 = this.collection) != null ? ref1.models[index] : void 0) || this.data[index];
-	  };
-
-	  Tilegrid.prototype.getViewingStats = function() {
-	    var $bottomTile, $next, $prev, $topTile, $visibleTile, gridScrollDims;
-	    gridScrollDims = this._getGridScrollDims();
-	    $visibleTile = this._findTileInViewport(gridScrollDims);
-	    $topTile = $bottomTile = $visibleTile;
-	    if (!(($visibleTile != null ? $visibleTile.length : void 0) > 0)) {
-	      return {
-	        topDisplayIndex: 0,
-	        bottomDisplayIndex: 0
-	      };
-	    }
-	    while (true) {
-	      $prev = $topTile.prev('.tile');
-	      if ($prev.length <= 0 || !this._isInViewPort(this._getTileDims($prev), gridScrollDims)) {
-	        break;
-	      }
-	      $topTile = $prev;
-	    }
-	    while (true) {
-	      $next = $bottomTile.next('.tile');
-	      if ($next.length <= 0 || !this._isInViewPort(this._getTileDims($next), gridScrollDims)) {
-	        break;
-	      }
-	      $bottomTile = $next;
-	    }
-	    return {
-	      topDisplayIndex: $topTile.data('index'),
-	      bottomDisplayIndex: $bottomTile.data('index')
-	    };
-	  };
-
-	  Tilegrid.prototype._getGridScrollDims = function() {
-	    var gridLeft, gridTop, h, w;
-	    gridTop = this.$tilegrid.scrollTop();
-	    gridLeft = this.$tilegrid.scrollLeft();
-	    h = this.$tilegrid.height();
-	    w = this.$tilegrid.width();
-	    return {
-	      top: gridTop,
-	      left: gridLeft,
-	      bottom: gridTop + h,
-	      right: gridLeft + w,
-	      height: h,
-	      width: w
-	    };
-	  };
-
-	  Tilegrid.prototype._getTileDims = function($tile) {
-	    var tilePosition;
-	    tilePosition = $tile.offset();
-	    _.extend(tilePosition, {
-	      bottom: tilePosition.top + $tile.height(),
-	      right: tilePosition.left + $tile.width()
-	    });
-	    return tilePosition;
-	  };
-
-	  Tilegrid.prototype._findTileInViewport = function(gridScrollDims) {
-	    var $tile, $tiles, absHalf, half, lastOffset, offset, tileDims;
-	    if (gridScrollDims == null) {
-	      gridScrollDims = this._getGridScrollDims();
-	    }
-	    $tiles = this.$tilegrid.find('.tile');
-	    $tile = null;
-	    half = $tiles.length / 2;
-	    lastOffset = 0;
-	    while ((absHalf = Math.abs(half)) >= 2) {
-	      offset = Math.min(Math.max(0, lastOffset + half), $tiles.length - 1);
-	      $tile = $($tiles[offset]);
-	      if ($tile.length <= 0) {
-	        break;
-	      }
-	      tileDims = this._getTileDims($tile);
-	      if (this._isInViewPort(tileDims, gridScrollDims)) {
-	        break;
-	      }
-	      half = Math.floor(absHalf / 2);
-	      if (tileDims.left > gridScrollDims.width || tileDims.top > gridScrollDims.height) {
-	        half *= -1;
-	      }
-	      lastOffset = offset;
-	    }
-	    return $tile;
-	  };
-
-	  Tilegrid.prototype._isInViewPort = function(tileDims, gridScrollDims) {
-	    var horzVisible, vertVisible;
-	    if (gridScrollDims == null) {
-	      gridScrollDims = this._getGridScrollDims();
-	    }
-	    horzVisible = tileDims.right > 0 && tileDims.left < gridScrollDims.width;
-	    vertVisible = tileDims.bottom > 0 && tileDims.top < gridScrollDims.height;
-	    return horzVisible && vertVisible;
-	  };
-
-	  Tilegrid.prototype.renderAllTiles = function(options) {
-	    var i, len, model, ref, ref1, results;
-	    if (options == null) {
-	      options = {};
-	    }
-	    this.lastRenderedIndex = -1;
-	    ref1 = ((ref = this.collection) != null ? ref.models : void 0) || this.data;
-	    results = [];
-	    for (i = 0, len = ref1.length; i < len; i++) {
-	      model = ref1[i];
-	      results.push(this.appendTile());
-	    }
-	    return results;
-	  };
-
-	  Tilegrid.prototype._renderNextPage = function(options) {
-	    var first, last;
-	    if (options == null) {
-	      options = {};
-	    }
-	    first = this.lastRenderedIndex + 1;
-	    last = first + this.options.pageSize;
-	    this.lastFirst = first;
-	    if ((this.collection != null) && _.isFunction(this.collection.ensureRows)) {
-	      return this.collection.ensureRows(first, last, {
-	        complete: this._onEnsureComplete
-	      });
-	    } else {
-	      return this._onEnsureComplete(first, last);
-	    }
-	  };
-
-	  Tilegrid.prototype._onEnsureComplete = function(first, last, options) {
-	    var appendTileDidFail, i, index, ref, ref1;
-	    if (options == null) {
-	      options = {};
-	    }
-	    for (index = i = ref = first, ref1 = last; ref <= ref1 ? i < ref1 : i > ref1; index = ref <= ref1 ? ++i : --i) {
-	      appendTileDidFail = !this.appendTile(index);
-	      if (index >= this.getTotalItems() || appendTileDidFail) {
-	        break;
-	      }
-	    }
-	    if (index >= this.getTotalItems() || appendTileDidFail) {
-	      this._endOfData();
-	    }
-	    return typeof options.success === "function" ? options.success() : void 0;
-	  };
-
-	  Tilegrid.prototype.getTotalItems = function() {
-	    var ref, ref1;
-	    if (this.collection == null) {
-	      return 0;
-	    }
-	    return ((ref = this.collection) != null ? typeof ref.getLength === "function" ? ref.getLength() : void 0 : void 0) || ((ref1 = this.collection) != null ? ref1.length : void 0) || this.data.length;
-	  };
-
-	  Tilegrid.prototype.appendTile = function(index) {
-	    var $tile, model;
-	    if (index == null) {
-	      index = this.lastRenderedIndex + 1;
-	    }
-	    model = this.getItemData(index);
-	    if (model == null) {
-	      return false;
-	    }
-	    this.lastRenderedIndex = index;
-	    $tile = this._cloneTileTemplate();
-	    $tile.attr('data-index', index);
-	    this.$loadingIndicator.before($tile);
-	    this.renderTile($tile, model);
-	    return true;
-	  };
-
-	  Tilegrid.prototype._cloneTileTemplate = function() {
-	    return this.$tileTemplate.clone();
-	  };
-
-	  Tilegrid.prototype.renderTileAt = function(index) {
-	    var $tile, model;
-	    $tile = this.tileAt(index);
-	    model = this.getItemData(index);
-	    if ($tile && model) {
-	      return this.renderTile($tile, model);
-	    }
-	  };
-
-	  Tilegrid.prototype.renderTile = function($tile, model) {
-	    if ($tile.hasClass('rendered')) {
-	      return;
-	    }
-	    this._$tilesByModelId[model.id] = $tile;
-	    model.on("remove", this._onModelRemove);
-	    this._renderTileTemplate($tile, model);
-	    $tile.toggleClass("selected", model.selected === true);
-	    $tile.addClass("rendered");
-	    $tile.attr('data-id', model.id);
-	    if ($tile.hasClass('underscore-tile')) {
-	      this.underscroreTemplate || (this.underscroreTemplate = _.template(this.tileTemplate));
-	      $tile.html(this.underscroreTemplate(model.attributes));
-	    }
-	    if (this.options.hideFunction && this.options.hideFunction(model)) {
-	      $tile.addClass('hidden');
-	    }
-	    return this.trigger('tileRendered', $tile, model);
-	  };
-
-	  Tilegrid.prototype._renderTileTemplate = function($tile, model) {
-	    return $tile.html(this._getTileTemplate($tile, model));
-	  };
-
-	  Tilegrid.prototype._getTileTemplate = function($tile, model) {
-	    return this.$tileTemplate.html();
-	  };
-
-	  Tilegrid.prototype.tileAt = function(index) {
-	    return this._$tilesByModelId[this.getItemData(index).id];
-	  };
-
-	  Tilegrid.prototype.findTileAt = function(index) {
-	    return this.$tilegrid.find("> .tile[data-index='" + index + "']");
-	  };
-
-	  Tilegrid.prototype.tileFor = function(model) {
-	    var key;
-	    key = model.id || model;
-	    return this._$tilesByModelId[key];
-	  };
-
-	  Tilegrid.prototype._endOfData = function(options) {
-	    if (options == null) {
-	      options = {};
-	    }
-	    return this.$loadingIndicator.hide();
-	  };
-
-	  Tilegrid.prototype._loadingInWindow = function() {
-	    var inWindow, loadingTop, scrollBottom, scrollHeight, scrollTop;
-	    if (!(this.$element.is(':visible') && this.$loadingIndicator.is(':visible'))) {
-	      return false;
-	    }
-	    if (this.$element.outerHeight() > 5000) {
-	      console.error(("dev error: the outer height of the .tilegrid element for " + this.selector + " is saying it's outer height ") + "is greater that 5000.  You need to set the height to something other than auto. ");
-	      scrollHeight = 5000;
-	    } else {
-	      scrollHeight = this.$element.outerHeight();
-	    }
-	    scrollTop = this.$element.scrollTop();
-	    scrollBottom = scrollTop + scrollHeight;
-	    loadingTop = this.$loadingIndicator.position().top;
-	    inWindow = loadingTop < scrollBottom + this.options.preloadCushion;
-	    return inWindow;
-	  };
-
-	  Tilegrid.prototype._onCollectionReset = function() {
-	    this.reset();
-	    return this.render();
-	  };
-
-	  Tilegrid.prototype._onCollectionSync = function() {
-	    return this.debouncedRefresh();
-	  };
-
-	  Tilegrid.prototype._onCollectionAdd = function() {
-	    return this.debouncedRender();
-	  };
-
-	  Tilegrid.prototype._onModelRemove = function(model) {
-	    var $tile;
-	    model.off("remove", this._onModelRemove);
-	    $tile = this._$tilesByModelId[model.id];
-	    return this._derenderTile($tile);
-	  };
-
-	  Tilegrid.prototype._onScroll = function() {
-	    return this._renderViewport();
-	  };
-
-	  Tilegrid.prototype._onResize = function() {
-	    return this._renderViewport();
-	  };
-
-	  Tilegrid.prototype._onTileGridClick = function(evt) {
-	    return evt.preventDefault();
-	  };
-
-	  Tilegrid.prototype._derenderOutsideTiles = function(topTileIndex, bottomTileIndex) {
-	    var $tile, bottomAcceptable, i, index, len, numInView, ref, results, tile, topAcceptable;
-	    numInView = bottomTileIndex - topTileIndex;
-	    ref = this.$element.find('.tile.rendered');
-	    results = [];
-	    for (i = 0, len = ref.length; i < len; i++) {
-	      tile = ref[i];
-	      $tile = $(tile);
-	      index = $tile.data('index');
-	      topAcceptable = topTileIndex;
-	      bottomAcceptable = bottomTileIndex;
-	      if (index >= topAcceptable && index <= bottomAcceptable) {
-	        continue;
-	      }
-	      results.push(this._derenderTile($tile));
-	    }
-	    return results;
-	  };
-
-	  Tilegrid.prototype._derenderTile = function($tile) {
-	    var modelId, zform;
-	    if (!($tile && $tile.length > 0)) {
-	      return;
-	    }
-	    $tile.css({
-	      height: $tile.height(),
-	      width: $tile.width()
-	    });
-	    this._renderDerenderedPlaceholder($tile);
-	    $tile.removeClass("rendered");
-	    $tile.removeClass("selected");
-	    modelId = $tile.data('id');
-	    if (modelId == null) {
-	      return;
-	    }
-	    $tile.removeAttr('data-id', null);
-	    delete this._$tilesByModelId[modelId];
-	    zform = $tile.data('zform');
-	    if (zform != null) {
-	      return zform.destroy();
-	    }
-	  };
-
-	  Tilegrid.prototype._renderDerenderedPlaceholder = function($tile) {
-	    return $tile.html("<div class='placeholder'>. . .</div>");
-	  };
-
-	  return Tilegrid;
-
-	})();
-
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var $, SelectableCollection, SingleSelect, _, jQuery,
-	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-	_ = __webpack_require__(8);
-
-	$ = jQuery = __webpack_require__(17);
-
-	__webpack_require__(20);
-
-	SelectableCollection = __webpack_require__(11);
-
-
-	/*
-	  This class implements the methods necessary to connect selections in a Tilegrid widget to a Collection with the
-	  SelectableCollection mixin.
-
-	  This is the implementation of a single select strategy for Tilegrid.  Clicking a tile selects the
-	  corresponding model in the collection throuh selectableCollection#selectModel interfaces.
-
-	  See widgets.tilegrid.MultiSelect for a multiselect strategy that supports selecting multiple models
-	  and clicking and dragging to select multiple models.
-
-	  Usage:  simply construct an instance of this class any time after constructing a Tilegrid and pass the tilegrid
-	  instance to SingleSelect constructor:
-
-	    new SingleSelect(@tilegrid)
-
-	  **Note for React users**: this class is initialized by the selection='single' prop on <Rb.Tilegrid>
-
-	  Note that constructing this class on a Tilegrid with a collection will cause the selectableCollection
-	  mixin to be added to the collection.  See mixins/SelectableCollection
-	 */
-
-	module.exports = SingleSelect = (function() {
-	  function SingleSelect(tilegrid, options) {
-	    this.tilegrid = tilegrid;
-	    if (options == null) {
-	      options = {};
-	    }
-	    this._scrollIntoView = bind(this._scrollIntoView, this);
-	    this._getTileFromEvent = bind(this._getTileFromEvent, this);
-	    this._getIndexFromEvent = bind(this._getIndexFromEvent, this);
-	    this._getSameTileOnRelativeRow = bind(this._getSameTileOnRelativeRow, this);
-	    this._getSameIndexOnRelativeRow = bind(this._getSameIndexOnRelativeRow, this);
-	    this._onRightArrow = bind(this._onRightArrow, this);
-	    this._onLeftArrow = bind(this._onLeftArrow, this);
-	    this._onPageUp = bind(this._onPageUp, this);
-	    this._onPageDown = bind(this._onPageDown, this);
-	    this._onUpArrow = bind(this._onUpArrow, this);
-	    this._onDownArrow = bind(this._onDownArrow, this);
-	    this._onKeydown = bind(this._onKeydown, this);
-	    this._getKeymap = bind(this._getKeymap, this);
-	    this._onSelectAll = bind(this._onSelectAll, this);
-	    this._onSelectionsChanged = bind(this._onSelectionsChanged, this);
-	    this._onTileMouseUp = bind(this._onTileMouseUp, this);
-	    this._onTileMouseDown = bind(this._onTileMouseDown, this);
-	    this._onFocusSinkFocus = bind(this._onFocusSinkFocus, this);
-	    this._initializeKeyboard = bind(this._initializeKeyboard, this);
-	    this._initializeCollection = bind(this._initializeCollection, this);
-	    this._initializeTilegrid = bind(this._initializeTilegrid, this);
-	    this.focus = bind(this.focus, this);
-	    this.getNextTile = bind(this.getNextTile, this);
-	    this.getPreviousTile = bind(this.getPreviousTile, this);
-	    this.updateTileStates = bind(this.updateTileStates, this);
-	    this.setActiveTile = bind(this.setActiveTile, this);
-	    this.getActiveTile = bind(this.getActiveTile, this);
-	    this.resetActiveTile = bind(this.resetActiveTile, this);
-	    this.selectNone = bind(this.selectNone, this);
-	    this.selectToggle = bind(this.selectToggle, this);
-	    this.selectOnlyOne = bind(this.selectOnlyOne, this);
-	    this.selectOne = bind(this.selectOne, this);
-	    this.initialize = bind(this.initialize, this);
-	    this.options = _.defaults(options, {
-	      selectOneOnSelected: true,
-	      scrollElement: this.tilegrid.$element,
-	      scrollOptions: {
-	        duration: 0,
-	        cushion: {
-	          top: 40,
-	          bottom: 40
-	        }
-	      }
-	    });
-	    this.collection = this.tilegrid.collection;
-	    if (!this.collection.hasSelectableCollectionMixin) {
-	      SelectableCollection.mixInto(this.collection);
-	    }
-	    this.initialize();
-	  }
-
-	  SingleSelect.prototype.initialize = function() {
-	    this._initializeTilegrid();
-	    this._initializeCollection();
-	    this._initializeKeyboard();
-	    return this;
-	  };
-
-	  SingleSelect.prototype.selectOne = function(index, selected, options) {
-	    if (selected == null) {
-	      selected = true;
-	    }
-	    if (options == null) {
-	      options = {};
-	    }
-	    options = _.defaults(options, {
-	      silent: false,
-	      active: true
-	    });
-	    if (selected === true && options.active) {
-	      return this.setActiveTile(index);
-	    } else {
-	      return this.collection.selectModelByIndex(index, selected, options);
-	    }
-	  };
-
-	  SingleSelect.prototype.selectOnlyOne = function(index) {
-	    if (!((index != null) && index >= 0)) {
-	      return;
-	    }
-	    this.selectNone();
-	    return this.selectOne(index);
-	  };
-
-	  SingleSelect.prototype.selectToggle = function(index) {
-	    return this.selectOne(index, 'toggle');
-	  };
-
-	  SingleSelect.prototype.selectNone = function() {
-	    this.collection.selectNone();
-	    return this.resetActiveTile();
-	  };
-
-	  SingleSelect.prototype.resetActiveTile = function() {
-	    return this.setActiveTile(null);
-	  };
-
-	  SingleSelect.prototype.getActiveTile = function() {
-	    return this.tilegrid.$element.find('.tile.active');
-	  };
-
-	  SingleSelect.prototype.setActiveTile = function(index) {
-	    var $newActive, $prevActive;
-	    $prevActive = this.getActiveTile();
-	    $newActive = null;
-	    if (index != null) {
-	      $newActive = this.tilegrid.findTileAt(index);
-	      if ($newActive && $newActive.length > 0 && !$newActive.is($prevActive)) {
-	        this._scrollIntoView($newActive, $newActive.closest(':hasScroll'), this.options.scrollOptions);
-	      }
-	    }
-	    if (($prevActive && !$newActive) || (!$prevActive && $newActive) || !($newActive != null ? $newActive.is($prevActive) : void 0)) {
-	      this.collection.setActiveIndex(index);
-	      if (index != null) {
-	        this.collection.selectModelByIndex(index);
-	      }
-	      this.tilegrid.trigger('activeTileChanged', $newActive, $prevActive);
-	    }
-	    this.updateTileStates($prevActive);
-	    this.updateTileStates($newActive);
-	    return $newActive;
-	  };
-
-	  SingleSelect.prototype.updateTileStates = function($tile) {
-	    var model;
-	    if ($tile == null) {
-	      return;
-	    }
-	    model = this.collection.get($tile.attr('data-id'));
-	    if (model == null) {
-	      return;
-	    }
-	    $tile.toggleClass('selected', model.selected);
-	    return $tile.toggleClass('active', model.active);
-	  };
-
-	  SingleSelect.prototype.getPreviousTile = function() {
-	    return this.getActiveTile().prevAll('.tile:visible').first();
-	  };
-
-	  SingleSelect.prototype.getNextTile = function() {
-	    return this.getActiveTile().nextAll('.tile:visible').first();
-	  };
-
-	  SingleSelect.prototype.focus = function() {
-	    return this.$focusSink.focus();
-	  };
-
-	  SingleSelect.prototype._initializeTilegrid = function() {
-	    this.tilegrid.$element.on("mousedown.SingleSelect", ".tile", this._onTileMouseDown);
-	    this.tilegrid.$element.on("mouseup.SingleSelect", ".tile", this._onTileMouseUp);
-	    return this.tilegrid.selections = this;
-	  };
-
-	  SingleSelect.prototype._initializeCollection = function() {
-	    this.collection.on('selectionsChanged', this._onSelectionsChanged);
-	    return this.collection.on('selectAll', this._onSelectAll);
-	  };
-
-	  SingleSelect.prototype._initializeKeyboard = function() {
-	    this.tilegrid.$element.on("click", this.focus);
-	    this.$focusSink = $("<input class=\"tilegrid-focus-sink\" type=\"text\">");
-	    this.tilegrid.$element.prepend(this.$focusSink);
-	    this.$focusSink.on('keydown', this._onKeydown);
-	    return this.$focusSink.on('focus', this._onFocusSinkFocus);
-	  };
-
-	  SingleSelect.prototype._onFocusSinkFocus = function() {};
-
-	  SingleSelect.prototype._onTileMouseDown = function(evt) {
-	    var index, ref;
-	    evt.preventDefault();
-	    if ($(evt.target).hasClass('no-select')) {
-	      return;
-	    }
-	    index = this._getIndexFromEvent(evt);
-	    if (this.options.selectOneOnSelected) {
-	      if (!((ref = this.tilegrid.tileAt(index)) != null ? ref.hasClass('active') : void 0)) {
-	        return this.selectOnlyOne(index);
-	      }
-	    } else {
-	      this.setActiveTile(index);
-	      return this.collection.trigger('selectedClicked', index, evt);
-	    }
-	  };
-
-	  SingleSelect.prototype._onTileMouseUp = function(evt) {};
-
-	  SingleSelect.prototype._onSelectionsChanged = function() {
-	    var $tile, i, len, model, modelIndex, results, selectedModels;
-	    selectedModels = this.collection.getSelectedModels();
-	    this.tilegrid.$element.find('>.tilegrid>.tile.selected').removeClass('selected');
-	    if (selectedModels.length <= 0) {
-	      return this.resetActiveTile();
-	    } else {
-	      results = [];
-	      for (i = 0, len = selectedModels.length; i < len; i++) {
-	        model = selectedModels[i];
-	        modelIndex = model.index != null ? model.index : this.collection.indexOf(model);
-	        $tile = this.tilegrid.$element.find(">.tilegrid>.tile[data-index='" + modelIndex + "']");
-	        $tile.addClass('selected');
-	        results.push($tile.toggleClass('active', model.active));
-	      }
-	      return results;
-	    }
-	  };
-
-	  SingleSelect.prototype._onSelectAll = function() {
-	    return this.setActiveTile(0);
-	  };
-
-	  SingleSelect.prototype._getKeymap = function() {
-	    return {
-	      40: this._onDownArrow,
-	      38: this._onUpArrow,
-	      33: this._onPageUp,
-	      34: this._onPageDown,
-	      37: this._onLeftArrow,
-	      39: this._onRightArrow
-	    };
-	  };
-
-	  SingleSelect.prototype._onKeydown = function(evt) {
-	    var base, name;
-	    return typeof (base = this._getKeymap())[name = evt.keyCode] === "function" ? base[name](evt) : void 0;
-	  };
-
-	  SingleSelect.prototype._onDownArrow = function(evt) {
-	    return this.selectOnlyOne(this._getSameIndexOnRelativeRow(1));
-	  };
-
-	  SingleSelect.prototype._onUpArrow = function(evt) {
-	    return this.selectOnlyOne(this._getSameIndexOnRelativeRow(-1));
-	  };
-
-	  SingleSelect.prototype._onPageDown = function(evt) {
-	    return this.selectOnlyOne(this._getSameIndexOnRelativeRow(5));
-	  };
-
-	  SingleSelect.prototype._onPageUp = function(evt) {
-	    return this.selectOnlyOne(this._getSameIndexOnRelativeRow(-5));
-	  };
-
-	  SingleSelect.prototype._onLeftArrow = function(evt) {
-	    return this.selectOnlyOne(this.getPreviousTile().data('index'));
-	  };
-
-	  SingleSelect.prototype._onRightArrow = function(evt) {
-	    return this.selectOnlyOne(this.getNextTile().data('index'));
-	  };
-
-	  SingleSelect.prototype._getSameIndexOnRelativeRow = function(nRows) {
-	    var ref;
-	    return (ref = this._getSameTileOnRelativeRow(nRows)) != null ? ref.data('index') : void 0;
-	  };
-
-	  SingleSelect.prototype._getSameTileOnRelativeRow = function(nRows) {
-	    var $active, $n, $next, activeBottom, activeHeight, activeLeft, activeRight, activeTop, activeWidth, nBottom, nHeight, nLeft, nRight, nTop, nWidth, rowsToTraverse;
-	    $active = this.tilegrid.$element.find('.tile.active');
-	    if (nRows === 0) {
-	      return $active;
-	    }
-	    $next = $active;
-	    rowsToTraverse = Math.abs(nRows);
-	    while (true) {
-	      if (nRows > 0) {
-	        $n = $next.nextAll('.tile:visible').first();
-	      } else {
-	        $n = $next.prevAll('.tile:visible').first();
-	      }
-	      if ($n.length <= 0) {
-	        break;
-	      }
-	      nHeight = $n.height();
-	      nWidth = $n.width();
-	      nTop = $n.position().top;
-	      nBottom = nTop + nHeight;
-	      nLeft = $n.position().left;
-	      nRight = nLeft + nWidth;
-	      activeHeight = $active.height();
-	      activeWidth = $active.width();
-	      activeTop = $active.position().top;
-	      activeBottom = activeTop + activeHeight;
-	      activeLeft = $active.position().left;
-	      activeRight = activeLeft + activeWidth;
-	      if ((nRows > 0 && nTop > activeBottom && (nLeft >= activeLeft || nRight >= activeRight)) || (nRows < 0 && nTop < activeTop && (nLeft <= activeLeft || nRight <= activeRight))) {
-	        $active = $n;
-	        rowsToTraverse -= 1;
-	      }
-	      $next = $n;
-	      if (rowsToTraverse <= 0) {
-	        break;
-	      }
-	    }
-	    return $next;
-	  };
-
-	  SingleSelect.prototype._getIndexFromEvent = function(evt) {
-	    var $tile, index;
-	    $tile = this._getTileFromEvent(evt);
-	    if (!$tile) {
-	      return -1;
-	    }
-	    index = $tile.data('index');
-	    if (index == null) {
-	      throw "dev: error: invalid tile found in tilegrid, no data-index attribute";
-	    }
-	    return index;
-	  };
-
-	  SingleSelect.prototype._getTileFromEvent = function(evt) {
-	    var $target, $tile;
-	    $target = $(evt.target);
-	    $tile = $target.closest('.tile');
-	    if ($tile.length <= 0) {
-	      console.warn("dev: error: _getIndexFromEvent unable to find .tile for " + $target.selector);
-	      return null;
-	    }
-	    return $tile;
-	  };
-
-	  SingleSelect.prototype._scrollIntoView = function($tile, $parent, options) {
-	    var $tileHeight, $tileLeft, $tileTop, $tileWidth, attrs, isAbove, isBelow, isLeft, isRight, parentHeight, parentLeft, parentScrollTop, parentTop, parentWidth;
-	    if (options == null) {
-	      options = {};
-	    }
-	    options = _.defaults(options, {
-	      cushion: {},
-	      duration: 100,
-	      alwaysAtTop: false,
-	      top: null,
-	      left: null,
-	      height: null,
-	      width: null
-	    });
-	    if (!(($parent != null ? $parent.length : void 0) > 0 && !$parent.is($(document)))) {
-	      return;
-	    }
-	    options.cushion = _.defaults(options.cushion, {
-	      left: 10,
-	      right: 10,
-	      top: 10,
-	      bottom: 15
-	    });
-	    $tileTop = options.top || $tile.position().top;
-	    $tileLeft = options.left || $tile.position().left;
-	    $tileHeight = options.height || $tile.outerHeight();
-	    $tileWidth = options.width || $tile.outerWidth();
-	    parentScrollTop = $parent.scrollTop();
-	    parentTop = options.parentTop || parentScrollTop;
-	    parentLeft = $parent.scrollLeft();
-	    parentHeight = $parent.outerHeight();
-	    parentWidth = $parent.outerWidth();
-	    isAbove = $tileTop - options.cushion.top < 0;
-	    isBelow = $tileTop + $tileHeight + options.cushion.bottom > parentHeight;
-	    isLeft = $tileLeft - options.cushion.left < 0;
-	    isRight = $tileLeft + $tileWidth + options.cushion.right > parentWidth;
-	    attrs = {};
-	    if (isAbove || options.alwaysAtTop) {
-	      attrs.scrollTop = Math.max(parentTop + $tileTop - options.cushion.top, 0);
-	    } else if (isBelow) {
-	      attrs.scrollTop = parentScrollTop + $tileTop + $tileHeight + options.cushion.bottom - parentHeight;
-	    }
-	    if (isLeft) {
-	      attrs.scrollLeft = parentLeft + $tileLeft - options.cushion.left;
-	    } else if (isRight) {
-	      attrs.scrollLeft = $tileLeft + $tileWidth + options.cushion.right - parentWidth;
-	    }
-	    if (_.keys(attrs).length <= 0) {
-	      return;
-	    }
-	    if (options.duration > 0) {
-	      $parent.animate(attrs, options.duration, "linear");
-	    } else {
-	      if (attrs.scrollTop != null) {
-	        $parent.scrollTop(attrs.scrollTop);
-	      }
-	      if (attrs.scrollLeft != null) {
-	        $parent.scrollLeft(attrs.scrollLeft);
-	      }
-	    }
-	    return $tile;
-	  };
-
-	  return SingleSelect;
-
-	})();
-
-
-/***/ },
-/* 20 */
-/***/ function(module, exports) {
-
-	
-	/*
-	  Thanks stackoverflow!   This allows the tilegrid to determine the scroll parent of the tiles
-	  http://codereview.stackexchange.com/questions/13338/hasscroll-function-checking-if-a-scrollbar-is-visible-in-an-element
-
-	  You can then use this in any jQuery selector, such as:
-	  ```
-	    $('div:hasScroll') //all divs that have scrollbars
-	    $('div').filter(':hasScroll') //same but better
-	    $(this).closest(':hasScroll(y)') //find the parent with the vert scrollbar
-	    $list.is(':hasScroll(x)') //are there any horizontal scrollbars in the list?
-	  ```
-	 */
-	var hasScroll;
-
-	hasScroll = function(el, index, match) {
-	  var $el, axis, hidden, sX, sY, scroll, visible;
-	  $el = $(el);
-	  sX = $el.css('overflow-x');
-	  sY = $el.css('overflow-y');
-	  hidden = 'hidden';
-	  visible = 'visible';
-	  scroll = 'scroll';
-	  axis = match[3];
-	  if (!axis) {
-	    if (sX === sY && (sY === hidden || sY === visible)) {
-	      return false;
-	    }
-	    if (sX === scroll || sY === scroll) {
-	      return true;
-	    }
-	  } else if (axis === 'x') {
-	    if (sX === hidden || sX === visible) {
-	      return false;
-	    }
-	    if (sX === scroll) {
-	      return true;
-	    }
-	  } else if (axis === 'y') {
-	    if (sY === hidden || sY === visible) {
-	      return false;
-	    }
-	    if (sY === scroll) {
-	      return true;
-	    }
-	  }
-	  return $el.innerHeight() < el.scrollHeight || $el.innerWidth() < el.scrollWidth;
-	};
-
-	$.expr[':'].hasScroll = hasScroll;
-
-
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var $, MultiSelect, SingleSelect, _, jQuery,
-	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-	  hasProp = {}.hasOwnProperty;
-
-	$ = jQuery = __webpack_require__(17);
-
-	_ = __webpack_require__(8);
-
-	SingleSelect = __webpack_require__(19);
-
-
-	/*
-	  This class implements the methods necessary to connect a Tilegrid widget to a Collection with the
-	  SelectableCollection mixin and provides a multi select strategy for Tilegrid.
-
-	  Clicking a tile selects the corresponding model in the collection throuh selectableCollection#selectModel...
-	  interfaces.  Clicking and draging selects all models between the drag start and drag end tile.
-
-	  - Holding down the command toggles rows to the selected.
-	  - Holding down the shift key extends the selection from the active cell to the clicked cell
-	  - Dragging always extends away and back to the first row selected in the drag operation
-
-	  Usage:  simply construct an instance of this class any time after constructing a Tilegrid and pass the tilegrid
-	  instance to MultiSelect constructor:
-
-	    new MultiSelect(@tilegrid)
-	 */
-
-	module.exports = MultiSelect = (function(superClass) {
-	  extend(MultiSelect, superClass);
-
-	  function MultiSelect() {
-	    this._whichMethod = bind(this._whichMethod, this);
-	    this._onRightArrow = bind(this._onRightArrow, this);
-	    this._onLeftArrow = bind(this._onLeftArrow, this);
-	    this._onPageUp = bind(this._onPageUp, this);
-	    this._onPageDown = bind(this._onPageDown, this);
-	    this._onUpArrow = bind(this._onUpArrow, this);
-	    this._onDownArrow = bind(this._onDownArrow, this);
-	    this._onTileMouseMove = bind(this._onTileMouseMove, this);
-	    this._onTileMouseDown = bind(this._onTileMouseDown, this);
-	    this.selectExtend = bind(this.selectExtend, this);
-	    this._initializeDragSelect = bind(this._initializeDragSelect, this);
-	    this.initialize = bind(this.initialize, this);
-	    MultiSelect.__super__.constructor.apply(this, arguments);
-	  }
-
-	  MultiSelect.prototype.initialize = function() {
-	    MultiSelect.__super__.initialize.apply(this, arguments);
-	    return this._initializeDragSelect();
-	  };
-
-	  MultiSelect.prototype._initializeDragSelect = function() {
-	    this.mouseDown = false;
-	    $(document).on('mousedown', (function(_this) {
-	      return function() {
-	        return _this.mouseDown = true;
-	      };
-	    })(this));
-	    $(document).on('mouseup', (function(_this) {
-	      return function() {
-	        return _this.mouseDown = false;
-	      };
-	    })(this));
-	    return this.tilegrid.$element.on("mousemove.multiSelect", ".tile", this._onTileMouseMove);
-	  };
-
-	  MultiSelect.prototype.selectExtend = function(index) {
-	    var $activeTile, $tile, activeIndex, firstTileIndex, lastTileIndex, onEnsureComplete, viewStats;
-	    $activeTile = this.getActiveTile();
-	    activeIndex = $activeTile.data('index');
-	    $tile = $activeTile;
-	    onEnsureComplete = (function(_this) {
-	      return function() {
-	        var lastIndex, nextIndex;
-	        while (true) {
-	          lastIndex = null;
-	          $tile = index < activeIndex ? $tile = $tile.prev() : $tile = $tile.next();
-	          nextIndex = $tile.data('index');
-	          if (nextIndex == null) {
-	            break;
-	          }
-	          lastIndex = nextIndex;
-	          _this.selectOne(nextIndex, true, {
-	            silent: true,
-	            active: false
-	          });
-	          if (nextIndex === index) {
-	            break;
-	          }
-	        }
-	        _this.collection.trigger('selectionsChanged');
-	        return _this.setActiveTile(lastIndex);
-	      };
-	    })(this);
-	    viewStats = this.tilegrid.getViewingStats();
-	    firstTileIndex = activeIndex > index ? viewStats.topDisplayIndex : activeIndex;
-	    lastTileIndex = activeIndex < index ? viewStats.bottomDisplayIndex : index;
-	    if (_.isFunction(this.collection.ensureRows)) {
-	      this.collection.ensureRows(firstTileIndex, lastTileIndex, {
-	        complete: onEnsureComplete
-	      });
-	    } else {
-	      onEnsureComplete();
-	    }
-	    return this.collection.trigger('selectionsChanged');
-	  };
-
-	  MultiSelect.prototype._onTileMouseDown = function(evt) {
-	    var $tile, index, method;
-	    evt.preventDefault();
-	    if ($(evt.target).hasClass('no-select')) {
-	      return;
-	    }
-	    method = this._whichMethod(evt);
-	    $tile = $(evt.target).closest('.tile');
-	    index = this._getIndexFromEvent(evt);
-	    this.lastMouseDownIndex = index;
-	    this.lastToggleIndex = null;
-	    if (!(($tile != null ? $tile.length : void 0) > 0)) {
-	      return;
-	    }
-	    if (method === this.selectOnlyOne && !this.options.selectOneOnSelected && $tile.hasClass('selected')) {
-	      return MultiSelect.__super__._onTileMouseDown.apply(this, arguments);
-	    } else if (method === this.selectOne && $tile.hasClass('selected')) {
-	      this.selectOne(index, false, {
-	        active: false
-	      });
-	      if ($tile.hasClass('active')) {
-	        return this.setActiveTile(null);
-	      }
-	    } else {
-	      return method(index);
-	    }
-	  };
-
-	  MultiSelect.prototype._onTileMouseMove = function(evt) {
-	    var $target, index;
-	    evt.preventDefault();
-	    $target = $(evt.target);
-	    if (this.mouseDown && !($target.hasClass('active') || $target.parents('.tile.active').length > 0)) {
-	      index = this._getIndexFromEvent(evt);
-	      if (evt.metaKey || evt.ctrlKey) {
-	        if (!(index === this.lastToggleIndex || index === this.lastMouseDownIndex)) {
-	          this.lastToggleIndex = index;
-	          return this.selectToggle(index);
-	        }
-	      } else {
-	        if (!(index < 0)) {
-	          return this.selectExtend(index);
-	        }
-	      }
-	    }
-	  };
-
-	  MultiSelect.prototype._onDownArrow = function(evt) {
-	    return this._whichMethod(evt)(this._getSameIndexOnRelativeRow(1));
-	  };
-
-	  MultiSelect.prototype._onUpArrow = function(evt) {
-	    return this._whichMethod(evt)(this._getSameIndexOnRelativeRow(-1));
-	  };
-
-	  MultiSelect.prototype._onPageDown = function(evt) {
-	    return this._whichMethod(evt)(this._getSameIndexOnRelativeRow(5));
-	  };
-
-	  MultiSelect.prototype._onPageUp = function(evt) {
-	    return this._whichMethod(evt)(this._getSameIndexOnRelativeRow(-5));
-	  };
-
-	  MultiSelect.prototype._onLeftArrow = function(evt) {
-	    return this._whichMethod(evt)(this.getPreviousTile().data('index'));
-	  };
-
-	  MultiSelect.prototype._onRightArrow = function(evt) {
-	    return this._whichMethod(evt)(this.getNextTile().data('index'));
-	  };
-
-	  MultiSelect.prototype._whichMethod = function(evt) {
-	    if (evt.shiftKey) {
-	      return this.selectExtend;
-	    } else if (evt.ctrlKey || evt.metaKey) {
-	      return this.selectOne;
-	    } else {
-	      return this.selectOnlyOne;
-	    }
-	  };
-
-	  return MultiSelect;
-
-	})(SingleSelect);
-
-
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var Datum, Email, React, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -3259,7 +1732,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 23 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, LazyPhoto, React,
@@ -3297,9 +1770,9 @@ var ReactDatum =
 
 	  LazyPhoto.displayName = "react-datum.LazyPhoto";
 
-	  LazyPhoto.prototype.notFoundUrl = __webpack_require__(24);
+	  LazyPhoto.prototype.notFoundUrl = __webpack_require__(17);
 
-	  LazyPhoto.prototype.loadingUrl = __webpack_require__(25);
+	  LazyPhoto.prototype.loadingUrl = __webpack_require__(18);
 
 	  LazyPhoto.prototype.subClassName = 'lazy-image';
 
@@ -3360,19 +1833,19 @@ var ReactDatum =
 
 
 /***/ },
-/* 24 */
+/* 17 */
 /***/ function(module, exports) {
 
 	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABoCAYAAAAHIFUvAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NEZCNjk5NUI5RjE2MTFFMkE2MjE4QzNGRDJGMzREOEQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NEZCNjk5NUM5RjE2MTFFMkE2MjE4QzNGRDJGMzREOEQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo0RkI2OTk1OTlGMTYxMUUyQTYyMThDM0ZEMkYzNEQ4RCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0RkI2OTk1QTlGMTYxMUUyQTYyMThDM0ZEMkYzNEQ4RCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PmtML+gAAA1VSURBVHja7F09cttK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"
 
 /***/ },
-/* 25 */
+/* 18 */
 /***/ function(module, exports) {
 
 	module.exports = "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAaCAYAAABctMd+AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAAtSURBVHja7MxBDQAACAQgtX/nM4UPNwhAJ6krU4fkcrlcLpfLv+QLAAD//wMANGkDMYhC/1cAAAAASUVORK5CYII="
 
 /***/ },
-/* 26 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Link, React, _,
@@ -3437,7 +1910,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 27 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Number, ONE_MILLION, ONE_THOUSAND, React, _,
@@ -3561,7 +2034,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 28 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, React, Text, _,
@@ -3628,7 +2101,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 29 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Number, React, WholeNumber,
@@ -3637,7 +2110,7 @@ var ReactDatum =
 
 	React = __webpack_require__(3);
 
-	Number = __webpack_require__(27);
+	Number = __webpack_require__(20);
 
 
 	/*
@@ -3661,7 +2134,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 30 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, CollectionPicker, Datum, React, Select, Strhelp, _,
@@ -3675,13 +2148,13 @@ var ReactDatum =
 
 	_ = __webpack_require__(8);
 
-	Strhelp = __webpack_require__(31);
+	Strhelp = __webpack_require__(24);
 
 	Datum = __webpack_require__(6);
 
-	Select = __webpack_require__(33);
+	Select = __webpack_require__(26);
 
-	Select.Async = __webpack_require__(38);
+	Select.Async = __webpack_require__(31);
 
 	module.exports = CollectionPicker = (function(superClass) {
 	  extend(CollectionPicker, superClass);
@@ -3950,15 +2423,15 @@ var ReactDatum =
 
 
 /***/ },
-/* 31 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(32);
+	module.exports = __webpack_require__(25);
 
 /***/ },
-/* 32 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var StringHelpers, _;
@@ -4029,7 +2502,7 @@ var ReactDatum =
 
 
 /***/ },
-/* 33 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4048,27 +2521,27 @@ var ReactDatum =
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _reactInputAutosize = __webpack_require__(34);
+	var _reactInputAutosize = __webpack_require__(27);
 
 	var _reactInputAutosize2 = _interopRequireDefault(_reactInputAutosize);
 
-	var _classnames = __webpack_require__(35);
+	var _classnames = __webpack_require__(28);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _stripDiacritics = __webpack_require__(37);
+	var _stripDiacritics = __webpack_require__(30);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
-	var _Async = __webpack_require__(38);
+	var _Async = __webpack_require__(31);
 
 	var _Async2 = _interopRequireDefault(_Async);
 
-	var _Option = __webpack_require__(39);
+	var _Option = __webpack_require__(32);
 
 	var _Option2 = _interopRequireDefault(_Option);
 
-	var _Value = __webpack_require__(40);
+	var _Value = __webpack_require__(33);
 
 	var _Value2 = _interopRequireDefault(_Value);
 
@@ -4720,7 +3193,7 @@ var ReactDatum =
 	exports.default = Select;
 
 /***/ },
-/* 34 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4842,7 +3315,7 @@ var ReactDatum =
 	module.exports = AutosizeInput;
 
 /***/ },
-/* 35 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -4888,7 +3361,7 @@ var ReactDatum =
 
 		if (typeof module !== 'undefined' && module.exports) {
 			module.exports = classNames;
-		} else if ("function" === 'function' && _typeof(__webpack_require__(36)) === 'object' && __webpack_require__(36)) {
+		} else if ("function" === 'function' && _typeof(__webpack_require__(29)) === 'object' && __webpack_require__(29)) {
 			// register as 'classnames', consistent with npm package name
 			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
 				return classNames;
@@ -4899,7 +3372,7 @@ var ReactDatum =
 	})();
 
 /***/ },
-/* 36 */
+/* 29 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
@@ -4907,7 +3380,7 @@ var ReactDatum =
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ },
-/* 37 */
+/* 30 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4922,7 +3395,7 @@ var ReactDatum =
 	};
 
 /***/ },
-/* 38 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4933,11 +3406,11 @@ var ReactDatum =
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Select = __webpack_require__(33);
+	var _Select = __webpack_require__(26);
 
 	var _Select2 = _interopRequireDefault(_Select);
 
-	var _stripDiacritics = __webpack_require__(37);
+	var _stripDiacritics = __webpack_require__(30);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
@@ -5091,7 +3564,7 @@ var ReactDatum =
 	module.exports = Async;
 
 /***/ },
-/* 39 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5100,7 +3573,7 @@ var ReactDatum =
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(35);
+	var _classnames = __webpack_require__(28);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -5170,7 +3643,7 @@ var ReactDatum =
 	module.exports = Option;
 
 /***/ },
-/* 40 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5179,7 +3652,7 @@ var ReactDatum =
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(35);
+	var _classnames = __webpack_require__(28);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -5252,4 +3725,6 @@ var ReactDatum =
 	module.exports = Value;
 
 /***/ }
-/******/ ]);
+/******/ ])
+});
+;

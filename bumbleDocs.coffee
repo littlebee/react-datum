@@ -1,7 +1,7 @@
 
 module.exports = 
   
-  logo: "docs/img/react-datum.logo.png",
+  logo: "img/docs/react-datum.logo.png",
 
   # these get added to the css linked to the static examples and docs and copied to 
   # docs/css
@@ -25,20 +25,20 @@ module.exports =
   }
 
   examples: 
-    root: 'src/examples'
+    root: 'examples'
     demos: [{
       id: "model",
       name: "Model Demo",
       path: "model/model.jsx",
       description: "This demo shows how simple it is to create a display only form.", 
-      thumbnailUrl: "http://zulily.github.io/react-datum/docs/img/react-datum_model-example.png",
+      thumbnailUrl: "http://zulily.github.io/react-datum/img/docs/react-datum_model-example.png",
     },{
       id: "form",
       name: "Form Demo",
       path: "form/form.jsx",
       description: "This demo shows how to create an input form that saves a Backbone model when "+
         "the user presses save.",
-      thumbnailUrl: "http://zulily.github.io/react-datum/docs/img/react-datum_form-example.png",
+      thumbnailUrl: "http://zulily.github.io/react-datum/img/docs/react-datum_form-example.png",
     },{
       id: "bigKittens",
       name: "Big Kittens Demo!",

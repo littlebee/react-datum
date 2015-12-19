@@ -8,6 +8,7 @@ We strive to build great software and welcome **everyone** to participate.
 This project adheres to the (Contributor Covenant 1.2)[http://contributor-covenant.org/version/1/2/0]. By participating, you are expected to uphold this code. Any issues, discussion posts or code comments not adhering to those guidelines will be removed with notice to the author.
 
 ## Getting started (public contributor)
+
 *Note to Zulily teammates, skip this section.  See the section that follows for setup and special instructions to build and test react-datum in zuKeeper.
 
 Clone that repo!  
@@ -28,9 +29,9 @@ Run npm install to install the remaining packages needed.
 
 Test it out:
 
-'grunt test'
+'grunt build test'
 
-The test task will run the build task first.  If you want to build without running tests (you might want to always run tests tho, just saying):
+If you want to build without running tests (you might want to always run tests tho, just saying):
 
 `grunt build`
 
@@ -41,13 +42,13 @@ The watch task can be used to pick up changes and build automagically:
 will watch all the source and tests and distribution relevant files and rebuild as necessary.  It will not run the tests.
 
 ## Getting started (zuKeeper developer):
-We eat our own produce and react-datum is a core piece of our zuKeeper React UI.  It's super easy for you to contribute and test your changes to react-datum in zuKeeper. 
+We use react-datum at Zulily as part of our zuKeeper application for managing sales events and the product catelog.  It is a core piece of both our zuKeeper React UI stack.  It's super easy for you to contribute and test your changes to Tilegrid in zuKeeper. 
 
 From your local htdoc_ems root (if you have multiple clones of htdocs_ems, use the one that you are currently working most in):
 
 `cake react-datum` 
 
-will clone the gitlab hosted repository of react-datum into a sibling directory of htdocs_ems/ if it isn't already. It will also save the full path of your current htdocs_ems dir in .zukeeperRoot file in the root of react-datum.  It will also try to open a terminal tab, but this only works if you are running terminal or iterm2 on osx.  Otherwise it will print a console message telling which directory (react-datum) to cd to get started.  See scripts/deployToZukeeper.coffee for more details. 
+will clone the github hosted repository of react-datum into a sibling directory of htdocs_ems/ if it isn't already. It will also save the full path of your current htdocs_ems dir in .zukeeperRoot file in the root of react-datum.  It will also try to open a terminal tab, but this only works if you are running terminal or iterm2 on osx.  Otherwise it will print a console message telling which directory (react-datum) to cd to get started.  See scripts/deployToZukeeper.coffee for more details. 
 
 As part of `grunt build` and `grunt watch`, scripts/deployToZuKeeper.coffee is executed which, if it sees the .zukeeperRoot file or an ../htdocs_ems dir that exists, it will copy dist/react-datum* to that dir + app/webroot/js/lib.  It will also try to scp the dist files into place on your emsweb-01.vps machine.   
 
@@ -55,10 +56,6 @@ You should be able to make a change in the react-datum code and instantly test i
 
 After you have written a test for your changes (come on, I swear it's really easy), you can commit them in the react-datum branch and, if deployToZukeeper worked on build, you can go over and commit the dist files in htdocs_ems.  Easy as -cake-, er, grunt!
 
-**Gitlab vs. Github  (TODO: remove this after public)**
-
-For now we commit and stage first to Gitlab internally and then periodically push builds to Github.  This was to enable easy early participation among the team.  We will probably do away with the Gitlab fork when we go public.  (soon)
- 
 
 ## Tests
 
@@ -78,8 +75,6 @@ _for things like `mySpy.calledWith("foo").should.be.ok`;_
 _for things like `(->result).should.change.by(3).when -> result += 3`_
 
 Also take a look at test/lib/testHelpers.cjsx.  You should include this in your test src file that you want to debug whether you use the convienience methods or not.  
-
-All tests should be in .cjsx.  Thank you.
   
 
 #### Debugging tests
@@ -96,11 +91,11 @@ will launch a server that you can connect chrome to for debugging. Point chrome 
 
 and then run a test.  You can bypass grunt which just shells out to scripts/testRunner.coffee.  The advantage of using the testRunner script directly is that you can pass an individual file to it for testing or debugging.  So if you just want to see the results of the test that you're working on you don't have to wait for the others to run.  To debug that test:
 
-`coffee --nodejs --debug-brk scripts/testRunner.coffee test/collectionPicker/readonly.cjsx`   
+`coffee --nodejs --debug-brk node_modules/bumble-test/bin/testRunner.coffee test/collectionPicker/readonly.cjsx`   
 
 Refresh the Chrome tab pointed at local node-inspector and wait for it to load.  It will first stop at the coffeescript loader. No other files are loaded yet though so press the run button and it will next stop at the `debugger` line intensionally left in test/lib/testHelpers.cjsx.  At this point your test file should be loaded and most or all of it's components.  Set breakpoints and let it fly!
 
-Both cake and grunt have tasks for running test.  Cake is probably going away, and doesn't display the stdout from testRunner until it has completely run.   To run all tests: 
+Grunt has a task for running test. To run all tests: 
 
 `grunt test`
 
@@ -109,7 +104,7 @@ from project root.
 
 ## Source
 
-Source should be in coffeescript or cjsx.  Examples (see below) are the exception.  Coffeescript provides the OO glue that makes the react-datum components easily extensible.  I buried a why_coffeescript.md in the src tree if you want a break from unopinionated. 
+Source should be in coffeescript or cjsx.  Examples (see below) are the exception.  Coffeescript provides the OO glue that makes the react-datum components easily extensible. 
 
 Use the Node.js/CommonJS require syntax for requires internally. For example: `Datum = require('./datum')`.  Examples are the exception, as they only expected to run in the browser and loaded via `<script>` tag.  We use webpack to bundle our dist/react-datum*.js files and it understands CommonJS requires and correctly orders the load of components based on the dependency tree.
    
@@ -124,16 +119,15 @@ Assume that we will be script tag loaded.  Do NOT use require() to load dependen
 
 The examples in src/examples will be picked up by the grunt build and watch and compiled to docs/examples.  Each src file in src/examples is assumed to be a single contained example, needing nothing but the base dependencies:
 ```
-<script src="../../../dist/vendor/jquery.js"></script>
 <script src="../../../dist/vendor/react.js"></script>
 <script src="../../../dist/vendor/react-dom.js"></script>
 <script src="../../../dist/vendor/underscore.js"></script>
 <script src="../../../dist/vendor/backbone.js"></script>
-<script src="../../../dist/react-datum.js"></script>
 ```
-If you need a vendor.js that isn't in that set, go ahead and add it to scripts/lib/exampleFile.tpl.  Each example is wrapped in a self contained .html file that shows the source file code (with highlighting) on the left and a demo div on the right where the code is expected to render.  The source is compiled from JSX down to JS and also placed in the docs/examples folder.  To compile the examples just run the usual:
 
-`grunt build`
+If you need a vendor.js that isn't in that set, go ahead and add it to bumbleDocs.coffee in the project root.  Each example is wrapped in a self contained .html file that shows the source file code (with highlighting) on the left and a demo div on the right where the code is expected to render.  The source is compiled from JSX down to JS and also placed in the docs/examples folder.  To compile the examples just:
+
+`grunt docs`
  
  
 ## CSS
@@ -155,24 +149,9 @@ all in node.
 I instead opted to build a separate combined css file in dist that the user can than optionally
 decide not to use at all.    
 
-## Using jQuery
+## TBD
 
-I love jQuery.  There I said it.  But... I hate that we have to insist people install it as a dependency.   
-
-In the React community, I think the general feeling is that you shouldn't be reaching directly into the DOM, or need to.  However, that said, we work in the real world which jQuery has been a huge part of for a really long time.   Our tilegrid component does a great job of directly manipulating the DOM for optimal performance with collections of thousands.  
-
-We are not going to see jQuery go away over night.  And, as you will see with many of the tests, jQuery still does a great job of reducing the noise of constantly calling methods like `document.getElementById('#someID')` and `document.querySelector({fully qualified path})`  
-
-For tests, continue to use jQuery. Those should be as easy to write as possible (so people will).  
-
-For the components except **ReactDatum.Tilegrid**, let's not use jQuery and try doing things the React Way (whatever that means).  
-
-For **ReactDatum.Tilegrid**, I think it will continue using jQuery for some time.  I can see it being reimagined in a React way in the future, but not now.  And besides, our internal experience using it, as it currently is, has been pretty good over the last year.  We may setup a seperate dist file or perhaps a seperate repo / npm package in the nearer future and achieve the same objective of removing jQuery dependence from the react-datum core components.  
-
-We should also consider splitting out src/datums/collectionPicker as well.  It doesn't rely on jQuery, but it does pull an additional 30k of source from react-select.  If it were it's own component, and Tilegrid were on it's own, the react-datum.min.js file size would be 60Kb less (estimate).  As of 11.2015 react-datum.min.js is 100Kb.
-
-
- 
+We should also consider splitting out src/datums/collectionPicker.  It doesn't rely on jQuery, but it does pull an additional 30K of source from react-select.  If it were it's own component, the react-datum.min.js file size would be about 30K less in size.  As of 12.19.2015 react-datum.min.js is 74K.
 
 
 

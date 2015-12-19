@@ -1,6 +1,7 @@
 .collection-picker-display-value{background-color:#f5f5f5;padding:2px 3px;margin-right:4px}
 .collection-stats{overflow:hidden;padding-left:2px}
 .collection-stats .loading-indicator{position:absolute;height:2px;width:31px;top:16px;left:5px}
+.Select,.Select-control{position:relative}
 .collection-stats .viewing.stats{float:right}
 .datum-input .validation{margin-right:2px;display:inline-block;min-width:13px;height:15px;text-align:center;font-family:"Times New Roman",Times,serif;font-size:20px;font-weight:900;cursor:default}
 body.tilegrid_tilegrid_jsx{overflow:hidden}
@@ -18,14 +19,6 @@ body.tilegrid_tilegrid_jsx .preview{display:inline-block;vertical-align:top;padd
 body.tilegrid_tilegrid_jsx .preview .lazy-image{min-height:140px;display:inline-block}
 body.tilegrid_tilegrid_jsx .preview img{width:100px}
 body.tilegrid_tilegrid_jsx .preview .top-right{display:inline-block;width:calc(100% - 113px);vertical-align:top;margin-left:7px}
-.tilegrid{height:100%;position:relative;overflow:auto;background-color:#f5f5f5;text-align:center}
-.tilegrid .tile{position:relative;display:inline-block;background-color:#fff;border-radius:7px;margin:3px;padding:2px;border:2px solid transparent;vertical-align:top;transition:background-color .5s ease}
-.tilegrid .tile.selected{background-color:#CADFFF}
-.tilegrid .tile.active{border:2px solid #000;box-shadow:3px 3px 6px rgba(0,0,0,.3)}
-input.tilegrid-focus-sink{position:absolute;left:-5000px;width:10px}
-.Select,.Select-control{position:relative}
-.tilegrid .tilegrid-loading{position:relative;height:300px;text-align:center;font-size:18px;padding-top:100px;background-color:#f5f5f5;color:rgba(128,128,128,.8)}
-.tilegrid .disabled{background:-webkit-linear-gradient(50deg,rgba(255,0,0,.3) 10%,rgba(0,0,0,.01) 11%,rgba(0,0,0,.01) 24%,rgba(255,10,10,.2) 25%,rgba(255,10,10,.2) 34%,rgba(0,0,0,.01) 35%,rgba(0,0,0,.01) 50%,rgba(255,10,10,.2) 0,rgba(255,10,10,.2) 60%,rgba(0,0,0,.01) 61%,rgba(0,0,0,.01) 74%,rgba(255,10,10,.2) 75%,rgba(255,10,10,.2) 85%,rgba(0,0,0,.01) 86%)}
 .Select,.Select div,.Select input,.Select span{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}
 .Select.is-disabled>.Select-control{background-color:#f9f9f9}
 .Select.is-disabled>.Select-control:hover{box-shadow:none}
@@ -86,3 +79,10 @@ to{opacity:1}
 }
 @-webkit-keyframes Select-animation-spin{to{-webkit-transform:rotate(1turn)}
 }
+.tilegrid{height:100%;position:relative;overflow:auto;background-color:#f5f5f5;text-align:center}
+.tilegrid .tile{position:relative;display:inline-block;background-color:#fff;border-radius:7px;margin:3px;padding:2px;border:2px solid transparent;vertical-align:top;transition:background-color .5s ease}
+.tilegrid .tile.selected{background-color:#CADFFF}
+.tilegrid .tile.active{border:2px solid #000;box-shadow:3px 3px 6px rgba(0,0,0,.3)}
+input.tilegrid-focus-sink{position:absolute;left:-5000px;width:10px}
+.tilegrid .tilegrid-loading{position:relative;height:300px;text-align:center;font-size:18px;padding-top:100px;background-color:#f5f5f5;color:rgba(128,128,128,.8)}
+.tilegrid .disabled{background:-webkit-linear-gradient(50deg,rgba(255,0,0,.3) 10%,rgba(0,0,0,.01) 11%,rgba(0,0,0,.01) 24%,rgba(255,10,10,.2) 25%,rgba(255,10,10,.2) 34%,rgba(0,0,0,.01) 35%,rgba(0,0,0,.01) 50%,rgba(255,10,10,.2) 0,rgba(255,10,10,.2) 60%,rgba(0,0,0,.01) 61%,rgba(0,0,0,.01) 74%,rgba(255,10,10,.2) 75%,rgba(255,10,10,.2) 85%,rgba(0,0,0,.01) 86%)}

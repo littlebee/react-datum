@@ -7,7 +7,6 @@ module.exports = {
   Form:              require( './form'),
   Model:             require( './model'),
   SelectedModel:     require( './selectedModel'),
-  Tilegrid:          require( './tilegrid'),
   Datum:             require( './datums/datum'),
   Email:             require( './datums/email'),
   LazyPhoto:         require( './datums/lazyPhoto'),
