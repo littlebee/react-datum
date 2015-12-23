@@ -2,7 +2,7 @@
   "name": "react-datum",
   "version": "0.1.0",
   "description": "A set of React components for interacting with Backbone collections and models",
-  "main": "src/index.js",
+  "main": "./index.js",
   "scripts": {
     "test": "grunt test",
     "build": "grunt build"
@@ -32,6 +32,7 @@
     "react-bootstrap": "^0.27.3",
     "react-dom": "^0.14.1",
     "react-select": "^1.0.0-beta5",
+    "selectable-collection": "^0.1.0",
     "underscore": "^1.8.3"
   },
   "peerDependencies": {
@@ -45,7 +46,6 @@
     "async": "^1.5.0",
     "bumble-build": "^0.1.1",
     "bumble-strings": "^0.1.2",
-    "bumble-test": "^0.1.1",
     "coffee-react": "^4.0.0",
     "coffee-script": "^1.10.0",
     "commander": "^2.9.0",
@@ -58,6 +58,7 @@
     "node-cjsx": "^1.0.0",
     "promise": "^7.0.4",
     "react-addons-test-utils": "^0.14.2",
-    "sync-request": "^2.1.0"
+    "sync-request": "^2.1.0",
+    "tilegrid": "^0.1.1"
   }
 }

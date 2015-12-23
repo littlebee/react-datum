@@ -2,9 +2,9 @@
 React = require('react')
 Backbone = require('backbone')
 _ = require('underscore')
+SelectableCollection = require('selectable-collection')
 
 ContextualData = require('./contextualData')
-SelectableCollection = require('./mixins/SelectableCollection')
 
 
 # see ./collection.md
@@ -38,6 +38,6 @@ module.exports = class Collection extends ContextualData
     super
     @collection = @dataItem  # for clarity
     unless @collection.hasSelectableCollectionMixin
-      SelectableCollection.mixInto(@collection)
+      SelectableCollection.applyTo(@collection)
 
     return @collection

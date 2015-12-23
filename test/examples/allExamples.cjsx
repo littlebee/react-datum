@@ -8,6 +8,7 @@ _ = require 'underscore'
 Th = require '../lib/testHelpers'
 
 TestExamples = require('bumble-test/testExamples')
+testExamples = new TestExamples()
 
 KITTEN_DATA = require '../lib/kittenData'
 # the examples expect these to be script tagged in and be available globally
@@ -22,7 +23,7 @@ _.extend global,
 
 
 describe 'All examples', ->
-  TestExamples.testAllExamples()
+  testExamples.testAllExamples()
   
     
 

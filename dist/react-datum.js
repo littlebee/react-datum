@@ -67,21 +67,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // contextual components
 	  ClickToEditForm: __webpack_require__(2),
 	  Collection: __webpack_require__(9),
-	  CollectionStats: __webpack_require__(12),
+	  CollectionStats: __webpack_require__(13),
 	  Form: __webpack_require__(4),
-	  Model: __webpack_require__(13),
-	  SelectedModel: __webpack_require__(14),
+	  Model: __webpack_require__(14),
+	  SelectedModel: __webpack_require__(15),
 	  Datum: __webpack_require__(6),
-	  Email: __webpack_require__(15),
-	  LazyPhoto: __webpack_require__(16),
-	  Link: __webpack_require__(19),
-	  Number: __webpack_require__(20),
-	  Text: __webpack_require__(21),
-	  WholeNumber: __webpack_require__(22),
+	  Email: __webpack_require__(16),
+	  LazyPhoto: __webpack_require__(17),
+	  Link: __webpack_require__(20),
+	  Number: __webpack_require__(21),
+	  Text: __webpack_require__(22),
+	  WholeNumber: __webpack_require__(23),
 
 	  // TODO : i think this will eventually go to a separate npm package so that the core doesn't
 	  //    have dependency on react-select
-	  CollectionPicker: __webpack_require__(23)
+	  CollectionPicker: __webpack_require__(24)
 
 	};
 
@@ -1060,9 +1060,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	_ = __webpack_require__(8);
 
-	ContextualData = __webpack_require__(10);
+	SelectableCollection = __webpack_require__(10);
 
-	SelectableCollection = __webpack_require__(11);
+	ContextualData = __webpack_require__(12);
 
 	module.exports = Collection = (function(superClass) {
 	  extend(Collection, superClass);
@@ -1089,7 +1089,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Collection.__super__._setDataItem.apply(this, arguments);
 	    this.collection = this.dataItem;
 	    if (!this.collection.hasSelectableCollectionMixin) {
-	      SelectableCollection.mixInto(this.collection);
+	      SelectableCollection.applyTo(this.collection);
 	    }
 	    return this.collection;
 	  };
@@ -1103,115 +1103,13 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Backbone, ContextualData, React, _,
-	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-	  hasProp = {}.hasOwnProperty;
+	'use strict';
 
-	React = __webpack_require__(3);
+	module.exports = {
 
-	Backbone = __webpack_require__(7);
+	  SelectableCollection: __webpack_require__(11)
 
-	_ = __webpack_require__(8);
-
-
-	/*
-	  This is an abstract base class for contextual data components like ReactDatum.Collection 
-	  and ReactDatum.Model that provide a single contextual data element.
-	  
-	  The ReactDatum.ContextualData base class also provides the listener to model or collection
-	  events and rendering of child components on changes.
-	  
-	  You shouldn't need to use this class directly.
-	 */
-
-	module.exports = ContextualData = (function(superClass) {
-	  extend(ContextualData, superClass);
-
-	  function ContextualData() {
-	    return ContextualData.__super__.constructor.apply(this, arguments);
-	  }
-
-
-	  /* you need to override these */
-
-	  ContextualData.prototype.dataType = null;
-
-	  ContextualData.prototype.contextKey = null;
-
-	  ContextualData.propTypes = {
-	    fetch: React.PropTypes.bool,
-	    fetchOptions: React.PropTypes.object
-	  };
-
-	  ContextualData.childContextTypes = {};
-
-	  ContextualData.prototype.getChildContext = function() {
-	    var c;
-	    c = {};
-	    c[this.contextKey] = this.dataItem;
-	    return c;
-	  };
-
-	  ContextualData.prototype.render = function() {
-	    this._initializeDataItem();
-	    return React.createElement("div", {
-	      "className": this.contextKey
-	    }, this.renderContent());
-	  };
-
-	  ContextualData.prototype.renderContent = function() {
-	    return this.props.children;
-	  };
-
-	  ContextualData.prototype.componentWillUnmount = function() {
-	    return this._unbindEvents();
-	  };
-
-	  ContextualData.prototype._initializeDataItem = function() {
-	    if (!this._needsReinitializing()) {
-	      return;
-	    }
-	    this._unbindEvents();
-	    this._setDataItem();
-	    this._bindEvents();
-	    if (this.props.fetch) {
-	      return this.dataItem.fetch(this.props.fetchOptions);
-	    }
-	  };
-
-	  ContextualData.prototype._needsReinitializing = function() {
-	    var truth;
-	    truth = (this.dataItem == null) || this.props[this.contextKey] !== this._lastPropsModel;
-	    this._lastPropsModel = this.props[this.contextKey];
-	    return truth;
-	  };
-
-	  ContextualData.prototype._setDataItem = function() {
-	    if (_.isFunction(this.props[this.contextKey])) {
-	      return this.dataItem = new this.props[this.contextKey]();
-	    } else {
-	      return this.dataItem = this.props[this.contextKey];
-	    }
-	  };
-
-	  ContextualData.prototype._bindEvents = function() {
-	    var ref;
-	    return (ref = this.dataItem) != null ? ref.on('all', this._onDataChanged, this) : void 0;
-	  };
-
-	  ContextualData.prototype._unbindEvents = function() {
-	    var ref;
-	    return (ref = this.dataItem) != null ? ref.off('all', this._onDataChanged) : void 0;
-	  };
-
-	  ContextualData.prototype._onDataChanged = function() {
-	    return this.forceUpdate();
-	  };
-
-	  return ContextualData;
-
-	})(React.Component);
-
+	};
 
 /***/ },
 /* 11 */
@@ -1221,37 +1119,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 	_ = __webpack_require__(8);
-
-
-	/*
-	  This collection instance mixin provides the ability to mark models as selected and active.
-
-	  There is one active model at a time and many selected. The collection will trigger an "activeModelChanged"
-	  event when the active model is set via setActiveModel() method.  Current version of this component does not
-	  support having active model that is not selected.  Calling setActiveModel on an unselected model, selects it.
-
-	  example:
-	  ```javascript
-	    kittensCollection = new Backbone.Collection()
-	    SelectableCollection.mixInto(kittensCollection)
-	    kittensCollection.onSelectionsChanged(function(){
-	      alert("you selected " + kittensCollection.getSelectedModels().length + " kittens")
-	    })
-	    ...
-
-	    kittensCollection.selectModelByIndex(0)
-	    ...
-	  ```
-	  When a collection is reset([]), or a selected model is removed from the collection it is no longer returned
-	  by any of the getSelected... methods.  Only models that exist in the collection can be selected.
-
-	  When a model is selected, model.selected=true.
-
-	  Events triggered on collection:
-
-	    selectionsChanged       - triggered whenever selections change
-	    activeModelChanged      - function(activeModel){} triggered on active change
-	 */
 
 	module.exports = SelectableCollection = (function() {
 	  function SelectableCollection() {
@@ -1271,7 +1138,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    This method is used to mix SelectableCollection features into a Backbone Collection
 	   */
 
-	  SelectableCollection.mixInto = function(collection) {
+	  SelectableCollection.applyTo = function(collection) {
 	    if (this.hasSelectableCollectionMixin) {
 	      return;
 	    }
@@ -1285,7 +1152,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!(intersect.length > 0)) {
 	      return;
 	    }
-	    return console.error("Warning: using react-datum SelectableCollection mixin will replace the following methods: " + intersect.join(', '));
+	    return console.error("Warning: using SelectableCollection mixin will replace the following methods: " + intersect.join(', '));
 	  };
 
 	  SelectableCollection.prototype.hasSelectableCollectionMixin = true;
@@ -1438,6 +1305,120 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var Backbone, ContextualData, React, _,
+	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+	  hasProp = {}.hasOwnProperty;
+
+	React = __webpack_require__(3);
+
+	Backbone = __webpack_require__(7);
+
+	_ = __webpack_require__(8);
+
+
+	/*
+	  This is an abstract base class for contextual data components like ReactDatum.Collection 
+	  and ReactDatum.Model that provide a single contextual data element.
+	  
+	  The ReactDatum.ContextualData base class also provides the listener to model or collection
+	  events and rendering of child components on changes.
+	  
+	  You shouldn't need to use this class directly.
+	 */
+
+	module.exports = ContextualData = (function(superClass) {
+	  extend(ContextualData, superClass);
+
+	  function ContextualData() {
+	    return ContextualData.__super__.constructor.apply(this, arguments);
+	  }
+
+
+	  /* you need to override these */
+
+	  ContextualData.prototype.dataType = null;
+
+	  ContextualData.prototype.contextKey = null;
+
+	  ContextualData.propTypes = {
+	    fetch: React.PropTypes.bool,
+	    fetchOptions: React.PropTypes.object
+	  };
+
+	  ContextualData.childContextTypes = {};
+
+	  ContextualData.prototype.getChildContext = function() {
+	    var c;
+	    c = {};
+	    c[this.contextKey] = this.dataItem;
+	    return c;
+	  };
+
+	  ContextualData.prototype.render = function() {
+	    this._initializeDataItem();
+	    return React.createElement("div", {
+	      "className": this.contextKey
+	    }, this.renderContent());
+	  };
+
+	  ContextualData.prototype.renderContent = function() {
+	    return this.props.children;
+	  };
+
+	  ContextualData.prototype.componentWillUnmount = function() {
+	    return this._unbindEvents();
+	  };
+
+	  ContextualData.prototype._initializeDataItem = function() {
+	    if (!this._needsReinitializing()) {
+	      return;
+	    }
+	    this._unbindEvents();
+	    this._setDataItem();
+	    this._bindEvents();
+	    if (this.props.fetch) {
+	      return this.dataItem.fetch(this.props.fetchOptions);
+	    }
+	  };
+
+	  ContextualData.prototype._needsReinitializing = function() {
+	    var truth;
+	    truth = (this.dataItem == null) || this.props[this.contextKey] !== this._lastPropsModel;
+	    this._lastPropsModel = this.props[this.contextKey];
+	    return truth;
+	  };
+
+	  ContextualData.prototype._setDataItem = function() {
+	    if (_.isFunction(this.props[this.contextKey])) {
+	      return this.dataItem = new this.props[this.contextKey]();
+	    } else {
+	      return this.dataItem = this.props[this.contextKey];
+	    }
+	  };
+
+	  ContextualData.prototype._bindEvents = function() {
+	    var ref;
+	    return (ref = this.dataItem) != null ? ref.on('all', this._onDataChanged, this) : void 0;
+	  };
+
+	  ContextualData.prototype._unbindEvents = function() {
+	    var ref;
+	    return (ref = this.dataItem) != null ? ref.off('all', this._onDataChanged) : void 0;
+	  };
+
+	  ContextualData.prototype._onDataChanged = function() {
+	    return this.forceUpdate();
+	  };
+
+	  return ContextualData;
+
+	})(React.Component);
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var Backbone, CollectionStats, React,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
@@ -1535,7 +1516,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, Model, React, _,
@@ -1548,7 +1529,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	_ = __webpack_require__(8);
 
-	ContextualData = __webpack_require__(10);
+	ContextualData = __webpack_require__(12);
 
 	module.exports = Model = (function(superClass) {
 	  extend(Model, superClass);
@@ -1577,7 +1558,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, React, SelectedModel,
@@ -1589,7 +1570,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	Backbone = __webpack_require__(7);
 
-	ContextualData = __webpack_require__(10);
+	ContextualData = __webpack_require__(12);
 
 	module.exports = SelectedModel = (function(superClass) {
 	  extend(SelectedModel, superClass);
@@ -1665,7 +1646,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Email, React, _,
@@ -1732,7 +1713,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, LazyPhoto, React,
@@ -1770,9 +1751,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  LazyPhoto.displayName = "react-datum.LazyPhoto";
 
-	  LazyPhoto.prototype.notFoundUrl = __webpack_require__(17);
+	  LazyPhoto.prototype.notFoundUrl = __webpack_require__(18);
 
-	  LazyPhoto.prototype.loadingUrl = __webpack_require__(18);
+	  LazyPhoto.prototype.loadingUrl = __webpack_require__(19);
 
 	  LazyPhoto.prototype.subClassName = 'lazy-image';
 
@@ -1833,19 +1814,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABoCAYAAAAHIFUvAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NEZCNjk5NUI5RjE2MTFFMkE2MjE4QzNGRDJGMzREOEQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NEZCNjk5NUM5RjE2MTFFMkE2MjE4QzNGRDJGMzREOEQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo0RkI2OTk1OTlGMTYxMUUyQTYyMThDM0ZEMkYzNEQ4RCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0RkI2OTk1QTlGMTYxMUUyQTYyMThDM0ZEMkYzNEQ4RCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PmtML+gAAA1VSURBVHja7F09cttK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"
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	module.exports = "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAaCAYAAABctMd+AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAAtSURBVHja7MxBDQAACAQgtX/nM4UPNwhAJ6krU4fkcrlcLpfLv+QLAAD//wMANGkDMYhC/1cAAAAASUVORK5CYII="
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Link, React, _,
@@ -1910,7 +1891,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Number, ONE_MILLION, ONE_THOUSAND, React, _,
@@ -2034,7 +2015,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, React, Text, _,
@@ -2101,7 +2082,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Number, React, WholeNumber,
@@ -2110,7 +2091,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	React = __webpack_require__(3);
 
-	Number = __webpack_require__(20);
+	Number = __webpack_require__(21);
 
 
 	/*
@@ -2134,7 +2115,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, CollectionPicker, Datum, React, Select, Strhelp, _,
@@ -2148,13 +2129,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	_ = __webpack_require__(8);
 
-	Strhelp = __webpack_require__(24);
+	Strhelp = __webpack_require__(25);
 
 	Datum = __webpack_require__(6);
 
-	Select = __webpack_require__(26);
+	Select = __webpack_require__(27);
 
-	Select.Async = __webpack_require__(31);
+	Select.Async = __webpack_require__(32);
 
 	module.exports = CollectionPicker = (function(superClass) {
 	  extend(CollectionPicker, superClass);
@@ -2423,15 +2404,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(25);
+	module.exports = __webpack_require__(26);
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var StringHelpers, _;
@@ -2502,7 +2483,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2521,27 +2502,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _reactInputAutosize = __webpack_require__(27);
+	var _reactInputAutosize = __webpack_require__(28);
 
 	var _reactInputAutosize2 = _interopRequireDefault(_reactInputAutosize);
 
-	var _classnames = __webpack_require__(28);
+	var _classnames = __webpack_require__(29);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _stripDiacritics = __webpack_require__(30);
+	var _stripDiacritics = __webpack_require__(31);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
-	var _Async = __webpack_require__(31);
+	var _Async = __webpack_require__(32);
 
 	var _Async2 = _interopRequireDefault(_Async);
 
-	var _Option = __webpack_require__(32);
+	var _Option = __webpack_require__(33);
 
 	var _Option2 = _interopRequireDefault(_Option);
 
-	var _Value = __webpack_require__(33);
+	var _Value = __webpack_require__(34);
 
 	var _Value2 = _interopRequireDefault(_Value);
 
@@ -2569,8 +2550,8 @@ return /******/ (function(modules) { // webpackBootstrap
 			autofocus: _react2.default.PropTypes.bool, // autofocus the component on mount
 			backspaceRemoves: _react2.default.PropTypes.bool, // whether backspace removes an item if there is no text input
 			className: _react2.default.PropTypes.string, // className for the outer element
-			clearAllText: _react2.default.PropTypes.string, // title for the "clear" control when multi: true
-			clearValueText: _react2.default.PropTypes.string, // title for the "clear" control
+			clearAllText: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.string, _react2.default.PropTypes.node]), // title for the "clear" control when multi: true
+			clearValueText: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.string, _react2.default.PropTypes.node]), // title for the "clear" control
 			clearable: _react2.default.PropTypes.bool, // should it be possible to reset value
 			delimiter: _react2.default.PropTypes.string, // delimiter to use to join multiple values for the hidden field value
 			disabled: _react2.default.PropTypes.bool, // whether the Select is disabled or not
@@ -2584,12 +2565,14 @@ return /******/ (function(modules) { // webpackBootstrap
 			labelKey: _react2.default.PropTypes.string, // path of the label value in option objects
 			matchPos: _react2.default.PropTypes.string, // (any|start) match the start or entire string when filtering
 			matchProp: _react2.default.PropTypes.string, // (any|label|value) which option property to filter on
+			scrollMenuIntoView: _react2.default.PropTypes.bool, // boolean to enable the viewport to shift so that the full menu fully visible when engaged
+			menuBuffer: _react2.default.PropTypes.number, // optional buffer (in px) between the bottom of the viewport and the bottom of the menu
 			menuStyle: _react2.default.PropTypes.object, // optional style to apply to the menu
 			menuContainerStyle: _react2.default.PropTypes.object, // optional style to apply to the menu container
 			multi: _react2.default.PropTypes.bool, // multi-value input
 			name: _react2.default.PropTypes.string, // generates a hidden <input /> tag with this field name for html forms
 			newOptionCreator: _react2.default.PropTypes.func, // factory to create new options when allowCreate set
-			noResultsText: _react2.default.PropTypes.string, // placeholder displayed when there are no matching search results
+			noResultsText: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.string, _react2.default.PropTypes.node]), // placeholder displayed when there are no matching search results
 			onBlur: _react2.default.PropTypes.func, // onBlur handler: function (event) {}
 			onChange: _react2.default.PropTypes.func, // onChange handler: function (newValue) {}
 			onFocus: _react2.default.PropTypes.func, // onFocus handler: function (event) {}
@@ -2599,7 +2582,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			optionComponent: _react2.default.PropTypes.func, // option component to render in dropdown
 			optionRenderer: _react2.default.PropTypes.func, // optionRenderer: function (option) {}
 			options: _react2.default.PropTypes.array, // array of options
-			placeholder: _react2.default.PropTypes.string, // field placeholder, displayed when there's no value
+			placeholder: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.string, _react2.default.PropTypes.node]), // field placeholder, displayed when there's no value
 			searchable: _react2.default.PropTypes.bool, // whether to enable searching feature or not
 			simpleValue: _react2.default.PropTypes.bool, // pass the value to onChange as a simple value (legacy pre 1.0 mode), defaults to false
 			style: _react2.default.PropTypes.object, // optional style to apply to the control
@@ -2630,6 +2613,8 @@ return /******/ (function(modules) { // webpackBootstrap
 				labelKey: 'label',
 				matchPos: 'any',
 				matchProp: 'any',
+				scrollMenuIntoView: true,
+				menuBuffer: 0,
 				multi: false,
 				noResultsText: 'No results found',
 				optionComponent: _Option2.default,
@@ -2667,6 +2652,15 @@ return /******/ (function(modules) { // webpackBootstrap
 				if (focusedRect.bottom > menuRect.bottom || focusedRect.top < menuRect.top) {
 					menuDOM.scrollTop = focusedDOM.offsetTop + focusedDOM.clientHeight - menuDOM.offsetHeight;
 				}
+			}
+			if (this.props.scrollMenuIntoView && this.refs.menuContainer) {
+				var menuContainerRect = this.refs.menuContainer.getBoundingClientRect();
+				if (window.innerHeight < menuContainerRect.bottom + this.props.menuBuffer) {
+					window.scrollTo(0, window.scrollY + menuContainerRect.bottom + this.props.menuBuffer - window.innerHeight);
+				}
+			}
+			if (prevProps.disabled !== this.props.disabled) {
+				this.setState({ isFocused: false });
 			}
 		},
 		focus: function focus() {
@@ -2739,9 +2733,10 @@ return /******/ (function(modules) { // webpackBootstrap
 			this._openAfterFocus = false;
 		},
 		handleInputBlur: function handleInputBlur(event) {
-			if (document.activeElement.isEqualNode(this.refs.menu)) {
+			if (this.refs.menu && document.activeElement.isEqualNode(this.refs.menu)) {
 				return;
 			}
+
 			if (this.props.onBlur) {
 				this.props.onBlur(event);
 			}
@@ -2885,6 +2880,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		popValue: function popValue() {
 			var valueArray = this.getValueArray();
 			if (!valueArray.length) return;
+			if (valueArray[valueArray.length - 1].clearableValue === false) return;
 			this.setValue(valueArray.slice(0, valueArray.length - 1));
 		},
 		removeValue: function removeValue(value) {
@@ -2988,7 +2984,7 @@ return /******/ (function(modules) { // webpackBootstrap
 					return _react2.default.createElement(
 						ValueComponent,
 						{
-							disabled: _this2.props.disabled,
+							disabled: _this2.props.disabled || value.clearableValue === false,
 							key: 'value-' + i + '-' + value[_this2.props.valueKey],
 							onClick: onClick,
 							onRemove: _this2.removeValue,
@@ -3193,7 +3189,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Select;
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3315,7 +3311,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = AutosizeInput;
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -3361,7 +3357,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		if (typeof module !== 'undefined' && module.exports) {
 			module.exports = classNames;
-		} else if ("function" === 'function' && _typeof(__webpack_require__(29)) === 'object' && __webpack_require__(29)) {
+		} else if ("function" === 'function' && _typeof(__webpack_require__(30)) === 'object' && __webpack_require__(30)) {
 			// register as 'classnames', consistent with npm package name
 			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
 				return classNames;
@@ -3372,7 +3368,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	})();
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
@@ -3380,7 +3376,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3395,7 +3391,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3406,11 +3402,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Select = __webpack_require__(26);
+	var _Select = __webpack_require__(27);
 
 	var _Select2 = _interopRequireDefault(_Select);
 
-	var _stripDiacritics = __webpack_require__(30);
+	var _stripDiacritics = __webpack_require__(31);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
@@ -3463,7 +3459,8 @@ return /******/ (function(modules) { // webpackBootstrap
 			loadingPlaceholder: _react2.default.PropTypes.string, // replaces the placeholder while options are loading
 			minimumInput: _react2.default.PropTypes.number, // the minimum number of characters that trigger loadOptions
 			noResultsText: _react2.default.PropTypes.string, // placeholder displayed when there are no matching search results (shared with Select)
-			placeholder: _react2.default.PropTypes.string, // field placeholder, displayed when there's no value (shared with Select)
+			placeholder: _react2.default.PropTypes.oneOfType([// field placeholder, displayed when there's no value (shared with Select)
+			_react2.default.PropTypes.string, _react2.default.PropTypes.node]),
 			searchingText: _react2.default.PropTypes.string, // message to display while options are loading
 			searchPromptText: _react2.default.PropTypes.string },
 		// label to prompt for search input
@@ -3497,6 +3494,9 @@ return /******/ (function(modules) { // webpackBootstrap
 					cache: initCache(nextProps.cache)
 				});
 			}
+		},
+		focus: function focus() {
+			this.refs.select.focus();
 		},
 		resetState: function resetState() {
 			this._currentRequestId = -1;
@@ -3552,6 +3552,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				if (isLoading) noResultsText = this.props.searchingText;
 			}
 			return _react2.default.createElement(_Select2.default, _extends({}, this.props, {
+				ref: 'select',
 				isLoading: isLoading,
 				noResultsText: noResultsText,
 				onInputChange: this.loadOptions,
@@ -3564,7 +3565,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Async;
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3573,7 +3574,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(28);
+	var _classnames = __webpack_require__(29);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -3643,7 +3644,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Option;
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3652,7 +3653,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(28);
+	var _classnames = __webpack_require__(29);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 

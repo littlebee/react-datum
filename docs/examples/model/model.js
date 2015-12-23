@@ -1,6 +1,6 @@
+"use strict";
 
-
-var Rd = ReactDatum
+var Rd = ReactDatum;
 
 // Say you have this model:
 
@@ -18,22 +18,49 @@ var kittenModel = new Backbone.Model({
 
 // To create the card on the right:
 
-KittenCard = React.createClass({
-  displayName:"KittenCard",
-  render: function(){
-    return (
-      React.createElement("div", {className: "kitten-card"}, 
-        React.createElement(Rd.Model, {model: kittenModel}, 
-          React.createElement("h3", null, "Adopt ", React.createElement(Rd.Text, {attr: "name"}), " Today!"), 
-          React.createElement("div", null, React.createElement(Rd.LazyPhoto, {attr: "imgUrl"})), 
-          React.createElement("div", null, React.createElement(Rd.Text, {attr: "name", label: "Name:"}), " (", React.createElement(Rd.Text, {attr: "title"}), ")"), 
-          React.createElement("div", null, React.createElement(Rd.Email, {attr: "sponsorEmail", label: "Adoption Sponsor:", displayLink: true})), 
-          React.createElement(Rd.Text, {attr: "description"}), 
-          React.createElement("h5", null, "Leave a comment"), 
-          React.createElement(Rd.Text, {attr: "comment", inputMode: "edit"})
-        )
+var KittenCard = React.createClass({
+  displayName: "KittenCard",
+  render: function render() {
+    return React.createElement(
+      "div",
+      { className: "kitten-card" },
+      React.createElement(
+        Rd.Model,
+        { model: kittenModel },
+        React.createElement(
+          "h3",
+          null,
+          "Adopt ",
+          React.createElement(Rd.Text, { attr: "name" }),
+          " Today!"
+        ),
+        React.createElement(
+          "div",
+          null,
+          React.createElement(Rd.LazyPhoto, { attr: "imgUrl" })
+        ),
+        React.createElement(
+          "div",
+          null,
+          React.createElement(Rd.Text, { attr: "name", label: "Name:" }),
+          " (",
+          React.createElement(Rd.Text, { attr: "title" }),
+          ")"
+        ),
+        React.createElement(
+          "div",
+          null,
+          React.createElement(Rd.Email, { attr: "sponsorEmail", label: "Adoption Sponsor:", displayLink: true })
+        ),
+        React.createElement(Rd.Text, { attr: "description" }),
+        React.createElement(
+          "h5",
+          null,
+          "Leave a comment"
+        ),
+        React.createElement(Rd.Text, { attr: "comment", inputMode: "edit" })
       )
-    )
+    );
   }
-})
-window.Demo = KittenCard
+});
+window.Demo = KittenCard;

@@ -22,7 +22,7 @@ kittenModel.save = function(attrs, options) {
 
 // To make it into a form, just add the <Rd.Form>
 
-KittenForm = React.createClass({
+var KittenForm = React.createClass({
   displayName:"KittenCard",
   render: function(){
     return (

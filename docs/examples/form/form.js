@@ -1,5 +1,6 @@
+"use strict";
 
-var Rd = ReactDatum
+var Rd = ReactDatum;
 
 // Say you have this model:
 
@@ -15,33 +16,76 @@ var kittenModel = new Backbone.Model({
   comment: ""
 });
 
-kittenModel.save = function(attrs, options) {
-  options.success(kittenModel, "success", options)
-  return true
-}
+kittenModel.save = function (attrs, options) {
+  options.success(kittenModel, "success", options);
+  return true;
+};
 
 // To make it into a form, just add the <Rd.Form>
 
-KittenForm = React.createClass({
-  displayName:"KittenCard",
-  render: function(){
-    return (
-      React.createElement("div", {className: "kitten-card"}, 
-        React.createElement(Rd.Model, {model: kittenModel}, 
-          React.createElement("h3", null, "Adopt ", React.createElement(Rd.Text, {attr: "name"}), " Today!"), 
-          React.createElement(Rd.Form, null, 
-            React.createElement("div", null, React.createElement(Rd.LazyPhoto, {attr: "imgUrl"})), 
-            React.createElement("div", null, React.createElement(Rd.Text, {attr: "name", label: "Name:", setOnChange: true, required: true}), " (", React.createElement(Rd.Text, {attr: "title"}), ")"), 
-            React.createElement("label", null, "Say something about ", React.createElement(Rd.Text, {attr: "name", readonly: true}), ": "), 
-            React.createElement("div", null, React.createElement(Rd.Text, {attr: "description", className: "wide-input"})), 
-            React.createElement("div", null, React.createElement(Rd.Email, {attr: "sponsorEmail", label: "Adoption Sponsor:", displayLink: true})), 
-            React.createElement("label", null, "Leave a Comment!"), 
-            React.createElement("div", null, React.createElement(Rd.Text, {attr: "comment", className: "wide-input"}))
+var KittenForm = React.createClass({
+  displayName: "KittenCard",
+  render: function render() {
+    return React.createElement(
+      "div",
+      { className: "kitten-card" },
+      React.createElement(
+        Rd.Model,
+        { model: kittenModel },
+        React.createElement(
+          "h3",
+          null,
+          "Adopt ",
+          React.createElement(Rd.Text, { attr: "name" }),
+          " Today!"
+        ),
+        React.createElement(
+          Rd.Form,
+          null,
+          React.createElement(
+            "div",
+            null,
+            React.createElement(Rd.LazyPhoto, { attr: "imgUrl" })
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement(Rd.Text, { attr: "name", label: "Name:", setOnChange: true, required: true }),
+            " (",
+            React.createElement(Rd.Text, { attr: "title" }),
+            ")"
+          ),
+          React.createElement(
+            "label",
+            null,
+            "Say something about ",
+            React.createElement(Rd.Text, { attr: "name", readonly: true }),
+            ": "
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement(Rd.Text, { attr: "description", className: "wide-input" })
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement(Rd.Email, { attr: "sponsorEmail", label: "Adoption Sponsor:", displayLink: true })
+          ),
+          React.createElement(
+            "label",
+            null,
+            "Leave a Comment!"
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement(Rd.Text, { attr: "comment", className: "wide-input" })
           )
         )
       )
-    )
+    );
   }
-})
+});
 
-window.Demo = KittenForm
+window.Demo = KittenForm;
