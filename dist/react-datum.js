@@ -4,9 +4,9 @@
 	else if(typeof define === 'function' && define.amd)
 		define(["React", "ReactDOM", "Backbone", "_"], factory);
 	else if(typeof exports === 'object')
-		exports["React-datum"] = factory(require("React"), require("ReactDOM"), require("Backbone"), require("_"));
+		exports["ReactDatum"] = factory(require("React"), require("ReactDOM"), require("Backbone"), require("_"));
 	else
-		root["React-datum"] = factory(root["React"], root["ReactDOM"], root["Backbone"], root["_"]);
+		root["ReactDatum"] = factory(root["React"], root["ReactDOM"], root["Backbone"], root["_"]);
 })(this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_7__, __WEBPACK_EXTERNAL_MODULE_8__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -1105,11 +1105,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	module.exports = {
-
-	  SelectableCollection: __webpack_require__(11)
-
-	};
+	module.exports = __webpack_require__(11);
 
 /***/ },
 /* 11 */

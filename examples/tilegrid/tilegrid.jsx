@@ -1,6 +1,7 @@
 
 
 var Rd = ReactDatum
+var ReactTilegrid = Tilegrid.ReactTilegrid
 
 var KittenModel = Backbone.Model.extend({
   save: function(attrs, options){ 
@@ -29,11 +30,11 @@ var TilegridDisplay = React.createClass({
       <Rd.Collection collection={kittenCollection}>
         <div className="grid">
           <Rd.CollectionStats itemDisplayName="Kittens"/>
-          <Rd.Tilegrid>
+          <ReactTilegrid>
             <Rd.LazyPhoto attr="imageUrl"/>
             <h4><Rd.Text attr="name"/></h4>
             <Rd.Email attr="breed"/>
-          </Rd.Tilegrid>
+          </ReactTilegrid>
         </div>
         <div className="preview">
           <Rd.SelectedModel placeholder="Select a kitten to see information here">

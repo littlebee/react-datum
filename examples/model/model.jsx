@@ -1,6 +1,8 @@
 
+console.log("model example loaded");
 
-var Rd = ReactDatum
+
+var Rd = ReactDatum;
 
 // Say you have this model:
 
@@ -36,4 +38,5 @@ var KittenCard = React.createClass({
     )
   }
 })
+
 window.Demo = KittenCard
