@@ -2,6 +2,8 @@ react-datum
 ============
 
 A set of [React](https://facebook.github.io/react/) components for interacting with Backbone collections and models.
+[<img alt="Screenshot from doc/examples/model/model.html" src="https://travis-ci.org/zulily/react-datum.svg?branch=master"
+/>](https://travis-ci.org/zulily/react-datum)
 
 ## Live Demo & Examples
 (http://zulily.github.io/react-datum/docs/examples/)
