@@ -10,7 +10,7 @@ A set of [React](https://facebook.github.io/react/) components for interacting w
 
 **Install from NPM:**
 ```bash
-TBD:  npm install react-datum --save
+npm install react-datum --save
 ```
 
 **Install using Bower:**
