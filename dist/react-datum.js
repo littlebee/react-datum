@@ -19,7 +19,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
 
-
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			exports: {},
@@ -673,7 +672,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Datum.__super__.constructor.call(this, props);
 	    this.state = {
 	      errors: []
-	    };1
+	    };
 	    this.addValidations(this.validateRequired);
 	  }
 

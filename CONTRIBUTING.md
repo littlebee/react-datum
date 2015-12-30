@@ -42,7 +42,8 @@ The watch task can be used to pick up changes and build automagically:
 will watch all the source and tests and distribution relevant files and rebuild as necessary.  It will not run the tests.
 
 ## Getting started (zuKeeper developer):
-We use react-datum at Zulily as part of our zuKeeper application for managing sales events and the product catelog.  It is a core piece of both our zuKeeper React UI stack.  It's super easy for you to contribute and test your changes to Tilegrid in zuKeeper. 
+
+We use react-datum at Zulily as part of our zuKeeper application for managing sales events, vendor information and the product catalog.  It is a core piece of zuKeeper React UI stack.  It's super easy for you to contribute and test your changes in zuKeeper. 
 
 From your local htdoc_ems root (if you have multiple clones of htdocs_ems, use the one that you are currently working most in):
 
@@ -50,7 +51,7 @@ From your local htdoc_ems root (if you have multiple clones of htdocs_ems, use t
 
 will clone the github hosted repository of react-datum into a sibling directory of htdocs_ems/ if it isn't already. It will also save the full path of your current htdocs_ems dir in .zukeeperRoot file in the root of react-datum.  It will also try to open a terminal tab, but this only works if you are running terminal or iterm2 on osx.  Otherwise it will print a console message telling which directory (react-datum) to cd to get started.  See scripts/deployToZukeeper.coffee for more details. 
 
-As part of `grunt build` and `grunt watch`, scripts/deployToZuKeeper.coffee is executed which, if it sees the .zukeeperRoot file or an ../htdocs_ems dir that exists, it will copy dist/react-datum* to that dir + app/webroot/js/lib.  It will also try to scp the dist files into place on your emsweb-01.vps machine.   
+As part of `grunt build` and `grunt watch` of react-datum, scripts/deployToZuKeeper.coffee is executed which, if it sees the .zukeeperRoot file or an ../htdocs_ems dir that exists, it will copy dist/react-datum* to that dir + app/webroot/js/lib.  It will also try to scp the dist files into place on your emsweb-01.vps machine.   
 
 You should be able to make a change in the react-datum code and instantly test it on your vps without committing to either repo and doing nothing more than `grunt build` in the react-datum directory.
 
@@ -95,7 +96,7 @@ and then run a test.  You can bypass grunt which just shells out to scripts/test
 
 Refresh the Chrome tab pointed at local node-inspector and wait for it to load.  It will first stop at the coffeescript loader. No other files are loaded yet though so press the run button and it will next stop at the `debugger` line intensionally left in test/lib/testHelpers.cjsx.  At this point your test file should be loaded and most or all of it's components.  Set breakpoints and let it fly!
 
-Grunt has a task for running test. To run all tests: 
+Grunt has a task for running tests. To run all tests: 
 
 `grunt test`
 
@@ -113,11 +114,11 @@ Use the Node.js/CommonJS require syntax for requires internally. For example: `D
 
 Examples should be able to run standalone (from a file://... url in browser) in order for us to host on github.io pages.  
 
-Assume that we will be script tag loaded.  Do NOT use require() to load dependencies.  When react-datum is script tag loaded it, like jQuery, React, .... will add itself as ReactDatum in the global namespace.  You shouldn't need to require any other internal things.
+Assume that the example will be script tag loaded.  Do NOT use require() to load dependencies.  When react-datum is script tag loaded it, like jQuery, React, .... will add itself as ReactDatum in the global namespace.  You shouldn't need to require any other internal things.
 
 *All examples should be written in ES5 + JSX javascript*.  No coffeescript or ES6 with the exception of one example each on how to extend react-datum components. (There are some .coffee haters out there)[https://ponyfoo.com/articles/we-dont-want-your-coffee])
 
-The examples in src/examples will be picked up by the grunt build and watch and compiled to docs/examples.  Each src file in src/examples is assumed to be a single contained example, needing nothing but the base dependencies:
+The examples in /examples will be picked up by the grunt build and watch and compiled to docs/examples.  Each src file in examples is assumed to be a single contained example, needing nothing but the base dependencies:
 ```
 <script src="../../../dist/vendor/react.js"></script>
 <script src="../../../dist/vendor/react-dom.js"></script>
@@ -125,7 +126,11 @@ The examples in src/examples will be picked up by the grunt build and watch and 
 <script src="../../../dist/vendor/backbone.js"></script>
 ```
 
-If you need a vendor.js that isn't in that set, go ahead and add it to bumbleDocs.coffee in the project root.  Each example is wrapped in a self contained .html file that shows the source file code (with highlighting) on the left and a demo div on the right where the code is expected to render.  The source is compiled from JSX down to JS and also placed in the docs/examples folder.  To compile the examples just:
+If you need a vendor.js that isn't in that set, go ahead and add it to bumbleDocs.coffee in the project root.  Each example is wrapped in a self contained .html file that shows the source file code (with highlighting) on the left and a demo div on the right where the code is expected to render.  
+
+For the example to be displayed in the demo viewer, it needs to added to the `examples:` in /bumbleDocs.coffee.
+
+The source is compiled from JSX down to JS and also placed in the docs/examples folder.  To compile the examples just:
 
 `grunt docs`
  

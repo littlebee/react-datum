@@ -29,7 +29,7 @@ To display the user's full name instead of the id:
     displayAttr="fullName"/>
 ```
 
-In `inputModel='readonly'`, the CollectionPicker above will display the fullName from a model in the usersCollection with id matching kittenModel.get('updatedByUserId') from usersCollection instance var.   
+In `inputMode ='readonly'`, the CollectionPicker above will display the fullName from a model in the usersCollection with id matching kittenModel.get('updatedByUserId') from usersCollection instance var.   
 
 In `inputMode='edit'`, the suggestions would also render the displayAttr because we didn't specify a suggestionAttr prop
 

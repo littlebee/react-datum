@@ -1,6 +1,7 @@
 ###
 
-  webpack setup and external grunt tasks borrowed from:
+  webpack setup and external grunt tasks are handled by bumble build:
+  https://github.com/littlebee/bumble-build
 
 ###
 

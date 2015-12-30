@@ -1,7 +1,4 @@
 
-console.log("model example loaded");
-
-
 var Rd = ReactDatum;
 
 // Say you have this model:
