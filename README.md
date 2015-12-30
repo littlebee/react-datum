@@ -76,7 +76,7 @@ ReactDOM.render(React.createElement(kittenCard), document.getElementById('demo')
 *screenshot - click to view demo:*
 
 [<img alt="Screenshot from doc/examples/model/model.html" src="http://zulily.github.io/react-datum/img/docs/react-datum_model-example.png"
-/>](http://http://zulily.github.io/react-datum/docs/examples/#model)
+/>](http://zulily.github.io/react-datum/docs/examples/#model)
 
 
 ## For Display and Input!
