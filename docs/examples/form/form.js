@@ -16,6 +16,7 @@ var kittenModel = new Backbone.Model({
   comment: ""
 });
 
+// For demonstration purposes only - stub out save and pretend to save
 kittenModel.save = function (attrs, options) {
   options.success(kittenModel, "success", options);
   return true;

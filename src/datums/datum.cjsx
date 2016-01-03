@@ -8,9 +8,7 @@ if ReactBootstrap?               # if available globally
   Popover = ReactBootstrap.Popover
   OverlayTrigger = ReactBootstrap.OverlayTrigger
 
-###
-  see ./datum.md
-###
+# see ./datum.md
 module.exports = class Datum extends React.Component
   @displayName: "react-datum.Datum"
 
@@ -87,8 +85,7 @@ module.exports = class Datum extends React.Component
   # there can only be one inlineEdit type editing at a time per page
   @inlineEditor: null
 
-  # use @addValidations from constructor to add additional validations.
-  # See also Number datum
+  # see addValidations below
   validations: []
   
 
@@ -98,9 +95,9 @@ module.exports = class Datum extends React.Component
     @addValidations @validateRequired
 
 
-  ###
-      React life cycle methods
-  ###
+  
+  #                            React life cycle methods
+  
 
   componentDidMount: ->
     # note that we don't need a form to work. this is for it's benefit, mostly
@@ -117,9 +114,7 @@ module.exports = class Datum extends React.Component
     @context?.form?.removeDatum?(@)
 
 
-  ###
-    Rendering methods
-  ###
+  #                           Rendering methods
 
   render: ->
     @renderDatumWrapper =>
@@ -272,6 +267,17 @@ module.exports = class Datum extends React.Component
     @setState errors: []
 
 
+  ###
+    When extending Datum, use @addValidations from constructor to add additional validations.
+    'required' validation is automatically added (only invalid if empty and has 'required' prop)
+    
+    For example, see [Number datum](#Number)
+    
+    You can add validations to an individual instance of any Datum extension.
+    
+    `validations` argument should be one or an array of methods that accept the (value) to
+    validate and return true if valid, false if not. 
+  ###
   addValidations: (validations) =>
     validations = [validations] unless _.isArray(validations)
     @validations = @validations.concat validations
@@ -294,9 +300,7 @@ module.exports = class Datum extends React.Component
     return @props?.model || @context?.model || new Backbone.Model()
 
 
-  ###
-    do not override this method to return a component element or jsx.  it's bad
-  ###
+  # Do not override this method to return a component element or jsx; bad things will happen.
   getModelValue: ->
     return null unless model = @getModel()
     value = if model instanceof Backbone.Model then model.get(@props.attr) else model[@props.attr]

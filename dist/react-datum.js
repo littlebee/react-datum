@@ -621,11 +621,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  OverlayTrigger = ReactBootstrap.OverlayTrigger;
 	}
 
-
-	/*
-	  see ./datum.md
-	 */
-
 	module.exports = Datum = (function(superClass) {
 	  extend(Datum, superClass);
 
@@ -676,11 +671,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.addValidations(this.validateRequired);
 	  }
 
-
-	  /*
-	      React life cycle methods
-	   */
-
 	  Datum.prototype.componentDidMount = function() {
 	    var ref, ref1;
 	    return (ref = this.context) != null ? (ref1 = ref.form) != null ? typeof ref1.addDatum === "function" ? ref1.addDatum(this) : void 0 : void 0 : void 0;
@@ -695,11 +685,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var ref, ref1;
 	    return (ref = this.context) != null ? (ref1 = ref.form) != null ? typeof ref1.removeDatum === "function" ? ref1.removeDatum(this) : void 0 : void 0 : void 0;
 	  };
-
-
-	  /*
-	    Rendering methods
-	   */
 
 	  Datum.prototype.render = function() {
 	    return this.renderDatumWrapper((function(_this) {
@@ -890,6 +875,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	  };
 
+
+	  /*
+	    When extending Datum, use @addValidations from constructor to add additional validations.
+	    'required' validation is automatically added (only invalid if empty and has 'required' prop)
+	    
+	    For example, see [Number datum](#Number)
+	    
+	    You can add validations to an individual instance of any Datum extension.
+	    
+	    `validations` argument should be one or an array of methods that accept the (value) to
+	    validate and return true if valid, false if not.
+	   */
+
 	  Datum.prototype.addValidations = function(validations) {
 	    if (!_.isArray(validations)) {
 	      validations = [validations];
@@ -916,11 +914,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var ref, ref1;
 	    return ((ref = this.props) != null ? ref.model : void 0) || ((ref1 = this.context) != null ? ref1.model : void 0) || new Backbone.Model();
 	  };
-
-
-	  /*
-	    do not override this method to return a component element or jsx.  it's bad
-	   */
 
 	  Datum.prototype.getModelValue = function() {
 	    var model, value;
@@ -1118,10 +1111,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = SelectableCollection = (function() {
 	  function SelectableCollection() {
-	    this.setActiveModel = bind(this.setActiveModel, this);
 	    this.setActiveModelById = bind(this.setActiveModelById, this);
 	    this.setActiveIndex = bind(this.setActiveIndex, this);
 	    this.getActiveModel = bind(this.getActiveModel, this);
+	    this.setActiveModel = bind(this.setActiveModel, this);
 	    this.selectNone = bind(this.selectNone, this);
 	    this.selectAll = bind(this.selectAll, this);
 	    this.selectModelByIndex = bind(this.selectModelByIndex, this);
@@ -1131,13 +1124,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	  /*
-	    This method is used to mix SelectableCollection features into a Backbone Collection
+	    This method is used to mix SelectableCollection features into a Backbone Collection.
+	    
+	    example:
+	    ```javascript
+	      kittensCollection = new Backbone.Collection()
+	      SelectableCollection.applyTo(kittensCollection)
+	    ```
 	   */
 
 	  SelectableCollection.applyTo = function(collection) {
-	    if (this.hasSelectableCollectionMixin) {
+	    if (collection.hasSelectableCollectionMixin) {
 	      return;
 	    }
+	    collection.hasSelectableCollection = true;
 	    this.warnIfReplacingMethods(collection);
 	    return _.extend(collection, this.prototype);
 	  };
@@ -1153,11 +1153,35 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  SelectableCollection.prototype.hasSelectableCollectionMixin = true;
 
+
+	  /*
+	    Collection instance method that returns an array of selected models
+	   */
+
 	  SelectableCollection.prototype.getSelectedModels = function() {
 	    return _.filter(this.models, function(m) {
 	      return m.selected;
 	    });
 	  };
+
+
+	  /*
+	    Collection instance method that selects a single model.
+	   
+	    The model will be given a `selected` property of true.
+	   
+	    The `selected` argument can be one of:
+	    `true`    - model argument will be selected
+	    `false`   - unselect model
+	    "toggle"` - invert current selected state
+	    
+	    Example: 
+	    ```javascript
+	      myCollection.selectModel(myModel)
+	      console.log(myModel.selected)
+	       * => true
+	    ```
+	   */
 
 	  SelectableCollection.prototype.selectModel = function(model, selected, options) {
 	    if (selected == null) {
@@ -1184,6 +1208,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return model.selected;
 	  };
 
+
+	  /*
+	    Collection instance method that selects a single model by ID.
+	    
+	    collection.get(id) is used to get the model passed to selectModel method.
+	    
+	    See also [selectModel method](#selectModel) for options
+	   */
+
 	  SelectableCollection.prototype.selectModelById = function(id, selected, options) {
 	    if (selected == null) {
 	      selected = true;
@@ -1194,6 +1227,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.selectModel(this.get(id), selected, options);
 	  };
 
+
+	  /*
+	    Collection instance method that selects a single model by it's zero based index
+	    in the collection.
+	  
+	    See also [selectModel method](#selectModel) for options
+	   */
+
 	  SelectableCollection.prototype.selectModelByIndex = function(index, selected, options) {
 	    if (selected == null) {
 	      selected = true;
@@ -1203,6 +1244,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    return this.selectModel(this.models[index], selected, options);
 	  };
+
+
+	  /*
+	    Collection instance method that selects all models in the collection.
+	  
+	    A single *selectionsChanged* event is triggered unless options.silent==true
+	   */
 
 	  SelectableCollection.prototype.selectAll = function(options) {
 	    var i, len, model, ref;
@@ -1227,6 +1275,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  };
 
+
+	  /*
+	    Collection instance method that unselects all models.  Also sets activeModel to null.
+	  
+	    A *selectionsChanged* event is triggered unless options.silent==true. 
+	    A *activeModelChanged* event is also fired
+	   */
+
 	  SelectableCollection.prototype.selectNone = function(options) {
 	    var i, len, model, ref;
 	    if (options == null) {
@@ -1245,29 +1301,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	        silent: true
 	      });
 	    }
-	    this.trigger('activeModelChanged', null);
 	    if (!options.silent) {
-	      return this.trigger('selectionsChanged');
+	      this.trigger('selectionsChanged');
 	    }
+	    return this.setActiveModel(null);
 	  };
 
-	  SelectableCollection.prototype.getActiveModel = function() {
-	    return this.activeModel;
-	  };
 
-	  SelectableCollection.prototype.setActiveIndex = function(index, options) {
-	    if (options == null) {
-	      options = {};
-	    }
-	    return this.setActiveModel(this.models[index]);
-	  };
-
-	  SelectableCollection.prototype.setActiveModelById = function(modelId, options) {
-	    if (options == null) {
-	      options = {};
-	    }
-	    return this.setActiveModel(this.get(modelId), options);
-	  };
+	  /*
+	    Collection instance method that sets the current 'active' Model.  Multiple models may be 
+	    selected in the collection, only one model can be 'active'.   The active model is also
+	    selected in the collection if not already selected.  
+	    
+	    SetActiveModel() is an optional feature. Active model can be used, as it is by 
+	    [tilegrid](https://github.com/zulily/tilegrid), to provide both multiple selections and
+	    a single selection within that set (the last tile added to the selections)
+	      
+	    pass in null for model argument to unset active model
+	   */
 
 	  SelectableCollection.prototype.setActiveModel = function(model, options) {
 	    var currentActive;
@@ -1290,6 +1341,43 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!options.silent) {
 	      return this.trigger('activeModelChanged', model);
 	    }
+	  };
+
+
+	  /*
+	    Collection instance method that returns the current active model.
+	   */
+
+	  SelectableCollection.prototype.getActiveModel = function() {
+	    return this.activeModel;
+	  };
+
+
+	  /*
+	    Collection instance method that sets the active model by index in collection.
+	    
+	    see [setActiveModel](#setActiveModel) for options
+	   */
+
+	  SelectableCollection.prototype.setActiveIndex = function(index, options) {
+	    if (options == null) {
+	      options = {};
+	    }
+	    return this.setActiveModel(this.models[index]);
+	  };
+
+
+	  /*
+	    Collection instance method that sets the active model by id in collection.
+	    
+	    see [setActiveModel](#setActiveModel) for options
+	   */
+
+	  SelectableCollection.prototype.setActiveModelById = function(modelId, options) {
+	    if (options == null) {
+	      options = {};
+	    }
+	    return this.setActiveModel(this.get(modelId), options);
 	  };
 
 	  return SelectableCollection;
@@ -2422,8 +2510,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return str.replace(/^\s+|\s+$/g, "");
 	  };
 
+
+	  /*
+	    otherStr can also be an array of other strings
+	   */
+
 	  StringHelpers.startsWith = function(str, otherStr) {
-	    return str.slice(0, otherStr.length) === otherStr;
+	    var i, len, otherStrings, testString;
+	    otherStrings = _.isArray(otherStr) ? otherStr : [otherStr];
+	    for (i = 0, len = otherStrings.length; i < len; i++) {
+	      testString = otherStrings[i];
+	      if (str.slice(0, testString.length) === testString) {
+	        return true;
+	      }
+	    }
+	    return false;
 	  };
 
 	  StringHelpers.has = function(str, otherStr) {

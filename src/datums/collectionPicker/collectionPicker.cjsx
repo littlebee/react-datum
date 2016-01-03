@@ -13,7 +13,6 @@ module.exports = class CollectionPicker extends Datum
   @displayName: "react-datum.CollectionPicker"
   
   @propTypes: _.extend {}, Datum.propTypes,
-    
     #  TBD: Can also be the string name of a shared collection (see ../sharedCollection.cjsx)
     #  TBD: Can also accept an array of [{lable: "option 1", id: 1}, ...]
     #  

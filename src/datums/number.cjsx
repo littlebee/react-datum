@@ -17,15 +17,16 @@ module.exports = class Number extends Datum
   @displayName: "react-datum.Number"
 
   @propTypes: _.extend {}, Datum.propTypes,
+    # format only effects display, not input.  Possible values:
     # 'abbreviate' - Add M and K to numbers greater than 1 million and 1 thousand respectively
     # 'money' - display dollar sign and two decimal places zero filled
     # 'comma' - add comma separators at thousands
     format: React.PropTypes.oneOf(['abbreviate','money','comma'])
     
-    #validate value is at least this value on change
+    # when input, validate value is at least this value on change
     minValue: React.PropTypes.number
     
-    #validate value is at most this value on change
+    # when input, validate value is at most this value on change
     maxValue: React.PropTypes.number
 
 
