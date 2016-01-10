@@ -18,10 +18,14 @@ Datum = require('./datum')
 module.exports = class LazyPhoto extends Datum
   @displayName: "react-datum.LazyPhoto"
 
-  # notFoundUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABoCAYAAAAHIFUvAAAAGXRFW…dk7GCMERBgUpCgmqJbQEcPxlgBIVDohNbFrwJGR/8XYAA/IBnrVTxJagAAAABJRU5ErkJggg=="
-  notFoundUrl: require("../../img/petals.png")
-  loadingUrl: require("../../img/blank.jpg")
-
+  # ...and again the promise of webpack falls should of the reality
+  # This works great for bundling, but when you require the react-datum npm package
+  # for server side use, it chokes on these
+  #notFoundUrl: require("../../img/petals.png")
+  #loadingUrl: require("../../img/blank.jpg")
+  notFoundUrl: "http://zulily.github.io/react-datum/img/petals.png"
+  loadingUrl: "http://zulily.github.io/react-datum/img/blank.jpg"
+  
   subClassName: 'lazy-image'
 
   # these are updated as events are fired

@@ -1,5 +1,6 @@
 
-module.exports = {
+
+var ReactDatum = {
   // contextual components
   ClickToEditForm:   require('./src/clickToEditForm'),
   Collection:        require('./src/collection'),
@@ -20,3 +21,8 @@ module.exports = {
   CollectionPicker: require('./src/datums/collectionPicker/collectionPicker')
 
 }
+if(window)
+  window.ReactDatum = ReactDatum
+
+if(module)
+  module.exports = ReactDatum

@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("React"), require("ReactDOM"), require("Backbone"), require("_"));
+		module.exports = factory(require("react"), require("react-dom"), require("backbone"), require("_"));
 	else if(typeof define === 'function' && define.amd)
-		define(["React", "ReactDOM", "Backbone", "_"], factory);
+		define(["react", "react-dom", "backbone", "_"], factory);
 	else if(typeof exports === 'object')
-		exports["ReactDatum"] = factory(require("React"), require("ReactDOM"), require("Backbone"), require("_"));
+		exports["ReactDatum"] = factory(require("react"), require("react-dom"), require("backbone"), require("_"));
 	else
 		root["ReactDatum"] = factory(root["React"], root["ReactDOM"], root["Backbone"], root["_"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_7__, __WEBPACK_EXTERNAL_MODULE_8__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_8__, __WEBPACK_EXTERNAL_MODULE_9__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -61,32 +61,53 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function(module) {'use strict';
 
-	module.exports = {
+	var ReactDatum = {
 	  // contextual components
-	  ClickToEditForm: __webpack_require__(2),
-	  Collection: __webpack_require__(9),
-	  CollectionStats: __webpack_require__(13),
-	  Form: __webpack_require__(4),
-	  Model: __webpack_require__(14),
-	  SelectedModel: __webpack_require__(15),
-	  Datum: __webpack_require__(6),
-	  Email: __webpack_require__(16),
-	  LazyPhoto: __webpack_require__(17),
-	  Link: __webpack_require__(20),
-	  Number: __webpack_require__(21),
-	  Text: __webpack_require__(22),
-	  WholeNumber: __webpack_require__(23),
+	  ClickToEditForm: __webpack_require__(3),
+	  Collection: __webpack_require__(10),
+	  CollectionStats: __webpack_require__(14),
+	  Form: __webpack_require__(5),
+	  Model: __webpack_require__(15),
+	  SelectedModel: __webpack_require__(16),
+	  Datum: __webpack_require__(7),
+	  Email: __webpack_require__(17),
+	  LazyPhoto: __webpack_require__(18),
+	  Link: __webpack_require__(19),
+	  Number: __webpack_require__(20),
+	  Text: __webpack_require__(21),
+	  WholeNumber: __webpack_require__(22),
 
 	  // TODO : i think this will eventually go to a separate npm package so that the core doesn't
 	  //    have dependency on react-select
-	  CollectionPicker: __webpack_require__(24)
+	  CollectionPicker: __webpack_require__(23)
 
 	};
+	if (window) window.ReactDatum = ReactDatum;
+
+	if (module) module.exports = ReactDatum;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
 
 /***/ },
 /* 2 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	module.exports = function (module) {
+		if (!module.webpackPolyfill) {
+			module.deprecate = function () {};
+			module.paths = [];
+			// module.parent = undefined by default
+			module.children = [];
+			module.webpackPolyfill = 1;
+		}
+		return module;
+	};
+
+/***/ },
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var ClickToEditForm, Form, React,
@@ -94,9 +115,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	React = __webpack_require__(3);
+	React = __webpack_require__(4);
 
-	Form = __webpack_require__(4);
+	Form = __webpack_require__(5);
 
 	module.exports = ClickToEditForm = (function(superClass) {
 	  extend(ClickToEditForm, superClass);
@@ -158,13 +179,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_4__;
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, Datum, Form, React, ReactDom, _,
@@ -173,15 +194,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  hasProp = {}.hasOwnProperty,
 	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-	React = __webpack_require__(3);
+	React = __webpack_require__(4);
 
-	ReactDom = __webpack_require__(5);
+	ReactDom = __webpack_require__(6);
 
-	Datum = __webpack_require__(6);
+	Datum = __webpack_require__(7);
 
-	Backbone = __webpack_require__(7);
+	Backbone = __webpack_require__(8);
 
-	_ = __webpack_require__(8);
+	_ = __webpack_require__(9);
 
 	module.exports = Form = (function(superClass) {
 	  extend(Form, superClass);
@@ -594,13 +615,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_5__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_6__;
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, Datum, OverlayTrigger, Popover, React, ReactDOM, _,
@@ -608,13 +629,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	React = __webpack_require__(3);
+	React = __webpack_require__(4);
 
-	ReactDOM = __webpack_require__(5);
+	ReactDOM = __webpack_require__(6);
 
-	Backbone = __webpack_require__(7);
+	Backbone = __webpack_require__(8);
 
-	_ = __webpack_require__(8);
+	_ = __webpack_require__(9);
 
 	if (typeof ReactBootstrap !== "undefined" && ReactBootstrap !== null) {
 	  Popover = ReactBootstrap.Popover;
@@ -1028,12 +1049,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_7__;
-
-/***/ },
 /* 8 */
 /***/ function(module, exports) {
 
@@ -1041,21 +1056,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 9 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_9__;
+
+/***/ },
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, Collection, ContextualData, React, SelectableCollection, _,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	React = __webpack_require__(3);
+	React = __webpack_require__(4);
 
-	Backbone = __webpack_require__(7);
+	Backbone = __webpack_require__(8);
 
-	_ = __webpack_require__(8);
+	_ = __webpack_require__(9);
 
-	SelectableCollection = __webpack_require__(10);
+	SelectableCollection = __webpack_require__(11);
 
-	ContextualData = __webpack_require__(12);
+	ContextualData = __webpack_require__(13);
 
 	module.exports = Collection = (function(superClass) {
 	  extend(Collection, superClass);
@@ -1093,21 +1114,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(11);
+	module.exports = __webpack_require__(12);
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var SelectableCollection, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-	_ = __webpack_require__(8);
+	_ = __webpack_require__(9);
 
 	module.exports = SelectableCollection = (function() {
 	  function SelectableCollection() {
@@ -1386,18 +1407,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, React, _,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	React = __webpack_require__(3);
+	React = __webpack_require__(4);
 
-	Backbone = __webpack_require__(7);
+	Backbone = __webpack_require__(8);
 
-	_ = __webpack_require__(8);
+	_ = __webpack_require__(9);
 
 
 	/*
@@ -1500,16 +1521,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, CollectionStats, React,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	React = __webpack_require__(3);
+	React = __webpack_require__(4);
 
-	Backbone = __webpack_require__(7);
+	Backbone = __webpack_require__(8);
 
 	module.exports = CollectionStats = (function(superClass) {
 	  extend(CollectionStats, superClass);
@@ -1600,20 +1621,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, Model, React, _,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	React = __webpack_require__(3);
+	React = __webpack_require__(4);
 
-	Backbone = __webpack_require__(7);
+	Backbone = __webpack_require__(8);
 
-	_ = __webpack_require__(8);
+	_ = __webpack_require__(9);
 
-	ContextualData = __webpack_require__(12);
+	ContextualData = __webpack_require__(13);
 
 	module.exports = Model = (function(superClass) {
 	  extend(Model, superClass);
@@ -1642,7 +1663,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, React, SelectedModel,
@@ -1650,11 +1671,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	React = __webpack_require__(3);
+	React = __webpack_require__(4);
 
-	Backbone = __webpack_require__(7);
+	Backbone = __webpack_require__(8);
 
-	ContextualData = __webpack_require__(12);
+	ContextualData = __webpack_require__(13);
 
 	module.exports = SelectedModel = (function(superClass) {
 	  extend(SelectedModel, superClass);
@@ -1730,7 +1751,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Email, React, _,
@@ -1738,11 +1759,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	React = __webpack_require__(3);
+	React = __webpack_require__(4);
 
-	_ = __webpack_require__(8);
+	_ = __webpack_require__(9);
 
-	Datum = __webpack_require__(6);
+	Datum = __webpack_require__(7);
 
 
 	/*
@@ -1797,7 +1818,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, LazyPhoto, React,
@@ -1805,9 +1826,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	React = __webpack_require__(3);
+	React = __webpack_require__(4);
 
-	Datum = __webpack_require__(6);
+	Datum = __webpack_require__(7);
 
 
 	/*
@@ -1835,9 +1856,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  LazyPhoto.displayName = "react-datum.LazyPhoto";
 
-	  LazyPhoto.prototype.notFoundUrl = __webpack_require__(18);
+	  LazyPhoto.prototype.notFoundUrl = "http://zulily.github.io/react-datum/img/petals.png";
 
-	  LazyPhoto.prototype.loadingUrl = __webpack_require__(19);
+	  LazyPhoto.prototype.loadingUrl = "http://zulily.github.io/react-datum/img/blank.jpg";
 
 	  LazyPhoto.prototype.subClassName = 'lazy-image';
 
@@ -1898,30 +1919,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 18 */
-/***/ function(module, exports) {
-
-	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABoCAYAAAAHIFUvAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NEZCNjk5NUI5RjE2MTFFMkE2MjE4QzNGRDJGMzREOEQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NEZCNjk5NUM5RjE2MTFFMkE2MjE4QzNGRDJGMzREOEQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo0RkI2OTk1OTlGMTYxMUUyQTYyMThDM0ZEMkYzNEQ4RCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0RkI2OTk1QTlGMTYxMUUyQTYyMThDM0ZEMkYzNEQ4RCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PmtML+gAAA1VSURBVHja7F09cttK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"
-
-/***/ },
 /* 19 */
-/***/ function(module, exports) {
-
-	module.exports = "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAaCAYAAABctMd+AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAAtSURBVHja7MxBDQAACAQgtX/nM4UPNwhAJ6krU4fkcrlcLpfLv+QLAAD//wMANGkDMYhC/1cAAAAASUVORK5CYII="
-
-/***/ },
-/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Link, React, _,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	React = __webpack_require__(3);
+	React = __webpack_require__(4);
 
-	_ = __webpack_require__(8);
+	_ = __webpack_require__(9);
 
-	Datum = __webpack_require__(6);
+	Datum = __webpack_require__(7);
 
 
 	/*
@@ -1975,7 +1984,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 21 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Number, ONE_MILLION, ONE_THOUSAND, React, _,
@@ -1983,11 +1992,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	React = __webpack_require__(3);
+	React = __webpack_require__(4);
 
-	_ = __webpack_require__(8);
+	_ = __webpack_require__(9);
 
-	Datum = __webpack_require__(6);
+	Datum = __webpack_require__(7);
 
 	ONE_MILLION = 1000000;
 
@@ -2099,18 +2108,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 22 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, React, Text, _,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	React = __webpack_require__(3);
+	React = __webpack_require__(4);
 
-	_ = __webpack_require__(8);
+	_ = __webpack_require__(9);
 
-	Datum = __webpack_require__(6);
+	Datum = __webpack_require__(7);
 
 
 	/*
@@ -2166,16 +2175,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 23 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Number, React, WholeNumber,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	React = __webpack_require__(3);
+	React = __webpack_require__(4);
 
-	Number = __webpack_require__(21);
+	Number = __webpack_require__(20);
 
 
 	/*
@@ -2199,7 +2208,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 24 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, CollectionPicker, Datum, React, Select, Strhelp, _,
@@ -2207,19 +2216,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
-	React = __webpack_require__(3);
+	React = __webpack_require__(4);
 
-	Backbone = __webpack_require__(7);
+	Backbone = __webpack_require__(8);
 
-	_ = __webpack_require__(8);
+	_ = __webpack_require__(9);
 
-	Strhelp = __webpack_require__(25);
+	Strhelp = __webpack_require__(24);
 
-	Datum = __webpack_require__(6);
+	Datum = __webpack_require__(7);
 
-	Select = __webpack_require__(27);
+	Select = __webpack_require__(26);
 
-	Select.Async = __webpack_require__(32);
+	Select.Async = __webpack_require__(31);
 
 	module.exports = CollectionPicker = (function(superClass) {
 	  extend(CollectionPicker, superClass);
@@ -2488,20 +2497,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 25 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(26);
+	module.exports = __webpack_require__(25);
 
 /***/ },
-/* 26 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var StringHelpers, _;
 
-	_ = __webpack_require__(8);
+	_ = __webpack_require__(9);
 
 	module.exports = StringHelpers = (function() {
 	  function StringHelpers() {}
@@ -2580,7 +2589,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 27 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2591,35 +2600,35 @@ return /******/ (function(modules) { // webpackBootstrap
 		value: true
 	});
 
-	var _react = __webpack_require__(3);
+	var _react = __webpack_require__(4);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactDom = __webpack_require__(5);
+	var _reactDom = __webpack_require__(6);
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _reactInputAutosize = __webpack_require__(28);
+	var _reactInputAutosize = __webpack_require__(27);
 
 	var _reactInputAutosize2 = _interopRequireDefault(_reactInputAutosize);
 
-	var _classnames = __webpack_require__(29);
+	var _classnames = __webpack_require__(28);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _stripDiacritics = __webpack_require__(31);
+	var _stripDiacritics = __webpack_require__(30);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
-	var _Async = __webpack_require__(32);
+	var _Async = __webpack_require__(31);
 
 	var _Async2 = _interopRequireDefault(_Async);
 
-	var _Option = __webpack_require__(33);
+	var _Option = __webpack_require__(32);
 
 	var _Option2 = _interopRequireDefault(_Option);
 
-	var _Value = __webpack_require__(34);
+	var _Value = __webpack_require__(33);
 
 	var _Value2 = _interopRequireDefault(_Value);
 
@@ -3286,7 +3295,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Select;
 
 /***/ },
-/* 28 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3301,7 +3310,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		}return target;
 	};
 
-	var React = __webpack_require__(3);
+	var React = __webpack_require__(4);
 
 	var sizerStyle = { position: 'absolute', visibility: 'hidden', height: 0, width: 0, overflow: 'scroll', whiteSpace: 'nowrap' };
 
@@ -3408,7 +3417,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = AutosizeInput;
 
 /***/ },
-/* 29 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -3454,7 +3463,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		if (typeof module !== 'undefined' && module.exports) {
 			module.exports = classNames;
-		} else if ("function" === 'function' && _typeof(__webpack_require__(30)) === 'object' && __webpack_require__(30)) {
+		} else if ("function" === 'function' && _typeof(__webpack_require__(29)) === 'object' && __webpack_require__(29)) {
 			// register as 'classnames', consistent with npm package name
 			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
 				return classNames;
@@ -3465,7 +3474,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	})();
 
 /***/ },
-/* 30 */
+/* 29 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
@@ -3473,7 +3482,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ },
-/* 31 */
+/* 30 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3488,22 +3497,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 32 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _react = __webpack_require__(3);
+	var _react = __webpack_require__(4);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Select = __webpack_require__(27);
+	var _Select = __webpack_require__(26);
 
 	var _Select2 = _interopRequireDefault(_Select);
 
-	var _stripDiacritics = __webpack_require__(31);
+	var _stripDiacritics = __webpack_require__(30);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
@@ -3662,16 +3671,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Async;
 
 /***/ },
-/* 33 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _react = __webpack_require__(3);
+	var _react = __webpack_require__(4);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(29);
+	var _classnames = __webpack_require__(28);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -3741,16 +3750,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Option;
 
 /***/ },
-/* 34 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _react = __webpack_require__(3);
+	var _react = __webpack_require__(4);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(29);
+	var _classnames = __webpack_require__(28);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
