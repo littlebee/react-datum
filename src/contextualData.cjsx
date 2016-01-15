@@ -111,5 +111,5 @@ module.exports = class ContextualData extends React.Component
     @dataItem?.off 'all', @_onDataChanged
 
 
-  _onDataChanged: () ->
-    setState lastUpdated: Date.now()
+  _onDataChanged: () =>
+    @setState(lastUpdated: Date.now())

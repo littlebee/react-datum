@@ -1066,6 +1066,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, React, _,
+	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 
@@ -1109,6 +1110,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  function ContextualData(props) {
+	    this._onDataChanged = bind(this._onDataChanged, this);
 	    ContextualData.__super__.constructor.call(this, props);
 	    this.state = {
 	      lastUpdated: null
@@ -1175,7 +1177,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  ContextualData.prototype._onDataChanged = function() {
-	    return setState({
+	    return this.setState({
 	      lastUpdated: Date.now()
 	    });
 	  };
