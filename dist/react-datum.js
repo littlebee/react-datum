@@ -66,7 +66,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ReactDatum = {
 	  // contextual components
 	  ClickToEditForm: __webpack_require__(3),
-	  Collection: __webpack_require__(10),
+	  ContextualData: __webpack_require__(10),
+	  Collection: __webpack_require__(11),
 	  CollectionStats: __webpack_require__(14),
 	  Form: __webpack_require__(5),
 	  Model: __webpack_require__(15),
@@ -1064,6 +1065,120 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var Backbone, ContextualData, React, _,
+	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+	  hasProp = {}.hasOwnProperty;
+
+	React = __webpack_require__(4);
+
+	Backbone = __webpack_require__(8);
+
+	_ = __webpack_require__(9);
+
+
+	/*
+	  This is an abstract base class for contextual data components like ReactDatum.Collection 
+	  and ReactDatum.Model that provide a single contextual data element.
+	  
+	  The ReactDatum.ContextualData base class also provides the listener to model or collection
+	  events and rendering of child components on changes.
+	  
+	  You shouldn't need to use this class directly.
+	 */
+
+	module.exports = ContextualData = (function(superClass) {
+	  extend(ContextualData, superClass);
+
+	  function ContextualData() {
+	    return ContextualData.__super__.constructor.apply(this, arguments);
+	  }
+
+
+	  /* you need to override these */
+
+	  ContextualData.prototype.dataType = null;
+
+	  ContextualData.prototype.contextKey = null;
+
+	  ContextualData.propTypes = {
+	    fetch: React.PropTypes.bool,
+	    fetchOptions: React.PropTypes.object
+	  };
+
+	  ContextualData.childContextTypes = {};
+
+	  ContextualData.prototype.getChildContext = function() {
+	    var c;
+	    c = {};
+	    c[this.contextKey] = this.dataItem;
+	    return c;
+	  };
+
+	  ContextualData.prototype.render = function() {
+	    this._initializeDataItem();
+	    return React.createElement("div", {
+	      "className": this.contextKey
+	    }, this.renderContent());
+	  };
+
+	  ContextualData.prototype.renderContent = function() {
+	    return this.props.children;
+	  };
+
+	  ContextualData.prototype.componentWillUnmount = function() {
+	    return this._unbindEvents();
+	  };
+
+	  ContextualData.prototype._initializeDataItem = function() {
+	    if (!this._needsReinitializing()) {
+	      return;
+	    }
+	    this._unbindEvents();
+	    this._setDataItem();
+	    this._bindEvents();
+	    if (this.props.fetch) {
+	      return this.dataItem.fetch(this.props.fetchOptions);
+	    }
+	  };
+
+	  ContextualData.prototype._needsReinitializing = function() {
+	    var truth;
+	    truth = (this.dataItem == null) || this.props[this.contextKey] !== this._lastPropsModel;
+	    this._lastPropsModel = this.props[this.contextKey];
+	    return truth;
+	  };
+
+	  ContextualData.prototype._setDataItem = function() {
+	    if (_.isFunction(this.props[this.contextKey])) {
+	      return this.dataItem = new this.props[this.contextKey]();
+	    } else {
+	      return this.dataItem = this.props[this.contextKey];
+	    }
+	  };
+
+	  ContextualData.prototype._bindEvents = function() {
+	    var ref;
+	    return (ref = this.dataItem) != null ? ref.on('all', this._onDataChanged, this) : void 0;
+	  };
+
+	  ContextualData.prototype._unbindEvents = function() {
+	    var ref;
+	    return (ref = this.dataItem) != null ? ref.off('all', this._onDataChanged) : void 0;
+	  };
+
+	  ContextualData.prototype._onDataChanged = function() {
+	    return this.forceUpdate();
+	  };
+
+	  return ContextualData;
+
+	})(React.Component);
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var Backbone, Collection, ContextualData, React, SelectableCollection, _,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
@@ -1074,9 +1189,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	_ = __webpack_require__(9);
 
-	SelectableCollection = __webpack_require__(11);
+	SelectableCollection = __webpack_require__(12);
 
-	ContextualData = __webpack_require__(13);
+	ContextualData = __webpack_require__(10);
 
 	module.exports = Collection = (function(superClass) {
 	  extend(Collection, superClass);
@@ -1114,15 +1229,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(12);
+	module.exports = __webpack_require__(13);
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var SelectableCollection, _,
@@ -1407,120 +1522,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Backbone, ContextualData, React, _,
-	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-	  hasProp = {}.hasOwnProperty;
-
-	React = __webpack_require__(4);
-
-	Backbone = __webpack_require__(8);
-
-	_ = __webpack_require__(9);
-
-
-	/*
-	  This is an abstract base class for contextual data components like ReactDatum.Collection 
-	  and ReactDatum.Model that provide a single contextual data element.
-	  
-	  The ReactDatum.ContextualData base class also provides the listener to model or collection
-	  events and rendering of child components on changes.
-	  
-	  You shouldn't need to use this class directly.
-	 */
-
-	module.exports = ContextualData = (function(superClass) {
-	  extend(ContextualData, superClass);
-
-	  function ContextualData() {
-	    return ContextualData.__super__.constructor.apply(this, arguments);
-	  }
-
-
-	  /* you need to override these */
-
-	  ContextualData.prototype.dataType = null;
-
-	  ContextualData.prototype.contextKey = null;
-
-	  ContextualData.propTypes = {
-	    fetch: React.PropTypes.bool,
-	    fetchOptions: React.PropTypes.object
-	  };
-
-	  ContextualData.childContextTypes = {};
-
-	  ContextualData.prototype.getChildContext = function() {
-	    var c;
-	    c = {};
-	    c[this.contextKey] = this.dataItem;
-	    return c;
-	  };
-
-	  ContextualData.prototype.render = function() {
-	    this._initializeDataItem();
-	    return React.createElement("div", {
-	      "className": this.contextKey
-	    }, this.renderContent());
-	  };
-
-	  ContextualData.prototype.renderContent = function() {
-	    return this.props.children;
-	  };
-
-	  ContextualData.prototype.componentWillUnmount = function() {
-	    return this._unbindEvents();
-	  };
-
-	  ContextualData.prototype._initializeDataItem = function() {
-	    if (!this._needsReinitializing()) {
-	      return;
-	    }
-	    this._unbindEvents();
-	    this._setDataItem();
-	    this._bindEvents();
-	    if (this.props.fetch) {
-	      return this.dataItem.fetch(this.props.fetchOptions);
-	    }
-	  };
-
-	  ContextualData.prototype._needsReinitializing = function() {
-	    var truth;
-	    truth = (this.dataItem == null) || this.props[this.contextKey] !== this._lastPropsModel;
-	    this._lastPropsModel = this.props[this.contextKey];
-	    return truth;
-	  };
-
-	  ContextualData.prototype._setDataItem = function() {
-	    if (_.isFunction(this.props[this.contextKey])) {
-	      return this.dataItem = new this.props[this.contextKey]();
-	    } else {
-	      return this.dataItem = this.props[this.contextKey];
-	    }
-	  };
-
-	  ContextualData.prototype._bindEvents = function() {
-	    var ref;
-	    return (ref = this.dataItem) != null ? ref.on('all', this._onDataChanged, this) : void 0;
-	  };
-
-	  ContextualData.prototype._unbindEvents = function() {
-	    var ref;
-	    return (ref = this.dataItem) != null ? ref.off('all', this._onDataChanged) : void 0;
-	  };
-
-	  ContextualData.prototype._onDataChanged = function() {
-	    return this.forceUpdate();
-	  };
-
-	  return ContextualData;
-
-	})(React.Component);
-
-
-/***/ },
 /* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -1634,7 +1635,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	_ = __webpack_require__(9);
 
-	ContextualData = __webpack_require__(13);
+	ContextualData = __webpack_require__(10);
 
 	module.exports = Model = (function(superClass) {
 	  extend(Model, superClass);
@@ -1675,7 +1676,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	Backbone = __webpack_require__(8);
 
-	ContextualData = __webpack_require__(13);
+	ContextualData = __webpack_require__(10);
 
 	module.exports = SelectedModel = (function(superClass) {
 	  extend(SelectedModel, superClass);

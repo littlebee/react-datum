@@ -3,6 +3,7 @@
 var ReactDatum = {
   // contextual components
   ClickToEditForm:   require('./src/clickToEditForm'),
+  ContextualData:    require('./src/contextualData'),
   Collection:        require('./src/collection'),
   CollectionStats:   require('./src/collectionStats'),
   Form:              require('./src/form'),

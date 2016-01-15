@@ -45,6 +45,11 @@ module.exports = class ContextualData extends React.Component
   #    collection: React.PropTypes.instanceOf(Backbone.Collection)
   #```
   @childContextTypes: {}
+  
+  # extend these the same was as above or just replace them
+  @defaultProps:
+    fetch: false
+    fetchOptions: {}
 
   # that's it!  most of the rest should not need to be overridden or extended
 
