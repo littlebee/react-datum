@@ -1089,10 +1089,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ContextualData = (function(superClass) {
 	  extend(ContextualData, superClass);
 
-	  function ContextualData() {
-	    return ContextualData.__super__.constructor.apply(this, arguments);
-	  }
-
 
 	  /* you need to override these */
 
@@ -1106,6 +1102,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  ContextualData.childContextTypes = {};
+
+	  ContextualData.defaultProps = {
+	    fetch: false,
+	    fetchOptions: {}
+	  };
+
+	  function ContextualData(props) {
+	    ContextualData.__super__.constructor.call(this, props);
+	    this.state = {
+	      lastUpdated: null
+	    };
+	  }
 
 	  ContextualData.prototype.getChildContext = function() {
 	    var c;
@@ -1167,7 +1175,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  ContextualData.prototype._onDataChanged = function() {
-	    return this.forceUpdate();
+	    return setState({
+	      lastUpdated: Date.now()
+	    });
 	  };
 
 	  return ContextualData;

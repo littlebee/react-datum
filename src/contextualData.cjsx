@@ -50,6 +50,13 @@ module.exports = class ContextualData extends React.Component
   @defaultProps:
     fetch: false
     fetchOptions: {}
+    
+  constructor: (props) ->
+    super props
+    
+    @state = 
+      lastUpdated: null
+    
 
   # that's it!  most of the rest should not need to be overridden or extended
 
@@ -105,4 +112,4 @@ module.exports = class ContextualData extends React.Component
 
 
   _onDataChanged: () ->
-    @forceUpdate()
+    setState lastUpdated: Date.now()
