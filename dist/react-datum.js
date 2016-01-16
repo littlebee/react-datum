@@ -1175,7 +1175,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  ContextualData.prototype._setCollectionOrModel = function() {
 	    var collectionOrModel;
 	    collectionOrModel = this._getInputCollectionOrModel();
-	    this.context[this.contextKey] = collectionOrModel;
 	    this.setState({
 	      collectionOrModel: collectionOrModel
 	    });

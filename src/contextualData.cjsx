@@ -120,8 +120,6 @@ module.exports = class ContextualData extends React.Component
   _setCollectionOrModel: () ->
     collectionOrModel = @_getInputCollectionOrModel()
 
-    @context[@contextKey] = collectionOrModel
-
     @setState(collectionOrModel: collectionOrModel)
     # TODO : why do I need to do this.  @setState seems to not immediately take above
     # and later code on this path depends on this being set
