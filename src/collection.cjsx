@@ -36,8 +36,8 @@ module.exports = class Collection extends ContextualData
   #    have it
   _setDataItem: () ->
     super
-    @collection = @dataItem  # for clarity
-    unless @collection.hasSelectableCollectionMixin
-      SelectableCollection.applyTo(@collection)
+    collection = @state.dataItem  # for clarity
+    unless !collection? || collection.hasSelectableCollectionMixin
+      SelectableCollection.applyTo(collection)
 
-    return @collection
+    return collection

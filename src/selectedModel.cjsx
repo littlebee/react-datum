@@ -29,9 +29,10 @@ module.exports = class SelectedModel extends ContextualData
   # extends super: renders placeholder if provided or blank when
   # there is no selected model
   renderContent: ->
-    if @dataItem?
-      return super
-
+    superContent = super
+    if @state.dataItem?
+      return superContent
+      
     return <div className="large-placeholder">{@props.placeholder}</div>
 
 
@@ -43,9 +44,9 @@ module.exports = class SelectedModel extends ContextualData
 
 
   # override - @dataItem should be the selected model in the collection
-  _setDataItem: () ->
-    @collection = @props.collection || @context.collection
-    @dataItem = @collection.getSelectedModels?()[0]
+  _getInputDataItem: () ->
+    collection = @props.collection || @context.collection 
+    return collection?.getSelectedModels?()[0]
 
 
   # extends - in addition to listening to our selected model events, listen for

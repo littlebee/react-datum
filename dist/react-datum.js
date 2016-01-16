@@ -1113,19 +1113,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._onDataChanged = bind(this._onDataChanged, this);
 	    ContextualData.__super__.constructor.call(this, props);
 	    this.state = {
-	      lastUpdated: null
+	      lastUpdated: null,
+	      dataItem: null
 	    };
 	  }
 
 	  ContextualData.prototype.getChildContext = function() {
 	    var c;
 	    c = {};
-	    c[this.contextKey] = this.dataItem;
+	    c[this.contextKey] = this.state.dataItem;
 	    return c;
 	  };
 
 	  ContextualData.prototype.render = function() {
-	    this._initializeDataItem();
 	    return React.createElement("div", {
 	      "className": this.contextKey
 	    }, this.renderContent());
@@ -1139,6 +1139,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this._unbindEvents();
 	  };
 
+	  ContextualData.prototype.componentWillMount = function() {
+	    return this._initializeDataItem();
+	  };
+
+	  ContextualData.prototype.componentWillReceiveProps = function(newProps) {
+	    this.props = newProps;
+	    return this._initializeDataItem();
+	  };
+
 	  ContextualData.prototype._initializeDataItem = function() {
 	    if (!this._needsReinitializing()) {
 	      return;
@@ -1146,34 +1155,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._unbindEvents();
 	    this._setDataItem();
 	    this._bindEvents();
-	    if (this.props.fetch) {
-	      return this.dataItem.fetch(this.props.fetchOptions);
+	    if (this.props.fetch && (this.state.dataItem != null)) {
+	      return this.state.dataItem.fetch(this.props.fetchOptions);
 	    }
 	  };
 
+	  ContextualData.prototype._getInputDataItem = function() {
+	    return this.props[this.contextKey] || this.context[this.contextKey];
+	  };
+
 	  ContextualData.prototype._needsReinitializing = function() {
-	    var truth;
-	    truth = (this.dataItem == null) || this.props[this.contextKey] !== this._lastPropsModel;
-	    this._lastPropsModel = this.props[this.contextKey];
+	    var dataItem, truth;
+	    dataItem = this._getInputDataItem();
+	    truth = (this.state.dataItem == null) || dataItem !== this._lastPropsModel;
+	    this._lastPropsModel = dataItem;
 	    return truth;
 	  };
 
 	  ContextualData.prototype._setDataItem = function() {
-	    if (_.isFunction(this.props[this.contextKey])) {
-	      return this.dataItem = new this.props[this.contextKey]();
-	    } else {
-	      return this.dataItem = this.props[this.contextKey];
-	    }
+	    var dataItem;
+	    dataItem = this._getInputDataItem();
+	    this.context[this.contextKey] = dataItem;
+	    this.setState({
+	      dataItem: dataItem
+	    });
+	    return this.state.dataItem = dataItem;
 	  };
 
 	  ContextualData.prototype._bindEvents = function() {
 	    var ref;
-	    return (ref = this.dataItem) != null ? ref.on('all', this._onDataChanged, this) : void 0;
+	    return (ref = this.state.dataItem) != null ? ref.on('all', this._onDataChanged, this) : void 0;
 	  };
 
 	  ContextualData.prototype._unbindEvents = function() {
 	    var ref;
-	    return (ref = this.dataItem) != null ? ref.off('all', this._onDataChanged) : void 0;
+	    return (ref = this.state.dataItem) != null ? ref.off('all', this._onDataChanged) : void 0;
 	  };
 
 	  ContextualData.prototype._onDataChanged = function() {
@@ -1227,12 +1243,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  });
 
 	  Collection.prototype._setDataItem = function() {
+	    var collection;
 	    Collection.__super__._setDataItem.apply(this, arguments);
-	    this.collection = this.dataItem;
-	    if (!this.collection.hasSelectableCollectionMixin) {
-	      SelectableCollection.applyTo(this.collection);
+	    collection = this.state.dataItem;
+	    if (!((collection == null) || collection.hasSelectableCollectionMixin)) {
+	      SelectableCollection.applyTo(collection);
 	    }
-	    return this.collection;
+	    return collection;
 	  };
 
 	  return Collection;
@@ -1718,8 +1735,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  SelectedModel.prototype.renderContent = function() {
-	    if (this.dataItem != null) {
-	      return SelectedModel.__super__.renderContent.apply(this, arguments);
+	    var superContent;
+	    superContent = SelectedModel.__super__.renderContent.apply(this, arguments);
+	    if (this.state.dataItem != null) {
+	      return superContent;
 	    }
 	    return React.createElement("div", {
 	      "className": "large-placeholder"
@@ -1733,10 +1752,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return truth;
 	  };
 
-	  SelectedModel.prototype._setDataItem = function() {
-	    var base;
-	    this.collection = this.props.collection || this.context.collection;
-	    return this.dataItem = typeof (base = this.collection).getSelectedModels === "function" ? base.getSelectedModels()[0] : void 0;
+	  SelectedModel.prototype._getInputDataItem = function() {
+	    var collection;
+	    collection = this.props.collection || this.context.collection;
+	    return collection != null ? typeof collection.getSelectedModels === "function" ? collection.getSelectedModels()[0] : void 0 : void 0;
 	  };
 
 	  SelectedModel.prototype._bindEvents = function(model) {

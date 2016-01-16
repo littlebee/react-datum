@@ -22,7 +22,7 @@ _.extend global,
   KITTEN_DATA: KITTEN_DATA
 
 
-describe 'All examples', ->
+describe 'All examples (requires rebuild)', ->
   testExamples.testAllExamples()
   
     

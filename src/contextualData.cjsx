@@ -56,30 +56,45 @@ module.exports = class ContextualData extends React.Component
     
     @state = 
       lastUpdated: null
+      dataItem: null
     
 
   # that's it!  most of the rest should not need to be overridden or extended
 
   getChildContext: ->
     c = {}
-    c[@contextKey] = @dataItem
+    c[@contextKey] = @state.dataItem
     return c
 
 
   render: ->
-    @_initializeDataItem()
     return <div className={@contextKey}>{@renderContent()}</div>
 
 
   # some children render a placeholder if dataItem is empty
   renderContent: ->
-    @props.children
+    return @props.children
 
 
   componentWillUnmount: ->
     @_unbindEvents()
+    
+    
+  componentWillMount: ->
+    @_initializeDataItem()
+    
+  
+  componentWillReceiveProps: (newProps)->
+    @props = newProps
+    @_initializeDataItem()
+    
+    
+  # api
+  
 
 
+  # implementation
+  
   _initializeDataItem: () ->
     # we already have a model and the props model hasn't changed
     return unless @_needsReinitializing()
@@ -87,28 +102,38 @@ module.exports = class ContextualData extends React.Component
     @_unbindEvents()
     @_setDataItem()
     @_bindEvents()
-    @dataItem.fetch(@props.fetchOptions) if @props.fetch
+    if @props.fetch && @state.dataItem?
+      @state.dataItem.fetch(@props.fetchOptions) 
 
+
+  _getInputDataItem: () ->
+    @props[@contextKey] || @context[@contextKey]
+    
 
   _needsReinitializing: () ->
-    truth = !@dataItem? || @props[@contextKey] != @_lastPropsModel
-    @_lastPropsModel = @props[@contextKey]
+    dataItem = @_getInputDataItem()
+    truth = !@state.dataItem? ||dataItem != @_lastPropsModel
+    @_lastPropsModel = dataItem
     return truth
 
 
   _setDataItem: () ->
-    if _.isFunction(@props[@contextKey])
-      @dataItem = new @props[@contextKey]()  # a class
-    else
-      @dataItem = @props[@contextKey]     # or an instance...
+    dataItem = @_getInputDataItem()
+
+    @context[@contextKey] = dataItem
+
+    @setState(dataItem: dataItem)
+    # TODO : why do I need to do this.  @setState seems to not immediately take above
+    # and later code on this path depends on this being set
+    @state.dataItem = dataItem
 
 
   _bindEvents: () ->
-    @dataItem?.on 'all', @_onDataChanged, @
+    @state.dataItem?.on 'all', @_onDataChanged, @
 
 
   _unbindEvents: () ->
-    @dataItem?.off 'all', @_onDataChanged
+    @state.dataItem?.off 'all', @_onDataChanged
 
 
   _onDataChanged: () =>
