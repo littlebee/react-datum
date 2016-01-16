@@ -56,14 +56,14 @@ module.exports = class ContextualData extends React.Component
     
     @state = 
       lastUpdated: null
-      dataItem: null
+      collectionOrModel: null
     
 
   # that's it!  most of the rest should not need to be overridden or extended
 
   getChildContext: ->
     c = {}
-    c[@contextKey] = @state.dataItem
+    c[@contextKey] = @state.collectionOrModel
     return c
 
 
@@ -71,7 +71,7 @@ module.exports = class ContextualData extends React.Component
     return <div className={@contextKey}>{@renderContent()}</div>
 
 
-  # some children render a placeholder if dataItem is empty
+  # some children render a placeholder if collectionOrModel is empty
   renderContent: ->
     return @props.children
 
@@ -81,12 +81,12 @@ module.exports = class ContextualData extends React.Component
     
     
   componentWillMount: ->
-    @_initializeDataItem()
+    @_initializeCollectionOrModel()
     
   
   componentWillReceiveProps: (newProps)->
     @props = newProps
-    @_initializeDataItem()
+    @_initializeCollectionOrModel()
     
     
   # api
@@ -95,45 +95,45 @@ module.exports = class ContextualData extends React.Component
 
   # implementation
   
-  _initializeDataItem: () ->
+  _initializeCollectionOrModel: () ->
     # we already have a model and the props model hasn't changed
     return unless @_needsReinitializing()
 
     @_unbindEvents()
-    @_setDataItem()
+    @_setCollectionOrModel()
     @_bindEvents()
-    if @props.fetch && @state.dataItem?
-      @state.dataItem.fetch(@props.fetchOptions) 
+    if @props.fetch && @state.collectionOrModel?
+      @state.collectionOrModel.fetch(@props.fetchOptions) 
 
 
-  _getInputDataItem: () ->
+  _getInputCollectionOrModel: () ->
     @props[@contextKey] || @context[@contextKey]
     
 
   _needsReinitializing: () ->
-    dataItem = @_getInputDataItem()
-    truth = !@state.dataItem? ||dataItem != @_lastPropsModel
-    @_lastPropsModel = dataItem
+    collectionOrModel = @_getInputCollectionOrModel()
+    truth = !@state.collectionOrModel? ||collectionOrModel != @_lastPropsModel
+    @_lastPropsModel = collectionOrModel
     return truth
 
 
-  _setDataItem: () ->
-    dataItem = @_getInputDataItem()
+  _setCollectionOrModel: () ->
+    collectionOrModel = @_getInputCollectionOrModel()
 
-    @context[@contextKey] = dataItem
+    @context[@contextKey] = collectionOrModel
 
-    @setState(dataItem: dataItem)
+    @setState(collectionOrModel: collectionOrModel)
     # TODO : why do I need to do this.  @setState seems to not immediately take above
     # and later code on this path depends on this being set
-    @state.dataItem = dataItem
+    @state.collectionOrModel = collectionOrModel
 
 
   _bindEvents: () ->
-    @state.dataItem?.on 'all', @_onDataChanged, @
+    @state.collectionOrModel?.on 'all', @_onDataChanged, @
 
 
   _unbindEvents: () ->
-    @state.dataItem?.off 'all', @_onDataChanged
+    @state.collectionOrModel?.off 'all', @_onDataChanged
 
 
   _onDataChanged: () =>

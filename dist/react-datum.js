@@ -1114,14 +1114,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    ContextualData.__super__.constructor.call(this, props);
 	    this.state = {
 	      lastUpdated: null,
-	      dataItem: null
+	      collectionOrModel: null
 	    };
 	  }
 
 	  ContextualData.prototype.getChildContext = function() {
 	    var c;
 	    c = {};
-	    c[this.contextKey] = this.state.dataItem;
+	    c[this.contextKey] = this.state.collectionOrModel;
 	    return c;
 	  };
 
@@ -1140,56 +1140,56 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  ContextualData.prototype.componentWillMount = function() {
-	    return this._initializeDataItem();
+	    return this._initializeCollectionOrModel();
 	  };
 
 	  ContextualData.prototype.componentWillReceiveProps = function(newProps) {
 	    this.props = newProps;
-	    return this._initializeDataItem();
+	    return this._initializeCollectionOrModel();
 	  };
 
-	  ContextualData.prototype._initializeDataItem = function() {
+	  ContextualData.prototype._initializeCollectionOrModel = function() {
 	    if (!this._needsReinitializing()) {
 	      return;
 	    }
 	    this._unbindEvents();
-	    this._setDataItem();
+	    this._setCollectionOrModel();
 	    this._bindEvents();
-	    if (this.props.fetch && (this.state.dataItem != null)) {
-	      return this.state.dataItem.fetch(this.props.fetchOptions);
+	    if (this.props.fetch && (this.state.collectionOrModel != null)) {
+	      return this.state.collectionOrModel.fetch(this.props.fetchOptions);
 	    }
 	  };
 
-	  ContextualData.prototype._getInputDataItem = function() {
+	  ContextualData.prototype._getInputCollectionOrModel = function() {
 	    return this.props[this.contextKey] || this.context[this.contextKey];
 	  };
 
 	  ContextualData.prototype._needsReinitializing = function() {
-	    var dataItem, truth;
-	    dataItem = this._getInputDataItem();
-	    truth = (this.state.dataItem == null) || dataItem !== this._lastPropsModel;
-	    this._lastPropsModel = dataItem;
+	    var collectionOrModel, truth;
+	    collectionOrModel = this._getInputCollectionOrModel();
+	    truth = (this.state.collectionOrModel == null) || collectionOrModel !== this._lastPropsModel;
+	    this._lastPropsModel = collectionOrModel;
 	    return truth;
 	  };
 
-	  ContextualData.prototype._setDataItem = function() {
-	    var dataItem;
-	    dataItem = this._getInputDataItem();
-	    this.context[this.contextKey] = dataItem;
+	  ContextualData.prototype._setCollectionOrModel = function() {
+	    var collectionOrModel;
+	    collectionOrModel = this._getInputCollectionOrModel();
+	    this.context[this.contextKey] = collectionOrModel;
 	    this.setState({
-	      dataItem: dataItem
+	      collectionOrModel: collectionOrModel
 	    });
-	    return this.state.dataItem = dataItem;
+	    return this.state.collectionOrModel = collectionOrModel;
 	  };
 
 	  ContextualData.prototype._bindEvents = function() {
 	    var ref;
-	    return (ref = this.state.dataItem) != null ? ref.on('all', this._onDataChanged, this) : void 0;
+	    return (ref = this.state.collectionOrModel) != null ? ref.on('all', this._onDataChanged, this) : void 0;
 	  };
 
 	  ContextualData.prototype._unbindEvents = function() {
 	    var ref;
-	    return (ref = this.state.dataItem) != null ? ref.off('all', this._onDataChanged) : void 0;
+	    return (ref = this.state.collectionOrModel) != null ? ref.off('all', this._onDataChanged) : void 0;
 	  };
 
 	  ContextualData.prototype._onDataChanged = function() {
@@ -1242,10 +1242,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    collection: React.PropTypes.instanceOf(Backbone.Collection)
 	  });
 
-	  Collection.prototype._setDataItem = function() {
+	  Collection.prototype._setCollectionOrModel = function() {
 	    var collection;
-	    Collection.__super__._setDataItem.apply(this, arguments);
-	    collection = this.state.dataItem;
+	    Collection.__super__._setCollectionOrModel.apply(this, arguments);
+	    collection = this.state.collectionOrModel;
 	    if (!((collection == null) || collection.hasSelectableCollectionMixin)) {
 	      SelectableCollection.applyTo(collection);
 	    }
@@ -1737,7 +1737,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  SelectedModel.prototype.renderContent = function() {
 	    var superContent;
 	    superContent = SelectedModel.__super__.renderContent.apply(this, arguments);
-	    if (this.state.dataItem != null) {
+	    if (this.state.collectionOrModel != null) {
 	      return superContent;
 	    }
 	    return React.createElement("div", {
@@ -1752,7 +1752,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return truth;
 	  };
 
-	  SelectedModel.prototype._getInputDataItem = function() {
+	  SelectedModel.prototype._getInputCollectionOrModel = function() {
 	    var collection;
 	    collection = this.props.collection || this.context.collection;
 	    return collection != null ? typeof collection.getSelectedModels === "function" ? collection.getSelectedModels()[0] : void 0 : void 0;
@@ -1772,7 +1772,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  SelectedModel.prototype._onSelectionsChanged = function() {
 	    this._unbindEvents();
-	    this._setDataItem();
+	    this._setCollectionOrModel();
 	    this._bindEvents();
 	    return this.forceUpdate();
 	  };

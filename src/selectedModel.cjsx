@@ -30,7 +30,7 @@ module.exports = class SelectedModel extends ContextualData
   # there is no selected model
   renderContent: ->
     superContent = super
-    if @state.dataItem?
+    if @state.collectionOrModel?
       return superContent
       
     return <div className="large-placeholder">{@props.placeholder}</div>
@@ -43,8 +43,8 @@ module.exports = class SelectedModel extends ContextualData
     return truth;
 
 
-  # override - @dataItem should be the selected model in the collection
-  _getInputDataItem: () ->
+  # override - @collectionOrModel should be the selected model in the collection
+  _getInputCollectionOrModel: () ->
     collection = @props.collection || @context.collection 
     return collection?.getSelectedModels?()[0]
 
@@ -63,6 +63,6 @@ module.exports = class SelectedModel extends ContextualData
 
   _onSelectionsChanged: =>
     @_unbindEvents()
-    @_setDataItem()
+    @_setCollectionOrModel()
     @_bindEvents()
     @forceUpdate()

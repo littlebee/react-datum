@@ -34,9 +34,9 @@ module.exports = class Collection extends ContextualData
 
   # override - adds SelectableCollection mixin to collection if it doesn't already
   #    have it
-  _setDataItem: () ->
+  _setCollectionOrModel: () ->
     super
-    collection = @state.dataItem  # for clarity
+    collection = @state.collectionOrModel  # for clarity
     unless !collection? || collection.hasSelectableCollectionMixin
       SelectableCollection.applyTo(collection)
 
