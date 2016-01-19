@@ -5,8 +5,11 @@ _ = require('underscore')
 Datum = require('./datum')
 
 
+ONE_BILLION = 1000000000
 ONE_MILLION = 1000000
 ONE_THOUSAND = 1000
+
+RECOGNIZED_FORMATS = ['abbreviate','money','comma', 'percent']
 
 ###
   For real numbers.
@@ -21,7 +24,11 @@ module.exports = class Number extends Datum
     # 'abbreviate' - Add M and K to numbers greater than 1 million and 1 thousand respectively
     # 'money' - display dollar sign and two decimal places zero filled
     # 'comma' - add comma separators at thousands
-    format: React.PropTypes.oneOf(['abbreviate','money','comma'])
+    # format: React.PropTypes.oneOfType([
+    #   React.PropTypes.oneOf(RECOGNIZED_FORMATS)
+    #   React.PropTypes.arrayOf(RECOGNIZED_FORMATS)
+    # ])
+    format: React.PropTypes.node
     
     # when input, validate value is at least this value on change
     minValue: React.PropTypes.number
@@ -44,30 +51,39 @@ module.exports = class Number extends Datum
   isAcceptableInput: (value) ->
     return value.match(@charactersMustMatch)
 
-
-  # overrides super - adds formatting
+  ###
+    overrides super - adds formatting
+  ###
   renderValueForDisplay: ->
     dataValue = @getModelValue()
-    switch @props.format
-      when 'abbreviate'
-        if  dataValue > ONE_MILLION
-          "#{dataValue / ONE_MILLION}M"
-        else if dataValue > ONE_THOUSAND
-          "#{dataValue / ONE_THOUSAND}K"
-        else
-          dataValue
-      when 'comma'
-        # add thousands separater
-        [wholeNumber, decimal] = dataValue.toString().split('.')
-        dataValue = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        dataValue += '.' + decimal if decimal?
-      when 'money'
-        dataValue = dataValue.toString().replace(/(.*\.\d$)/, '$10')
-        unless dataValue.indexOf('.') >= 0
-          dataValue += ".00"
-        dataValue = "$#{dataValue}"
+    formats = if _.isArray(@props.format) then @props.format else [@props.format]
+
+    if 'abbreviate' in formats
+      dataValue = Math.round(parseFloat(dataValue))
+      dataValue = if dataValue >= ONE_BILLION
+        "#{dataValue / ONE_BILLION}MM"
+      else if dataValue >= ONE_MILLION
+        "#{dataValue / ONE_MILLION}M"
+      else if dataValue >= ONE_THOUSAND
+        "#{dataValue / ONE_THOUSAND}K"
       else
         dataValue
+
+    if 'percent' in formats
+      dataValue = (parseFloat(dataValue) * 100).toString() + '%'
+
+    if 'comma' in formats
+      # add thousands separater
+      [wholeNumber, decimal] = dataValue.toString().split('.')
+      dataValue = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      dataValue += '.' + decimal if decimal?
+
+    if 'money' in formats
+      dataValue = dataValue.toString().replace(/(.*\.\d$)/, '$10')
+      unless dataValue.indexOf('.') >= 0
+        dataValue += ".00" unless 'abbreviate' in formats
+      dataValue = "$#{dataValue}"
+
 
     return dataValue
 

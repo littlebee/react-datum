@@ -2036,7 +2036,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Datum, Number, ONE_MILLION, ONE_THOUSAND, React, _,
+	var Datum, Number, ONE_BILLION, ONE_MILLION, ONE_THOUSAND, RECOGNIZED_FORMATS, React, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
@@ -2047,9 +2047,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	Datum = __webpack_require__(7);
 
+	ONE_BILLION = 1000000000;
+
 	ONE_MILLION = 1000000;
 
 	ONE_THOUSAND = 1000;
+
+	RECOGNIZED_FORMATS = ['abbreviate', 'money', 'comma', 'percent'];
 
 
 	/*
@@ -2064,7 +2068,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Number.displayName = "react-datum.Number";
 
 	  Number.propTypes = _.extend({}, Datum.propTypes, {
-	    format: React.PropTypes.oneOf(['abbreviate', 'money', 'comma']),
+	    format: React.PropTypes.oneOfType([React.PropTypes.oneOf(RECOGNIZED_FORMATS), React.PropTypes.arrayOf(RECOGNIZED_FORMATS)]),
 	    minValue: React.PropTypes.number,
 	    maxValue: React.PropTypes.number
 	  });
@@ -2083,35 +2087,49 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return value.match(this.charactersMustMatch);
 	  };
 
+
+	  /*
+	    overrides super - adds formatting
+	   */
+
 	  Number.prototype.renderValueForDisplay = function() {
-	    var dataValue, decimal, ref, wholeNumber;
+	    var dataValue, decimal, format, formats, i, len, wholeNumber;
 	    dataValue = this.getModelValue();
-	    switch (this.props.format) {
-	      case 'abbreviate':
-	        if (dataValue > ONE_MILLION) {
-	          (dataValue / ONE_MILLION) + "M";
-	        } else if (dataValue > ONE_THOUSAND) {
-	          (dataValue / ONE_THOUSAND) + "K";
-	        } else {
-	          dataValue;
+	    formats = _.isArray(this.props.format) ? this.props.format : [this.props.format];
+	    for (i = 0, len = formats.length; i < len; i++) {
+	      format = formats[i];
+	      dataValue = (function() {
+	        var ref;
+	        switch (format) {
+	          case 'abbreviate':
+	            if (dataValue > ONE_MILLION) {
+	              return (dataValue / ONE_MILLION) + "M";
+	            } else if (dataValue > ONE_THOUSAND) {
+	              return (dataValue / ONE_THOUSAND) + "K";
+	            } else {
+	              return dataValue;
+	            }
+	            break;
+	          case 'comma':
+	            ref = dataValue.toString().split('.'), wholeNumber = ref[0], decimal = ref[1];
+	            dataValue = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	            if (decimal != null) {
+	              dataValue += '.' + decimal;
+	            }
+	            return dataValue;
+	          case 'money':
+	            dataValue = dataValue.toString().replace(/(.*\.\d$)/, '$10');
+	            if (!(dataValue.indexOf('.') >= 0)) {
+	              dataValue += ".00";
+	            }
+	            dataValue = "$" + dataValue;
+	            return dataValue;
+	          case 'percent':
+	            return dataValue = (Number.parseInt(dataValue) * 10).toString() + '%';
+	          default:
+	            return dataValue;
 	        }
-	        break;
-	      case 'comma':
-	        ref = dataValue.toString().split('.'), wholeNumber = ref[0], decimal = ref[1];
-	        dataValue = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	        if (decimal != null) {
-	          dataValue += '.' + decimal;
-	        }
-	        break;
-	      case 'money':
-	        dataValue = dataValue.toString().replace(/(.*\.\d$)/, '$10');
-	        if (!(dataValue.indexOf('.') >= 0)) {
-	          dataValue += ".00";
-	        }
-	        dataValue = "$" + dataValue;
-	        break;
-	      default:
-	        dataValue;
+	      })();
 	    }
 	    return dataValue;
 	  };
