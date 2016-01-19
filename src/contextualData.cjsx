@@ -16,16 +16,18 @@ module.exports = class ContextualData extends React.Component
   #  don't forget your display name so you get semi-intelligent errors from react
   #@displayName: "react-datum.Model"
 
-  ### you need to override these ###
-
-  # this is the class of thing being placed in the context.
-  # ex. `Backbone.Model` or `Backbone.Collection`
+  ###
+    This is the class of thing being placed in the context.
+      ex. `Backbone.Model` or `Backbone.Collection`
+  ###
   dataType:  null
-  # this is the key in @context children should use to access thing
-  # ex. "model"
+  
+  ###
+   this is the key in @context children should use to access thing
+    ex. "model"
+  ###
   contextKey: null
 
-  #  end of pure virtuals 
 
   # you will also possibly want to extend these in your child class.  like this:
   # ```
@@ -92,6 +94,12 @@ module.exports = class ContextualData extends React.Component
   # api
   
 
+  ###
+    override this model to do a custom fetch method like fetchForUser or some such
+  ###
+  fetchCollectionOrModel: () ->
+      @state.collectionOrModel.fetch(@props.fetchOptions) 
+
 
   # implementation
   
@@ -103,9 +111,9 @@ module.exports = class ContextualData extends React.Component
     @_setCollectionOrModel()
     @_bindEvents()
     if @props.fetch && @state.collectionOrModel?
-      @state.collectionOrModel.fetch(@props.fetchOptions) 
-
-
+      @fetchCollectionOrModel()
+      
+      
   _getInputCollectionOrModel: () ->
     @props[@contextKey] || @context[@contextKey]
     
