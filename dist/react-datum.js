@@ -1157,6 +1157,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this._initializeCollectionOrModel();
 	  };
 
+
+	  /*
+	    override this model to do a custom fetch method like fetchForUser or some such
+	   */
+
+	  ContextualData.prototype.fetchCollectionOrModel = function() {
+	    return this.state.collectionOrModel.fetch(this.props.fetchOptions);
+	  };
+
 	  ContextualData.prototype._initializeCollectionOrModel = function() {
 	    if (!this._needsReinitializing()) {
 	      return;
@@ -1165,12 +1174,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._setCollectionOrModel();
 	    this._bindEvents();
 	    if (this.props.fetch && (this.state.collectionOrModel != null)) {
-	      return this._fetchCollectionOrModel();
+	      return this.fetchCollectionOrModel();
 	    }
-	  };
-
-	  ContextualData.prototype._fetchCollectionOrModel = function() {
-	    return this.state.collectionOrModel.fetch(this.props.fetchOptions);
 	  };
 
 	  ContextualData.prototype._getInputCollectionOrModel = function() {
