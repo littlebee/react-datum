@@ -79,18 +79,11 @@ describe 'Number datum', ->
       model.set('foo', 1000000)
       component.forceUpdate()        # doesn't automatically update because it's not in a <Model> context
       $(domNode).find('.datum-display-value').text().should.be.equal("$1M")
-    
-    
-    
-  describe 'as display with money and abbreviate formats', ->
-    component = Th.render <Number attr='foo' model={model} format={["money", "abbreviate"]}/>
-    domNode = Th.domNode(component)
-
-    it 'should properly abbreviate on million as money', ->
+        
+    it 'should properly abbreviate on 5.5 million as money without zero filling decimal places', ->
       model.set('foo', 5500000000)
       component.forceUpdate()        # doesn't automatically update because it's not in a <Model> context
       $(domNode).find('.datum-display-value').text().should.be.equal("$5.5MM")
-    
     
 
   describe 'as display with percent format', ->
@@ -120,7 +113,14 @@ describe 'Number datum', ->
       component.forceUpdate()        
       $(domNode).find('.datum-display-value').text().should.be.equal("0.1271")
     
+  describe 'as display with 4 decimalPlaces abbreviated', ->
+    component = Th.render <Number attr='foo' model={model} format='abbreviate' decimalPlaces='4'/>
+    domNode = Th.domNode(component)
     
+    it 'should respect decimal places with really large number', ->
+      model.set('foo', 1012505178.57)
+      component.forceUpdate()        
+      $(domNode).find('.datum-display-value').text().should.be.equal("1.0125MM")
     
     
     

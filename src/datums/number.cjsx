@@ -65,7 +65,7 @@ module.exports = class Number extends Datum
     # numberic processing should precede this comment
 
     decimalPlaces = @props.decimalPlaces
-    if !decimalPlaces? && 'money' in formats
+    if !decimalPlaces? && 'money' in formats && 'abbreviate' not in formats
       decimalPlaces = 2
     if decimalPlaces?
       dataValue = dataValue.toFixed(decimalPlaces)
@@ -73,20 +73,24 @@ module.exports = class Number extends Datum
     # at this point, dataValue is a string with 4 decimal places zero filled
     # all formatting that works on the text value goes after here
     
-    if 'percent' in formats
-      dataValue += "%"
-      
-
     if 'abbreviate' in formats
       dataValue = Math.round(parseFloat(dataValue))
-      dataValue = if dataValue >= ONE_BILLION
-        "#{dataValue / ONE_BILLION}MM"
+      [dataValue, affix] = if dataValue >= ONE_BILLION
+        [dataValue / ONE_BILLION, "MM"]
       else if dataValue >= ONE_MILLION
-        "#{dataValue / ONE_MILLION}M"
+        [dataValue / ONE_MILLION, "M" ]
       else if dataValue >= ONE_THOUSAND
-        "#{dataValue / ONE_THOUSAND}K"
+        [dataValue / ONE_THOUSAND, "K"]
       else
-        dataValue
+        [dataValue, ""]
+      
+      if decimalPlaces?
+        dataValue = "#{dataValue.toFixed(decimalPlaces)}#{affix}"
+      else
+        dataValue = dataValue + affix
+
+    if 'percent' in formats
+      dataValue += "%"
 
     if 'comma' in formats
       # add thousands separater

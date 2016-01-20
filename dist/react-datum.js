@@ -2094,18 +2094,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Number.prototype.renderValueForDisplay = function() {
-	    var dataValue, decimal, formats, ref, wholeNumber;
-	    dataValue = this.getModelValue();
+	    var affix, dataValue, decimal, decimalPlaces, formats, ref, ref1, wholeNumber;
+	    dataValue = parseFloat(this.getModelValue());
 	    formats = _.isArray(this.props.format) ? this.props.format : [this.props.format];
+	    if (indexOf.call(formats, 'percent') >= 0) {
+	      dataValue *= 100;
+	    }
+	    decimalPlaces = this.props.decimalPlaces;
+	    if ((decimalPlaces == null) && indexOf.call(formats, 'money') >= 0 && indexOf.call(formats, 'abbreviate') < 0) {
+	      decimalPlaces = 2;
+	    }
+	    if (decimalPlaces != null) {
+	      dataValue = dataValue.toFixed(decimalPlaces);
+	    }
 	    if (indexOf.call(formats, 'abbreviate') >= 0) {
 	      dataValue = Math.round(parseFloat(dataValue));
-	      dataValue = dataValue >= ONE_BILLION ? (dataValue / ONE_BILLION) + "MM" : dataValue >= ONE_MILLION ? (dataValue / ONE_MILLION) + "M" : dataValue >= ONE_THOUSAND ? (dataValue / ONE_THOUSAND) + "K" : dataValue;
+	      ref = dataValue >= ONE_BILLION ? [dataValue / ONE_BILLION, "MM"] : dataValue >= ONE_MILLION ? [dataValue / ONE_MILLION, "M"] : dataValue >= ONE_THOUSAND ? [dataValue / ONE_THOUSAND, "K"] : [dataValue, ""], dataValue = ref[0], affix = ref[1];
+	      if (decimalPlaces != null) {
+	        dataValue = "" + (dataValue.toFixed(decimalPlaces)) + affix;
+	      } else {
+	        dataValue = dataValue + affix;
+	      }
 	    }
 	    if (indexOf.call(formats, 'percent') >= 0) {
-	      dataValue = (parseFloat(dataValue) * 100).toString() + '%';
+	      dataValue += "%";
 	    }
 	    if (indexOf.call(formats, 'comma') >= 0) {
-	      ref = dataValue.toString().split('.'), wholeNumber = ref[0], decimal = ref[1];
+	      ref1 = dataValue.toString().split('.'), wholeNumber = ref1[0], decimal = ref1[1];
 	      dataValue = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	      if (decimal != null) {
 	        dataValue += '.' + decimal;
