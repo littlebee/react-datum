@@ -2071,7 +2071,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Number.propTypes = _.extend({}, Datum.propTypes, {
 	    format: React.PropTypes.node,
 	    decimalPlaces: React.PropTypes.number,
-	    zeroFill: React.PropTypes.number,
+	    zeroFill: React.PropTypes.bool,
 	    minValue: React.PropTypes.number,
 	    maxValue: React.PropTypes.number
 	  });

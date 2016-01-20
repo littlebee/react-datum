@@ -34,7 +34,7 @@ module.exports = class Number extends Datum
     decimalPlaces: React.PropTypes.number
     
     # if decimalPlaces, zeroFill={true} will round out to n places 
-    zeroFill: React.PropTypes.number
+    zeroFill: React.PropTypes.bool
     
     # when input, validate value is at least this value on change
     minValue: React.PropTypes.number
