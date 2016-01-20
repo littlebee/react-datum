@@ -50,6 +50,15 @@ describe 'Number datum', ->
       model.set('foo', 1000)
       component.forceUpdate()        # doesn't automatically update because it's not in a <Model> context
       $(domNode).find('.datum-display-value').text().should.be.equal("$1000.00")
+      
+    it 'should round decimal places to two digits', ->
+      model.set('foo', 1000.015)
+      component.forceUpdate()        
+      $(domNode).find('.datum-display-value').text().should.be.equal("$1000.01")
+      model.set('foo', 1000.016)
+      component.forceUpdate()        
+      $(domNode).find('.datum-display-value').text().should.be.equal("$1000.02")
+      
     
     
   describe 'as display with money and comma formats', ->
@@ -90,8 +99,26 @@ describe 'Number datum', ->
 
     it 'should properly abbreviate on million as money', ->
       model.set('foo', 0.127)
-      component.forceUpdate()        # doesn't automatically update because it's not in a <Model> context
+      component.forceUpdate()       
       $(domNode).find('.datum-display-value').text().should.be.equal("12.7%")
+    
+    
+  describe 'as display with 4 decimalPlaces', ->
+    component = Th.render <Number attr='foo' model={model} decimalPlaces='4'/>
+    domNode = Th.domNode(component)
+
+    it 'should zero fill out to 4 decimal places', ->
+      model.set('foo', 0.127)
+      component.forceUpdate()        
+      $(domNode).find('.datum-display-value').text().should.be.equal("0.1270")
+    
+    it 'should round to 4 decimal places', ->
+      model.set('foo', 0.12715415)
+      component.forceUpdate()       
+      $(domNode).find('.datum-display-value').text().should.be.equal("0.1272")
+      model.set('foo', 0.12714615)
+      component.forceUpdate()        
+      $(domNode).find('.datum-display-value').text().should.be.equal("0.1271")
     
     
     

@@ -65,7 +65,9 @@ module.exports = class ContextualData extends React.Component
 
   getChildContext: ->
     c = {}
-    c[@contextKey] = @state.collectionOrModel
+    # it should be in state, if not we have a misunderstanding.  If you do it from the 
+    # props and context too, might make it difficult to nullify
+    c[@contextKey] = @state.collectionOrModel # || @props[@contextKey] || @context[@contextKey]
     return c
 
 

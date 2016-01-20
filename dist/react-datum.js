@@ -2039,7 +2039,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Datum, Number, ONE_BILLION, ONE_MILLION, ONE_THOUSAND, RECOGNIZED_FORMATS, React, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-	  hasProp = {}.hasOwnProperty;
+	  hasProp = {}.hasOwnProperty,
+	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 	React = __webpack_require__(4);
 
@@ -2068,7 +2069,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Number.displayName = "react-datum.Number";
 
 	  Number.propTypes = _.extend({}, Datum.propTypes, {
-	    format: React.PropTypes.oneOfType([React.PropTypes.oneOf(RECOGNIZED_FORMATS), React.PropTypes.arrayOf(RECOGNIZED_FORMATS)]),
+	    format: React.PropTypes.node,
 	    minValue: React.PropTypes.number,
 	    maxValue: React.PropTypes.number
 	  });
@@ -2093,43 +2094,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Number.prototype.renderValueForDisplay = function() {
-	    var dataValue, decimal, format, formats, i, len, wholeNumber;
+	    var dataValue, decimal, formats, ref, wholeNumber;
 	    dataValue = this.getModelValue();
 	    formats = _.isArray(this.props.format) ? this.props.format : [this.props.format];
-	    for (i = 0, len = formats.length; i < len; i++) {
-	      format = formats[i];
-	      dataValue = (function() {
-	        var ref;
-	        switch (format) {
-	          case 'abbreviate':
-	            if (dataValue > ONE_MILLION) {
-	              return (dataValue / ONE_MILLION) + "M";
-	            } else if (dataValue > ONE_THOUSAND) {
-	              return (dataValue / ONE_THOUSAND) + "K";
-	            } else {
-	              return dataValue;
-	            }
-	            break;
-	          case 'comma':
-	            ref = dataValue.toString().split('.'), wholeNumber = ref[0], decimal = ref[1];
-	            dataValue = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	            if (decimal != null) {
-	              dataValue += '.' + decimal;
-	            }
-	            return dataValue;
-	          case 'money':
-	            dataValue = dataValue.toString().replace(/(.*\.\d$)/, '$10');
-	            if (!(dataValue.indexOf('.') >= 0)) {
-	              dataValue += ".00";
-	            }
-	            dataValue = "$" + dataValue;
-	            return dataValue;
-	          case 'percent':
-	            return dataValue = (Number.parseInt(dataValue) * 10).toString() + '%';
-	          default:
-	            return dataValue;
+	    if (indexOf.call(formats, 'abbreviate') >= 0) {
+	      dataValue = Math.round(parseFloat(dataValue));
+	      dataValue = dataValue >= ONE_BILLION ? (dataValue / ONE_BILLION) + "MM" : dataValue >= ONE_MILLION ? (dataValue / ONE_MILLION) + "M" : dataValue >= ONE_THOUSAND ? (dataValue / ONE_THOUSAND) + "K" : dataValue;
+	    }
+	    if (indexOf.call(formats, 'percent') >= 0) {
+	      dataValue = (parseFloat(dataValue) * 100).toString() + '%';
+	    }
+	    if (indexOf.call(formats, 'comma') >= 0) {
+	      ref = dataValue.toString().split('.'), wholeNumber = ref[0], decimal = ref[1];
+	      dataValue = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	      if (decimal != null) {
+	        dataValue += '.' + decimal;
+	      }
+	    }
+	    if (indexOf.call(formats, 'money') >= 0) {
+	      dataValue = dataValue.toString().replace(/(.*\.\d$)/, '$10');
+	      if (!(dataValue.indexOf('.') >= 0)) {
+	        if (indexOf.call(formats, 'abbreviate') < 0) {
+	          dataValue += ".00";
 	        }
-	      })();
+	      }
+	      dataValue = "$" + dataValue;
 	    }
 	    return dataValue;
 	  };

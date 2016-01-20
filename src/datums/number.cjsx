@@ -55,8 +55,27 @@ module.exports = class Number extends Datum
     overrides super - adds formatting
   ###
   renderValueForDisplay: ->
-    dataValue = @getModelValue()
+    dataValue = parseFloat(@getModelValue())
     formats = if _.isArray(@props.format) then @props.format else [@props.format]
+
+    if 'percent' in formats
+      dataValue *= 100
+
+    # we are going to convert the dataValue to a string now.  All 
+    # numberic processing should precede this comment
+
+    decimalPlaces = @props.decimalPlaces
+    if !decimalPlaces? && 'money' in formats
+      decimalPlaces = 2
+    if decimalPlaces?
+      dataValue = dataValue.toFixed(decimalPlaces)
+
+    # at this point, dataValue is a string with 4 decimal places zero filled
+    # all formatting that works on the text value goes after here
+    
+    if 'percent' in formats
+      dataValue += "%"
+      
 
     if 'abbreviate' in formats
       dataValue = Math.round(parseFloat(dataValue))
@@ -68,9 +87,6 @@ module.exports = class Number extends Datum
         "#{dataValue / ONE_THOUSAND}K"
       else
         dataValue
-
-    if 'percent' in formats
-      dataValue = (parseFloat(dataValue) * 100).toString() + '%'
 
     if 'comma' in formats
       # add thousands separater
