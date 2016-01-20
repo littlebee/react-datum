@@ -100,10 +100,10 @@ describe 'Number datum', ->
     component = Th.render <Number attr='foo' model={model} decimalPlaces='4'/>
     domNode = Th.domNode(component)
 
-    it 'should zero fill out to 4 decimal places', ->
+    it 'should not zero fill out to 4 decimal places unless asked', ->
       model.set('foo', 0.127)
       component.forceUpdate()        
-      $(domNode).find('.datum-display-value').text().should.be.equal("0.1270")
+      $(domNode).find('.datum-display-value').text().should.be.equal("0.127")
     
     it 'should round to 4 decimal places', ->
       model.set('foo', 0.12715415)
@@ -113,6 +113,16 @@ describe 'Number datum', ->
       component.forceUpdate()        
       $(domNode).find('.datum-display-value').text().should.be.equal("0.1271")
     
+  describe 'as display with 4 decimalPlaces zero filled', ->
+    component = Th.render <Number attr='foo' model={model} decimalPlaces='4' zeroFill={true}/>
+    domNode = Th.domNode(component)
+
+    it 'should zero fill out to 4 decimal places when asked nicely', ->
+      model.set('foo', 0.127)
+      component.forceUpdate()        
+      $(domNode).find('.datum-display-value').text().should.be.equal("0.1270")
+      
+
   describe 'as display with 4 decimalPlaces abbreviated', ->
     component = Th.render <Number attr='foo' model={model} format='abbreviate' decimalPlaces='4'/>
     domNode = Th.domNode(component)

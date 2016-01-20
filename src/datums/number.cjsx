@@ -20,21 +20,40 @@ module.exports = class Number extends Datum
   @displayName: "react-datum.Number"
 
   @propTypes: _.extend {}, Datum.propTypes,
+    
     # format only effects display, not input.  Possible values:
     # 'abbreviate' - Add M and K to numbers greater than 1 million and 1 thousand respectively
     # 'money' - display dollar sign and two decimal places zero filled
     # 'comma' - add comma separators at thousands
-    # format: React.PropTypes.oneOfType([
-    #   React.PropTypes.oneOf(RECOGNIZED_FORMATS)
-    #   React.PropTypes.arrayOf(RECOGNIZED_FORMATS)
-    # ])
+    # 'percent' - multiply by 100 and postfix '%'
+    #
+    # can be an array of formats or a single string format
     format: React.PropTypes.node
+    
+    # rounds value to n decimal places
+    decimalPlaces: React.PropTypes.number
+    
+    # if decimalPlaces, zeroFill={true} will round out to n places 
+    zeroFill: React.PropTypes.number
     
     # when input, validate value is at least this value on change
     minValue: React.PropTypes.number
     
     # when input, validate value is at most this value on change
     maxValue: React.PropTypes.number
+    
+  
+  @defaultProps: _.extend {}, Datum.defaultProps,
+    # Exceptional case: when format='money' is used without format='abbreviate',
+    # this defaults to 2
+    decimalPlaces: null
+    # Exceptional case: when format='money' is used without format='abbreviate',
+    # this defaults to 2
+    zeroFill: false
+    
+    
+    
+  
 
 
   # TODO : push down this feature to Datum? with default to all   
@@ -55,57 +74,26 @@ module.exports = class Number extends Datum
     overrides super - adds formatting
   ###
   renderValueForDisplay: ->
-    dataValue = parseFloat(@getModelValue())
+    value = parseFloat(@getModelValue())
     formats = if _.isArray(@props.format) then @props.format else [@props.format]
 
     if 'percent' in formats
-      dataValue *= 100
-
-    # we are going to convert the dataValue to a string now.  All 
-    # numberic processing should precede this comment
-
-    decimalPlaces = @props.decimalPlaces
-    if !decimalPlaces? && 'money' in formats && 'abbreviate' not in formats
-      decimalPlaces = 2
-    if decimalPlaces?
-      dataValue = dataValue.toFixed(decimalPlaces)
-
-    # at this point, dataValue is a string with 4 decimal places zero filled
-    # all formatting that works on the text value goes after here
-    
-    if 'abbreviate' in formats
-      dataValue = Math.round(parseFloat(dataValue))
-      [dataValue, affix] = if dataValue >= ONE_BILLION
-        [dataValue / ONE_BILLION, "MM"]
-      else if dataValue >= ONE_MILLION
-        [dataValue / ONE_MILLION, "M" ]
-      else if dataValue >= ONE_THOUSAND
-        [dataValue / ONE_THOUSAND, "K"]
-      else
-        [dataValue, ""]
+      value *= 100
       
-      if decimalPlaces?
-        dataValue = "#{dataValue.toFixed(decimalPlaces)}#{affix}"
-      else
-        dataValue = dataValue + affix
+    # we are going to convert the value to a string now.  All 
+    # numberic processing should precede this comment
+    value = @roundToDecimalPlaces(value, formats)
+
+    # at this point, value is a string with 4 decimal places zero filled
+    # all formatting that works on the text value goes after here
+    value = @abbreviate(value, formats)
+    value = @addCommas(value, formats)
+    value = @monitize(value, formats)
 
     if 'percent' in formats
-      dataValue += "%"
+      value += "%"
 
-    if 'comma' in formats
-      # add thousands separater
-      [wholeNumber, decimal] = dataValue.toString().split('.')
-      dataValue = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      dataValue += '.' + decimal if decimal?
-
-    if 'money' in formats
-      dataValue = dataValue.toString().replace(/(.*\.\d$)/, '$10')
-      unless dataValue.indexOf('.') >= 0
-        dataValue += ".00" unless 'abbreviate' in formats
-      dataValue = "$#{dataValue}"
-
-
-    return dataValue
+    return value
 
 
   # extends super
@@ -133,3 +121,61 @@ module.exports = class Number extends Datum
     return true unless @props.maxValue?
     return true if value <= @props.maxValue
     return "The value must be equal or less than #{@props.maxValue}"
+    
+  ###  
+    returns a string with number value input rounded to user requested props.decimalPlaces 
+      and optionally zeroFilled if @props.zeroFill == true
+    note that 'money', when not 'abbreviate'd should zero fill out to two decimal places 
+    unless props indicate otherwise
+  ###
+  roundToDecimalPlaces: (value, formats) ->
+    decimalPlaces = @props.decimalPlaces
+    zeroFill = @props.zeroFill
+    if 'money' in formats && 'abbreviate' not in formats
+      decimalPlaces ?= 2
+      zeroFill ?= true
+      
+    if decimalPlaces?
+      value = value.toFixed(decimalPlaces)
+      unless zeroFill
+        value = parseFloat(value).toString()
+        
+    return value
+    
+    
+  abbreviate: (value, formats) ->
+    if 'abbreviate' in formats
+      value = Math.round(parseFloat(value))
+      [value, affix] = if value >= ONE_BILLION
+        [value / ONE_BILLION, "MM"]
+      else if value >= ONE_MILLION
+        [value / ONE_MILLION, "M" ]
+      else if value >= ONE_THOUSAND
+        [value / ONE_THOUSAND, "K"]
+      else
+        [value, ""]
+
+      value = "#{@roundToDecimalPlaces(value, formats)}#{affix}"
+    return value
+        
+        
+  addCommas: (value, formats) ->
+    if 'comma' in formats
+      # add thousands separater
+      [wholeNumber, decimal] = value.toString().split('.')
+      value = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      value += '.' + decimal if decimal?
+    return value
+
+
+  monitize: (value, formats) ->
+    if 'money' in formats
+      value = value.toString().replace(/(.*\.\d$)/, '$10')
+      unless value.indexOf('.') >= 0
+        value += ".00" unless 'abbreviate' in formats
+      value = "$#{value}"
+    return value
+
+    
+  
+    

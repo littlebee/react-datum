@@ -2070,8 +2070,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Number.propTypes = _.extend({}, Datum.propTypes, {
 	    format: React.PropTypes.node,
+	    decimalPlaces: React.PropTypes.number,
+	    zeroFill: React.PropTypes.number,
 	    minValue: React.PropTypes.number,
 	    maxValue: React.PropTypes.number
+	  });
+
+	  Number.defaultProps = _.extend({}, Datum.defaultProps, {
+	    decimalPlaces: null,
+	    zeroFill: false
 	  });
 
 	  Number.prototype.charactersMustMatch = /^\-?[0-9]*\.?[0-9]*$/;
@@ -2094,48 +2101,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Number.prototype.renderValueForDisplay = function() {
-	    var affix, dataValue, decimal, decimalPlaces, formats, ref, ref1, wholeNumber;
-	    dataValue = parseFloat(this.getModelValue());
+	    var formats, value;
+	    value = parseFloat(this.getModelValue());
 	    formats = _.isArray(this.props.format) ? this.props.format : [this.props.format];
 	    if (indexOf.call(formats, 'percent') >= 0) {
-	      dataValue *= 100;
+	      value *= 100;
 	    }
-	    decimalPlaces = this.props.decimalPlaces;
-	    if ((decimalPlaces == null) && indexOf.call(formats, 'money') >= 0 && indexOf.call(formats, 'abbreviate') < 0) {
-	      decimalPlaces = 2;
-	    }
-	    if (decimalPlaces != null) {
-	      dataValue = dataValue.toFixed(decimalPlaces);
-	    }
-	    if (indexOf.call(formats, 'abbreviate') >= 0) {
-	      dataValue = Math.round(parseFloat(dataValue));
-	      ref = dataValue >= ONE_BILLION ? [dataValue / ONE_BILLION, "MM"] : dataValue >= ONE_MILLION ? [dataValue / ONE_MILLION, "M"] : dataValue >= ONE_THOUSAND ? [dataValue / ONE_THOUSAND, "K"] : [dataValue, ""], dataValue = ref[0], affix = ref[1];
-	      if (decimalPlaces != null) {
-	        dataValue = "" + (dataValue.toFixed(decimalPlaces)) + affix;
-	      } else {
-	        dataValue = dataValue + affix;
-	      }
-	    }
+	    value = this.roundToDecimalPlaces(value, formats);
+	    value = this.abbreviate(value, formats);
+	    value = this.addCommas(value, formats);
+	    value = this.monitize(value, formats);
 	    if (indexOf.call(formats, 'percent') >= 0) {
-	      dataValue += "%";
+	      value += "%";
 	    }
-	    if (indexOf.call(formats, 'comma') >= 0) {
-	      ref1 = dataValue.toString().split('.'), wholeNumber = ref1[0], decimal = ref1[1];
-	      dataValue = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	      if (decimal != null) {
-	        dataValue += '.' + decimal;
-	      }
-	    }
-	    if (indexOf.call(formats, 'money') >= 0) {
-	      dataValue = dataValue.toString().replace(/(.*\.\d$)/, '$10');
-	      if (!(dataValue.indexOf('.') >= 0)) {
-	        if (indexOf.call(formats, 'abbreviate') < 0) {
-	          dataValue += ".00";
-	        }
-	      }
-	      dataValue = "$" + dataValue;
-	    }
-	    return dataValue;
+	    return value;
 	  };
 
 	  Number.prototype.renderPlaceHolder = function() {
@@ -2171,6 +2150,70 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return true;
 	    }
 	    return "The value must be equal or less than " + this.props.maxValue;
+	  };
+
+
+	  /*  
+	    returns a string with number value input rounded to user requested props.decimalPlaces 
+	      and optionally zeroFilled if @props.zeroFill == true
+	    note that 'money', when not 'abbreviate'd should zero fill out to two decimal places 
+	    unless props indicate otherwise
+	   */
+
+	  Number.prototype.roundToDecimalPlaces = function(value, formats) {
+	    var decimalPlaces, zeroFill;
+	    decimalPlaces = this.props.decimalPlaces;
+	    zeroFill = this.props.zeroFill;
+	    if (indexOf.call(formats, 'money') >= 0 && indexOf.call(formats, 'abbreviate') < 0) {
+	      if (decimalPlaces == null) {
+	        decimalPlaces = 2;
+	      }
+	      if (zeroFill == null) {
+	        zeroFill = true;
+	      }
+	    }
+	    if (decimalPlaces != null) {
+	      value = value.toFixed(decimalPlaces);
+	      if (!zeroFill) {
+	        value = parseFloat(value).toString();
+	      }
+	    }
+	    return value;
+	  };
+
+	  Number.prototype.abbreviate = function(value, formats) {
+	    var affix, ref;
+	    if (indexOf.call(formats, 'abbreviate') >= 0) {
+	      value = Math.round(parseFloat(value));
+	      ref = value >= ONE_BILLION ? [value / ONE_BILLION, "MM"] : value >= ONE_MILLION ? [value / ONE_MILLION, "M"] : value >= ONE_THOUSAND ? [value / ONE_THOUSAND, "K"] : [value, ""], value = ref[0], affix = ref[1];
+	      value = "" + (this.roundToDecimalPlaces(value, formats)) + affix;
+	    }
+	    return value;
+	  };
+
+	  Number.prototype.addCommas = function(value, formats) {
+	    var decimal, ref, wholeNumber;
+	    if (indexOf.call(formats, 'comma') >= 0) {
+	      ref = value.toString().split('.'), wholeNumber = ref[0], decimal = ref[1];
+	      value = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	      if (decimal != null) {
+	        value += '.' + decimal;
+	      }
+	    }
+	    return value;
+	  };
+
+	  Number.prototype.monitize = function(value, formats) {
+	    if (indexOf.call(formats, 'money') >= 0) {
+	      value = value.toString().replace(/(.*\.\d$)/, '$10');
+	      if (!(value.indexOf('.') >= 0)) {
+	        if (indexOf.call(formats, 'abbreviate') < 0) {
+	          value += ".00";
+	        }
+	      }
+	      value = "$" + value;
+	    }
+	    return value;
 	  };
 
 	  return Number;
