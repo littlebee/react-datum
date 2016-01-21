@@ -1119,7 +1119,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  function ContextualData(props) {
-	    this._onDataChanged = bind(this._onDataChanged, this);
+	    this.onDataChanged = bind(this.onDataChanged, this);
 	    ContextualData.__super__.constructor.call(this, props);
 	    this.state = {
 	      lastUpdated: null,
@@ -1145,16 +1145,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  ContextualData.prototype.componentWillUnmount = function() {
-	    return this._unbindEvents();
+	    return this.unbindEvents();
 	  };
 
 	  ContextualData.prototype.componentWillMount = function() {
-	    return this._initializeCollectionOrModel();
+	    return this.initializeCollectionOrModel();
 	  };
 
 	  ContextualData.prototype.componentWillReceiveProps = function(newProps) {
 	    this.props = newProps;
-	    return this._initializeCollectionOrModel();
+	    return this.initializeCollectionOrModel();
 	  };
 
 
@@ -1166,50 +1166,79 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.state.collectionOrModel.fetch(this.props.fetchOptions);
 	  };
 
-	  ContextualData.prototype._initializeCollectionOrModel = function() {
-	    if (!this._needsReinitializing()) {
+
+	  /*
+	    extend this method to provide additional initialization on the 
+	    thing you provide.  You should probably call super
+	   */
+
+	  ContextualData.prototype.initializeCollectionOrModel = function() {
+	    if (!this.needsReinitializing()) {
 	      return;
 	    }
-	    this._unbindEvents();
-	    this._setCollectionOrModel();
-	    this._bindEvents();
+	    this.unbindEvents();
+	    this.setCollectionOrModel();
+	    this.bindEvents();
 	    if (this.props.fetch && (this.state.collectionOrModel != null)) {
 	      return this.fetchCollectionOrModel();
 	    }
 	  };
 
-	  ContextualData.prototype._getInputCollectionOrModel = function() {
+
+	  /*
+	    override this method to input from somewhere other than the context or props being passed in
+	   */
+
+	  ContextualData.prototype.getInputCollectionOrModel = function() {
 	    return this.props[this.contextKey] || this.context[this.contextKey];
 	  };
 
-	  ContextualData.prototype._needsReinitializing = function() {
+
+	  /*
+	    override or extend this method to provide something other than what we recieve
+	   */
+
+	  ContextualData.prototype.getCollectionOrModelToProvide = function() {
+	    return this.getInputCollectionOrModel();
+	  };
+
+
+	  /*
+	    extend this to provide additional tests to determine if initialization is 
+	    needed.  You should probably extend this method like so:
+	    ```
+	      return super() || this._someOtherTest()
+	    ```
+	   */
+
+	  ContextualData.prototype.needsReinitializing = function() {
 	    var collectionOrModel, truth;
-	    collectionOrModel = this._getInputCollectionOrModel();
+	    collectionOrModel = this.getCollectionOrModelToProvide();
 	    truth = (this.state.collectionOrModel == null) || collectionOrModel !== this._lastPropsModel;
 	    this._lastPropsModel = collectionOrModel;
 	    return truth;
 	  };
 
-	  ContextualData.prototype._setCollectionOrModel = function() {
+	  ContextualData.prototype.setCollectionOrModel = function() {
 	    var collectionOrModel;
-	    collectionOrModel = this._getInputCollectionOrModel();
+	    collectionOrModel = this.getCollectionOrModelToProvide();
 	    this.setState({
 	      collectionOrModel: collectionOrModel
 	    });
 	    return this.state.collectionOrModel = collectionOrModel;
 	  };
 
-	  ContextualData.prototype._bindEvents = function() {
+	  ContextualData.prototype.bindEvents = function() {
 	    var ref;
-	    return (ref = this.state.collectionOrModel) != null ? ref.on('all', this._onDataChanged, this) : void 0;
+	    return (ref = this.state.collectionOrModel) != null ? ref.on('all', this.onDataChanged, this) : void 0;
 	  };
 
-	  ContextualData.prototype._unbindEvents = function() {
+	  ContextualData.prototype.unbindEvents = function() {
 	    var ref;
-	    return (ref = this.state.collectionOrModel) != null ? ref.off('all', this._onDataChanged) : void 0;
+	    return (ref = this.state.collectionOrModel) != null ? ref.off('all', this.onDataChanged) : void 0;
 	  };
 
-	  ContextualData.prototype._onDataChanged = function() {
+	  ContextualData.prototype.onDataChanged = function() {
 	    return this.setState({
 	      lastUpdated: Date.now()
 	    });
@@ -1259,9 +1288,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    collection: React.PropTypes.instanceOf(Backbone.Collection)
 	  });
 
-	  Collection.prototype._setCollectionOrModel = function() {
+	  Collection.prototype.setCollectionOrModel = function() {
 	    var collection;
-	    Collection.__super__._setCollectionOrModel.apply(this, arguments);
+	    Collection.__super__.setCollectionOrModel.apply(this, arguments);
 	    collection = this.state.collectionOrModel;
 	    if (!((collection == null) || collection.hasSelectableCollectionMixin)) {
 	      SelectableCollection.applyTo(collection);
@@ -1762,35 +1791,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, this.props.placeholder);
 	  };
 
-	  SelectedModel.prototype._needsReinitializing = function() {
+	  SelectedModel.prototype.needsReinitializing = function() {
 	    var truth;
-	    truth = SelectedModel.__super__._needsReinitializing.call(this) || this.context.collection !== this._lastContextCollection;
+	    truth = SelectedModel.__super__.needsReinitializing.call(this) || this.context.collection !== this._lastContextCollection;
 	    this._lastContextCollection = this.context.collection;
 	    return truth;
 	  };
 
-	  SelectedModel.prototype._getInputCollectionOrModel = function() {
+	  SelectedModel.prototype.getCollectionOrModelToProvide = function() {
 	    var collection;
 	    collection = this.props.collection || this.context.collection;
 	    return collection != null ? typeof collection.getSelectedModels === "function" ? collection.getSelectedModels()[0] : void 0 : void 0;
 	  };
 
-	  SelectedModel.prototype._bindEvents = function(model) {
+	  SelectedModel.prototype.bindEvents = function(model) {
 	    var ref;
-	    SelectedModel.__super__._bindEvents.apply(this, arguments);
+	    SelectedModel.__super__.bindEvents.apply(this, arguments);
 	    return (ref = this.collection) != null ? ref.on("selectionsChanged", this._onSelectionsChanged) : void 0;
 	  };
 
-	  SelectedModel.prototype._unbindEvents = function() {
+	  SelectedModel.prototype.unbindEvents = function() {
 	    var ref;
-	    SelectedModel.__super__._unbindEvents.apply(this, arguments);
+	    SelectedModel.__super__.unbindEvents.apply(this, arguments);
 	    return (ref = this.collection) != null ? ref.off("selectionsChanged", this._onSelectionsChanged) : void 0;
 	  };
 
 	  SelectedModel.prototype._onSelectionsChanged = function() {
-	    this._unbindEvents();
-	    this._setCollectionOrModel();
-	    this._bindEvents();
+	    this.unbindEvents();
+	    this.setCollectionOrModel();
+	    this.bindEvents();
 	    return this.forceUpdate();
 	  };
 

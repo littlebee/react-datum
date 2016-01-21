@@ -37,32 +37,32 @@ module.exports = class SelectedModel extends ContextualData
 
 
   # extends - also need to consider our inbound context collection may have changed
-  _needsReinitializing: () ->
+  needsReinitializing: () ->
     truth = super() || @context.collection != @_lastContextCollection
     @_lastContextCollection = @context.collection
     return truth;
 
 
   # override - @collectionOrModel should be the selected model in the collection
-  _getInputCollectionOrModel: () ->
+  getCollectionOrModelToProvide: () ->
     collection = @props.collection || @context.collection 
     return collection?.getSelectedModels?()[0]
 
 
   # extends - in addition to listening to our selected model events, listen for
   # selections changed on collection
-  _bindEvents: (model) ->
+  bindEvents: (model) ->
     super
     @collection?.on "selectionsChanged", @_onSelectionsChanged
 
 
-  _unbindEvents: () ->
+  unbindEvents: () ->
     super
     @collection?.off "selectionsChanged", @_onSelectionsChanged
 
 
   _onSelectionsChanged: =>
-    @_unbindEvents()
-    @_setCollectionOrModel()
-    @_bindEvents()
+    @unbindEvents()
+    @setCollectionOrModel()
+    @bindEvents()
     @forceUpdate()

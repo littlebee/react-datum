@@ -31,7 +31,7 @@ module.exports = class ContextualData extends React.Component
 
   # you will also possibly want to extend these in your child class.  like this:
   # ```
-  #   @proptypes: _.extend {}, ContextualData.propTypes,
+  #   @proptypes: _.extend {}, ReactDatum.ContextualData.propTypes,
   #     collection: React.PropTypes.oneOfType([
   #       React.PropTypes.instanceOf(Backbone.Collection)
   #       React.PropTypes.func
@@ -43,7 +43,7 @@ module.exports = class ContextualData extends React.Component
 
   # you will also need to similarly extend this, like this:
   #```
-  #  @childContextTypes: _.extend {}, ContextualData.childContextTypes,
+  #  @childContextTypes: _.extend {}, ReactDatum.ContextualData.childContextTypes,
   #    collection: React.PropTypes.instanceOf(Backbone.Collection)
   #```
   @childContextTypes: {}
@@ -52,6 +52,7 @@ module.exports = class ContextualData extends React.Component
   @defaultProps:
     fetch: false
     fetchOptions: {}
+
     
   constructor: (props) ->
     super props
@@ -59,9 +60,7 @@ module.exports = class ContextualData extends React.Component
     @state = 
       lastUpdated: null
       collectionOrModel: null
-    
 
-  # that's it!  most of the rest should not need to be overridden or extended
 
   getChildContext: ->
     c = {}
@@ -81,16 +80,16 @@ module.exports = class ContextualData extends React.Component
 
 
   componentWillUnmount: ->
-    @_unbindEvents()
+    @unbindEvents()
     
     
   componentWillMount: ->
-    @_initializeCollectionOrModel()
+    @initializeCollectionOrModel()
     
   
   componentWillReceiveProps: (newProps)->
     @props = newProps
-    @_initializeCollectionOrModel()
+    @initializeCollectionOrModel()
     
     
   # api
@@ -100,35 +99,55 @@ module.exports = class ContextualData extends React.Component
     override this model to do a custom fetch method like fetchForUser or some such
   ###
   fetchCollectionOrModel: () ->
-      @state.collectionOrModel.fetch(@props.fetchOptions) 
+    @state.collectionOrModel.fetch(@props.fetchOptions) 
 
 
-  # implementation
-  
-  _initializeCollectionOrModel: () ->
+  ###
+    extend this method to provide additional initialization on the 
+    thing you provide.  You should probably call super
+  ###
+  initializeCollectionOrModel: () ->
     # we already have a model and the props model hasn't changed
-    return unless @_needsReinitializing()
+    return unless @needsReinitializing()
 
-    @_unbindEvents()
-    @_setCollectionOrModel()
-    @_bindEvents()
+    @unbindEvents()
+    @setCollectionOrModel()
+    @bindEvents()
     if @props.fetch && @state.collectionOrModel?
       @fetchCollectionOrModel()
+  
       
-      
-  _getInputCollectionOrModel: () ->
+  ###
+    override this method to input from somewhere other than the context or props being passed in
+  ###
+  getInputCollectionOrModel: () ->
     @props[@contextKey] || @context[@contextKey]
+  
+  
+  ###
+    override or extend this method to provide something other than what we recieve
+  ###  
+  getCollectionOrModelToProvide: () ->
+    @getInputCollectionOrModel()
     
 
-  _needsReinitializing: () ->
-    collectionOrModel = @_getInputCollectionOrModel()
+  ###
+    extend this to provide additional tests to determine if initialization is 
+    needed.  You should probably extend this method like so:
+    ```
+      return super() || this._someOtherTest()
+    ```
+  ###
+  needsReinitializing: () ->
+    collectionOrModel = @getCollectionOrModelToProvide()
     truth = !@state.collectionOrModel? ||collectionOrModel != @_lastPropsModel
     @_lastPropsModel = collectionOrModel
     return truth
 
 
-  _setCollectionOrModel: () ->
-    collectionOrModel = @_getInputCollectionOrModel()
+
+  setCollectionOrModel: () ->
+    collectionOrModel = @getCollectionOrModelToProvide()
 
     @setState(collectionOrModel: collectionOrModel)
     # TODO : why do I need to do this.  @setState seems to not immediately take above
@@ -136,13 +155,13 @@ module.exports = class ContextualData extends React.Component
     @state.collectionOrModel = collectionOrModel
 
 
-  _bindEvents: () ->
-    @state.collectionOrModel?.on 'all', @_onDataChanged, @
+  bindEvents: () ->
+    @state.collectionOrModel?.on 'all', @onDataChanged, @
 
 
-  _unbindEvents: () ->
-    @state.collectionOrModel?.off 'all', @_onDataChanged
+  unbindEvents: () ->
+    @state.collectionOrModel?.off 'all', @onDataChanged
 
 
-  _onDataChanged: () =>
+  onDataChanged: () =>
     @setState(lastUpdated: Date.now())
