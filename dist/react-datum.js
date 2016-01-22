@@ -1108,14 +1108,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  ContextualData.propTypes = {
 	    fetch: React.PropTypes.bool,
-	    fetchOptions: React.PropTypes.object
+	    fetchOptions: React.PropTypes.object,
+	    placeholder: React.PropTypes.node
 	  };
 
 	  ContextualData.childContextTypes = {};
 
 	  ContextualData.defaultProps = {
 	    fetch: false,
-	    fetchOptions: {}
+	    fetchOptions: {},
+	    placeholder: void 0
 	  };
 
 	  function ContextualData(props) {
@@ -1141,7 +1143,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  ContextualData.prototype.renderContent = function() {
-	    return this.props.children;
+	    if ((this.state.collectionOrModel != null) || this.props.placeholder === void 0) {
+	      return this.props.children;
+	    }
+	    return this.props.placeholder;
 	  };
 
 	  ContextualData.prototype.componentWillUnmount = function() {
@@ -1240,7 +1245,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  ContextualData.prototype.onDataChanged = function() {
 	    return this.setState({
-	      lastUpdated: Date.now()
+	      lastUpdated: Date.now(),
+	      collectionOrModel: this.getCollectionOrModelToProvide()
 	    });
 	  };
 

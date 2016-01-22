@@ -38,8 +38,12 @@ module.exports = class ContextualData extends React.Component
   #     ]).isRequired
   # ```
   @propTypes:
+    # set this to true to issue the initial fetch of the collection on mount
     fetch: React.PropTypes.bool
+    # passed through to collection|model fetch
     fetchOptions: React.PropTypes.object
+    # something to render if our input model|collection is not available
+    placeholder: React.PropTypes.node  # anything react can render
 
   # you will also need to similarly extend this, like this:
   #```
@@ -52,6 +56,11 @@ module.exports = class ContextualData extends React.Component
   @defaultProps:
     fetch: false
     fetchOptions: {}
+    # we don't define placeholder, that's up to our subclass. with 
+    # `placeholder: undefined` by default, there is no placeholder,
+    # the renderContent method will always render children
+    placeholder: undefined
+    
 
     
   constructor: (props) ->
@@ -74,9 +83,12 @@ module.exports = class ContextualData extends React.Component
     return <div className={@contextKey}>{@renderContent()}</div>
 
 
-  # some children render a placeholder if collectionOrModel is empty
+  # if the model we provide isn't set, render placeholder if user asked nicely
   renderContent: ->
-    return @props.children
+    if @state.collectionOrModel? || @props.placeholder == undefined
+      return @props.children
+    
+    return @props.placeholder
 
 
   componentWillUnmount: ->
@@ -164,4 +176,4 @@ module.exports = class ContextualData extends React.Component
 
 
   onDataChanged: () =>
-    @setState(lastUpdated: Date.now())
+    @setState(lastUpdated: Date.now(), collectionOrModel: @getCollectionOrModelToProvide())
