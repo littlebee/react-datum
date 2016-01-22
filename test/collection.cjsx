@@ -32,7 +32,11 @@ describe "Collection", ->
       component = Th.render <Collection collection={testCollection} fetch={true}/>
       testCollection.fetch.restore()
       fetchStub.should.have.been.called
-  
+
+    it "should passthrough className to element", ->
+      component = Th.render <Collection collection={testCollection} className="haz multipols"/>
+      domNode = Th.domNode(component)
+      $(domNode).attr("class").should.be.equal('contextual-data collection haz multipols')
     
   describe "when selecting models, Backbone collection", ->
     testCollection = null

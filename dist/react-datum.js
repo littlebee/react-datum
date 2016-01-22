@@ -1109,7 +1109,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  ContextualData.propTypes = {
 	    fetch: React.PropTypes.bool,
 	    fetchOptions: React.PropTypes.object,
-	    placeholder: React.PropTypes.node
+	    placeholder: React.PropTypes.node,
+	    className: React.PropTypes.string
 	  };
 
 	  ContextualData.childContextTypes = {};
@@ -1137,8 +1138,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  ContextualData.prototype.render = function() {
+	    var className;
+	    className = "contextual-data " + this.contextKey + " " + this.props.className;
 	    return React.createElement("div", {
-	      "className": this.contextKey
+	      "className": className
 	    }, this.renderContent());
 	  };
 

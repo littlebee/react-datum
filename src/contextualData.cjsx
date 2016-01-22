@@ -44,6 +44,8 @@ module.exports = class ContextualData extends React.Component
     fetchOptions: React.PropTypes.object
     # something to render if our input model|collection is not available
     placeholder: React.PropTypes.node  # anything react can render
+    # additional css classes to add
+    className: React.PropTypes.string
 
   # you will also need to similarly extend this, like this:
   #```
@@ -80,7 +82,8 @@ module.exports = class ContextualData extends React.Component
 
 
   render: ->
-    return <div className={@contextKey}>{@renderContent()}</div>
+    className = "contextual-data #{@contextKey} #{@props.className}"
+    return <div className={className}>{@renderContent()}</div>
 
 
   # if the model we provide isn't set, render placeholder if user asked nicely
