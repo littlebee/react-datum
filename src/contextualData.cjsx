@@ -147,7 +147,7 @@ module.exports = class ContextualData extends React.Component
     
 
   ###
-    extend this to provide additional tests to determine if initialization is 
+    extend this method to provide additional tests to determine if initialization is 
     needed.  You should probably extend this method like so:
     ```
       return super() || this._someOtherTest()
@@ -158,7 +158,6 @@ module.exports = class ContextualData extends React.Component
     truth = !@state.collectionOrModel? ||collectionOrModel != @_lastPropsModel
     @_lastPropsModel = collectionOrModel
     return truth
-
 
 
   setCollectionOrModel: () ->
