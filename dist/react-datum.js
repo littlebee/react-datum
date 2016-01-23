@@ -932,6 +932,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.getModelValue();
 	  };
 
+
+	  /*
+	    returns the Backbone Model currently associated with the datum
+	   */
+
 	  Datum.prototype.getModel = function() {
 	    var ref, ref1;
 	    return ((ref = this.props) != null ? ref.model : void 0) || ((ref1 = this.context) != null ? ref1.model : void 0) || new Backbone.Model();
@@ -2107,7 +2112,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Number.displayName = "react-datum.Number";
 
 	  Number.propTypes = _.extend({}, Datum.propTypes, {
-	    format: React.PropTypes.node,
+	    format: React.PropTypes.oneOfType([React.PropTypes.array, React.PropTypes.string]),
 	    decimalPlaces: React.PropTypes.number,
 	    zeroFill: React.PropTypes.bool,
 	    minValue: React.PropTypes.number,
@@ -2116,7 +2121,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Number.defaultProps = _.extend({}, Datum.defaultProps, {
 	    decimalPlaces: null,
-	    zeroFill: false
+	    zeroFill: null
 	  });
 
 	  Number.prototype.charactersMustMatch = /^\-?[0-9]*\.?[0-9]*$/;
@@ -2139,9 +2144,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Number.prototype.renderValueForDisplay = function() {
-	    var formats, value;
+	    var formats, ref, value;
 	    value = parseFloat(this.getModelValue());
-	    formats = _.isArray(this.props.format) ? this.props.format : [this.props.format];
+	    formats = _.isArray(this.props.format) ? this.props.format : ((ref = this.props.format) != null ? ref.toString().split(' ') : void 0) || [];
 	    if (indexOf.call(formats, 'percent') >= 0) {
 	      value *= 100;
 	    }
@@ -2202,12 +2207,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var decimalPlaces, zeroFill;
 	    decimalPlaces = this.props.decimalPlaces;
 	    zeroFill = this.props.zeroFill;
-	    if (indexOf.call(formats, 'money') >= 0 && indexOf.call(formats, 'abbreviate') < 0) {
+	    if (indexOf.call(formats, 'money') >= 0) {
 	      if (decimalPlaces == null) {
 	        decimalPlaces = 2;
 	      }
 	      if (zeroFill == null) {
-	        zeroFill = true;
+	        zeroFill = !(indexOf.call(formats, 'abbreviate') >= 0);
 	      }
 	    }
 	    if (decimalPlaces != null) {
@@ -2222,8 +2227,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Number.prototype.abbreviate = function(value, formats) {
 	    var affix, ref;
 	    if (indexOf.call(formats, 'abbreviate') >= 0) {
-	      value = Math.round(parseFloat(value));
-	      ref = value >= ONE_BILLION ? [value / ONE_BILLION, "MM"] : value >= ONE_MILLION ? [value / ONE_MILLION, "M"] : value >= ONE_THOUSAND ? [value / ONE_THOUSAND, "K"] : [value, ""], value = ref[0], affix = ref[1];
+	      value = parseFloat(value);
+	      ref = value >= ONE_MILLION ? [value / ONE_MILLION, "MM"] : value >= ONE_THOUSAND ? [value / ONE_THOUSAND, "K"] : [value, ""], value = ref[0], affix = ref[1];
 	      value = "" + (this.roundToDecimalPlaces(value, formats)) + affix;
 	    }
 	    return value;
@@ -2243,12 +2248,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Number.prototype.monitize = function(value, formats) {
 	    if (indexOf.call(formats, 'money') >= 0) {
-	      value = value.toString().replace(/(.*\.\d$)/, '$10');
-	      if (!(value.indexOf('.') >= 0)) {
-	        if (indexOf.call(formats, 'abbreviate') < 0) {
-	          value += ".00";
-	        }
-	      }
 	      value = "$" + value;
 	    }
 	    return value;

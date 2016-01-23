@@ -295,7 +295,9 @@ module.exports = class Datum extends React.Component
   getValueForInput: () ->
     @getModelValue()
     
-
+  ###
+    returns the Backbone Model currently associated with the datum
+  ###
   getModel: ->
     return @props?.model || @context?.model || new Backbone.Model()
 

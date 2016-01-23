@@ -28,7 +28,10 @@ module.exports = class Number extends Datum
     # 'percent' - multiply by 100 and postfix '%'
     #
     # can be an array of formats or a single string format
-    format: React.PropTypes.node
+    format: React.PropTypes.oneOfType [
+      React.PropTypes.array
+      React.PropTypes.string
+    ]
     
     # rounds value to n decimal places
     decimalPlaces: React.PropTypes.number
@@ -47,9 +50,11 @@ module.exports = class Number extends Datum
     # Exceptional case: when format='money' is used without format='abbreviate',
     # this defaults to 2
     decimalPlaces: null
+    
     # Exceptional case: when format='money' is used without format='abbreviate',
-    # this defaults to 2
-    zeroFill: false
+    # this defaults to 2, you can however change the money behavior by explicitly
+    # setting zerofill to false
+    zeroFill: null
     
     
     
@@ -75,7 +80,7 @@ module.exports = class Number extends Datum
   ###
   renderValueForDisplay: ->
     value = parseFloat(@getModelValue())
-    formats = if _.isArray(@props.format) then @props.format else [@props.format]
+    formats = if _.isArray(@props.format) then @props.format else @props.format?.toString().split(' ') || []
 
     if 'percent' in formats
       value *= 100
@@ -131,9 +136,9 @@ module.exports = class Number extends Datum
   roundToDecimalPlaces: (value, formats) ->
     decimalPlaces = @props.decimalPlaces
     zeroFill = @props.zeroFill
-    if 'money' in formats && 'abbreviate' not in formats
+    if 'money' in formats
       decimalPlaces ?= 2
-      zeroFill ?= true
+      zeroFill ?= !('abbreviate' in formats)
       
     if decimalPlaces?
       value = value.toFixed(decimalPlaces)
@@ -145,11 +150,9 @@ module.exports = class Number extends Datum
     
   abbreviate: (value, formats) ->
     if 'abbreviate' in formats
-      value = Math.round(parseFloat(value))
-      [value, affix] = if value >= ONE_BILLION
-        [value / ONE_BILLION, "MM"]
-      else if value >= ONE_MILLION
-        [value / ONE_MILLION, "M" ]
+      value = parseFloat(value)
+      [value, affix] = if value >= ONE_MILLION
+        [value / ONE_MILLION, "MM" ]
       else if value >= ONE_THOUSAND
         [value / ONE_THOUSAND, "K"]
       else
@@ -170,9 +173,6 @@ module.exports = class Number extends Datum
 
   monitize: (value, formats) ->
     if 'money' in formats
-      value = value.toString().replace(/(.*\.\d$)/, '$10')
-      unless value.indexOf('.') >= 0
-        value += ".00" unless 'abbreviate' in formats
       value = "$#{value}"
     return value
 
