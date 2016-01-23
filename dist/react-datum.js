@@ -1217,7 +1217,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	  /*
-	    extend this to provide additional tests to determine if initialization is 
+	    extend this method to provide additional tests to determine if initialization is 
 	    needed.  You should probably extend this method like so:
 	    ```
 	      return super() || this._someOtherTest()
