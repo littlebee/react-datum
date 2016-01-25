@@ -684,6 +684,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.validateRequired = bind(this.validateRequired, this);
 	    this.focus = bind(this.focus, this);
 	    this.onInputRef = bind(this.onInputRef, this);
+	    this.getInputComponent = bind(this.getInputComponent, this);
 	    this.onChange = bind(this.onChange, this);
 	    this.addValidations = bind(this.addValidations, this);
 	    Datum.__super__.constructor.call(this, props);
@@ -821,8 +822,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.renderForInput = function() {
 	    return React.createElement("span", {
-	      "className": "datum-input",
-	      "data-value": this.getValueForInput()
+	      "className": "datum-input"
 	    }, this.renderLabel(), this.renderInput(), this.renderIcons());
 	  };
 
@@ -928,7 +928,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.getModelValue();
 	  };
 
+
+	  /*
+	    Extend this method to coerce or intepret the value from that model
+	    that this displayed when in input
+	   */
+
 	  Datum.prototype.getValueForInput = function() {
+	    return this.getModelValue();
+	  };
+
+
+	  /*
+	    Returns the current value as set on the model.  The model should own
+	    the value state as all changes are set on it in realtime
+	   */
+
+	  Datum.prototype.getCurrentValue = function() {
 	    return this.getModelValue();
 	  };
 
@@ -942,6 +958,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return ((ref = this.props) != null ? ref.model : void 0) || ((ref1 = this.context) != null ? ref1.model : void 0) || new Backbone.Model();
 	  };
 
+
+	  /*
+	    returns the current model value.  
+	    
+	    warning: Do not override this method to return a component element or jsx; bad things will happen.
+	   */
+
 	  Datum.prototype.getModelValue = function() {
 	    var model, value;
 	    if (!(model = this.getModel())) {
@@ -950,6 +973,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value = model instanceof Backbone.Model ? model.get(this.props.attr) : model[this.props.attr];
 	    return value;
 	  };
+
+
+	  /*
+	    Extend this model to interpret the value prior to saving for example a Percent datum
+	    that the user enters a value that is 100x what gets saved to model
+	    
+	    options pass through to model.set
+	   */
 
 	  Datum.prototype.setModelValue = function(value, options) {
 	    var ref;
@@ -998,6 +1029,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        silent: true
 	      });
 	    }
+	  };
+
+
+	  /*
+	    This method can be used to get at the inner input component if one exists, only
+	    while inputMode=='edit'
+	   */
+
+	  Datum.prototype.getInputComponent = function() {
+	    return this.inputComponent;
 	  };
 
 	  Datum.prototype.onInputRef = function(input) {

@@ -291,9 +291,20 @@ module.exports = class Datum extends React.Component
   getValueForDisplay: () ->
     @getModelValue()
 
-
+  ###
+    Extend this method to coerce or intepret the value from that model
+    that this displayed when in input
+  ###
   getValueForInput: () ->
     @getModelValue()
+    
+  ###
+    Returns the current value as set on the model.  The model should own
+    the value state as all changes are set on it in realtime 
+  ###
+  getCurrentValue: () ->
+    @getModelValue()
+    
     
   ###
     returns the Backbone Model currently associated with the datum
@@ -302,14 +313,22 @@ module.exports = class Datum extends React.Component
     return @props?.model || @context?.model || new Backbone.Model()
 
 
-  # Do not override this method to return a component element or jsx; bad things will happen.
+  ###
+    returns the current model value.  
+    
+    warning: Do not override this method to return a component element or jsx; bad things will happen.
+  ###
   getModelValue: ->
     return null unless model = @getModel()
     value = if model instanceof Backbone.Model then model.get(@props.attr) else model[@props.attr]
     return value
 
-
-  # options pass through to model.set
+  ###
+    Extend this model to interpret the value prior to saving for example a Percent datum
+    that the user enters a value that is 100x what gets saved to model
+    
+    options pass through to model.set
+  ###
   setModelValue: (value, options={}) ->
     @getModel()?.set(@props.attr, value, options)
 
@@ -342,6 +361,13 @@ module.exports = class Datum extends React.Component
     else
       @setModelValue(currentValue, silent: true)
 
+  ###
+    This method can be used to get at the inner input component if one exists, only
+    while inputMode=='edit'
+  ###
+  getInputComponent: () =>
+    @inputComponent
+
 
   onInputRef: (input) =>
     @inputComponent = input
@@ -372,3 +398,5 @@ module.exports = class Datum extends React.Component
     return true unless @props.required
     return true if !(_.isNull(value) || _.isEmpty(value) || _.isUndefined(value))
     return "This input is required"
+
+
