@@ -112,6 +112,15 @@ module.exports = class Datum extends React.Component
 
   componentWillUnmount: ->
     @context?.form?.removeDatum?(@)
+    
+    
+  shouldComponentUpdate: (nextProps, nextState) ->
+    modelValue = @getModelValue(nextProps)
+    truth = !@currentValue? || modelValue != @currentValue
+    @currentValue = modelValue
+    return truth
+    
+    
 
 
   #                           Rendering methods
@@ -309,8 +318,8 @@ module.exports = class Datum extends React.Component
   ###
     returns the Backbone Model currently associated with the datum
   ###
-  getModel: ->
-    return @props?.model || @context?.model || new Backbone.Model()
+  getModel: (props=@props, context=@context)->
+    return props?.model || context?.model || new Backbone.Model()
 
 
   ###
@@ -318,9 +327,9 @@ module.exports = class Datum extends React.Component
     
     warning: Do not override this method to return a component element or jsx; bad things will happen.
   ###
-  getModelValue: ->
-    return null unless model = @getModel()
-    value = if model instanceof Backbone.Model then model.get(@props.attr) else model[@props.attr]
+  getModelValue: (props=@props)->
+    return null unless model = @getModel(props)
+    value = if model instanceof Backbone.Model then model.get(props.attr) else model[props.attr]
     return value
 
   ###
@@ -354,12 +363,12 @@ module.exports = class Datum extends React.Component
 
 
   onChange: (event) =>
-    currentValue = event.target.value
-    @validate(currentValue)
+    @currentValue = event.target.value
+    @validate(@currentValue)
     if @shouldSetOnChange()
-      @setModelValue(currentValue)
+      @setModelValue(@currentValue)
     else
-      @setModelValue(currentValue, silent: true)
+      @setModelValue(@currentValue, silent: true)
 
   ###
     This method can be used to get at the inner input component if one exists, only

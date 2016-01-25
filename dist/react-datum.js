@@ -709,6 +709,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return (ref = this.context) != null ? (ref1 = ref.form) != null ? typeof ref1.removeDatum === "function" ? ref1.removeDatum(this) : void 0 : void 0 : void 0;
 	  };
 
+	  Datum.prototype.shouldComponentUpdate = function(nextProps, nextState) {
+	    var modelValue, truth;
+	    modelValue = this.getModelValue(nextProps);
+	    truth = (this.currentValue == null) || modelValue !== this.currentValue;
+	    this.currentValue = modelValue;
+	    return truth;
+	  };
+
 	  Datum.prototype.render = function() {
 	    return this.renderDatumWrapper((function(_this) {
 	      return function() {
@@ -822,7 +830,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.renderForInput = function() {
 	    return React.createElement("span", {
-	      "className": "datum-input"
+	      "className": "datum-input",
+	      "data-value": this.getValueForInput()
 	    }, this.renderLabel(), this.renderInput(), this.renderIcons());
 	  };
 
@@ -953,9 +962,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    returns the Backbone Model currently associated with the datum
 	   */
 
-	  Datum.prototype.getModel = function() {
-	    var ref, ref1;
-	    return ((ref = this.props) != null ? ref.model : void 0) || ((ref1 = this.context) != null ? ref1.model : void 0) || new Backbone.Model();
+	  Datum.prototype.getModel = function(props, context) {
+	    if (props == null) {
+	      props = this.props;
+	    }
+	    if (context == null) {
+	      context = this.context;
+	    }
+	    return (props != null ? props.model : void 0) || (context != null ? context.model : void 0) || new Backbone.Model();
 	  };
 
 
@@ -965,12 +979,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    warning: Do not override this method to return a component element or jsx; bad things will happen.
 	   */
 
-	  Datum.prototype.getModelValue = function() {
+	  Datum.prototype.getModelValue = function(props) {
 	    var model, value;
-	    if (!(model = this.getModel())) {
+	    if (props == null) {
+	      props = this.props;
+	    }
+	    if (!(model = this.getModel(props))) {
 	      return null;
 	    }
-	    value = model instanceof Backbone.Model ? model.get(this.props.attr) : model[this.props.attr];
+	    value = model instanceof Backbone.Model ? model.get(props.attr) : model[props.attr];
 	    return value;
 	  };
 
@@ -1019,13 +1036,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.onChange = function(event) {
-	    var currentValue;
-	    currentValue = event.target.value;
-	    this.validate(currentValue);
+	    this.currentValue = event.target.value;
+	    this.validate(this.currentValue);
 	    if (this.shouldSetOnChange()) {
-	      return this.setModelValue(currentValue);
+	      return this.setModelValue(this.currentValue);
 	    } else {
-	      return this.setModelValue(currentValue, {
+	      return this.setModelValue(this.currentValue, {
 	        silent: true
 	      });
 	    }
