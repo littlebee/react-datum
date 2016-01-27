@@ -82,7 +82,8 @@ module.exports = class ContextualData extends React.Component
 
 
   render: ->
-    className = "contextual-data #{@contextKey} #{@props.className}"
+    className = "contextual-data #{@contextKey}"
+    className += " #{@props.className}" if @props.className?
     return <div className={className}>{@renderContent()}</div>
 
 

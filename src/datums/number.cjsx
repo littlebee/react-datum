@@ -56,10 +56,6 @@ module.exports = class Number extends Datum
     # setting zerofill to false
     zeroFill: null
     
-    
-    
-  
-
 
   # TODO : push down this feature to Datum? with default to all   
   # will not allow characters to be entered that do not match this pattern

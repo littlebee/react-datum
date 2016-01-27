@@ -822,7 +822,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.renderForInput = function() {
 	    return React.createElement("span", {
-	      "className": "datum-input"
+	      "className": "datum-input",
+	      "data-value": this.getValueForInput()
 	    }, this.renderLabel(), this.renderInput(), this.renderIcons());
 	  };
 
@@ -1185,7 +1186,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  ContextualData.prototype.render = function() {
 	    var className;
-	    className = "contextual-data " + this.contextKey + " " + this.props.className;
+	    className = "contextual-data " + this.contextKey;
+	    if (this.props.className != null) {
+	      className += " " + this.props.className;
+	    }
 	    return React.createElement("div", {
 	      "className": className
 	    }, this.renderContent());
