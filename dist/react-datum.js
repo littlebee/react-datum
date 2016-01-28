@@ -685,6 +685,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.onInputRef = bind(this.onInputRef, this);
 	    this.getInputComponent = bind(this.getInputComponent, this);
 	    this.setValue = bind(this.setValue, this);
+	    this.onInputKeyDown = bind(this.onInputKeyDown, this);
 	    this.onBlur = bind(this.onBlur, this);
 	    this.onChange = bind(this.onChange, this);
 	    this.addValidations = bind(this.addValidations, this);
@@ -946,6 +947,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      value: value,
 	      onChange: this.onChange,
 	      onBlur: this.onBlur,
+	      onKeyDown: this.onInputKeyDown,
 	      ref: this.onInputRef
 	    };
 	  };
@@ -1064,6 +1066,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.setValue(event.target.value, {
 	      setModelValue: this.shouldSetOnBlur()
 	    });
+	  };
+
+	  Datum.prototype.onInputKeyDown = function(event) {
+	    var base;
+	    return typeof (base = this.props).onKeyDown === "function" ? base.onKeyDown(event) : void 0;
 	  };
 
 	  Datum.prototype.setValue = function(newValue, options) {
@@ -2244,9 +2251,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Number.prototype.renderValueForDisplay = function() {
-	    var formats, ref, value;
+	    var formats, value;
 	    value = parseFloat(this.getModelValue());
-	    formats = _.isArray(this.props.format) ? this.props.format : ((ref = this.props.format) != null ? ref.toString().split(' ') : void 0) || [];
+	    formats = this.getFormats();
 	    if (indexOf.call(formats, 'percent') >= 0) {
 	      value *= 100;
 	    }
@@ -2265,6 +2272,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	      Number.__super__.renderPlaceHolder.apply(this, arguments);
 	    }
 	    return React.createElement("span", null, "0");
+	  };
+
+	  Number.prototype.getFormats = function() {
+	    var ref;
+	    if (_.isArray(this.props.format)) {
+	      return this.props.format;
+	    } else {
+	      return ((ref = this.props.format) != null ? ref.toString().split(' ') : void 0) || [];
+	    }
+	  };
+
+	  Number.prototype.getValueForInput = function() {
+	    return Number.__super__.getValueForInput.apply(this, arguments);
 	  };
 
 	  Number.prototype.onChange = function(event) {
@@ -2305,6 +2325,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Number.prototype.roundToDecimalPlaces = function(value, formats) {
 	    var decimalPlaces, zeroFill;
+	    if (formats == null) {
+	      formats = this.getFormats();
+	    }
 	    decimalPlaces = this.props.decimalPlaces;
 	    zeroFill = this.props.zeroFill;
 	    if (indexOf.call(formats, 'money') >= 0) {
@@ -2316,7 +2339,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	    }
 	    if (decimalPlaces != null) {
-	      value = value.toFixed(decimalPlaces);
+	      value = parseFloat(value).toFixed(decimalPlaces);
 	      if (!zeroFill) {
 	        value = parseFloat(value).toString();
 	      }
@@ -2326,6 +2349,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Number.prototype.abbreviate = function(value, formats) {
 	    var affix, ref;
+	    if (formats == null) {
+	      formats = this.getFormats();
+	    }
 	    if (indexOf.call(formats, 'abbreviate') >= 0) {
 	      value = parseFloat(value);
 	      ref = value >= ONE_MILLION ? [value / ONE_MILLION, "MM"] : value >= ONE_THOUSAND ? [value / ONE_THOUSAND, "K"] : [value, ""], value = ref[0], affix = ref[1];
@@ -2336,6 +2362,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Number.prototype.addCommas = function(value, formats) {
 	    var decimal, ref, wholeNumber;
+	    if (formats == null) {
+	      formats = this.getFormats();
+	    }
 	    if (indexOf.call(formats, 'comma') >= 0) {
 	      ref = value.toString().split('.'), wholeNumber = ref[0], decimal = ref[1];
 	      value = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -2347,6 +2376,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Number.prototype.monitize = function(value, formats) {
+	    if (formats == null) {
+	      formats = this.getFormats();
+	    }
 	    if (indexOf.call(formats, 'money') >= 0) {
 	      value = "$" + value;
 	    }

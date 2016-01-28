@@ -76,7 +76,7 @@ module.exports = class Number extends Datum
   ###
   renderValueForDisplay: ->
     value = parseFloat(@getModelValue())
-    formats = if _.isArray(@props.format) then @props.format else @props.format?.toString().split(' ') || []
+    formats = @getFormats()
 
     if 'percent' in formats
       value *= 100
@@ -103,7 +103,21 @@ module.exports = class Number extends Datum
       super
     # if we don't have a placeholder, render zero by default without the placeholder classes
     return <span>0</span>
-
+    
+    
+  getFormats: ->
+    if _.isArray(@props.format) 
+      return @props.format 
+    else 
+      return @props.format?.toString().split(' ') || []
+      
+      
+  getValueForInput: () ->
+    # TODO : this is either the greatest idea or worst ever - but if you are
+    # displaying a rounded value maybe you want an option to edited as rounded?
+    #return @state.value || @roundToDecimalPlaces(@getModelValue())
+    return super
+    
 
   # extend super, ignore invalid input characters
   onChange: (event) =>
@@ -129,7 +143,7 @@ module.exports = class Number extends Datum
     note that 'money', when not 'abbreviate'd should zero fill out to two decimal places 
     unless props indicate otherwise
   ###
-  roundToDecimalPlaces: (value, formats) ->
+  roundToDecimalPlaces: (value, formats=@getFormats()) ->
     decimalPlaces = @props.decimalPlaces
     zeroFill = @props.zeroFill
     if 'money' in formats
@@ -137,14 +151,14 @@ module.exports = class Number extends Datum
       zeroFill ?= !('abbreviate' in formats)
       
     if decimalPlaces?
-      value = value.toFixed(decimalPlaces)
+      value = parseFloat(value).toFixed(decimalPlaces)
       unless zeroFill
         value = parseFloat(value).toString()
         
     return value
     
     
-  abbreviate: (value, formats) ->
+  abbreviate: (value, formats=@getFormats()) ->
     if 'abbreviate' in formats
       value = parseFloat(value)
       [value, affix] = if value >= ONE_MILLION
@@ -158,7 +172,7 @@ module.exports = class Number extends Datum
     return value
         
         
-  addCommas: (value, formats) ->
+  addCommas: (value, formats=@getFormats()) ->
     if 'comma' in formats
       # add thousands separater
       [wholeNumber, decimal] = value.toString().split('.')
@@ -167,7 +181,7 @@ module.exports = class Number extends Datum
     return value
 
 
-  monitize: (value, formats) ->
+  monitize: (value, formats=@getFormats()) ->
     if 'money' in formats
       value = "$#{value}"
     return value

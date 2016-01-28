@@ -17,6 +17,17 @@
     "tilegrid",
     "backbone"
   ],
+  "config": {
+    "travis-cov": { 
+      "threshold": 10 
+    },
+    "blanket": {
+      "pattern": "src",
+      "data-cover-reporter-options": {
+        "shortnames": true
+      }
+    } 
+  },
   "author": "Zulily",
   "license": "ISC",
   "bugs": {

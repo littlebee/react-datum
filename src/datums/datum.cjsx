@@ -311,6 +311,7 @@ module.exports = class Datum extends React.Component
       value: value 
       onChange: @onChange
       onBlur: @onBlur
+      onKeyDown: @onInputKeyDown
       ref: @onInputRef
     }
 
@@ -396,6 +397,10 @@ module.exports = class Datum extends React.Component
   onBlur: (event) =>
     @setValue(event.target.value, setModelValue: @shouldSetOnBlur())
   
+  
+  onInputKeyDown: (event) =>
+    @props.onKeyDown?(event)
+    
   
   # sets the value of the datum (display and input text)
   setValue: (newValue, options={}) =>
