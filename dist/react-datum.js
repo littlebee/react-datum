@@ -593,10 +593,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (model !== this._savedModel) {
 	      return;
 	    }
-	    model.set(this._savedAttrs, {
-	      silent: true
-	    });
-	    return model.trigger('sync', model);
+	    return model.set(this._savedAttrs);
 	  };
 
 	  Form.prototype._resetDatums = function() {
@@ -658,12 +655,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    inputMode: React.PropTypes.oneOf(['readonly', 'edit']),
 	    noPopover: React.PropTypes.bool,
 	    setOnChange: React.PropTypes.bool,
+	    setOnBlur: React.PropTypes.bool,
 	    readonly: React.PropTypes.bool,
 	    required: React.PropTypes.bool
 	  };
 
 	  Datum.defaultProps = {
-	    ellipsizeAt: 35
+	    ellipsizeAt: 35,
+	    setOnBlur: true
 	  };
 
 	  Datum.contextTypes = {
@@ -685,28 +684,46 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.focus = bind(this.focus, this);
 	    this.onInputRef = bind(this.onInputRef, this);
 	    this.getInputComponent = bind(this.getInputComponent, this);
+	    this.setValue = bind(this.setValue, this);
+	    this.onBlur = bind(this.onBlur, this);
 	    this.onChange = bind(this.onChange, this);
 	    this.addValidations = bind(this.addValidations, this);
 	    Datum.__super__.constructor.call(this, props);
 	    this.state = {
+	      value: null,
 	      errors: []
 	    };
 	    this.addValidations(this.validateRequired);
 	  }
 
 	  Datum.prototype.componentDidMount = function() {
-	    var ref, ref1;
-	    return (ref = this.context) != null ? (ref1 = ref.form) != null ? typeof ref1.addDatum === "function" ? ref1.addDatum(this) : void 0 : void 0 : void 0;
+	    var modelValue, ref, ref1;
+	    if ((ref = this.context) != null) {
+	      if ((ref1 = ref.form) != null) {
+	        if (typeof ref1.addDatum === "function") {
+	          ref1.addDatum(this);
+	        }
+	      }
+	    }
+	    return modelValue = this.getModelValue();
 	  };
 
-	  Datum.prototype.componentWillReceiveProps = function(nextProps) {
-	    var model;
-	    return model = nextProps.model || this.context.model;
-	  };
+	  Datum.prototype.componentWillReceiveProps = function(nextProps) {};
 
 	  Datum.prototype.componentWillUnmount = function() {
 	    var ref, ref1;
-	    return (ref = this.context) != null ? (ref1 = ref.form) != null ? typeof ref1.removeDatum === "function" ? ref1.removeDatum(this) : void 0 : void 0 : void 0;
+	    if ((ref = this.context) != null) {
+	      if ((ref1 = ref.form) != null) {
+	        if (typeof ref1.removeDatum === "function") {
+	          ref1.removeDatum(this);
+	        }
+	      }
+	    }
+	    if ((this.state.value != null) && this.shouldSetOnBlur()) {
+	      return this.setValue(this.state.value, {
+	        setModelValue: true
+	      });
+	    }
 	  };
 
 	  Datum.prototype.render = function() {
@@ -830,20 +847,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  /*
 	    In most cases this is the method you want to override to alter the presentation of the datum when
-	    inputMode='edit'
+	    inputMode='edit'.
+	    
+	    If you override this method, be sure to add @onBlur() and @onChange() to your input
+	    component
 	   */
 
 	  Datum.prototype.renderInput = function() {
-	    var placeholder, value;
-	    placeholder = this.props.placeholder || "";
-	    value = this.getValueForInput();
-	    return React.createElement("input", {
-	      "type": "text",
-	      "placeholder": placeholder,
-	      "value": value,
-	      "onChange": this.onChange,
-	      "ref": this.onInputRef
-	    });
+	    return React.createElement("input", React.__spread({}, this.getInputComponentOptions()));
 	  };
 
 	  Datum.prototype.renderIcons = function() {
@@ -925,6 +936,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.props.inputMode || this.context.inputMode || "readonly";
 	  };
 
+	  Datum.prototype.getInputComponentOptions = function() {
+	    var placeholder, value;
+	    placeholder = this.props.placeholder || "";
+	    value = this.getValueForInput();
+	    return {
+	      type: "text",
+	      placeholder: placeholder,
+	      value: value,
+	      onChange: this.onChange,
+	      onBlur: this.onBlur,
+	      ref: this.onInputRef
+	    };
+	  };
+
+
+	  /* 
+	    This method should return the value for display from the model. You 
+	    can extend this method in a custom Datum to coerce or manipulate just
+	    the value used for display.   
+	    
+	    In most cases, you'll probably want to extend the Datum.renderValueForDisplay() 
+	    instead
+	   */
+
 	  Datum.prototype.getValueForDisplay = function() {
 	    return this.getModelValue();
 	  };
@@ -936,17 +971,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.getValueForInput = function() {
-	    return this.getModelValue();
-	  };
-
-
-	  /*
-	    Returns the current value as set on the model.  The model should own
-	    the value state as all changes are set on it in realtime
-	   */
-
-	  Datum.prototype.getCurrentValue = function() {
-	    return this.getModelValue();
+	    return this.state.value || this.getModelValue();
 	  };
 
 
@@ -954,24 +979,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	    returns the Backbone Model currently associated with the datum
 	   */
 
-	  Datum.prototype.getModel = function() {
-	    var ref, ref1;
-	    return ((ref = this.props) != null ? ref.model : void 0) || ((ref1 = this.context) != null ? ref1.model : void 0) || new Backbone.Model();
+	  Datum.prototype.getModel = function(newProps) {
+	    var ref;
+	    if (newProps == null) {
+	      newProps = this.props;
+	    }
+	    return (newProps != null ? newProps.model : void 0) || ((ref = this.context) != null ? ref.model : void 0) || new Backbone.Model();
 	  };
 
 
 	  /*
-	    returns the current model value.  
+	    returns the value currently set on the model
 	    
 	    warning: Do not override this method to return a component element or jsx; bad things will happen.
 	   */
 
-	  Datum.prototype.getModelValue = function() {
+	  Datum.prototype.getModelValue = function(newProps) {
 	    var model, value;
+	    if (newProps == null) {
+	      newProps = this.props;
+	    }
 	    if (!(model = this.getModel())) {
 	      return null;
 	    }
-	    value = model instanceof Backbone.Model ? model.get(this.props.attr) : model[this.props.attr];
+	    value = model instanceof Backbone.Model ? model.get(newProps.attr) : model[newProps.attr];
 	    return value;
 	  };
 
@@ -1019,15 +1050,39 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.props.setOnChange === true || (this.getInputMode() === 'inlineEdit' && !this.props.setOnChange === false);
 	  };
 
+	  Datum.prototype.shouldSetOnBlur = function() {
+	    return this.props.setOnBlur === true && !this.shouldSetOnChange();
+	  };
+
 	  Datum.prototype.onChange = function(event) {
-	    var currentValue;
-	    currentValue = event.target.value;
-	    this.validate(currentValue);
-	    if (this.shouldSetOnChange()) {
-	      return this.setModelValue(currentValue);
+	    return this.setValue(event.target.value, {
+	      setModelValue: this.shouldSetOnChange()
+	    });
+	  };
+
+	  Datum.prototype.onBlur = function(event) {
+	    return this.setValue(event.target.value, {
+	      setModelValue: this.shouldSetOnBlur()
+	    });
+	  };
+
+	  Datum.prototype.setValue = function(newValue, options) {
+	    var valid;
+	    if (options == null) {
+	      options = {};
+	    }
+	    options = _.defaults(options, {
+	      setModelValue: false
+	    });
+	    valid = this.validate(newValue);
+	    if (options.setModelValue) {
+	      this.setModelValue(newValue);
+	      return this.setState({
+	        value: null
+	      });
 	    } else {
-	      return this.setModelValue(currentValue, {
-	        silent: true
+	      return this.setState({
+	        value: newValue
 	      });
 	    }
 	  };
@@ -2583,6 +2638,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      placeholder: this.props.placeholder || this.renderPlaceholder(),
 	      value: value,
 	      onChange: this.onChange,
+	      onBlur: this.onBlur,
 	      ref: this.onInputRef,
 	      options: this.getOptionValuesForReactSelect(collection.models),
 	      labelKey: "label",

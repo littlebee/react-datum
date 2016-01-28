@@ -47,6 +47,9 @@ module.exports = class Datum extends React.Component
     # set to true to set the model value on change. this defaults to true if inputMode = inlineEdit
     setOnChange: React.PropTypes.bool
     
+    # setOnBlur = true model value is set when the input is blurred
+    setOnBlur: React.PropTypes.bool
+        
     # make this input readonly regardless of context or inputMode prop
     readonly: React.PropTypes.bool
     
@@ -59,6 +62,7 @@ module.exports = class Datum extends React.Component
   @defaultProps:
     # ellipsizeAt is defaulted to prevent really long strings from breaking layouts
     ellipsizeAt: 35
+    setOnBlur: true
 
 
   @contextTypes:
@@ -91,7 +95,10 @@ module.exports = class Datum extends React.Component
 
   constructor: (props) ->
     super props
-    @state = {errors: []}
+    @state = {
+      value: null
+      errors: []
+    }
     @addValidations @validateRequired
 
 
@@ -104,16 +111,22 @@ module.exports = class Datum extends React.Component
     # so it can ask us if we are valid (via @validate() method) and tell us
     # when the user cancels the update (via @reset() method)
     @context?.form?.addDatum?(@)
+    modelValue = @getModelValue()
 
 
   componentWillReceiveProps: (nextProps) ->
-    model = nextProps.model || @context.model
-
+    # TBD
+    
 
   componentWillUnmount: ->
     @context?.form?.removeDatum?(@)
-
-
+    
+    # you can unmount without bluring save state value to 
+    # model if it exists
+    if @state.value? && @shouldSetOnBlur()
+      @setValue(@state.value, setModelValue: true)
+      
+      
   #                           Rendering methods
 
   render: ->
@@ -220,13 +233,14 @@ module.exports = class Datum extends React.Component
 
   ###
     In most cases this is the method you want to override to alter the presentation of the datum when
-    inputMode='edit'
+    inputMode='edit'.
+    
+    If you override this method, be sure to add @onBlur() and @onChange() to your input
+    component 
   ###
   renderInput: ->
-    placeholder = @props.placeholder || ""
-    value = @getValueForInput()
-    <input type="text" placeholder={placeholder} value={value} onChange={@onChange} ref={@onInputRef}/>
-
+    <input {... @getInputComponentOptions()}/>
+      
 
   renderIcons: ->
     if @isEditing() && @state.errors.length > 0
@@ -286,42 +300,60 @@ module.exports = class Datum extends React.Component
   getInputMode: () ->
     return "readonly" if @props.readonly
     return @props.inputMode || @context.inputMode || "readonly"
+    
+    
+  getInputComponentOptions: () ->
+    placeholder = @props.placeholder || ""
+    value = @getValueForInput()
+    return {
+      type: "text" 
+      placeholder: placeholder
+      value: value 
+      onChange: @onChange
+      onBlur: @onBlur
+      ref: @onInputRef
+    }
 
-
+  ### 
+    This method should return the value for display from the model. You 
+    can extend this method in a custom Datum to coerce or manipulate just
+    the value used for display.   
+    
+    In most cases, you'll probably want to extend the Datum.renderValueForDisplay() 
+    instead
+  ###
   getValueForDisplay: () ->
-    @getModelValue()
+    return @getModelValue()
+    
 
   ###
     Extend this method to coerce or intepret the value from that model
     that this displayed when in input
   ###
   getValueForInput: () ->
-    @getModelValue()
-    
-  ###
-    Returns the current value as set on the model.  The model should own
-    the value state as all changes are set on it in realtime 
-  ###
-  getCurrentValue: () ->
-    @getModelValue()
+    return @state.value || @getModelValue()
     
     
   ###
     returns the Backbone Model currently associated with the datum
   ###
-  getModel: ->
-    return @props?.model || @context?.model || new Backbone.Model()
+  getModel: (newProps = @props)->
+    return newProps?.model || @context?.model || new Backbone.Model()
 
 
   ###
-    returns the current model value.  
+    returns the value currently set on the model
     
     warning: Do not override this method to return a component element or jsx; bad things will happen.
   ###
-  getModelValue: ->
+  getModelValue: (newProps = @props)->
     return null unless model = @getModel()
-    value = if model instanceof Backbone.Model then model.get(@props.attr) else model[@props.attr]
+    value = if model instanceof Backbone.Model  
+      model.get(newProps.attr) 
+    else 
+      model[newProps.attr]
     return value
+
 
   ###
     Extend this model to interpret the value prior to saving for example a Percent datum
@@ -353,13 +385,33 @@ module.exports = class Datum extends React.Component
     @props.setOnChange == true || (@getInputMode() == 'inlineEdit' && !@props.setOnChange == false)
 
 
+  shouldSetOnBlur: ->
+    @props.setOnBlur == true && !@shouldSetOnChange()
+
+
   onChange: (event) =>
-    currentValue = event.target.value
-    @validate(currentValue)
-    if @shouldSetOnChange()
-      @setModelValue(currentValue)
+    @setValue(event.target.value, setModelValue: @shouldSetOnChange())
+      
+      
+  onBlur: (event) =>
+    @setValue(event.target.value, setModelValue: @shouldSetOnBlur())
+  
+  
+  # sets the value of the datum (display and input text)
+  setValue: (newValue, options={}) =>
+    options = _.defaults options,
+      # causes the new value to be set on the model too
+      setModelValue: false
+      
+    valid = @validate(newValue)
+    if options.setModelValue
+      @setModelValue(newValue)
+      @setState(value: null)  # go back to using backbone model value
     else
-      @setModelValue(currentValue, silent: true)
+      @setState(value: newValue)
+      
+  
+  
 
   ###
     This method can be used to get at the inner input component if one exists, only

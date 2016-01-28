@@ -187,6 +187,7 @@ module.exports = class CollectionPicker extends Datum
       placeholder: @props.placeholder || @renderPlaceholder()
       value: value
       onChange: @onChange
+      onBlur: @onBlur
       ref: @onInputRef
       options: @getOptionValuesForReactSelect(collection.models)
       labelKey: "label"

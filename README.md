@@ -81,7 +81,7 @@ ReactDOM.render(React.createElement(kittenCard), document.getElementById('demo')
 
 ## For Display and Input!
 
-In the example above, the comment field, having the `inputMode="edit"` prop, renders as an input and when the user enters a comment, `kittenModel.set('comment', userEnteredValue, {silent: true})` is called.
+In the example above, the comment field, having the `inputMode="edit"` prop, renders as an input and when the user enters a comment and blurs the input,  `kittenModel.set('comment', userEnteredValue)` is called.
 
 Adding the **ReactDatum.Form** component, you can easily convert the above into a editable form with save and cancel buttons:
 
@@ -119,9 +119,8 @@ By wrapping the datums in the **ReactDatum.Form** tag, they implicitedly recieve
  
 #### *Shhhh, don't call it "2 way data-binding"*
 
-In the form example above, the **ReactDatum.Text** input component labeled "Name" in the form was given a 'setOnChange' prop.  When the name input is changed by the user, every character entered causes `kittenModel.set('name', userEnteredValue)` to be called.  The difference of `setOnChange` is the lack of `{silent: true}` on model set().  Since all descendants of the **ReactDatum.model** component virtually rerender on every triggered event, the form updates as you type and the two other references to the 'name' attribute in labels on the form are updated as you type.  Pretty cool, but mostly just a parlor trick.  The reasoning behind using `{silent: true}` on set() by default is that, in most cases, users will get confused as to the saved state of the data. Since `model.save()` is not called until the user presses the 'Save' button, a table or grid cell changing as you type in the edit form is probably not what you want because it may imply that the changes have been saved.   
+In the form example above, the **ReactDatum.Text** input component labeled "Name" in the form was given a 'setOnChange' prop.  When the name input is changed by the user, every character entered causes `kittenModel.set('name', userEnteredValue)` to be called.  Since all children of the **ReactDatum.model** component virtually rerender on every triggered event, the form updates as you type and the two other references to the 'name' attribute in labels on the form are updated as you type.  Pretty cool, but mostly just a parlor trick.  The reasoning behind using `{silent: true}` on set() by default is that, in most cases, users will get confused as to the saved state of the data. Since `model.save()` is not called until the user presses the 'Save' button, a table or grid cell changing as you type in the edit form is probably not what you want because it may imply that the changes have been saved.   
 
-In essence, the Backbone model is the arbiter of state for the datums associated with it.  
 
 ## Implied Context, Deterministic Props
 

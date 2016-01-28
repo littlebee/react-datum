@@ -334,8 +334,9 @@ module.exports = class Form extends React.Component
     model = @getModel()
     # don't ever get confused and save one model's attributes on another
     return if model != @_savedModel
-    model.set(@_savedAttrs, silent: true)
-    model.trigger('sync', model)
+    model.set(@_savedAttrs)
+    
+    
 
 
   _resetDatums: ->

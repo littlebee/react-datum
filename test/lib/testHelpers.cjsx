@@ -2,6 +2,7 @@
   utilities for writing tests and aliases for long ass, no fucking way I'm typing
   that out, React methods
 ###
+_ = require 'underscore'
 
 React = require 'react'
 ReactDOM = require 'react-dom'
@@ -57,9 +58,14 @@ module.exports = class TestHelpers
     @findByClass(component, 'error').length.should.be.equal(iconsExpected, "expected to find one icon")
 
 
-  @changeDatumValue = (component, newValue) ->
+  @changeDatumValue = (component, newValue, options={}) ->
+    options = _.defaults options,
+      blur: true
+      
     inputNode = @domNodeByTag(component, 'input')
     inputNode.value = newValue
     ReactTest.Simulate.change(inputNode)
+    ReactTest.Simulate.blur(inputNode) if options.blur
+    
     return inputNode
     
