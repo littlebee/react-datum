@@ -180,3 +180,5 @@ module.exports = class ContextualData extends React.Component
 
   onDataChanged: () =>
     @setState(lastUpdated: Date.now(), collectionOrModel: @getCollectionOrModelToProvide())
+    if @props.forceUpdate
+      @forceUpdate()

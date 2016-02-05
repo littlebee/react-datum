@@ -1359,10 +1359,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  ContextualData.prototype.onDataChanged = function() {
-	    return this.setState({
+	    this.setState({
 	      lastUpdated: Date.now(),
 	      collectionOrModel: this.getCollectionOrModelToProvide()
 	    });
+	    if (this.props.forceUpdate) {
+	      return this.forceUpdate();
+	    }
 	  };
 
 	  return ContextualData;
