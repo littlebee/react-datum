@@ -332,7 +332,15 @@ module.exports = class Datum extends React.Component
     that this displayed when in input
   ###
   getValueForInput: () ->
-    return @state.value || @getModelValue()
+    #console.log "Datum::getValueForInput", @state.value, @getModelValue(), JSON.stringify({value: @state.value})
+    return if @state.value? then @state.value else @getModelValue()
+    
+    
+  ###
+    this method returns the value in the input as seen by user
+  ###
+  getInputValue: () ->
+    return @state.value
     
     
   ###
@@ -362,7 +370,7 @@ module.exports = class Datum extends React.Component
     
     options pass through to model.set
   ###
-  setModelValue: (value, options={}) ->
+  setModelValue: (value=@getInputValue(), options={}) ->
     @getModel()?.set(@props.attr, value, options)
 
 

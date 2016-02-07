@@ -4,6 +4,7 @@ var Rd = ReactDatum
 // Say you have this model:
 
 var kittenModel = new Backbone.Model({
+  id: "234345654",
   name: "Fluffy",
   title: "His Royal Cuteness",
   description: "He's a cuddler and a lover through and through",
@@ -32,6 +33,7 @@ var KittenForm = React.createClass({
           <h3>Adopt <Rd.Text attr="name"/> Today!</h3>
           <Rd.Form>
             <div><Rd.LazyPhoto attr="imgUrl"/></div>
+            <div><Rd.Number attr="id" label="Id:"/></div>
             <div><Rd.Text attr="name" label="Name:" setOnChange required/> (<Rd.Text attr="title"/>)</div>
             <label>Say something about <Rd.Text attr="name" readonly/>: </label>
             <div><Rd.Text attr="description" className="wide-input"/></div>

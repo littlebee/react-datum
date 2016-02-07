@@ -973,7 +973,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.getValueForInput = function() {
-	    return this.state.value || this.getModelValue();
+	    if (this.state.value != null) {
+	      return this.state.value;
+	    } else {
+	      return this.getModelValue();
+	    }
+	  };
+
+
+	  /*
+	    this method returns the value in the input as seen by user
+	   */
+
+	  Datum.prototype.getInputValue = function() {
+	    return this.state.value;
 	  };
 
 
@@ -1018,6 +1031,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.setModelValue = function(value, options) {
 	    var ref;
+	    if (value == null) {
+	      value = this.getInputValue();
+	    }
 	    if (options == null) {
 	      options = {};
 	    }

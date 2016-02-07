@@ -1,4 +1,6 @@
 React = require 'react'
+ReactTest = require 'react-addons-test-utils'
+
 Backbone = require 'backbone'
 $ = require 'jquery'
 
@@ -8,6 +10,13 @@ Number = require '../src/datums/number'
 
 describe 'Number datum', ->
   model = new Backbone.Model({foo: 10})
+  
+  describe 'as input', ->
+    component = Th.render <Number attr='foo' model={model} inputMode='edit'/>
+    input = Th.findByTag(component, 'input')
+    
+    it 'should allow change to blank', ->  Th.changeDatumAndTestValid(component, "")
+    
 
   describe 'as input with minValue prop', ->
     component = Th.render <Number attr='foo' model={model} inputMode='edit' minValue={10}/>

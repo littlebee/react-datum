@@ -5,6 +5,7 @@ var Rd = ReactDatum;
 // Say you have this model:
 
 var kittenModel = new Backbone.Model({
+  id: "234345654",
   name: "Fluffy",
   title: "His Royal Cuteness",
   description: "He's a cuddler and a lover through and through",
@@ -47,6 +48,11 @@ var KittenForm = React.createClass({
             "div",
             null,
             React.createElement(Rd.LazyPhoto, { attr: "imgUrl" })
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement(Rd.Number, { attr: "id", label: "Id:" })
           ),
           React.createElement(
             "div",
