@@ -380,6 +380,7 @@ module.exports = class Datum extends React.Component
     options pass through to model.set
   ###
   setModelValue: (value=@getInputValue(), options={}) ->
+    return unless value?   # value == null means the user didn't change it
     @getModel()?.set(@props.attr, value, options)
 
 
@@ -407,12 +408,20 @@ module.exports = class Datum extends React.Component
     @props.setOnBlur == true && !@shouldSetOnChange()
 
 
+  # on every change, it needs to set the value in state (see @setValue()) with
+  # the event.target.value in the input.  On next render the value in state
+  # is what the user sees, so you could also intercept this method
   onChange: (event) =>
     @setValue(event.target.value, setModelValue: @shouldSetOnChange())
       
       
+  # onChange above captures the value in state.  
+  # onBlur only sets the value on the model with the current state value, and
+  #   only if state value is not null 
   onBlur: (event) =>
-    @setValue(event.target.value, setModelValue: @shouldSetOnBlur())
+    value = @getInputValue()
+    return unless value?
+    @setValue(value, setModelValue: @shouldSetOnBlur())
   
   
   onInputKeyDown: (event) =>
@@ -453,8 +462,15 @@ module.exports = class Datum extends React.Component
       node.focus()
       node.select()
 
-
-  validate: (value=@getModelValue())->
+  ###
+    This method is called to validate the value in the input.
+    
+    Note that validations such as props.required also need to apply if the user 
+    hasn't changed the input, so the default value is the coalesce of state.value
+    or model value.  state.value (see getInputValue()) is null if the user has
+    not made changes. 
+  ###
+  validate: (value=@getValueForInput())->
     return true unless @isEditable()
     @setState errors: []
     errors = []

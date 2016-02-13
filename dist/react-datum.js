@@ -1048,6 +1048,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (options == null) {
 	      options = {};
 	    }
+	    if (value == null) {
+	      return;
+	    }
 	    return (ref = this.getModel()) != null ? ref.set(this.props.attr, value, options) : void 0;
 	  };
 
@@ -1090,7 +1093,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.onBlur = function(event) {
-	    return this.setValue(event.target.value, {
+	    var value;
+	    value = this.getInputValue();
+	    if (value == null) {
+	      return;
+	    }
+	    return this.setValue(value, {
 	      setModelValue: this.shouldSetOnBlur()
 	    });
 	  };
@@ -1144,10 +1152,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  };
 
+
+	  /*
+	    This method is called to validate the value in the input.
+	    
+	    Note that validations such as props.required also need to apply if the user 
+	    hasn't changed the input, so the default value is the coalesce of state.value
+	    or model value.  state.value (see getInputValue()) is null if the user has
+	    not made changes.
+	   */
+
 	  Datum.prototype.validate = function(value) {
 	    var errors, i, len, ref, valid, validation;
 	    if (value == null) {
-	      value = this.getModelValue();
+	      value = this.getValueForInput();
 	    }
 	    if (!this.isEditable()) {
 	      return true;
