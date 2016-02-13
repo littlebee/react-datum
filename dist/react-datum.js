@@ -890,6 +890,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return null;
 	  };
 
+
+	  /*
+	    This method can be overriden to provide custom determination of dirty state.
+	    dirty meaning, has the input value changed.  The base implementation assumes
+	    that the base behavior of setting state.value to null on model.set() happens.
+	   */
+
+	  Datum.prototype.isDirty = function() {
+	    return this.state.value != null;
+	  };
+
 	  Datum.prototype.isEditable = function() {
 	    var inputMode;
 	    inputMode = this.getInputMode();
@@ -2276,7 +2287,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (indexOf.call(formats, 'percent') >= 0) {
 	      value *= 100;
 	    }
-	    value = this.roundToDecimalPlaces(value, formats);
+	    value = this.roundToDecimalPlaces(value, {
+	      formats: formats
+	    });
 	    value = this.abbreviate(value, formats);
 	    value = this.addCommas(value, formats);
 	    value = this.monitize(value, formats);
@@ -2342,24 +2355,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	    unless props indicate otherwise
 	   */
 
-	  Number.prototype.roundToDecimalPlaces = function(value, formats) {
-	    var decimalPlaces, zeroFill;
-	    if (formats == null) {
-	      formats = this.getFormats();
+	  Number.prototype.roundToDecimalPlaces = function(value, options) {
+	    if (options == null) {
+	      options = {};
 	    }
-	    decimalPlaces = this.props.decimalPlaces;
-	    zeroFill = this.props.zeroFill;
-	    if (indexOf.call(formats, 'money') >= 0) {
-	      if (decimalPlaces == null) {
-	        decimalPlaces = 2;
+	    options = _.defaults(options, {
+	      formats: this.getFormats(),
+	      decimalPlaces: this.props.decimalPlaces,
+	      zeroFill: this.props.zeroFill
+	    });
+	    if (indexOf.call(options.formats, 'money') >= 0) {
+	      if (options.decimalPlaces == null) {
+	        options.decimalPlaces = 2;
 	      }
-	      if (zeroFill == null) {
-	        zeroFill = !(indexOf.call(formats, 'abbreviate') >= 0);
+	      if (options.zeroFill == null) {
+	        options.zeroFill = !(indexOf.call(options.formats, 'abbreviate') >= 0);
 	      }
 	    }
-	    if (decimalPlaces != null) {
-	      value = parseFloat(value).toFixed(decimalPlaces);
-	      if (!zeroFill) {
+	    if (options.decimalPlaces != null) {
+	      value = parseFloat(value).toFixed(options.decimalPlaces);
+	      if (!options.zeroFill) {
 	        value = parseFloat(value).toString();
 	      }
 	    }
@@ -2374,7 +2389,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (indexOf.call(formats, 'abbreviate') >= 0) {
 	      value = parseFloat(value);
 	      ref = value >= ONE_MILLION ? [value / ONE_MILLION, "MM"] : value >= ONE_THOUSAND ? [value / ONE_THOUSAND, "K"] : [value, ""], value = ref[0], affix = ref[1];
-	      value = "" + (this.roundToDecimalPlaces(value, formats)) + affix;
+	      value = "" + (this.roundToDecimalPlaces(value, {
+	        formats: formats
+	      })) + affix;
 	    }
 	    return value;
 	  };

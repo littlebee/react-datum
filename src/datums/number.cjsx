@@ -83,7 +83,7 @@ module.exports = class Number extends Datum
       
     # we are going to convert the value to a string now.  All 
     # numberic processing should precede this comment
-    value = @roundToDecimalPlaces(value, formats)
+    value = @roundToDecimalPlaces(value, formats: formats)
 
     # at this point, value is a string with 4 decimal places zero filled
     # all formatting that works on the text value goes after here
@@ -143,16 +143,19 @@ module.exports = class Number extends Datum
     note that 'money', when not 'abbreviate'd should zero fill out to two decimal places 
     unless props indicate otherwise
   ###
-  roundToDecimalPlaces: (value, formats=@getFormats()) ->
-    decimalPlaces = @props.decimalPlaces
-    zeroFill = @props.zeroFill
-    if 'money' in formats
-      decimalPlaces ?= 2
-      zeroFill ?= !('abbreviate' in formats)
+  roundToDecimalPlaces: (value, options={}) ->
+    options = _.defaults options,
+      formats:  @getFormats()
+      decimalPlaces: @props.decimalPlaces
+      zeroFill: @props.zeroFill
+    
+    if 'money' in options.formats
+      options.decimalPlaces ?= 2
+      options.zeroFill ?= !('abbreviate' in options.formats)
       
-    if decimalPlaces?
-      value = parseFloat(value).toFixed(decimalPlaces)
-      unless zeroFill
+    if options.decimalPlaces?
+      value = parseFloat(value).toFixed(options.decimalPlaces)
+      unless options.zeroFill
         value = parseFloat(value).toString()
         
     return value
@@ -168,7 +171,7 @@ module.exports = class Number extends Datum
       else
         [value, ""]
 
-      value = "#{@roundToDecimalPlaces(value, formats)}#{affix}"
+      value = "#{@roundToDecimalPlaces(value, formats: formats)}#{affix}"
     return value
         
         

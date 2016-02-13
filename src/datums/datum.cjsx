@@ -266,6 +266,15 @@ module.exports = class Datum extends React.Component
     return null
 
 
+  ###
+    This method can be overriden to provide custom determination of dirty state.
+    dirty meaning, has the input value changed.  The base implementation assumes
+    that the base behavior of setting state.value to null on model.set() happens.
+  ###
+  isDirty: () ->
+    return @state.value?
+
+
   isEditable: () ->
     inputMode = @getInputMode()
     return true if inputMode == "edit" || (inputMode == "inlineEdit" && @isEditing())
