@@ -2854,11 +2854,25 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  _ = __webpack_require__(9);
 
-	  module.exports = StringHelpers = (function () {
+	  module.exports = StringHelpers = function () {
 	    function StringHelpers() {}
 
-	    StringHelpers.trim = function (str) {
-	      return str.replace(/^\s+|\s+$/g, "");
+	    /*
+	      Trims leading and trailing spaces.  Also optionally trims internal excess spaces
+	     */
+
+	    StringHelpers.trim = function (str, options) {
+	      if (options == null) {
+	        options = {};
+	      }
+	      options = _.defaults(options, {
+	        all: false
+	      });
+	      str = str.replace(/^\s+|\s+$/g, "");
+	      if (options.all) {
+	        str = str.replace(/\s+/g, ' ');
+	      }
+	      return str;
 	    };
 
 	    StringHelpers.elipsize = function (str, maxLength) {
@@ -2869,27 +2883,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    /*
-	      otherStr can also be an array of other strings
+	      returns true if string starts with other string 
+	      
+	      otherStr can also be an array of other strings, returns true if any match.
 	     */
 
-	    StringHelpers.startsWith = function (str, otherStr) {
-	      var i, len, otherStrings, testString;
-	      otherStrings = _.isArray(otherStr) ? otherStr : [otherStr];
-	      for (i = 0, len = otherStrings.length; i < len; i++) {
-	        testString = otherStrings[i];
-	        if (str.slice(0, testString.length) === testString) {
+	    StringHelpers.startsWith = function (str, otherStrings) {
+	      return this._withOneOrArray(otherStrings, function (otherStr) {
+	        if (str.slice(0, otherStr.length) === otherStr) {
 	          return true;
 	        }
-	      }
-	      return false;
+	      });
 	    };
 
-	    StringHelpers.endsWith = function (str, otherString) {
-	      return str.slice(-otherString.length) === str;
+	    StringHelpers.endsWith = function (str, otherStrings) {
+	      return this._withOneOrArray(otherStrings, function (otherStr) {
+	        if (!((otherStr != null ? otherStr.length : void 0) > 0)) {
+	          return true;
+	        }
+	        if (str.slice(-1 * otherStr.length) === otherStr) {
+	          return true;
+	        }
+	      });
 	    };
 
-	    StringHelpers.has = function (str, otherStr) {
-	      return str.indexOf(otherStr) !== -1;
+	    StringHelpers.has = function (str, otherStrings) {
+	      return this._withOneOrArray(otherStrings, function (otherStr) {
+	        if (str.indexOf(otherStr) !== -1) {
+	          return true;
+	        }
+	      });
 	    };
 
 	    StringHelpers.weakValue = function (str, options) {
@@ -2902,7 +2925,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        trim: true
 	      });
 	      if (options.trim) {
-	        str = this.trim(str);
+	        str = this.trim(str, {
+	          all: true
+	        });
 	      }
 	      if (options.ignoreCase) {
 	        if (options.useLocale) {
@@ -2927,20 +2952,52 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return this.weakValue(str, options).localeCompare(this.weakValue(otherStr, options));
 	    };
 
-	    StringHelpers.weaklyHas = function (str, otherStr) {
-	      return this.weakValue(str).indexOf(this.weakValue(otherStr)) !== -1;
+	    StringHelpers.weaklyHas = function (str, otherStrings) {
+	      return this._withOneOrArray(otherStrings, function (_this) {
+	        return function (otherStr) {
+	          if (_this.weakValue(str).indexOf(_this.weakValue(otherStr)) !== -1) {
+	            return true;
+	          }
+	        };
+	      }(this));
 	    };
 
-	    StringHelpers.weaklyStartsWith = function (str, otherStr) {
-	      return this.startsWith(this.weakValue(str), this.weakValue(otherStr));
+	    StringHelpers.weaklyStartsWith = function (str, otherStrings) {
+	      return this._withOneOrArray(otherStrings, function (_this) {
+	        return function (otherStr) {
+	          if (_this.startsWith(_this.weakValue(str), _this.weakValue(otherStr))) {
+	            return true;
+	          }
+	        };
+	      }(this));
 	    };
 
-	    StringHelpers.weaklyEndsWith = function (str, otherStr) {
-	      return this.endsWith(this.weakValue(str), this.weakValue(otherStr));
+	    StringHelpers.weaklyEndsWith = function (str, otherStrings) {
+	      return this._withOneOrArray(otherStrings, function (_this) {
+	        return function (otherStr) {
+	          if (_this.endsWith(_this.weakValue(str), _this.weakValue(otherStr))) {
+	            return true;
+	          }
+	        };
+	      }(this));
+	    };
+
+	    StringHelpers._withOneOrArray = function (strOrArray, fn) {
+	      var array, i, len, str, truth;
+	      array = _.isArray(strOrArray) ? strOrArray : [strOrArray];
+	      truth = false;
+	      for (i = 0, len = array.length; i < len; i++) {
+	        str = array[i];
+	        if (fn(str) === true) {
+	          truth = true;
+	          break;
+	        }
+	      }
+	      return truth;
 	    };
 
 	    return StringHelpers;
-	  })();
+	  }();
 	}).call(undefined);
 
 /***/ },
