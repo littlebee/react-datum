@@ -56,11 +56,14 @@ module.exports = class ContextualData extends React.Component
   
   # extend these the same was as above or just replace them
   @defaultProps:
+    # when true, we will automatically fetch the model or collection on mount
     fetch: false
+    # additional fetch options (see Backbone Collection|Model fetch() options)
     fetchOptions: {}
-    # we don't define placeholder, that's up to our subclass. with 
+    # We don't define placeholder, that's up to our subclass. with 
     # `placeholder: undefined` by default, there is no placeholder,
-    # the renderContent method will always render children
+    # the renderContent method will always render children.  
+    # To render no placeholder but not render children, set this to null
     placeholder: undefined
     
 
