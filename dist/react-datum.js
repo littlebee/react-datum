@@ -1491,10 +1491,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = SelectableCollection = (function() {
 	  function SelectableCollection() {
+	    this.setActiveModel = bind(this.setActiveModel, this);
 	    this.setActiveModelById = bind(this.setActiveModelById, this);
 	    this.setActiveIndex = bind(this.setActiveIndex, this);
 	    this.getActiveModel = bind(this.getActiveModel, this);
-	    this.setActiveModel = bind(this.setActiveModel, this);
 	    this.selectNone = bind(this.selectNone, this);
 	    this.selectAll = bind(this.selectAll, this);
 	    this.selectModelByIndex = bind(this.selectModelByIndex, this);
@@ -1504,20 +1504,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	  /*
-	    This method is used to mix SelectableCollection features into a Backbone Collection.
-	    
-	    example:
-	    ```javascript
-	      kittensCollection = new Backbone.Collection()
-	      SelectableCollection.applyTo(kittensCollection)
-	    ```
+	    This method is used to mix SelectableCollection features into a Backbone Collection
 	   */
 
 	  SelectableCollection.applyTo = function(collection) {
-	    if (collection.hasSelectableCollectionMixin) {
+	    if (this.hasSelectableCollectionMixin) {
 	      return;
 	    }
-	    collection.hasSelectableCollection = true;
 	    this.warnIfReplacingMethods(collection);
 	    return _.extend(collection, this.prototype);
 	  };
@@ -1533,35 +1526,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  SelectableCollection.prototype.hasSelectableCollectionMixin = true;
 
-
-	  /*
-	    Collection instance method that returns an array of selected models
-	   */
-
 	  SelectableCollection.prototype.getSelectedModels = function() {
 	    return _.filter(this.models, function(m) {
 	      return m.selected;
 	    });
 	  };
-
-
-	  /*
-	    Collection instance method that selects a single model.
-	   
-	    The model will be given a `selected` property of true.
-	   
-	    The `selected` argument can be one of:
-	    `true`    - model argument will be selected
-	    `false`   - unselect model
-	    "toggle"` - invert current selected state
-	    
-	    Example: 
-	    ```javascript
-	      myCollection.selectModel(myModel)
-	      console.log(myModel.selected)
-	       * => true
-	    ```
-	   */
 
 	  SelectableCollection.prototype.selectModel = function(model, selected, options) {
 	    if (selected == null) {
@@ -1588,15 +1557,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return model.selected;
 	  };
 
-
-	  /*
-	    Collection instance method that selects a single model by ID.
-	    
-	    collection.get(id) is used to get the model passed to selectModel method.
-	    
-	    See also [selectModel method](#selectModel) for options
-	   */
-
 	  SelectableCollection.prototype.selectModelById = function(id, selected, options) {
 	    if (selected == null) {
 	      selected = true;
@@ -1607,14 +1567,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.selectModel(this.get(id), selected, options);
 	  };
 
-
-	  /*
-	    Collection instance method that selects a single model by it's zero based index
-	    in the collection.
-	  
-	    See also [selectModel method](#selectModel) for options
-	   */
-
 	  SelectableCollection.prototype.selectModelByIndex = function(index, selected, options) {
 	    if (selected == null) {
 	      selected = true;
@@ -1624,13 +1576,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    return this.selectModel(this.models[index], selected, options);
 	  };
-
-
-	  /*
-	    Collection instance method that selects all models in the collection.
-	  
-	    A single *selectionsChanged* event is triggered unless options.silent==true
-	   */
 
 	  SelectableCollection.prototype.selectAll = function(options) {
 	    var i, len, model, ref;
@@ -1655,14 +1600,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  };
 
-
-	  /*
-	    Collection instance method that unselects all models.  Also sets activeModel to null.
-	  
-	    A *selectionsChanged* event is triggered unless options.silent==true. 
-	    A *activeModelChanged* event is also fired
-	   */
-
 	  SelectableCollection.prototype.selectNone = function(options) {
 	    var i, len, model, ref;
 	    if (options == null) {
@@ -1681,24 +1618,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	        silent: true
 	      });
 	    }
+	    this.trigger('activeModelChanged', null);
 	    if (!options.silent) {
-	      this.trigger('selectionsChanged');
+	      return this.trigger('selectionsChanged');
 	    }
-	    return this.setActiveModel(null);
 	  };
 
+	  SelectableCollection.prototype.getActiveModel = function() {
+	    return this.activeModel;
+	  };
 
-	  /*
-	    Collection instance method that sets the current 'active' Model.  Multiple models may be 
-	    selected in the collection, only one model can be 'active'.   The active model is also
-	    selected in the collection if not already selected.  
-	    
-	    SetActiveModel() is an optional feature. Active model can be used, as it is by 
-	    [tilegrid](https://github.com/zulily/tilegrid), to provide both multiple selections and
-	    a single selection within that set (the last tile added to the selections)
-	      
-	    pass in null for model argument to unset active model
-	   */
+	  SelectableCollection.prototype.setActiveIndex = function(index, options) {
+	    if (options == null) {
+	      options = {};
+	    }
+	    return this.setActiveModel(this.models[index]);
+	  };
+
+	  SelectableCollection.prototype.setActiveModelById = function(modelId, options) {
+	    if (options == null) {
+	      options = {};
+	    }
+	    return this.setActiveModel(this.get(modelId), options);
+	  };
 
 	  SelectableCollection.prototype.setActiveModel = function(model, options) {
 	    var currentActive;
@@ -1721,43 +1663,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!options.silent) {
 	      return this.trigger('activeModelChanged', model);
 	    }
-	  };
-
-
-	  /*
-	    Collection instance method that returns the current active model.
-	   */
-
-	  SelectableCollection.prototype.getActiveModel = function() {
-	    return this.activeModel;
-	  };
-
-
-	  /*
-	    Collection instance method that sets the active model by index in collection.
-	    
-	    see [setActiveModel](#setActiveModel) for options
-	   */
-
-	  SelectableCollection.prototype.setActiveIndex = function(index, options) {
-	    if (options == null) {
-	      options = {};
-	    }
-	    return this.setActiveModel(this.models[index]);
-	  };
-
-
-	  /*
-	    Collection instance method that sets the active model by id in collection.
-	    
-	    see [setActiveModel](#setActiveModel) for options
-	   */
-
-	  SelectableCollection.prototype.setActiveModelById = function(modelId, options) {
-	    if (options == null) {
-	      options = {};
-	    }
-	    return this.setActiveModel(this.get(modelId), options);
 	  };
 
 	  return SelectableCollection;
@@ -3006,11 +2911,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 	var _react = __webpack_require__(4);
 
@@ -3046,8 +2953,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
-
 	function stringifyValue(value) {
 		if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
 			return JSON.stringify(value);
@@ -3056,20 +2961,21 @@ return /******/ (function(modules) { // webpackBootstrap
 		}
 	}
 
-	var Select = _react2.default.createClass({
+	var stringOrNode = _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.string, _react2.default.PropTypes.node]);
 
-		statics: { Async: _Async2.default },
+	var Select = _react2.default.createClass({
 
 		displayName: 'Select',
 
 		propTypes: {
 			addLabelText: _react2.default.PropTypes.string, // placeholder displayed when you want to add a label on a multi-value input
 			allowCreate: _react2.default.PropTypes.bool, // whether to allow creation of new entries
+			autoBlur: _react2.default.PropTypes.bool,
 			autofocus: _react2.default.PropTypes.bool, // autofocus the component on mount
 			backspaceRemoves: _react2.default.PropTypes.bool, // whether backspace removes an item if there is no text input
 			className: _react2.default.PropTypes.string, // className for the outer element
-			clearAllText: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.string, _react2.default.PropTypes.node]), // title for the "clear" control when multi: true
-			clearValueText: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.string, _react2.default.PropTypes.node]), // title for the "clear" control
+			clearAllText: stringOrNode, // title for the "clear" control when multi: true
+			clearValueText: stringOrNode, // title for the "clear" control
 			clearable: _react2.default.PropTypes.bool, // should it be possible to reset value
 			delimiter: _react2.default.PropTypes.string, // delimiter to use to join multiple values for the hidden field value
 			disabled: _react2.default.PropTypes.bool, // whether the Select is disabled or not
@@ -3083,24 +2989,28 @@ return /******/ (function(modules) { // webpackBootstrap
 			labelKey: _react2.default.PropTypes.string, // path of the label value in option objects
 			matchPos: _react2.default.PropTypes.string, // (any|start) match the start or entire string when filtering
 			matchProp: _react2.default.PropTypes.string, // (any|label|value) which option property to filter on
-			scrollMenuIntoView: _react2.default.PropTypes.bool, // boolean to enable the viewport to shift so that the full menu fully visible when engaged
 			menuBuffer: _react2.default.PropTypes.number, // optional buffer (in px) between the bottom of the viewport and the bottom of the menu
-			menuStyle: _react2.default.PropTypes.object, // optional style to apply to the menu
 			menuContainerStyle: _react2.default.PropTypes.object, // optional style to apply to the menu container
+			menuStyle: _react2.default.PropTypes.object, // optional style to apply to the menu
 			multi: _react2.default.PropTypes.bool, // multi-value input
 			name: _react2.default.PropTypes.string, // generates a hidden <input /> tag with this field name for html forms
 			newOptionCreator: _react2.default.PropTypes.func, // factory to create new options when allowCreate set
-			noResultsText: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.string, _react2.default.PropTypes.node]), // placeholder displayed when there are no matching search results
+			noResultsText: stringOrNode, // placeholder displayed when there are no matching search results
 			onBlur: _react2.default.PropTypes.func, // onBlur handler: function (event) {}
+			onBlurResetsInput: _react2.default.PropTypes.bool, // whether input is cleared on blur
 			onChange: _react2.default.PropTypes.func, // onChange handler: function (newValue) {}
+			onClose: _react2.default.PropTypes.func, // fires when the menu is closed
 			onFocus: _react2.default.PropTypes.func, // onFocus handler: function (event) {}
 			onInputChange: _react2.default.PropTypes.func, // onInputChange handler: function (inputValue) {}
-			onValueClick: _react2.default.PropTypes.func, // onClick handler for value labels: function (value, event) {}
 			onMenuScrollToBottom: _react2.default.PropTypes.func, // fires when the menu is scrolled to the bottom; can be used to paginate options
+			onOpen: _react2.default.PropTypes.func, // fires when the menu is opened
+			onValueClick: _react2.default.PropTypes.func, // onClick handler for value labels: function (value, event) {}
 			optionComponent: _react2.default.PropTypes.func, // option component to render in dropdown
 			optionRenderer: _react2.default.PropTypes.func, // optionRenderer: function (option) {}
 			options: _react2.default.PropTypes.array, // array of options
-			placeholder: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.string, _react2.default.PropTypes.node]), // field placeholder, displayed when there's no value
+			placeholder: stringOrNode, // field placeholder, displayed when there's no value
+			required: _react2.default.PropTypes.bool, // applies HTML5 required attribute when needed
+			scrollMenuIntoView: _react2.default.PropTypes.bool, // boolean to enable the viewport to shift so that the full menu fully visible when engaged
 			searchable: _react2.default.PropTypes.bool, // whether to enable searching feature or not
 			simpleValue: _react2.default.PropTypes.bool, // pass the value to onChange as a simple value (legacy pre 1.0 mode), defaults to false
 			style: _react2.default.PropTypes.object, // optional style to apply to the control
@@ -3112,14 +3022,16 @@ return /******/ (function(modules) { // webpackBootstrap
 			wrapperStyle: _react2.default.PropTypes.object },
 
 		// optional style to apply to the component wrapper
+		statics: { Async: _Async2.default },
+
 		getDefaultProps: function getDefaultProps() {
 			return {
 				addLabelText: 'Add "{label}"?',
 				allowCreate: false,
 				backspaceRemoves: true,
+				clearable: true,
 				clearAllText: 'Clear all',
 				clearValueText: 'Clear value',
-				clearable: true,
 				delimiter: ',',
 				disabled: false,
 				escapeClearsValue: true,
@@ -3131,12 +3043,14 @@ return /******/ (function(modules) { // webpackBootstrap
 				labelKey: 'label',
 				matchPos: 'any',
 				matchProp: 'any',
-				scrollMenuIntoView: true,
 				menuBuffer: 0,
 				multi: false,
 				noResultsText: 'No results found',
+				onBlurResetsInput: true,
 				optionComponent: _Option2.default,
 				placeholder: 'Select...',
+				required: false,
+				scrollMenuIntoView: true,
 				searchable: true,
 				simpleValue: false,
 				valueComponent: _Value2.default,
@@ -3149,7 +3063,8 @@ return /******/ (function(modules) { // webpackBootstrap
 				isFocused: false,
 				isLoading: false,
 				isOpen: false,
-				isPseudoFocused: false
+				isPseudoFocused: false,
+				required: this.props.required && this.handleRequired(this.props.value, this.props.multi)
 			};
 		},
 		componentDidMount: function componentDidMount() {
@@ -3157,7 +3072,23 @@ return /******/ (function(modules) { // webpackBootstrap
 				this.focus();
 			}
 		},
+		componentWillUpdate: function componentWillUpdate(nextProps, nextState) {
+			if (nextState.isOpen !== this.state.isOpen) {
+				var handler = nextState.isOpen ? nextProps.onOpen : nextProps.onClose;
+				handler && handler();
+			}
+		},
 		componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
+			// focus to the selected option
+			if (this.refs.menu && this.refs.focused && this.state.isOpen && !this.hasScrolledToOption) {
+				var focusedOptionNode = _reactDom2.default.findDOMNode(this.refs.focused);
+				var menuNode = _reactDom2.default.findDOMNode(this.refs.menu);
+				menuNode.scrollTop = focusedOptionNode.offsetTop;
+				this.hasScrolledToOption = true;
+			} else if (!this.state.isOpen) {
+				this.hasScrolledToOption = false;
+			}
+
 			if (prevState.inputValue !== this.state.inputValue && this.props.onInputChange) {
 				this.props.onInputChange(this.state.inputValue);
 			}
@@ -3178,12 +3109,40 @@ return /******/ (function(modules) { // webpackBootstrap
 				}
 			}
 			if (prevProps.disabled !== this.props.disabled) {
-				this.setState({ isFocused: false });
+				this.setState({ isFocused: false }); // eslint-disable-line react/no-did-update-set-state
 			}
 		},
 		focus: function focus() {
 			if (!this.refs.input) return;
 			this.refs.input.focus();
+		},
+		blurInput: function blurInput() {
+			if (!this.refs.input) return;
+			this.refs.input.blur();
+		},
+		handleTouchMove: function handleTouchMove(event) {
+			// Set a flag that the view is being dragged
+			this.dragging = true;
+		},
+		handleTouchStart: function handleTouchStart(event) {
+			// Set a flag that the view is not being dragged
+			this.dragging = false;
+		},
+		handleTouchEnd: function handleTouchEnd(event) {
+			// Check if the view is being dragged, In this case
+			// we don't want to fire the click event (because the user only wants to scroll)
+			if (this.dragging) return;
+
+			// Fire the mouse events
+			this.handleMouseDown(event);
+		},
+		handleTouchEndClearValue: function handleTouchEndClearValue(event) {
+			// Check if the view is being dragged, In this case
+			// we don't want to fire the click event (because the user only wants to scroll)
+			if (this.dragging) return;
+
+			// Clear the value
+			this.clearValue(event);
 		},
 		handleMouseDown: function handleMouseDown(event) {
 			// if the event was triggered by a mousedown and not the primary
@@ -3232,12 +3191,25 @@ return /******/ (function(modules) { // webpackBootstrap
 			// close the menu
 			this.closeMenu();
 		},
+		handleMouseDownOnMenu: function handleMouseDownOnMenu(event) {
+			// if the event was triggered by a mousedown and not the primary
+			// button, or if the component is disabled, ignore it.
+			if (this.props.disabled || event.type === 'mousedown' && event.button !== 0) {
+				return;
+			}
+			event.stopPropagation();
+			event.preventDefault();
+
+			this._openAfterFocus = true;
+			this.focus();
+		},
 		closeMenu: function closeMenu() {
 			this.setState({
 				isOpen: false,
 				isPseudoFocused: this.state.isFocused && !this.props.multi,
 				inputValue: ''
 			});
+			this.hasScrolledToOption = false;
 		},
 		handleInputFocus: function handleInputFocus(event) {
 			var isOpen = this.state.isOpen || this._openAfterFocus;
@@ -3258,12 +3230,15 @@ return /******/ (function(modules) { // webpackBootstrap
 			if (this.props.onBlur) {
 				this.props.onBlur(event);
 			}
-			this.setState({
-				inputValue: '',
+			var onBlurredState = {
 				isFocused: false,
 				isOpen: false,
 				isPseudoFocused: false
-			});
+			};
+			if (this.props.onBlurResetsInput) {
+				onBlurredState.inputValue = '';
+			}
+			this.setState(onBlurredState);
 		},
 		handleInputChange: function handleInputChange(event) {
 			this.setState({
@@ -3288,10 +3263,11 @@ return /******/ (function(modules) { // webpackBootstrap
 						return;
 					}
 					this.selectFocusedOption();
-					break;
+					return;
 				case 13:
 					// enter
 					if (!this.state.isOpen) return;
+					event.stopPropagation();
 					this.selectFocusedOption();
 					break;
 				case 27:
@@ -3336,6 +3312,10 @@ return /******/ (function(modules) { // webpackBootstrap
 				this.props.onMenuScrollToBottom();
 			}
 		},
+		handleRequired: function handleRequired(value, multi) {
+			if (!value) return true;
+			return multi ? value.length === 0 : Object.keys(value).length === 0;
+		},
 		getOptionLabel: function getOptionLabel(op) {
 			return op[this.props.labelKey];
 		},
@@ -3368,7 +3348,14 @@ return /******/ (function(modules) { // webpackBootstrap
 		setValue: function setValue(value) {
 			var _this = this;
 
+			if (this.props.autoBlur) {
+				this.blurInput();
+			}
 			if (!this.props.onChange) return;
+			if (this.props.required) {
+				var required = this.handleRequired(value, this.props.multi);
+				this.setState({ required: required });
+			}
 			if (this.props.simpleValue && value) {
 				value = this.props.multi ? value.map(function (i) {
 					return i[_this.props.valueKey];
@@ -3377,6 +3364,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			this.props.onChange(value);
 		},
 		selectValue: function selectValue(value) {
+			this.hasScrolledToOption = false;
 			if (this.props.multi) {
 				this.addValue(value);
 				this.setState({
@@ -3543,6 +3531,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				onFocus: this.handleInputFocus,
 				minWidth: '5',
 				ref: 'input',
+				required: this.state.required,
 				value: this.state.inputValue
 			}));
 		},
@@ -3550,7 +3539,12 @@ return /******/ (function(modules) { // webpackBootstrap
 			if (!this.props.clearable || !this.props.value || this.props.multi && !this.props.value.length || this.props.disabled || this.props.isLoading) return;
 			return _react2.default.createElement(
 				'span',
-				{ className: 'Select-clear-zone', title: this.props.multi ? this.props.clearAllText : this.props.clearValueText, 'aria-label': this.props.multi ? this.props.clearAllText : this.props.clearValueText, onMouseDown: this.clearValue, onTouchEnd: this.clearValue },
+				{ className: 'Select-clear-zone', title: this.props.multi ? this.props.clearAllText : this.props.clearValueText,
+					'aria-label': this.props.multi ? this.props.clearAllText : this.props.clearValueText,
+					onMouseDown: this.clearValue,
+					onTouchStart: this.handleTouchStart,
+					onTouchMove: this.handleTouchMove,
+					onTouchEnd: this.handleTouchEndClearValue },
 				_react2.default.createElement('span', { className: 'Select-clear', dangerouslySetInnerHTML: { __html: '&times;' } })
 			);
 		},
@@ -3602,9 +3596,10 @@ return /******/ (function(modules) { // webpackBootstrap
 			var _this4 = this;
 
 			if (options && options.length) {
-				var _ret = (function () {
+				var _ret = function () {
 					var Option = _this4.props.optionComponent;
 					var renderLabel = _this4.props.optionRenderer || _this4.getOptionLabel;
+
 					return {
 						v: options.map(function (option, i) {
 							var isSelected = valueArray && valueArray.indexOf(option) > -1;
@@ -3616,6 +3611,7 @@ return /******/ (function(modules) { // webpackBootstrap
 								'is-focused': isFocused,
 								'is-disabled': option.disabled
 							});
+
 							return _react2.default.createElement(
 								Option,
 								{
@@ -3633,15 +3629,17 @@ return /******/ (function(modules) { // webpackBootstrap
 							);
 						})
 					};
-				})();
+				}();
 
 				if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
-			} else {
+			} else if (this.props.noResultsText) {
 				return _react2.default.createElement(
 					'div',
 					{ className: 'Select-noresults' },
 					this.props.noResultsText
 				);
+			} else {
+				return null;
 			}
 		},
 		renderHiddenField: function renderHiddenField(valueArray) {
@@ -3684,7 +3682,14 @@ return /******/ (function(modules) { // webpackBootstrap
 				this.renderHiddenField(valueArray),
 				_react2.default.createElement(
 					'div',
-					{ ref: 'control', className: 'Select-control', style: this.props.style, onKeyDown: this.handleKeyDown, onMouseDown: this.handleMouseDown, onTouchEnd: this.handleMouseDown },
+					{ ref: 'control',
+						className: 'Select-control',
+						style: this.props.style,
+						onKeyDown: this.handleKeyDown,
+						onMouseDown: this.handleMouseDown,
+						onTouchEnd: this.handleTouchEnd,
+						onTouchStart: this.handleTouchStart,
+						onTouchMove: this.handleTouchMove },
 					this.renderValue(valueArray, isOpen),
 					this.renderInput(valueArray),
 					this.renderLoading(),
@@ -3696,7 +3701,10 @@ return /******/ (function(modules) { // webpackBootstrap
 					{ ref: 'menuContainer', className: 'Select-menu-outer', style: this.props.menuContainerStyle },
 					_react2.default.createElement(
 						'div',
-						{ ref: 'menu', className: 'Select-menu', style: this.props.menuStyle, onScroll: this.handleMenuScroll, onMouseDown: this.handleMouseDownOnMenu },
+						{ ref: 'menu', className: 'Select-menu',
+							style: this.props.menuStyle,
+							onScroll: this.handleMenuScroll,
+							onMouseDown: this.handleMouseDownOnMenu },
 						this.renderMenu(options, !this.props.multi ? valueArray : null, focusedOption)
 					)
 				) : null
@@ -3726,11 +3734,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var sizerStyle = { position: 'absolute', visibility: 'hidden', height: 0, width: 0, overflow: 'scroll', whiteSpace: 'nowrap' };
 
-	var nextFrame = typeof window !== 'undefined' ? (function () {
+	var nextFrame = typeof window !== 'undefined' ? function () {
 		return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
 			window.setTimeout(callback, 1000 / 60);
 		};
-	})().bind(window) : undefined; // If window is undefined, then we can't define a nextFrame function
+	}().bind(window) : undefined; // If window is undefined, then we can't define a nextFrame function
 
 	var AutosizeInput = React.createClass({
 		displayName: 'AutosizeInput',
@@ -3811,11 +3819,14 @@ return /******/ (function(modules) { // webpackBootstrap
 		focus: function focus() {
 			this.refs.input.focus();
 		},
+		blur: function blur() {
+			this.refs.input.blur();
+		},
 		select: function select() {
 			this.refs.input.select();
 		},
 		render: function render() {
-			var escapedValue = (this.props.value || '').replace(/\&/g, '&amp;').replace(/ /g, '&nbsp;').replace(/\</g, '&lt;').replace(/\>/g, '&gt;');
+			var escapedValue = (this.props.defaultValue || this.props.value || '').replace(/\&/g, '&amp;').replace(/ /g, '&nbsp;').replace(/\</g, '&lt;').replace(/\>/g, '&gt;');
 			var wrapperStyle = this.props.style || {};
 			if (!wrapperStyle.display) wrapperStyle.display = 'inline-block';
 			var inputStyle = _extends({}, this.props.inputStyle);
@@ -3834,10 +3845,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 
-	function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 	/*!
-	  Copyright (c) 2015 Jed Watson.
+	  Copyright (c) 2016 Jed Watson.
 	  Licensed under the MIT License (MIT), see
 	  http://jedwatson.github.io/classnames
 	*/
@@ -3846,10 +3857,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	(function () {
 		'use strict';
 
-		var hasOwn = ({}).hasOwnProperty;
+		var hasOwn = {}.hasOwnProperty;
 
 		function classNames() {
-			var classes = '';
+			var classes = [];
 
 			for (var i = 0; i < arguments.length; i++) {
 				var arg = arguments[i];
@@ -3858,19 +3869,19 @@ return /******/ (function(modules) { // webpackBootstrap
 				var argType = typeof arg === 'undefined' ? 'undefined' : _typeof(arg);
 
 				if (argType === 'string' || argType === 'number') {
-					classes += ' ' + arg;
+					classes.push(arg);
 				} else if (Array.isArray(arg)) {
-					classes += ' ' + classNames.apply(null, arg);
+					classes.push(classNames.apply(null, arg));
 				} else if (argType === 'object') {
 					for (var key in arg) {
 						if (hasOwn.call(arg, key) && arg[key]) {
-							classes += ' ' + key;
+							classes.push(key);
 						}
 					}
 				}
 			}
 
-			return classes.substr(1);
+			return classes.join(' ');
 		}
 
 		if (typeof module !== 'undefined' && module.exports) {
@@ -3916,6 +3927,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 	var _react = __webpack_require__(4);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -3929,8 +3942,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
 	var requestId = 0;
 
@@ -3965,23 +3976,24 @@ return /******/ (function(modules) { // webpackBootstrap
 		});
 	}
 
+	var stringOrNode = _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.string, _react2.default.PropTypes.node]);
+
 	var Async = _react2.default.createClass({
 		displayName: 'Async',
 
 		propTypes: {
 			cache: _react2.default.PropTypes.any, // object to use to cache results, can be null to disable cache
-			loadOptions: _react2.default.PropTypes.func.isRequired, // function to call to load options asynchronously
 			ignoreAccents: _react2.default.PropTypes.bool, // whether to strip diacritics when filtering (shared with Select)
 			ignoreCase: _react2.default.PropTypes.bool, // whether to perform case-insensitive filtering (shared with Select)
 			isLoading: _react2.default.PropTypes.bool, // overrides the isLoading state when set to true
+			loadOptions: _react2.default.PropTypes.func.isRequired, // function to call to load options asynchronously
 			loadingPlaceholder: _react2.default.PropTypes.string, // replaces the placeholder while options are loading
 			minimumInput: _react2.default.PropTypes.number, // the minimum number of characters that trigger loadOptions
 			noResultsText: _react2.default.PropTypes.string, // placeholder displayed when there are no matching search results (shared with Select)
-			placeholder: _react2.default.PropTypes.oneOfType([// field placeholder, displayed when there's no value (shared with Select)
-			_react2.default.PropTypes.string, _react2.default.PropTypes.node]),
-			searchingText: _react2.default.PropTypes.string, // message to display while options are loading
-			searchPromptText: _react2.default.PropTypes.string },
-		// label to prompt for search input
+			placeholder: stringOrNode, // field placeholder, displayed when there's no value (shared with Select)
+			searchPromptText: _react2.default.PropTypes.string, // label to prompt for search input
+			searchingText: _react2.default.PropTypes.string },
+		// message to display while options are loading
 		getDefaultProps: function getDefaultProps() {
 			return {
 				cache: true,
@@ -4102,12 +4114,13 @@ return /******/ (function(modules) { // webpackBootstrap
 		displayName: 'Option',
 
 		propTypes: {
+			children: _react2.default.PropTypes.node,
 			className: _react2.default.PropTypes.string, // className (based on mouse position)
 			isDisabled: _react2.default.PropTypes.bool, // the option is disabled
 			isFocused: _react2.default.PropTypes.bool, // the option is focused
 			isSelected: _react2.default.PropTypes.bool, // the option is selected
-			onSelect: _react2.default.PropTypes.func, // method to handle click on option element
 			onFocus: _react2.default.PropTypes.func, // method to handle mouseEnter on option element
+			onSelect: _react2.default.PropTypes.func, // method to handle click on option element
 			onUnfocus: _react2.default.PropTypes.func, // method to handle mouseLeave on option element
 			option: _react2.default.PropTypes.object.isRequired },
 		// object that is base for that option
@@ -4129,11 +4142,30 @@ return /******/ (function(modules) { // webpackBootstrap
 			this.props.onSelect(this.props.option, event);
 		},
 		handleMouseEnter: function handleMouseEnter(event) {
-			this.props.onFocus(this.props.option, event);
+			this.onFocus(event);
 		},
 		handleMouseMove: function handleMouseMove(event) {
-			if (this.props.focused) return;
-			this.props.onFocus(this.props.option, event);
+			this.onFocus(event);
+		},
+		handleTouchEnd: function handleTouchEnd(event) {
+			// Check if the view is being dragged, In this case
+			// we don't want to fire the click event (because the user only wants to scroll)
+			if (this.dragging) return;
+
+			this.handleMouseDown(event);
+		},
+		handleTouchMove: function handleTouchMove(event) {
+			// Set a flag that the view is being dragged
+			this.dragging = true;
+		},
+		handleTouchStart: function handleTouchStart(event) {
+			// Set a flag that the view is not being dragged
+			this.dragging = false;
+		},
+		onFocus: function onFocus(event) {
+			if (!this.props.isFocused) {
+				this.props.onFocus(this.props.option, event);
+			}
 		},
 		render: function render() {
 			var option = this.props.option;
@@ -4153,6 +4185,9 @@ return /******/ (function(modules) { // webpackBootstrap
 					onMouseDown: this.handleMouseDown,
 					onMouseEnter: this.handleMouseEnter,
 					onMouseMove: this.handleMouseMove,
+					onTouchStart: this.handleTouchStart,
+					onTouchMove: this.handleTouchMove,
+					onTouchEnd: this.handleTouchEnd,
 					title: option.title },
 				this.props.children
 			);
@@ -4182,6 +4217,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		displayName: 'Value',
 
 		propTypes: {
+			children: _react2.default.PropTypes.node,
 			disabled: _react2.default.PropTypes.bool, // disabled prop passed to ReactSelect
 			onClick: _react2.default.PropTypes.func, // method to handle click on value label
 			onRemove: _react2.default.PropTypes.func, // method to handle removal of the value
@@ -4206,13 +4242,31 @@ return /******/ (function(modules) { // webpackBootstrap
 			event.stopPropagation();
 			this.props.onRemove(this.props.value);
 		},
+		handleTouchEndRemove: function handleTouchEndRemove(event) {
+			// Check if the view is being dragged, In this case
+			// we don't want to fire the click event (because the user only wants to scroll)
+			if (this.dragging) return;
+
+			// Fire the mouse events
+			this.onRemove(event);
+		},
+		handleTouchMove: function handleTouchMove(event) {
+			// Set a flag that the view is being dragged
+			this.dragging = true;
+		},
+		handleTouchStart: function handleTouchStart(event) {
+			// Set a flag that the view is not being dragged
+			this.dragging = false;
+		},
 		renderRemoveIcon: function renderRemoveIcon() {
 			if (this.props.disabled || !this.props.onRemove) return;
 			return _react2.default.createElement(
 				'span',
 				{ className: 'Select-value-icon',
 					onMouseDown: this.onRemove,
-					onTouchEnd: this.onRemove },
+					onTouchEnd: this.handleTouchEndRemove,
+					onTouchStart: this.handleTouchStart,
+					onTouchMove: this.handleTouchMove },
 				'×'
 			);
 		},
