@@ -87,6 +87,7 @@
     "node-cjsx": "^1.0.0",
     "promise": "^7.0.4",
     "react-addons-test-utils": "^0.14.2",
+    "sinon": "^1.17.3",
     "sync-request": "^2.1.0",
     "tilegrid": "^0.1.1",
     "webpack": "^1.12.14",
