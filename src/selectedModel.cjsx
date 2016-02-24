@@ -42,6 +42,13 @@ module.exports = class SelectedModel extends ContextualData
     @_lastContextCollection = @context.collection
     return truth;
 
+  ###
+    override - We are going to provide a 'model' context (contextKey), but we listen to a 
+    collection
+  ###
+  getInputCollectionOrModel: () ->
+    @props.collection || @context.collection
+
 
   # override - @collectionOrModel should be the selected model in the collection
   getCollectionOrModelToProvide: () ->
@@ -53,16 +60,15 @@ module.exports = class SelectedModel extends ContextualData
   # selections changed on collection
   bindEvents: (model) ->
     super
-    @collection?.on "selectionsChanged", @_onSelectionsChanged
+    @getInputCollectionOrModel()?.on "selectionsChanged", @_onSelectionsChanged
 
 
   unbindEvents: () ->
     super
-    @collection?.off "selectionsChanged", @_onSelectionsChanged
+    @getInputCollectionOrModel()?.off "selectionsChanged", @_onSelectionsChanged
 
 
   _onSelectionsChanged: =>
-    @unbindEvents()
+    console.log "selections changed"
     @setCollectionOrModel()
-    @bindEvents()
     @forceUpdate()

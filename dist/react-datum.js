@@ -1872,6 +1872,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return truth;
 	  };
 
+
+	  /*
+	    override - We are going to provide a 'model' context (contextKey), but we listen to a 
+	    collection
+	   */
+
+	  SelectedModel.prototype.getInputCollectionOrModel = function() {
+	    return this.props.collection || this.context.collection;
+	  };
+
 	  SelectedModel.prototype.getCollectionOrModelToProvide = function() {
 	    var collection;
 	    collection = this.props.collection || this.context.collection;
@@ -1881,19 +1891,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	  SelectedModel.prototype.bindEvents = function(model) {
 	    var ref;
 	    SelectedModel.__super__.bindEvents.apply(this, arguments);
-	    return (ref = this.collection) != null ? ref.on("selectionsChanged", this._onSelectionsChanged) : void 0;
+	    return (ref = this.getInputCollectionOrModel()) != null ? ref.on("selectionsChanged", this._onSelectionsChanged) : void 0;
 	  };
 
 	  SelectedModel.prototype.unbindEvents = function() {
 	    var ref;
 	    SelectedModel.__super__.unbindEvents.apply(this, arguments);
-	    return (ref = this.collection) != null ? ref.off("selectionsChanged", this._onSelectionsChanged) : void 0;
+	    return (ref = this.getInputCollectionOrModel()) != null ? ref.off("selectionsChanged", this._onSelectionsChanged) : void 0;
 	  };
 
 	  SelectedModel.prototype._onSelectionsChanged = function() {
-	    this.unbindEvents();
+	    console.log("selections changed");
 	    this.setCollectionOrModel();
-	    this.bindEvents();
 	    return this.forceUpdate();
 	  };
 
