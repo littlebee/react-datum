@@ -1901,7 +1901,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  SelectedModel.prototype._onSelectionsChanged = function() {
-	    console.log("selections changed");
 	    this.setCollectionOrModel();
 	    return this.forceUpdate();
 	  };

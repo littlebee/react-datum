@@ -69,6 +69,5 @@ module.exports = class SelectedModel extends ContextualData
 
 
   _onSelectionsChanged: =>
-    console.log "selections changed"
     @setCollectionOrModel()
     @forceUpdate()
