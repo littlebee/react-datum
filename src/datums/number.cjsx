@@ -165,7 +165,7 @@ module.exports = class Number extends Datum
     if 'abbreviate' in formats
       value = parseFloat(value)
       [value, affix] = if value >= ONE_MILLION
-        [value / ONE_MILLION, "MM" ]
+        [value / ONE_MILLION, "M" ]
       else if value >= ONE_THOUSAND
         [value / ONE_THOUSAND, "K"]
       else

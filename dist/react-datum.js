@@ -2319,7 +2319,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    if (indexOf.call(formats, 'abbreviate') >= 0) {
 	      value = parseFloat(value);
-	      ref = value >= ONE_MILLION ? [value / ONE_MILLION, "MM"] : value >= ONE_THOUSAND ? [value / ONE_THOUSAND, "K"] : [value, ""], value = ref[0], affix = ref[1];
+	      ref = value >= ONE_MILLION ? [value / ONE_MILLION, "M"] : value >= ONE_THOUSAND ? [value / ONE_THOUSAND, "K"] : [value, ""], value = ref[0], affix = ref[1];
 	      value = "" + (this.roundToDecimalPlaces(value, {
 	        formats: formats
 	      })) + affix;
