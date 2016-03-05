@@ -46,6 +46,15 @@ module.exports = class ContextualData extends React.Component
     placeholder: React.PropTypes.node  # anything react can render
     # additional css classes to add
     className: React.PropTypes.string
+    # set debouncedUpdate = false to not debounce, i.e. 1:1 collection or 
+    # model triggered events to renders. 
+    debouncedUpdate: React.PropTypes.bool
+    # set debounceMs to a higher delay. 
+    debounceMs: React.PropTypes.number
+    # set to true to show console messages about useful things
+    debug: React.PropTypes.bool
+    
+    
 
   # you will also need to similarly extend this, like this:
   #```
@@ -66,6 +75,13 @@ module.exports = class ContextualData extends React.Component
     # To render no placeholder but not render children, set this to null
     placeholder: undefined
     
+    # effectively batch and defer multiple syncronous events into one defaults to zero 
+    # second debounce which will effectively ignore all but the last triggered event
+    # in a long sequence
+    debouncedUpdate: true
+    debounceMs: 0
+    
+    
 
     
   constructor: (props) ->
@@ -74,6 +90,15 @@ module.exports = class ContextualData extends React.Component
     @state = 
       lastUpdated: null
       collectionOrModel: null
+
+    # we don't want to delay, but we do want to head off a stampeed when
+    # many events fire subsquently like after a large collection.add.
+    #  
+    # debounceMs is an undocumented prop because I'm not sure it's a good idea
+    @debouncedUpdate = if @props.debouncedUpdate 
+      _.debounce((=>@update()), @props.debounceMs)
+    else
+      @update
 
 
   getChildContext: ->
@@ -87,7 +112,7 @@ module.exports = class ContextualData extends React.Component
   render: ->
     className = "contextual-data #{@contextKey}"
     className += " #{@props.className}" if @props.className?
-    return <div className={className}>{@renderContent()}</div>
+    return <span className={className}>{@renderContent()}</span>
 
 
   # if the model we provide isn't set, render placeholder if user asked nicely
@@ -147,6 +172,9 @@ module.exports = class ContextualData extends React.Component
     override or extend this method to provide something other than what we recieve
   ###  
   getCollectionOrModelToProvide: () ->
+    # TODO : I think this should be `@state.collectionOrModel || @getInputCollectionOrModel()`
+    #    that way an extension can just set the provided thing into state instead
+    #    of being forced to override this method
     @getInputCollectionOrModel()
     
 
@@ -182,6 +210,15 @@ module.exports = class ContextualData extends React.Component
 
 
   onDataChanged: () =>
+    @debouncedUpdate()
+    
+    
+  update: () =>
+    if @props.debug
+      console.log "ContextualData: update on model", @state.collectionOrModel
+    
     @setState(lastUpdated: Date.now(), collectionOrModel: @getCollectionOrModelToProvide())
     if @props.forceUpdate
       @forceUpdate()
+        
+        

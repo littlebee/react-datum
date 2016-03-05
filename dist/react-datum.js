@@ -1264,7 +1264,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    fetch: React.PropTypes.bool,
 	    fetchOptions: React.PropTypes.object,
 	    placeholder: React.PropTypes.node,
-	    className: React.PropTypes.string
+	    className: React.PropTypes.string,
+	    debouncedUpdate: React.PropTypes.bool,
+	    debounceMs: React.PropTypes.number
 	  };
 
 	  ContextualData.childContextTypes = {};
@@ -1272,16 +1274,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	  ContextualData.defaultProps = {
 	    fetch: false,
 	    fetchOptions: {},
-	    placeholder: void 0
+	    placeholder: void 0,
+	    debouncedUpdate: true,
+	    debounceMs: 0
 	  };
 
 	  function ContextualData(props) {
+	    this.update = bind(this.update, this);
 	    this.onDataChanged = bind(this.onDataChanged, this);
 	    ContextualData.__super__.constructor.call(this, props);
 	    this.state = {
 	      lastUpdated: null,
 	      collectionOrModel: null
 	    };
+	    this.debouncedUpdate = this.props.debouncedUpdate ? _.debounce(((function(_this) {
+	      return function() {
+	        return _this.update();
+	      };
+	    })(this)), this.props.debounceMs) : this.update;
 	  }
 
 	  ContextualData.prototype.getChildContext = function() {
@@ -1297,7 +1307,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (this.props.className != null) {
 	      className += " " + this.props.className;
 	    }
-	    return React.createElement("div", {
+	    return React.createElement("span", {
 	      "className": className
 	    }, this.renderContent());
 	  };
@@ -1404,6 +1414,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  ContextualData.prototype.onDataChanged = function() {
+	    return this.debouncedUpdate();
+	  };
+
+	  ContextualData.prototype.update = function() {
 	    this.setState({
 	      lastUpdated: Date.now(),
 	      collectionOrModel: this.getCollectionOrModelToProvide()
