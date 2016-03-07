@@ -68,10 +68,13 @@ describe 'Form when rendering', ->
     withAndWithoutModelContext(component, model)
 
     # with a model context, we expect the name to rerender to reflect the change to the model
-    it 'should respond to model changes', ->
+    it 'should respond to model changes', (done) ->
       model.set('name', 'Foofoo')
-      domNode = Th.domNodeByClass(component, 'datum')
-      expect(domNode.innerHTML).to.contain('Foofoo')
+      # model rerender is debounced, so defer the test to pickup changes
+      _.defer =>
+        domNode = Th.domNodeByClass(component, 'datum')
+        expect(domNode.innerHTML).to.contain('Foofoo')
+        done()
 
 
   describe "without any props other than model", ->

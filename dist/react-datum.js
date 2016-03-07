@@ -1266,7 +1266,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    placeholder: React.PropTypes.node,
 	    className: React.PropTypes.string,
 	    debouncedUpdate: React.PropTypes.bool,
-	    debounceMs: React.PropTypes.number
+	    debounceMs: React.PropTypes.number,
+	    debug: React.PropTypes.bool
 	  };
 
 	  ContextualData.childContextTypes = {};
@@ -1418,6 +1419,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  ContextualData.prototype.update = function() {
+	    if (this.props.debug) {
+	      console.log("ContextualData: update on model", this.state.collectionOrModel);
+	    }
 	    this.setState({
 	      lastUpdated: Date.now(),
 	      collectionOrModel: this.getCollectionOrModelToProvide()
