@@ -55,6 +55,10 @@ module.exports = class Datum extends React.Component
     
     # make this input required and give it required class and invalid class when invalid
     required: React.PropTypes.bool
+    
+    # style to apply to outer datum div
+    style: React.PropTypes.object
+    
 
 
   # no default for inputMode because we can also get from context, but default is
@@ -139,7 +143,7 @@ module.exports = class Datum extends React.Component
 
   renderDatumWrapper: (contentFn)->
     # TODO: add data-zattr attribute for backward compatibility?
-    <span className={@getFullClassName()} data-zattr={@props.attr}>
+    <span className={@getFullClassName()} data-zattr={@props.attr} style={@props.style||{}}>
       {contentFn()}
     </span>
 
@@ -178,7 +182,7 @@ module.exports = class Datum extends React.Component
 
 
   renderWrappedDisplayValue: (value)->
-    <span className="datum-display-value">{value}</span>
+    <span className="datum-display-value" style={@props.style}>{value}</span>
 
 
   renderPlaceholder: ->

@@ -70,6 +70,19 @@ describe 'Datum (base class)', ->
       datumNode.innerHTML.should.not.contain("undefined")
       datumNode.innerHTML.should.not.contain("[object Object")
       
+      
+  describe 'when rendered with a style property', ->
+    style = {width: 9989, display: 'inline-block'}
+    datum = Th.render <Datum model={model} attr="name" style={style}/>
+    datumNode = Th.domNode(datum)
+    
+    it 'should have applied styles', ->
+      datumNode.innerHTML.should.contain("width:9989px")
+      datumNode.innerHTML.should.contain("display:inline-block")
+      
+      
+  
+      
 
 
       
