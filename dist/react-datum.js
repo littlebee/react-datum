@@ -699,8 +699,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.initializeState = function() {
 	    return this.state = {
-	      value: null,
-	      errors: []
+	      value: this.getModelValue(),
+	      errors: [],
+	      isDirty: false
 	    };
 	  };
 
@@ -716,7 +717,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return modelValue = this.getModelValue();
 	  };
 
-	  Datum.prototype.componentWillReceiveProps = function(nextProps) {};
+	  Datum.prototype.componentWillReceiveProps = function(nextProps) {
+	    var newModelValue, prevModelValue;
+	    prevModelValue = this.getModelValue(this.props);
+	    newModelValue = this.getModelValue(nextProps);
+	    if (JSON.stringify(prevModelValue) !== JSON.stringify(newModelValue)) {
+	      return this.setState({
+	        value: newModelValue
+	      });
+	    }
+	  };
 
 	  Datum.prototype.componentWillUnmount = function() {
 	    var ref, ref1;
@@ -916,7 +926,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.isDirty = function() {
-	    return this.state.value != null;
+	    return this.state.isDirty;
 	  };
 
 	  Datum.prototype.isEditable = function() {
@@ -935,7 +945,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.cancelEdit = function() {
 	    return this.setState({
-	      errors: []
+	      errors: [],
+	      value: this.getModelValue()
 	    });
 	  };
 
@@ -1043,7 +1054,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (newProps == null) {
 	      newProps = this.props;
 	    }
-	    if (!(model = this.getModel())) {
+	    if (!(model = this.getModel(newProps))) {
 	      return null;
 	    }
 	    value = model instanceof Backbone.Model ? model.get(newProps.attr) : model[newProps.attr];
@@ -1122,7 +1133,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.prototype.onBlur = function(event) {
 	    var value;
 	    value = this.getInputValue();
-	    if (value == null) {
+	    if (this.isInputValueChanged()) {
 	      return;
 	    }
 	    this.setValue(value, {
@@ -1131,6 +1142,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (this.shouldSetOnBlur() || this.getInputMode() === 'inlineEdit') {
 	      return this.toDisplayMode();
 	    }
+	  };
+
+	  Datum.prototype.isInputValueChanged = function() {
+	    return this.getInputValue() === this.getModelValue();
 	  };
 
 	  Datum.prototype.toDisplayMode = function() {
@@ -1156,14 +1171,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    valid = this.validate(newValue);
 	    if (options.setModelValue) {
 	      this.setModelValue(newValue);
-	      return this.setState({
-	        value: newValue
+	      this.setState({
+	        isDirty: false
 	      });
 	    } else {
-	      return this.setState({
-	        value: newValue
+	      this.setState({
+	        isDirty: true
 	      });
 	    }
+	    return this.setState({
+	      value: newValue
+	    });
 	  };
 
 
@@ -2750,9 +2768,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  CollectionPicker.prototype.initializeState = function() {
 	    return this.state = {
-	      value: this.props.multi ? this.getModelValues() : this.getModelValue(),
+	      value: this._getValue(),
 	      errors: []
 	    };
+	  };
+
+	  CollectionPicker.prototype.componentWillReceiveProps = function(nextProps) {
+	    var newModelValue, prevModelValue;
+	    prevModelValue = this.props.multi ? this.getModelValues(this.props) : this.getModelValue(this.props);
+	    newModelValue = nextProps.multi ? this.getModelValues(nextProps) : this.getModelValue(nextProps);
+	    if (JSON.stringify(prevModelValue) !== JSON.stringify(newModelValue)) {
+	      return this.setState({
+	        value: newModelValue
+	      });
+	    }
 	  };
 
 	  CollectionPicker.prototype.renderValueForDisplay = function() {
@@ -2794,6 +2823,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return React.createElement(Select.Async, React.__spread({}, this.getSelectAsyncOptions()));
 	  };
 
+	  CollectionPicker.prototype.cancelEdit = function() {
+	    return this.setState({
+	      errors: [],
+	      value: this._getValue()
+	    });
+	  };
+
 	  CollectionPicker.prototype.getCollection = function() {
 	    var collection;
 	    collection = this.props.collection || this.context.collection;
@@ -2804,6 +2840,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return new Backbone.Collection(collection);
 	    }
 	    return collection;
+	  };
+
+	  CollectionPicker.prototype._getValue = function(newProps) {
+	    if (newProps == null) {
+	      newProps = this.props;
+	    }
+	    return (newProps.multi ? this.getModelValues(newProps) : this.getModelValue(newProps));
 	  };
 
 	  CollectionPicker.prototype._getCollectionModelById = function(modelOrId) {
@@ -2858,9 +2901,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return model != null ? model.get(this.props.optionSaveAttr) : void 0;
 	  };
 
-	  CollectionPicker.prototype.getModelValues = function() {
+	  CollectionPicker.prototype.getModelValues = function(newProps) {
 	    var modelValue, modelValues;
-	    modelValue = this.getModelValue();
+	    if (newProps == null) {
+	      newProps = this.props;
+	    }
+	    modelValue = this.getModelValue(newProps);
 	    modelValues = (function() {
 	      switch (false) {
 	        case !_.isString(modelValue):
@@ -2888,6 +2934,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      valueKey: "value",
 	      ref: this.selectRef
 	    });
+	  };
+
+	  CollectionPicker.prototype.isInputValueChanged = function() {
+	    return this.getInputValue() === this._getValue();
 	  };
 
 	  CollectionPicker.prototype.getInputComponent = function() {

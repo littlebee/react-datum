@@ -103,15 +103,26 @@ module.exports = class CollectionPicker extends Datum
       React.PropTypes.instanceOf(Backbone.Collection)
       React.PropTypes.string
     ])  
-  
+
   subClassName: "collection-picker"
   selectRef: "reactSelect"
 
   initializeState: ->
     @state = {
-      value: if @props.multi then @getModelValues() else @getModelValue()
+      value: @_getValue()
       errors: []
     }
+
+
+  componentWillReceiveProps: (nextProps) ->
+    prevModelValue = if @props.multi then @getModelValues(@props) else @getModelValue(@props)
+    newModelValue = if nextProps.multi then @getModelValues(nextProps) else @getModelValue(nextProps)
+    
+    if JSON.stringify(prevModelValue) != JSON.stringify(newModelValue)
+      @setState({
+        value: newModelValue
+      })  
+
 
   #override - if multi, returns an array of values that renderEllipsizeValue wraps in spans
   renderValueForDisplay: ->
@@ -146,6 +157,13 @@ module.exports = class CollectionPicker extends Datum
   renderInput: ->
     <Select.Async {... @getSelectAsyncOptions()}/>
 
+
+  cancelEdit: () ->
+    @setState { 
+      errors: [], 
+      value: @_getValue()
+    }
+
     
   getCollection: ->
     collection = @props.collection || @context.collection
@@ -154,8 +172,12 @@ module.exports = class CollectionPicker extends Datum
       return new Backbone.Collection(collection)
     
     return collection
-    
-    
+  
+
+  _getValue: (newProps = @props) ->
+    return (if newProps.multi then @getModelValues(newProps) else @getModelValue(newProps))
+
+
   _getCollectionModelById: (modelOrId) ->
     if _.isNumber(modelOrId) or _.isString(modelOrId)
       model = @getCollection()?.get(modelOrId, add: @props.fetchUnknownModelsInCollection)
@@ -192,8 +214,8 @@ module.exports = class CollectionPicker extends Datum
     
 
   # used for multi mode. always returns an array
-  getModelValues: () ->
-    modelValue = @getModelValue()
+  getModelValues: (newProps = @props) ->
+    modelValue = @getModelValue(newProps)
     modelValues = switch 
       when _.isString(modelValue) then modelValue.split(',')
       when _.isArray(modelValue) then modelValue
@@ -215,6 +237,10 @@ module.exports = class CollectionPicker extends Datum
       labelKey: "label"
       valueKey: "value"
       ref: @selectRef
+
+
+  isInputValueChanged: ->
+    @getInputValue() == @_getValue()
       
 
   getInputComponent: () =>

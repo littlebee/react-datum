@@ -47,7 +47,6 @@ describe 'Datum (base class)', ->
       datum.isDirty().should.equal true, "...and it should think it's dirty"
       
     it 'should not set model value on blur if not changed', ->
-      (datum.getInputValue() == null).should.be.true
       sinon.spy model, 'set'
       inputNode = Th.domNodeByTag(datum, 'input')
       model.set.called.should.equal false, "sanity check: model.set should not have been called yet, becuase we haven't done anything yet"

@@ -102,8 +102,9 @@ module.exports = class Datum extends React.Component
 
   initializeState: ->
     @state = {
-      value: null
+      value: @getModelValue()
       errors: []
+      isDirty: false
     }
 
   
@@ -119,7 +120,13 @@ module.exports = class Datum extends React.Component
 
 
   componentWillReceiveProps: (nextProps) ->
-    # TBD
+    prevModelValue = @getModelValue(@props)
+    newModelValue = @getModelValue(nextProps)
+    
+    if JSON.stringify(prevModelValue) != JSON.stringify(newModelValue)
+      @setState({
+        value: newModelValue
+      })
     
 
   componentWillUnmount: ->
@@ -282,7 +289,7 @@ module.exports = class Datum extends React.Component
     that the base behavior of setting state.value to null on model.set() happens.
   ###
   isDirty: () ->
-    return @state.value?
+    return @state.isDirty
 
 
   isEditable: () ->
@@ -297,8 +304,7 @@ module.exports = class Datum extends React.Component
 
 
   cancelEdit: () ->
-    @setState errors: []
-
+    @setState { errors: [], value: @getModelValue() }
 
   ###
     When extending Datum, use @addValidations from constructor to add additional validations.
@@ -327,7 +333,7 @@ module.exports = class Datum extends React.Component
     return {
       type: "text" 
       placeholder: placeholder
-      value: value 
+      value: value
       onChange: @onChange
       onBlur: @onBlur
       onKeyDown: @onInputKeyDown
@@ -375,7 +381,7 @@ module.exports = class Datum extends React.Component
     warning: Do not override this method to return a component element or jsx; bad things will happen.
   ###
   getModelValue: (newProps = @props)->
-    return null unless model = @getModel()
+    return null unless model = @getModel(newProps)
     value = if model instanceof Backbone.Model  
       model.get(newProps.attr) 
     else 
@@ -436,11 +442,15 @@ module.exports = class Datum extends React.Component
   #   only if state value is not null 
   onBlur: (event) =>
     value = @getInputValue()
-    return unless value?
+    return if @isInputValueChanged()
     @setValue(value, setModelValue: @shouldSetOnBlur())
 
     if @shouldSetOnBlur() || @getInputMode() == 'inlineEdit' # if inline edit should get back to display mode.
       @toDisplayMode()
+
+
+  isInputValueChanged: ->    
+    @getInputValue() == @getModelValue()
 
 
   toDisplayMode: () ->
@@ -461,13 +471,14 @@ module.exports = class Datum extends React.Component
       setModelValue: false
       
     valid = @validate(newValue)
+
     if options.setModelValue
       @setModelValue(newValue)
-      @setState(value: newValue)
+      @setState({isDirty: false})
     else
-      @setState(value: newValue)
-      
-  
+      @setState({isDirty: true})
+
+    @setState({value: newValue})
   
 
   ###
