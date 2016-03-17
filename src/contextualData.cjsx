@@ -46,15 +46,15 @@ module.exports = class ContextualData extends React.Component
     placeholder: React.PropTypes.node  # anything react can render
     # additional css classes to add
     className: React.PropTypes.string
-    # set debouncedUpdate = false to not debounce, i.e. 1:1 collection or 
+    # set debouncedUpdate = false to not debounce, i.e. 1:1 collection or
     # model triggered events to renders. 
     debouncedUpdate: React.PropTypes.bool
     # set debounceMs to a higher delay. 
     debounceMs: React.PropTypes.number
     # set to true to show console messages about useful things
     debug: React.PropTypes.bool
-    
-    
+    # style override object for the rendered div.
+    styleObj: React.PropTypes.object
 
   # you will also need to similarly extend this, like this:
   #```
@@ -74,6 +74,8 @@ module.exports = class ContextualData extends React.Component
     # the renderContent method will always render children.  
     # To render no placeholder but not render children, set this to null
     placeholder: undefined
+    # We do not define any default style data.
+    styleObj: {}
     
     # effectively batch and defer multiple syncronous events into one defaults to zero 
     # second debounce which will effectively ignore all but the last triggered event
@@ -112,7 +114,7 @@ module.exports = class ContextualData extends React.Component
   render: ->
     className = "contextual-data #{@contextKey}"
     className += " #{@props.className}" if @props.className?
-    return <span className={className}>{@renderContent()}</span>
+    return <span style={_.extend({}, @props.styleObj)} className={className}>{@renderContent()}</span>
 
 
   # if the model we provide isn't set, render placeholder if user asked nicely

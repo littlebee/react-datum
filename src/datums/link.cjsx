@@ -44,7 +44,7 @@ module.exports = class Link extends Datum
   _getTagContent: ->
     if @props.nameAttr?
       return @getModel().get(@props.nameAttr)
-    else if @props.children && @props.children.length > 0
+    else if @props.children?
       return <span>{@props.children}</span>
     else
       return @getModelValue()

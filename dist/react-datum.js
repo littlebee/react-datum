@@ -79,10 +79,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Number: __webpack_require__(20),
 	  Text: __webpack_require__(21),
 	  WholeNumber: __webpack_require__(22),
+	  SelectOption: __webpack_require__(23),
 
 	  // TODO : i think this will eventually go to a separate npm package so that the core doesn't
 	  //    have dependency on react-select
-	  CollectionPicker: __webpack_require__(23)
+	  CollectionPicker: __webpack_require__(26)
 
 	};
 	if (window) window.ReactDatum = ReactDatum;
@@ -652,12 +653,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    label: React.PropTypes.string,
 	    ellipsizeAt: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.bool]),
 	    placeholder: React.PropTypes.string,
-	    inputMode: React.PropTypes.oneOf(['readonly', 'edit']),
+	    inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit']),
 	    noPopover: React.PropTypes.bool,
 	    setOnChange: React.PropTypes.bool,
 	    setOnBlur: React.PropTypes.bool,
 	    readonly: React.PropTypes.bool,
-	    required: React.PropTypes.bool
+	    required: React.PropTypes.bool,
+	    onChange: React.PropTypes.func
 	  };
 
 	  Datum.defaultProps = {
@@ -689,13 +691,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.onBlur = bind(this.onBlur, this);
 	    this.onChange = bind(this.onChange, this);
 	    this.addValidations = bind(this.addValidations, this);
+	    this.onEditClick = bind(this.onEditClick, this);
 	    Datum.__super__.constructor.call(this, props);
-	    this.state = {
+	    this.initializeState();
+	    this.addValidations(this.validateRequired);
+	  }
+
+	  Datum.prototype.initializeState = function() {
+	    return this.state = {
 	      value: null,
 	      errors: []
 	    };
-	    this.addValidations(this.validateRequired);
-	  }
+	  };
 
 	  Datum.prototype.componentDidMount = function() {
 	    var modelValue, ref, ref1;
@@ -782,8 +789,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.renderWrappedDisplayValue = function(value) {
 	    return React.createElement("span", {
-	      "className": "datum-display-value"
+	      "className": "datum-display-value",
+	      "onClick": this.onEditClick
 	    }, value);
+	  };
+
+	  Datum.prototype.onEditClick = function() {
+	    this.constructor.inlineEditor = this;
+	    this.forceUpdate();
+	    return _.defer((function(_this) {
+	      return function() {
+	        return _this.focus();
+	      };
+	    })(this));
 	  };
 
 	  Datum.prototype.renderPlaceholder = function() {
@@ -1086,10 +1104,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.props.setOnBlur === true && !this.shouldSetOnChange();
 	  };
 
-	  Datum.prototype.onChange = function(event) {
-	    return this.setValue(event.target.value, {
+	  Datum.prototype.onChange = function(event, options) {
+	    if (options == null) {
+	      options = {};
+	    }
+	    this.setValue(event.target.value, {
 	      setModelValue: this.shouldSetOnChange()
 	    });
+	    if (this.shouldSetOnChange()) {
+	      this.toDisplayMode();
+	    }
+	    if ((options.callOnChangeHandler != null) && options.callOnChangeHandler && (this.props.onChange != null)) {
+	      return this.props.onChange(event);
+	    }
 	  };
 
 	  Datum.prototype.onBlur = function(event) {
@@ -1098,9 +1125,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (value == null) {
 	      return;
 	    }
-	    return this.setValue(value, {
+	    this.setValue(value, {
 	      setModelValue: this.shouldSetOnBlur()
 	    });
+	    if (this.shouldSetOnBlur() || this.getInputMode() === 'inlineEdit') {
+	      return this.toDisplayMode();
+	    }
+	  };
+
+	  Datum.prototype.toDisplayMode = function() {
+	    if (this.constructor.inlineEditor === this) {
+	      this.constructor.inlineEditor = null;
+	      return this.forceUpdate();
+	    }
 	  };
 
 	  Datum.prototype.onInputKeyDown = function(event) {
@@ -1120,7 +1157,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (options.setModelValue) {
 	      this.setModelValue(newValue);
 	      return this.setState({
-	        value: null
+	        value: newValue
 	      });
 	    } else {
 	      return this.setState({
@@ -1145,8 +1182,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.focus = function() {
 	    var node;
-	    if (this.inputComponent != null) {
-	      node = ReactDOM.findDOMNode(this.inputComponent);
+	    if (this.getInputComponent() != null) {
+	      node = ReactDOM.findDOMNode(this.getInputComponent());
 	      node.focus();
 	      return node.select();
 	    }
@@ -1267,7 +1304,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    className: React.PropTypes.string,
 	    debouncedUpdate: React.PropTypes.bool,
 	    debounceMs: React.PropTypes.number,
-	    debug: React.PropTypes.bool
+	    debug: React.PropTypes.bool,
+	    styleObj: React.PropTypes.object
 	  };
 
 	  ContextualData.childContextTypes = {};
@@ -1276,6 +1314,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    fetch: false,
 	    fetchOptions: {},
 	    placeholder: void 0,
+	    styleObj: {},
 	    debouncedUpdate: true,
 	    debounceMs: 0
 	  };
@@ -1309,6 +1348,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      className += " " + this.props.className;
 	    }
 	    return React.createElement("span", {
+	      "style": _.extend({}, this.props.styleObj),
 	      "className": className
 	    }, this.renderContent());
 	  };
@@ -2149,7 +2189,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Link.prototype._getTagContent = function() {
 	    if (this.props.nameAttr != null) {
 	      return this.getModel().get(this.props.nameAttr);
-	    } else if (this.props.children && this.props.children.length > 0) {
+	    } else if (this.props.children != null) {
 	      return React.createElement("span", null, this.props.children);
 	    } else {
 	      return this.getModelValue();
@@ -2480,6 +2520,173 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	var _react = __webpack_require__(4);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _classnames = __webpack_require__(24);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Option = _react2.default.createClass({
+		displayName: 'Option',
+
+		propTypes: {
+			children: _react2.default.PropTypes.node,
+			className: _react2.default.PropTypes.string, // className (based on mouse position)
+			isDisabled: _react2.default.PropTypes.bool, // the option is disabled
+			isFocused: _react2.default.PropTypes.bool, // the option is focused
+			isSelected: _react2.default.PropTypes.bool, // the option is selected
+			onFocus: _react2.default.PropTypes.func, // method to handle mouseEnter on option element
+			onSelect: _react2.default.PropTypes.func, // method to handle click on option element
+			onUnfocus: _react2.default.PropTypes.func, // method to handle mouseLeave on option element
+			option: _react2.default.PropTypes.object.isRequired },
+		// object that is base for that option
+		blockEvent: function blockEvent(event) {
+			event.preventDefault();
+			event.stopPropagation();
+			if (event.target.tagName !== 'A' || !('href' in event.target)) {
+				return;
+			}
+			if (event.target.target) {
+				window.open(event.target.href, event.target.target);
+			} else {
+				window.location.href = event.target.href;
+			}
+		},
+		handleMouseDown: function handleMouseDown(event) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.props.onSelect(this.props.option, event);
+		},
+		handleMouseEnter: function handleMouseEnter(event) {
+			this.onFocus(event);
+		},
+		handleMouseMove: function handleMouseMove(event) {
+			this.onFocus(event);
+		},
+		handleTouchEnd: function handleTouchEnd(event) {
+			// Check if the view is being dragged, In this case
+			// we don't want to fire the click event (because the user only wants to scroll)
+			if (this.dragging) return;
+
+			this.handleMouseDown(event);
+		},
+		handleTouchMove: function handleTouchMove(event) {
+			// Set a flag that the view is being dragged
+			this.dragging = true;
+		},
+		handleTouchStart: function handleTouchStart(event) {
+			// Set a flag that the view is not being dragged
+			this.dragging = false;
+		},
+		onFocus: function onFocus(event) {
+			if (!this.props.isFocused) {
+				this.props.onFocus(this.props.option, event);
+			}
+		},
+		render: function render() {
+			var option = this.props.option;
+
+			var className = (0, _classnames2.default)(this.props.className, option.className);
+
+			return option.disabled ? _react2.default.createElement(
+				'div',
+				{ className: className,
+					onMouseDown: this.blockEvent,
+					onClick: this.blockEvent },
+				this.props.children
+			) : _react2.default.createElement(
+				'div',
+				{ className: className,
+					style: option.style,
+					onMouseDown: this.handleMouseDown,
+					onMouseEnter: this.handleMouseEnter,
+					onMouseMove: this.handleMouseMove,
+					onTouchStart: this.handleTouchStart,
+					onTouchMove: this.handleTouchMove,
+					onTouchEnd: this.handleTouchEnd,
+					title: option.title },
+				this.props.children
+			);
+		}
+	});
+
+	module.exports = Option;
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+	/*!
+	  Copyright (c) 2016 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+
+	(function () {
+		'use strict';
+
+		var hasOwn = {}.hasOwnProperty;
+
+		function classNames() {
+			var classes = [];
+
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+
+				var argType = typeof arg === 'undefined' ? 'undefined' : _typeof(arg);
+
+				if (argType === 'string' || argType === 'number') {
+					classes.push(arg);
+				} else if (Array.isArray(arg)) {
+					classes.push(classNames.apply(null, arg));
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				}
+			}
+
+			return classes.join(' ');
+		}
+
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if ("function" === 'function' && _typeof(__webpack_require__(25)) === 'object' && __webpack_require__(25)) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	})();
+
+/***/ },
+/* 25 */
+/***/ function(module, exports) {
+
+	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, {}))
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var Backbone, CollectionPicker, Datum, React, Select, Strhelp, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -2491,13 +2698,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	_ = __webpack_require__(9);
 
-	Strhelp = __webpack_require__(24);
+	Strhelp = __webpack_require__(27);
 
 	Datum = __webpack_require__(7);
 
-	Select = __webpack_require__(26);
+	Select = __webpack_require__(29);
 
-	Select.Async = __webpack_require__(31);
+	Select.Async = __webpack_require__(32);
 
 	module.exports = CollectionPicker = (function(superClass) {
 	  extend(CollectionPicker, superClass);
@@ -2508,6 +2715,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.onLoadOptions = bind(this.onLoadOptions, this);
 	    this.onChange = bind(this.onChange, this);
 	    this.getOptionValuesForReactSelect = bind(this.getOptionValuesForReactSelect, this);
+	    this.focus = bind(this.focus, this);
+	    this.getInputComponent = bind(this.getInputComponent, this);
 	    return CollectionPicker.__super__.constructor.apply(this, arguments);
 	  }
 
@@ -2515,16 +2724,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  CollectionPicker.propTypes = _.extend({}, Datum.propTypes, {
 	    collection: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Collection), React.PropTypes.string, React.PropTypes.array]),
+	    optionComponent: React.PropTypes.func,
+	    valueComponent: React.PropTypes.func,
+	    fetchUnknownModelsInCollection: React.PropTypes.bool,
 	    displayAttr: React.PropTypes.string,
 	    optionDisplayAttr: React.PropTypes.string,
 	    optionSaveAttr: React.PropTypes.string.isRequired,
-	    displayComponent: React.PropTypes.node,
+	    displayComponent: React.PropTypes.func,
 	    asyncSuggestionCallback: React.PropTypes.func,
 	    multi: React.PropTypes.bool
 	  });
 
 	  CollectionPicker.defaultProps = _.extend({}, Datum.defaultProps, {
-	    optionSaveAttr: 'id'
+	    optionSaveAttr: 'id',
+	    fetchUnknownModelsInCollection: true
 	  });
 
 	  CollectionPicker.contextTypes = _.extend({}, Datum.contextTypes, {
@@ -2532,6 +2745,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  });
 
 	  CollectionPicker.prototype.subClassName = "collection-picker";
+
+	  CollectionPicker.prototype.selectRef = "reactSelect";
+
+	  CollectionPicker.prototype.initializeState = function() {
+	    return this.state = {
+	      value: this.props.multi ? this.getModelValues() : this.getModelValue(),
+	      errors: []
+	    };
+	  };
 
 	  CollectionPicker.prototype.renderValueForDisplay = function() {
 	    var collection, modelValues;
@@ -2549,7 +2771,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  CollectionPicker.prototype.renderCollectionDisplayValue = function(modelId, collection) {
-	    var modelValue;
+	    var modelValue, valueProps;
 	    if (collection == null) {
 	      collection = this.getCollection();
 	    }
@@ -2557,10 +2779,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (modelValue) {
 	      modelValue = this.renderEllipsizedValue(modelValue);
 	    }
-	    return React.createElement("span", {
-	      "key": modelValue,
-	      "className": "collection-picker-display-value"
-	    }, modelValue || this.renderPlaceholder() || "unknown");
+	    valueProps = {
+	      key: modelValue,
+	      className: "collection-picker-display-value"
+	    };
+	    if (this.props.displayComponent != null) {
+	      valueProps.value = this._getCollectionModelById(modelId);
+	      return React.createElement(this.props.displayComponent, React.__spread({}, valueProps));
+	    }
+	    return React.createElement("span", React.__spread({}, valueProps), modelValue || this.renderPlaceholder() || "unknown");
 	  };
 
 	  CollectionPicker.prototype.renderInput = function() {
@@ -2581,9 +2808,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  CollectionPicker.prototype._getCollectionModelById = function(modelOrId) {
 	    var model, ref;
-	    if (_.isNumber(modelOrId)) {
+	    if (_.isNumber(modelOrId) || _.isString(modelOrId)) {
 	      return model = (ref = this.getCollection()) != null ? ref.get(modelOrId, {
-	        add: true
+	        add: this.props.fetchUnknownModelsInCollection
 	      }) : void 0;
 	    } else {
 	      return model = modelOrId;
@@ -2648,21 +2875,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  CollectionPicker.prototype.getSelectAsyncOptions = function() {
-	    var collection, value;
+	    var collection;
 	    collection = this.getCollection();
-	    value = this.props.multi ? this.getModelValues() : this.getModelValue();
 	    return _.extend({}, this.props, {
 	      loadOptions: this.onLoadOptions,
 	      placeholder: this.props.placeholder || this.renderPlaceholder(),
-	      value: value,
+	      value: this.state.value,
 	      onChange: this.onChange,
 	      onBlur: this.onBlur,
-	      ref: this.onInputRef,
 	      options: this.getOptionValuesForReactSelect(collection.models),
 	      labelKey: "label",
 	      valueKey: "value",
-	      ref: "reactSelect"
+	      ref: this.selectRef
 	    });
+	  };
+
+	  CollectionPicker.prototype.getInputComponent = function() {
+	    var ref;
+	    return (ref = this.refs) != null ? ref[this.selectRef] : void 0;
+	  };
+
+	  CollectionPicker.prototype.focus = function() {
+	    if (this.getInputComponent() != null) {
+	      return this.getInputComponent().focus();
+	    }
 	  };
 
 	  CollectionPicker.prototype.getOptionValuesForReactSelect = function(models) {
@@ -2673,7 +2909,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return function(m) {
 	        return {
 	          label: _this.getCollectionModelDisplayValue(m),
-	          value: _this.getOptionSaveValue(m)
+	          value: _this.getOptionSaveValue(m),
+	          model: m
 	        };
 	      };
 	    })(this));
@@ -2686,17 +2923,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (!this.props.setAsArray) {
 	        values = values.join(',');
 	      }
-	      return CollectionPicker.__super__.onChange.call(this, {
+	      CollectionPicker.__super__.onChange.call(this, {
 	        target: {
 	          value: values
 	        }
+	      }, {
+	        callOnChangeHandler: false
 	      });
 	    } else {
-	      return CollectionPicker.__super__.onChange.call(this, {
+	      CollectionPicker.__super__.onChange.call(this, {
 	        target: {
-	          value: optionsSelected.value
+	          value: optionsSelected != null ? optionsSelected.value : void 0
 	        }
+	      }, {
+	        callOnChangeHandler: false
 	      });
+	    }
+	    if (this.props.onChange != null) {
+	      return this.props.onChange(optionsSelected);
 	    }
 	  };
 
@@ -2767,15 +3011,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 24 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(25);
+	module.exports = __webpack_require__(28);
 
 /***/ },
-/* 25 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2933,7 +3177,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}).call(undefined);
 
 /***/ },
-/* 26 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2954,23 +3198,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _reactInputAutosize = __webpack_require__(27);
+	var _reactInputAutosize = __webpack_require__(30);
 
 	var _reactInputAutosize2 = _interopRequireDefault(_reactInputAutosize);
 
-	var _classnames = __webpack_require__(28);
+	var _classnames = __webpack_require__(24);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _stripDiacritics = __webpack_require__(30);
+	var _stripDiacritics = __webpack_require__(31);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
-	var _Async = __webpack_require__(31);
+	var _Async = __webpack_require__(32);
 
 	var _Async2 = _interopRequireDefault(_Async);
 
-	var _Option = __webpack_require__(32);
+	var _Option = __webpack_require__(23);
 
 	var _Option2 = _interopRequireDefault(_Option);
 
@@ -3742,7 +3986,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Select;
 
 /***/ },
-/* 27 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3867,72 +4111,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = AutosizeInput;
 
 /***/ },
-/* 28 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
-	/*!
-	  Copyright (c) 2016 Jed Watson.
-	  Licensed under the MIT License (MIT), see
-	  http://jedwatson.github.io/classnames
-	*/
-	/* global define */
-
-	(function () {
-		'use strict';
-
-		var hasOwn = {}.hasOwnProperty;
-
-		function classNames() {
-			var classes = [];
-
-			for (var i = 0; i < arguments.length; i++) {
-				var arg = arguments[i];
-				if (!arg) continue;
-
-				var argType = typeof arg === 'undefined' ? 'undefined' : _typeof(arg);
-
-				if (argType === 'string' || argType === 'number') {
-					classes.push(arg);
-				} else if (Array.isArray(arg)) {
-					classes.push(classNames.apply(null, arg));
-				} else if (argType === 'object') {
-					for (var key in arg) {
-						if (hasOwn.call(arg, key) && arg[key]) {
-							classes.push(key);
-						}
-					}
-				}
-			}
-
-			return classes.join(' ');
-		}
-
-		if (typeof module !== 'undefined' && module.exports) {
-			module.exports = classNames;
-		} else if ("function" === 'function' && _typeof(__webpack_require__(29)) === 'object' && __webpack_require__(29)) {
-			// register as 'classnames', consistent with npm package name
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-				return classNames;
-			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else {
-			window.classNames = classNames;
-		}
-	})();
-
-/***/ },
-/* 29 */
-/***/ function(module, exports) {
-
-	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, {}))
-
-/***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3947,7 +4126,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3960,11 +4139,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Select = __webpack_require__(26);
+	var _Select = __webpack_require__(29);
 
 	var _Select2 = _interopRequireDefault(_Select);
 
-	var _stripDiacritics = __webpack_require__(30);
+	var _stripDiacritics = __webpack_require__(31);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
@@ -4122,108 +4301,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Async;
 
 /***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _react = __webpack_require__(4);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _classnames = __webpack_require__(28);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var Option = _react2.default.createClass({
-		displayName: 'Option',
-
-		propTypes: {
-			children: _react2.default.PropTypes.node,
-			className: _react2.default.PropTypes.string, // className (based on mouse position)
-			isDisabled: _react2.default.PropTypes.bool, // the option is disabled
-			isFocused: _react2.default.PropTypes.bool, // the option is focused
-			isSelected: _react2.default.PropTypes.bool, // the option is selected
-			onFocus: _react2.default.PropTypes.func, // method to handle mouseEnter on option element
-			onSelect: _react2.default.PropTypes.func, // method to handle click on option element
-			onUnfocus: _react2.default.PropTypes.func, // method to handle mouseLeave on option element
-			option: _react2.default.PropTypes.object.isRequired },
-		// object that is base for that option
-		blockEvent: function blockEvent(event) {
-			event.preventDefault();
-			event.stopPropagation();
-			if (event.target.tagName !== 'A' || !('href' in event.target)) {
-				return;
-			}
-			if (event.target.target) {
-				window.open(event.target.href, event.target.target);
-			} else {
-				window.location.href = event.target.href;
-			}
-		},
-		handleMouseDown: function handleMouseDown(event) {
-			event.preventDefault();
-			event.stopPropagation();
-			this.props.onSelect(this.props.option, event);
-		},
-		handleMouseEnter: function handleMouseEnter(event) {
-			this.onFocus(event);
-		},
-		handleMouseMove: function handleMouseMove(event) {
-			this.onFocus(event);
-		},
-		handleTouchEnd: function handleTouchEnd(event) {
-			// Check if the view is being dragged, In this case
-			// we don't want to fire the click event (because the user only wants to scroll)
-			if (this.dragging) return;
-
-			this.handleMouseDown(event);
-		},
-		handleTouchMove: function handleTouchMove(event) {
-			// Set a flag that the view is being dragged
-			this.dragging = true;
-		},
-		handleTouchStart: function handleTouchStart(event) {
-			// Set a flag that the view is not being dragged
-			this.dragging = false;
-		},
-		onFocus: function onFocus(event) {
-			if (!this.props.isFocused) {
-				this.props.onFocus(this.props.option, event);
-			}
-		},
-		render: function render() {
-			var option = this.props.option;
-
-			var className = (0, _classnames2.default)(this.props.className, option.className);
-
-			return option.disabled ? _react2.default.createElement(
-				'div',
-				{ className: className,
-					onMouseDown: this.blockEvent,
-					onClick: this.blockEvent },
-				this.props.children
-			) : _react2.default.createElement(
-				'div',
-				{ className: className,
-					style: option.style,
-					onMouseDown: this.handleMouseDown,
-					onMouseEnter: this.handleMouseEnter,
-					onMouseMove: this.handleMouseMove,
-					onTouchStart: this.handleTouchStart,
-					onTouchMove: this.handleTouchMove,
-					onTouchEnd: this.handleTouchEnd,
-					title: option.title },
-				this.props.children
-			);
-		}
-	});
-
-	module.exports = Option;
-
-/***/ },
 /* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -4233,7 +4310,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(28);
+	var _classnames = __webpack_require__(24);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 

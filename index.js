@@ -16,6 +16,7 @@ var ReactDatum = {
   Number:            require('./src/datums/number'),
   Text:              require('./src/datums/text'),
   WholeNumber:       require('./src/datums/wholeNumber'),
+  SelectOption:            require('./node_modules/react-select/src/Option.js'),
 
   // TODO : i think this will eventually go to a separate npm package so that the core doesn't
   //    have dependency on react-select

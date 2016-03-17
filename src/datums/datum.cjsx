@@ -36,10 +36,9 @@ module.exports = class Datum extends React.Component
     
     placeholder: React.PropTypes.string
     
-    # TODO : add back support of 'inlineEdit'?
     # 'readonly' = render for display;
     # 'edit' = render for input;
-    inputMode: React.PropTypes.oneOf(['readonly', 'edit'])  
+    inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit'])
     
     # set to true to not render a popover on ellipsized values
     noPopover: React.PropTypes.bool
@@ -56,6 +55,8 @@ module.exports = class Datum extends React.Component
     # make this input required and give it required class and invalid class when invalid
     required: React.PropTypes.bool
 
+    # call back for when the datum changes
+    onChange: React.PropTypes.func
 
   # no default for inputMode because we can also get from context, but default is
   # 'readonly'.  see @getInputMode()
@@ -95,16 +96,19 @@ module.exports = class Datum extends React.Component
 
   constructor: (props) ->
     super props
+    @initializeState()
+    @addValidations @validateRequired
+
+
+  initializeState: ->
     @state = {
       value: null
       errors: []
     }
-    @addValidations @validateRequired
-
 
   
-  #                            React life cycle methods
-  
+  #..................................................React life cycle methods...........................................
+
 
   componentDidMount: ->
     # note that we don't need a form to work. this is for it's benefit, mostly
@@ -178,7 +182,13 @@ module.exports = class Datum extends React.Component
 
 
   renderWrappedDisplayValue: (value)->
-    <span className="datum-display-value">{value}</span>
+    <span className="datum-display-value" onClick={@onEditClick}>{value}</span>
+
+
+  onEditClick: =>
+    @constructor.inlineEditor = @
+    @forceUpdate()
+    _.defer => @focus()
 
 
   renderPlaceholder: ->
@@ -411,10 +421,16 @@ module.exports = class Datum extends React.Component
   # on every change, it needs to set the value in state (see @setValue()) with
   # the event.target.value in the input.  On next render the value in state
   # is what the user sees, so you could also intercept this method
-  onChange: (event) =>
+  onChange: (event, options = {}) =>
     @setValue(event.target.value, setModelValue: @shouldSetOnChange())
       
-      
+    if @shouldSetOnChange()
+      @toDisplayMode()
+
+    if options.callOnChangeHandler? and options.callOnChangeHandler and @props.onChange?
+      @props.onChange(event)
+
+
   # onChange above captures the value in state.  
   # onBlur only sets the value on the model with the current state value, and
   #   only if state value is not null 
@@ -422,7 +438,17 @@ module.exports = class Datum extends React.Component
     value = @getInputValue()
     return unless value?
     @setValue(value, setModelValue: @shouldSetOnBlur())
-  
+
+    if @shouldSetOnBlur() || @getInputMode() == 'inlineEdit' # if inline edit should get back to display mode.
+      @toDisplayMode()
+
+
+  toDisplayMode: () ->
+    if @constructor.inlineEditor == @
+      @constructor.inlineEditor = null
+      @forceUpdate()
+
+
   
   onInputKeyDown: (event) =>
     @props.onKeyDown?(event)
@@ -437,7 +463,7 @@ module.exports = class Datum extends React.Component
     valid = @validate(newValue)
     if options.setModelValue
       @setModelValue(newValue)
-      @setState(value: null)  # go back to using backbone model value
+      @setState(value: newValue)
     else
       @setState(value: newValue)
       
@@ -457,8 +483,8 @@ module.exports = class Datum extends React.Component
 
 
   focus: () =>
-    if @inputComponent?
-      node = ReactDOM.findDOMNode(@inputComponent)
+    if @getInputComponent()?
+      node = ReactDOM.findDOMNode(@getInputComponent())
       node.focus()
       node.select()
 
