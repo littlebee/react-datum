@@ -659,6 +659,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    setOnBlur: React.PropTypes.bool,
 	    readonly: React.PropTypes.bool,
 	    required: React.PropTypes.bool,
+	    style: React.PropTypes.object,
 	    onChange: React.PropTypes.func
 	  };
 
@@ -759,7 +760,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.prototype.renderDatumWrapper = function(contentFn) {
 	    return React.createElement("span", {
 	      "className": this.getFullClassName(),
-	      "data-zattr": this.props.attr
+	      "data-zattr": this.props.attr,
+	      "style": this.props.style || {}
 	    }, contentFn());
 	  };
 
@@ -800,7 +802,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.prototype.renderWrappedDisplayValue = function(value) {
 	    return React.createElement("span", {
 	      "className": "datum-display-value",
-	      "onClick": this.onEditClick
+	      "onClick": this.onEditClick,
+	      "style": this.props.style
 	    }, value);
 	  };
 
