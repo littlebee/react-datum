@@ -89,10 +89,20 @@ describe 'Number datum', ->
       component.forceUpdate()        # doesn't automatically update because it's not in a <Model> context
       $(domNode).find('.datum-display-value').text().should.be.equal("$1M")
         
-    it 'should properly abbreviate on 5.5 million as money without zero filling decimal places', ->
+    it 'should properly abbreviate on 5.5 billion as money without zero filling decimal places', ->
       model.set('foo', 5500000000)
       component.forceUpdate()        # doesn't automatically update because it's not in a <Model> context
       $(domNode).find('.datum-display-value').text().should.be.equal("$5500M")
+    
+    it 'should properly abbreviate on -1,000,000 as money', ->
+      model.set('foo', -1000000)
+      component.forceUpdate()        # doesn't automatically update because it's not in a <Model> context
+      $(domNode).find('.datum-display-value').text().should.be.equal("$-1M")
+        
+    it 'should properly abbreviate on -5.5 billion as money without zero filling decimal places', ->
+      model.set('foo', -5500000000)
+      component.forceUpdate()        # doesn't automatically update because it's not in a <Model> context
+      $(domNode).find('.datum-display-value').text().should.be.equal("$-5500M")
     
 
   describe 'as display with percent format', ->

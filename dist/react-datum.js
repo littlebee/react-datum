@@ -2331,13 +2331,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Number.prototype.abbreviate = function(value, formats) {
-	    var affix, ref;
+	    var absValue, affix, ref;
 	    if (formats == null) {
 	      formats = this.getFormats();
 	    }
 	    if (indexOf.call(formats, 'abbreviate') >= 0) {
 	      value = parseFloat(value);
-	      ref = value >= ONE_MILLION ? [value / ONE_MILLION, "M"] : value >= ONE_THOUSAND ? [value / ONE_THOUSAND, "K"] : [value, ""], value = ref[0], affix = ref[1];
+	      absValue = Math.abs(value);
+	      ref = absValue >= ONE_MILLION ? [value / ONE_MILLION, "M"] : absValue >= ONE_THOUSAND ? [value / ONE_THOUSAND, "K"] : [value, ""], value = ref[0], affix = ref[1];
 	      value = "" + (this.roundToDecimalPlaces(value, {
 	        formats: formats
 	      })) + affix;
