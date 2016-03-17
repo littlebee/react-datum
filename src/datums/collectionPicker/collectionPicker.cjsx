@@ -23,7 +23,16 @@ module.exports = class CollectionPicker extends Datum
       React.PropTypes.string
       React.PropTypes.array
     ])
-    
+
+    # Component for rendering the custom options
+    optionComponent: React.PropTypes.func
+
+    # Component for rendering the value options
+    valueComponent: React.PropTypes.func
+
+    # Attribute which indicates if we need to fetch the model if not found in collection.
+    fetchUnknownModelsInCollection: React.PropTypes.bool
+
     #  Attribute value from model in lookup collection to render in inputMode='readonly'.
     #  if not specified, model.toString() will be displayed
     displayAttr: React.PropTypes.string
@@ -38,7 +47,7 @@ module.exports = class CollectionPicker extends Datum
     optionSaveAttr: React.PropTypes.string.isRequired
 
     # react component to render when in inputMode='readonly'. 
-    displayComponent: React.PropTypes.node
+    displayComponent: React.PropTypes.func
     
     #  Specify a callback to load suggestions asynchronously.  
     #  The callback method  should accept the following arguments: 
@@ -82,22 +91,39 @@ module.exports = class CollectionPicker extends Datum
     #  value of our @props.model.get(@props.attr) returns the IDs either as an
     #  array or comma separated value.  
     multi: React.PropTypes.bool
-    
-    
+
   @defaultProps: _.extend {}, Datum.defaultProps,
     optionSaveAttr: 'id'
+    fetchUnknownModelsInCollection: true
     
-    
+
   @contextTypes: _.extend {}, Datum.contextTypes,
     # see @proptypes.collection above 
     collection: React.PropTypes.oneOfType([
       React.PropTypes.instanceOf(Backbone.Collection)
       React.PropTypes.string
     ])  
-  
+
   subClassName: "collection-picker"
-  
-  
+  selectRef: "reactSelect"
+
+  initializeState: ->
+    @state = {
+      value: @_getValue()
+      errors: []
+    }
+
+
+  componentWillReceiveProps: (nextProps) ->
+    prevModelValue = if @props.multi then @getModelValues(@props) else @getModelValue(@props)
+    newModelValue = if nextProps.multi then @getModelValues(nextProps) else @getModelValue(nextProps)
+    
+    if JSON.stringify(prevModelValue) != JSON.stringify(newModelValue)
+      @setState({
+        value: newModelValue
+      })  
+
+
   #override - if multi, returns an array of values that renderEllipsizeValue wraps in spans
   renderValueForDisplay: ->
     collection = @getCollection() 
@@ -112,8 +138,17 @@ module.exports = class CollectionPicker extends Datum
   renderCollectionDisplayValue: (modelId, collection=@getCollection()) ->
     modelValue = @getCollectionModelDisplayValue(modelId, collection)
     modelValue = @renderEllipsizedValue(modelValue) if modelValue
-        
-    return <span key={modelValue} className="collection-picker-display-value">
+
+    valueProps = {
+      key: modelValue
+      className: "collection-picker-display-value"
+    }
+
+    if @props.displayComponent?
+       valueProps.value = @_getCollectionModelById(modelId)
+       return <@props.displayComponent {... valueProps}/>
+
+    return <span  {... valueProps}>
       {modelValue || @renderPlaceholder() || "unknown"}
     </span>
     
@@ -121,6 +156,13 @@ module.exports = class CollectionPicker extends Datum
   #override
   renderInput: ->
     <Select.Async {... @getSelectAsyncOptions()}/>
+
+
+  cancelEdit: () ->
+    @setState { 
+      errors: [], 
+      value: @_getValue()
+    }
 
     
   getCollection: ->
@@ -130,11 +172,15 @@ module.exports = class CollectionPicker extends Datum
       return new Backbone.Collection(collection)
     
     return collection
-    
-    
+  
+
+  _getValue: (newProps = @props) ->
+    return (if newProps.multi then @getModelValues(newProps) else @getModelValue(newProps))
+
+
   _getCollectionModelById: (modelOrId) ->
-    if _.isNumber modelOrId
-      model = @getCollection()?.get(modelOrId, add: true)
+    if _.isNumber(modelOrId) or _.isString(modelOrId)
+      model = @getCollection()?.get(modelOrId, add: @props.fetchUnknownModelsInCollection)
     else
       model = modelOrId    
   
@@ -168,8 +214,8 @@ module.exports = class CollectionPicker extends Datum
     
 
   # used for multi mode. always returns an array
-  getModelValues: () ->
-    modelValue = @getModelValue()
+  getModelValues: (newProps = @props) ->
+    modelValue = @getModelValue(newProps)
     modelValues = switch 
       when _.isString(modelValue) then modelValue.split(',')
       when _.isArray(modelValue) then modelValue
@@ -181,25 +227,37 @@ module.exports = class CollectionPicker extends Datum
     
   getSelectAsyncOptions: () ->
     collection = @getCollection()
-    value = if @props.multi then @getModelValues() else @getModelValue()
-    return _.extend {}, @props, 
+    return _.extend {}, @props,
       loadOptions: @onLoadOptions
       placeholder: @props.placeholder || @renderPlaceholder()
-      value: value
+      value: @state.value
       onChange: @onChange
       onBlur: @onBlur
-      ref: @onInputRef
       options: @getOptionValuesForReactSelect(collection.models)
       labelKey: "label"
       valueKey: "value"
-      ref: "reactSelect"
+      ref: @selectRef
+
+
+  isInputValueChanged: ->
+    @getInputValue() == @_getValue()
       
-    
+
+  getInputComponent: () =>
+    @refs?[@selectRef]
+
+
+  focus: () =>
+    if @getInputComponent()?
+      @getInputComponent().focus()
+
+
   getOptionValuesForReactSelect: (models) =>
     return [] unless models?
     _.map models, (m) => return {
       label: @getCollectionModelDisplayValue(m) 
       value: @getOptionSaveValue(m)
+      model: m # We need this data if we have optionRenderes or optionComponents
     }    
       
   
@@ -208,11 +266,14 @@ module.exports = class CollectionPicker extends Datum
     if @props.multi
       values = _.pluck(optionsSelected, 'value')
       values = values.join(',') unless @props.setAsArray 
-      super {target: {value: values}}
+      super {target: {value: values}}, {callOnChangeHandler: false}
     else
-      super {target: {value: optionsSelected.value}}
+      super {target: {value: optionsSelected?.value}}, {callOnChangeHandler: false}
       
-      
+    if @props.onChange?
+      @props.onChange optionsSelected
+
+
   # async callback for react-select      
   onLoadOptions: (userInput, callback) =>
     collection = @getCollection()
@@ -248,8 +309,8 @@ module.exports = class CollectionPicker extends Datum
 
     callback?(filteredModels)
     return filteredModels
-    
-    
+
+
   groupSuggestionModels: (userInput, models) =>
     topHits = []
     bottomHits = []

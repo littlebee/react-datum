@@ -36,10 +36,9 @@ module.exports = class Datum extends React.Component
     
     placeholder: React.PropTypes.string
     
-    # TODO : add back support of 'inlineEdit'?
     # 'readonly' = render for display;
     # 'edit' = render for input;
-    inputMode: React.PropTypes.oneOf(['readonly', 'edit'])  
+    inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit'])
     
     # set to true to not render a popover on ellipsized values
     noPopover: React.PropTypes.bool
@@ -60,6 +59,8 @@ module.exports = class Datum extends React.Component
     style: React.PropTypes.object
     
 
+    # call back for when the datum changes
+    onChange: React.PropTypes.func
 
   # no default for inputMode because we can also get from context, but default is
   # 'readonly'.  see @getInputMode()
@@ -99,16 +100,20 @@ module.exports = class Datum extends React.Component
 
   constructor: (props) ->
     super props
-    @state = {
-      value: null
-      errors: []
-    }
+    @initializeState()
     @addValidations @validateRequired
 
 
+  initializeState: ->
+    @state = {
+      value: @getModelValue()
+      errors: []
+      isDirty: false
+    }
+
   
-  #                            React life cycle methods
-  
+  #..................................................React life cycle methods...........................................
+
 
   componentDidMount: ->
     # note that we don't need a form to work. this is for it's benefit, mostly
@@ -119,7 +124,13 @@ module.exports = class Datum extends React.Component
 
 
   componentWillReceiveProps: (nextProps) ->
-    # TBD
+    prevModelValue = @getModelValue(@props)
+    newModelValue = @getModelValue(nextProps)
+    
+    if JSON.stringify(prevModelValue) != JSON.stringify(newModelValue)
+      @setState({
+        value: newModelValue
+      })
     
 
   componentWillUnmount: ->
@@ -182,7 +193,13 @@ module.exports = class Datum extends React.Component
 
 
   renderWrappedDisplayValue: (value)->
-    <span className="datum-display-value" style={@props.style}>{value}</span>
+    <span className="datum-display-value" onClick={@onEditClick} style={@props.style}>{value}</span>
+
+
+  onEditClick: =>
+    @constructor.inlineEditor = @
+    @forceUpdate()
+    _.defer => @focus()
 
 
   renderPlaceholder: ->
@@ -276,7 +293,7 @@ module.exports = class Datum extends React.Component
     that the base behavior of setting state.value to null on model.set() happens.
   ###
   isDirty: () ->
-    return @state.value?
+    return @state.isDirty
 
 
   isEditable: () ->
@@ -291,8 +308,7 @@ module.exports = class Datum extends React.Component
 
 
   cancelEdit: () ->
-    @setState errors: []
-
+    @setState { errors: [], value: @getModelValue() }
 
   ###
     When extending Datum, use @addValidations from constructor to add additional validations.
@@ -321,7 +337,7 @@ module.exports = class Datum extends React.Component
     return {
       type: "text" 
       placeholder: placeholder
-      value: value 
+      value: value
       onChange: @onChange
       onBlur: @onBlur
       onKeyDown: @onInputKeyDown
@@ -369,7 +385,7 @@ module.exports = class Datum extends React.Component
     warning: Do not override this method to return a component element or jsx; bad things will happen.
   ###
   getModelValue: (newProps = @props)->
-    return null unless model = @getModel()
+    return null unless model = @getModel(newProps)
     value = if model instanceof Backbone.Model  
       model.get(newProps.attr) 
     else 
@@ -415,18 +431,38 @@ module.exports = class Datum extends React.Component
   # on every change, it needs to set the value in state (see @setValue()) with
   # the event.target.value in the input.  On next render the value in state
   # is what the user sees, so you could also intercept this method
-  onChange: (event) =>
+  onChange: (event, options = {}) =>
     @setValue(event.target.value, setModelValue: @shouldSetOnChange())
       
-      
+    if @shouldSetOnChange()
+      @toDisplayMode()
+
+    if options.callOnChangeHandler? and options.callOnChangeHandler and @props.onChange?
+      @props.onChange(event)
+
+
   # onChange above captures the value in state.  
   # onBlur only sets the value on the model with the current state value, and
   #   only if state value is not null 
   onBlur: (event) =>
     value = @getInputValue()
-    return unless value?
+    return if @isInputValueChanged()
     @setValue(value, setModelValue: @shouldSetOnBlur())
-  
+
+    if @shouldSetOnBlur() || @getInputMode() == 'inlineEdit' # if inline edit should get back to display mode.
+      @toDisplayMode()
+
+
+  isInputValueChanged: ->    
+    @getInputValue() == @getModelValue()
+
+
+  toDisplayMode: () ->
+    if @constructor.inlineEditor == @
+      @constructor.inlineEditor = null
+      @forceUpdate()
+
+
   
   onInputKeyDown: (event) =>
     @props.onKeyDown?(event)
@@ -439,13 +475,14 @@ module.exports = class Datum extends React.Component
       setModelValue: false
       
     valid = @validate(newValue)
+
     if options.setModelValue
       @setModelValue(newValue)
-      @setState(value: null)  # go back to using backbone model value
+      @setState({isDirty: false})
     else
-      @setState(value: newValue)
-      
-  
+      @setState({isDirty: true})
+
+    @setState({value: newValue})
   
 
   ###
@@ -461,8 +498,8 @@ module.exports = class Datum extends React.Component
 
 
   focus: () =>
-    if @inputComponent?
-      node = ReactDOM.findDOMNode(@inputComponent)
+    if @getInputComponent()?
+      node = ReactDOM.findDOMNode(@getInputComponent())
       node.focus()
       node.select()
 
