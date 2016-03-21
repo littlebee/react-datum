@@ -1123,7 +1123,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.shouldSetOnBlur = function() {
-	    return this.props.setOnBlur === true && !this.shouldSetOnChange();
+	    return this.props.setOnBlur === true && !this.shouldSetOnChange() && !this.props.multi;
 	  };
 
 	  Datum.prototype.onChange = function(event, options) {
@@ -2981,7 +2981,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var values;
 	    if (this.props.multi) {
 	      values = _.pluck(optionsSelected, 'value');
-	      if (!this.props.setAsArray) {
+	      if (this.getInputMode() !== 'edit') {
 	        values = values.join(',');
 	      }
 	      CollectionPicker.__super__.onChange.call(this, {

@@ -265,7 +265,7 @@ module.exports = class CollectionPicker extends Datum
   onChange: (optionsSelected) =>
     if @props.multi
       values = _.pluck(optionsSelected, 'value')
-      values = values.join(',') unless @props.setAsArray 
+      values = values.join(',') unless @getInputMode() == 'edit' 
       super {target: {value: values}}, {callOnChangeHandler: false}
     else
       super {target: {value: optionsSelected?.value}}, {callOnChangeHandler: false}

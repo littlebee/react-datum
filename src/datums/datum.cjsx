@@ -431,7 +431,7 @@ module.exports = class Datum extends React.Component
 
 
   shouldSetOnBlur: ->
-    @props.setOnBlur == true && !@shouldSetOnChange()
+    @props.setOnBlur == true && !@shouldSetOnChange() && !@props.multi
 
 
   # on every change, it needs to set the value in state (see @setValue()) with
