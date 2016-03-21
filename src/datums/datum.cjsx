@@ -386,7 +386,7 @@ module.exports = class Datum extends React.Component
   ###
   getModelValue: (newProps = @props)->
     return null unless model = @getModel(newProps)
-    value = if model instanceof Backbone.Model  
+    value = if _.isFunction(model.get)
       model.get(newProps.attr) 
     else 
       model[newProps.attr]
@@ -397,11 +397,17 @@ module.exports = class Datum extends React.Component
     Extend this model to interpret the value prior to saving for example a Percent datum
     that the user enters a value that is 100x what gets saved to model
     
-    options pass through to model.set
+    options pass through to model.set() 
   ###
   setModelValue: (value=@getInputValue(), options={}) ->
     return unless value?   # value == null means the user didn't change it
-    @getModel()?.set(@props.attr, value, options)
+    model = @getModel()
+    return unless model?
+    
+    if _.isFunction(model.set) 
+      model.set(@props.attr, value, options) 
+    else 
+      model[@props.attr] = value
 
 
   saveModel: ->

@@ -1060,7 +1060,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!(model = this.getModel(newProps))) {
 	      return null;
 	    }
-	    value = model instanceof Backbone.Model ? model.get(newProps.attr) : model[newProps.attr];
+	    value = _.isFunction(model.get) ? model.get(newProps.attr) : model[newProps.attr];
 	    return value;
 	  };
 
@@ -1069,11 +1069,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Extend this model to interpret the value prior to saving for example a Percent datum
 	    that the user enters a value that is 100x what gets saved to model
 	    
-	    options pass through to model.set
+	    options pass through to model.set()
 	   */
 
 	  Datum.prototype.setModelValue = function(value, options) {
-	    var ref;
+	    var model;
 	    if (value == null) {
 	      value = this.getInputValue();
 	    }
@@ -1083,7 +1083,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (value == null) {
 	      return;
 	    }
-	    return (ref = this.getModel()) != null ? ref.set(this.props.attr, value, options) : void 0;
+	    model = this.getModel();
+	    if (model == null) {
+	      return;
+	    }
+	    if (_.isFunction(model.set)) {
+	      return model.set(this.props.attr, value, options);
+	    } else {
+	      return model[this.props.attr] = value;
+	    }
 	  };
 
 	  Datum.prototype.saveModel = function() {
