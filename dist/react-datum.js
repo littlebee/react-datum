@@ -738,7 +738,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	      }
 	    }
-	    if ((this.state.value != null) && this.shouldSetOnBlur()) {
+	    if (this.isDirty() && this.shouldSetOnBlur()) {
 	      return this.setValue(this.state.value, {
 	        setModelValue: true
 	      });
@@ -2281,6 +2281,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Number.prototype.charactersMustMatch = /^\-?[0-9]*\.?[0-9]*$/;
 
+	  Number.getComaAddedValue = function(value) {
+	    var decimal, ref, wholeNumber;
+	    ref = value.toString().split('.'), wholeNumber = ref[0], decimal = ref[1];
+	    value = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	    if (decimal != null) {
+	      value += '.' + decimal;
+	    }
+	    return value;
+	  };
+
 	  function Number(props) {
 	    this.validateMax = bind(this.validateMax, this);
 	    this.validateMin = bind(this.validateMin, this);
@@ -2416,16 +2426,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Number.prototype.addCommas = function(value, formats) {
-	    var decimal, ref, wholeNumber;
 	    if (formats == null) {
 	      formats = this.getFormats();
 	    }
 	    if (indexOf.call(formats, 'comma') >= 0) {
-	      ref = value.toString().split('.'), wholeNumber = ref[0], decimal = ref[1];
-	      value = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	      if (decimal != null) {
-	        value += '.' + decimal;
-	      }
+	      value = Number.getComaAddedValue(value);
 	    }
 	    return value;
 	  };

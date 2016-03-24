@@ -138,7 +138,7 @@ module.exports = class Datum extends React.Component
     
     # you can unmount without bluring save state value to 
     # model if it exists
-    if @state.value? && @shouldSetOnBlur()
+    if @isDirty() && @shouldSetOnBlur()
       @setValue(@state.value, setModelValue: true)
       
       

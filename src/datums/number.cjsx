@@ -61,6 +61,16 @@ module.exports = class Number extends Datum
   # will not allow characters to be entered that do not match this pattern
   charactersMustMatch: /^\-?[0-9]*\.?[0-9]*$/
 
+
+  @getComaAddedValue: (value) ->
+    # add thousands separater
+    [wholeNumber, decimal] = value.toString().split('.')
+    value = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    value += '.' + decimal if decimal?
+
+    return value
+
+
   constructor: (props) ->
     super
     @addValidations [
@@ -178,10 +188,8 @@ module.exports = class Number extends Datum
         
   addCommas: (value, formats=@getFormats()) ->
     if 'comma' in formats
-      # add thousands separater
-      [wholeNumber, decimal] = value.toString().split('.')
-      value = wholeNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      value += '.' + decimal if decimal?
+      value = Number.getComaAddedValue(value)
+
     return value
 
 
