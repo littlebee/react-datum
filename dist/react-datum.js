@@ -660,6 +660,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    readonly: React.PropTypes.bool,
 	    required: React.PropTypes.bool,
 	    style: React.PropTypes.object,
+	    asDiv: React.PropTypes.bool,
 	    onChange: React.PropTypes.func
 	  };
 
@@ -758,11 +759,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.renderDatumWrapper = function(contentFn) {
-	    return React.createElement("span", {
-	      "className": this.getFullClassName(),
-	      "data-zattr": this.props.attr,
-	      "style": this.props.style || {}
-	    }, contentFn());
+	    if (this.props.asDiv) {
+	      return React.createElement("div", {
+	        "className": this.getFullClassName(),
+	        "data-zattr": this.props.attr,
+	        "style": this.props.style || {}
+	      }, contentFn());
+	    } else {
+	      return React.createElement("span", {
+	        "className": this.getFullClassName(),
+	        "data-zattr": this.props.attr,
+	        "style": this.props.style || {}
+	      }, contentFn());
+	    }
 	  };
 
 	  Datum.prototype.renderForDisplay = function() {
@@ -1334,7 +1343,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    debouncedUpdate: React.PropTypes.bool,
 	    debounceMs: React.PropTypes.number,
 	    debug: React.PropTypes.bool,
-	    styleObj: React.PropTypes.object
+	    style: React.PropTypes.object
 	  };
 
 	  ContextualData.childContextTypes = {};
@@ -1343,7 +1352,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    fetch: false,
 	    fetchOptions: {},
 	    placeholder: void 0,
-	    styleObj: {},
+	    style: {},
 	    debouncedUpdate: true,
 	    debounceMs: 0
 	  };
@@ -1377,7 +1386,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      className += " " + this.props.className;
 	    }
 	    return React.createElement("span", {
-	      "style": _.extend({}, this.props.styleObj),
+	      "style": _.extend({}, this.props.style),
 	      "className": className
 	    }, this.renderContent());
 	  };

@@ -58,6 +58,8 @@ module.exports = class Datum extends React.Component
     # style to apply to outer datum div
     style: React.PropTypes.object
     
+    # if true, renders a div as the component wrapper
+    asDiv: React.PropTypes.bool
 
     # call back for when the datum changes
     onChange: React.PropTypes.func
@@ -154,9 +156,14 @@ module.exports = class Datum extends React.Component
 
   renderDatumWrapper: (contentFn)->
     # TODO: add data-zattr attribute for backward compatibility?
-    <span className={@getFullClassName()} data-zattr={@props.attr} style={@props.style||{}}>
-      {contentFn()}
-    </span>
+    if @props.asDiv 
+      <div className={@getFullClassName()} data-zattr={@props.attr} style={@props.style||{}}>
+        {contentFn()}
+      </div>
+    else
+      <span className={@getFullClassName()} data-zattr={@props.attr} style={@props.style||{}}>
+        {contentFn()}
+      </span>
 
 
   renderForDisplay: ->

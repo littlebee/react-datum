@@ -81,6 +81,13 @@ describe 'Datum (base class)', ->
       datumNode.innerHTML.should.contain("display:inline-block")
       
       
+  describe 'when rendered asDiv', ->
+    datum = Th.render <Datum model={model} attr="name" asDiv/>
+    datumNode = Th.domNode(datum)
+  
+    it 'should render a div wrapper', ->
+      datumNode.outerHTML.should.contain('div')
+      
   
       
 
