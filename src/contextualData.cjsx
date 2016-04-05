@@ -54,7 +54,7 @@ module.exports = class ContextualData extends React.Component
     # set to true to show console messages about useful things
     debug: React.PropTypes.bool
     # style override object for the rendered div.
-    styleObj: React.PropTypes.object
+    style: React.PropTypes.object
 
   # you will also need to similarly extend this, like this:
   #```
@@ -75,7 +75,7 @@ module.exports = class ContextualData extends React.Component
     # To render no placeholder but not render children, set this to null
     placeholder: undefined
     # We do not define any default style data.
-    styleObj: {}
+    style: {}
     
     # effectively batch and defer multiple syncronous events into one defaults to zero 
     # second debounce which will effectively ignore all but the last triggered event
@@ -114,7 +114,7 @@ module.exports = class ContextualData extends React.Component
   render: ->
     className = "contextual-data #{@contextKey}"
     className += " #{@props.className}" if @props.className?
-    return <span style={_.extend({}, @props.styleObj)} className={className}>{@renderContent()}</span>
+    return <span style={_.extend({}, @props.style)} className={className}>{@renderContent()}</span>
 
 
   # if the model we provide isn't set, render placeholder if user asked nicely
