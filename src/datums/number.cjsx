@@ -175,14 +175,16 @@ module.exports = class Number extends Datum
     if 'abbreviate' in formats
       value = parseFloat(value)
       absValue = Math.abs(value)
-      [value, affix] = if absValue >= ONE_MILLION
+      [value, affix] = if absValue >= ONE_BILLION
+        [value / ONE_BILLION, "B" ]
+      else if absValue >= ONE_MILLION
         [value / ONE_MILLION, "M" ]
       else if absValue >= ONE_THOUSAND
         [value / ONE_THOUSAND, "K"]
       else
         [value, ""]
 
-      value = "#{@roundToDecimalPlaces(value, formats: formats)}#{affix}"
+      value = "#{@roundToDecimalPlaces(value, formats: formats)} #{affix}"
     return value
         
         

@@ -2426,10 +2426,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (indexOf.call(formats, 'abbreviate') >= 0) {
 	      value = parseFloat(value);
 	      absValue = Math.abs(value);
-	      ref = absValue >= ONE_MILLION ? [value / ONE_MILLION, "M"] : absValue >= ONE_THOUSAND ? [value / ONE_THOUSAND, "K"] : [value, ""], value = ref[0], affix = ref[1];
-	      value = "" + (this.roundToDecimalPlaces(value, {
+	      ref = absValue >= ONE_BILLION ? [value / ONE_BILLION, "B"] : absValue >= ONE_MILLION ? [value / ONE_MILLION, "M"] : absValue >= ONE_THOUSAND ? [value / ONE_THOUSAND, "K"] : [value, ""], value = ref[0], affix = ref[1];
+	      value = (this.roundToDecimalPlaces(value, {
 	        formats: formats
-	      })) + affix;
+	      })) + " " + affix;
 	    }
 	    return value;
 	  };
