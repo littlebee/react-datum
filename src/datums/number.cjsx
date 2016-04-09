@@ -170,7 +170,10 @@ module.exports = class Number extends Datum
         
     return value
     
-    
+  ###  
+    returns a string with number value abbreviated and rounded to user 
+    requested props.decimalPlaces 
+  ###  
   abbreviate: (value, formats=@getFormats()) ->
     if 'abbreviate' in formats
       value = parseFloat(value)
