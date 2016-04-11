@@ -34,7 +34,7 @@ module.exports = class Datum extends React.Component
       React.PropTypes.bool
     ])
     
-    placeholder: React.PropTypes.string
+    placeholder: React.PropTypes.node
     
     # 'readonly' = render for display;
     # 'edit' = render for input;

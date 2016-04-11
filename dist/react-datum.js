@@ -1,10 +1,10 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("react"), require("react-dom"), require("backbone"), require("_"));
+		module.exports = factory(require("react"), require("react-dom"), require("backbone"), require("underscore"));
 	else if(typeof define === 'function' && define.amd)
-		define(["react", "react-dom", "backbone", "_"], factory);
+		define(["react", "react-dom", "backbone", "underscore"], factory);
 	else if(typeof exports === 'object')
-		exports["ReactDatum"] = factory(require("react"), require("react-dom"), require("backbone"), require("_"));
+		exports["ReactDatum"] = factory(require("react"), require("react-dom"), require("backbone"), require("underscore"));
 	else
 		root["ReactDatum"] = factory(root["React"], root["ReactDOM"], root["Backbone"], root["_"]);
 })(this, function(__WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_8__, __WEBPACK_EXTERNAL_MODULE_9__) {
@@ -652,7 +652,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    attr: React.PropTypes.string.isRequired,
 	    label: React.PropTypes.string,
 	    ellipsizeAt: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.bool]),
-	    placeholder: React.PropTypes.string,
+	    placeholder: React.PropTypes.node,
 	    inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit']),
 	    noPopover: React.PropTypes.bool,
 	    setOnChange: React.PropTypes.bool,
@@ -2417,6 +2417,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    return value;
 	  };
+
+
+	  /*  
+	    returns a string with number value abbreviated and rounded to user 
+	    requested props.decimalPlaces
+	   */
 
 	  Number.prototype.abbreviate = function(value, formats) {
 	    var absValue, affix, ref;
