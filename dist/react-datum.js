@@ -2433,9 +2433,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	      value = parseFloat(value);
 	      absValue = Math.abs(value);
 	      ref = absValue >= ONE_BILLION ? [value / ONE_BILLION, "B"] : absValue >= ONE_MILLION ? [value / ONE_MILLION, "M"] : absValue >= ONE_THOUSAND ? [value / ONE_THOUSAND, "K"] : [value, ""], value = ref[0], affix = ref[1];
-	      value = (this.roundToDecimalPlaces(value, {
+	      value = "" + (this.roundToDecimalPlaces(value, {
 	        formats: formats
-	      })) + " " + affix;
+	      }));
+	      if ((affix != null ? affix.length : void 0) > 0) {
+	        value += " " + affix;
+	      }
 	    }
 	    return value;
 	  };

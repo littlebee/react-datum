@@ -187,7 +187,9 @@ module.exports = class Number extends Datum
       else
         [value, ""]
 
-      value = "#{@roundToDecimalPlaces(value, formats: formats)} #{affix}"
+      value = "#{@roundToDecimalPlaces(value, formats: formats)}"
+      value += " #{affix}" if affix?.length > 0
+        
     return value
         
         
