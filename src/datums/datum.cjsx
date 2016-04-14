@@ -4,9 +4,7 @@ ReactDOM = require('react-dom')
 Backbone = require('backbone')
 _ = require('underscore')
 
-if ReactBootstrap?               # if available globally
-  Popover = ReactBootstrap.Popover
-  OverlayTrigger = ReactBootstrap.OverlayTrigger
+Options = require '../options'
 
 # see ./datum.md
 module.exports = class Datum extends React.Component
@@ -234,6 +232,11 @@ module.exports = class Datum extends React.Component
       if @props.noPopover
         value = ellipsizedValue
       else
+        # if available globally or user called ReactDatum.set('ReactBootstrap', someLib)
+        if Options.ReactBootstrap?        
+          Popover = Options.ReactBootstrap.Popover
+          OverlayTrigger = Options.ReactBootstrap.OverlayTrigger
+
         # if react-bootstrap is available globally use it
         if Popover?
           popover = <Popover id='datumTextEllisize'>{value}</Popover>
@@ -273,6 +276,20 @@ module.exports = class Datum extends React.Component
   renderIcons: ->
     if @isEditing() && @state.errors.length > 0
       errors = []
+      className = "error validation"
+      
+      errorIconClass = Options.get('errorIconClass')
+      errorIcon = if errorIconClass?
+        <i className={errorIconClass}/>
+      else
+        '!'
+
+      # if available globally or user called ReactDatum.set('ReactBootstrap', someLib)
+      ReactBootstrap = Options.get('ReactBootstrap')
+      if ReactBootstrap?        
+        Popover = ReactBootstrap.Popover
+        OverlayTrigger = ReactBootstrap.OverlayTrigger
+  
       # if react-bootstrap is globally available, we will use that
       if Popover?
         errors.push(<div>{error}</div>) for error in @state.errors
@@ -282,13 +299,13 @@ module.exports = class Datum extends React.Component
 
         return (
           <OverlayTrigger trigger={['hover','focus']} placement="bottom" overlay={popover}>
-            <span className="error validation">!</span>
+            <span className={className}>{errorIcon}</span>
           </OverlayTrigger>
         )
       else
         errors = @state.errors.join('\n')
         return (
-          <span className="error validation" title={errors}>!</span>
+          <span className={className} title={errors}>{errorIcon}</span>
         )
 
     return null

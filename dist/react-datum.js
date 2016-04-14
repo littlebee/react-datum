@@ -66,24 +66,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ReactDatum = {
 	  // contextual components
 	  ClickToEditForm: __webpack_require__(3),
-	  ContextualData: __webpack_require__(10),
-	  Collection: __webpack_require__(11),
-	  CollectionStats: __webpack_require__(14),
+	  ContextualData: __webpack_require__(11),
+	  Collection: __webpack_require__(12),
+	  CollectionStats: __webpack_require__(15),
 	  Form: __webpack_require__(5),
-	  Model: __webpack_require__(15),
-	  SelectedModel: __webpack_require__(16),
+	  Model: __webpack_require__(16),
+	  SelectedModel: __webpack_require__(17),
+
+	  // Datums
 	  Datum: __webpack_require__(7),
-	  Email: __webpack_require__(17),
-	  LazyPhoto: __webpack_require__(18),
-	  Link: __webpack_require__(19),
-	  Number: __webpack_require__(20),
-	  Text: __webpack_require__(21),
-	  WholeNumber: __webpack_require__(22),
-	  SelectOption: __webpack_require__(23),
+	  Email: __webpack_require__(18),
+	  LazyPhoto: __webpack_require__(19),
+	  Link: __webpack_require__(20),
+	  Number: __webpack_require__(21),
+	  Text: __webpack_require__(22),
+	  WholeNumber: __webpack_require__(23),
+	  SelectOption: __webpack_require__(24),
+
+	  // Global options
+	  Options: __webpack_require__(10),
 
 	  // TODO : i think this will eventually go to a separate npm package so that the core doesn't
 	  //    have dependency on react-select
-	  CollectionPicker: __webpack_require__(26)
+	  CollectionPicker: __webpack_require__(27)
 
 	};
 	if (window) window.ReactDatum = ReactDatum;
@@ -623,7 +628,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Backbone, Datum, OverlayTrigger, Popover, React, ReactDOM, _,
+	var Backbone, Datum, Options, React, ReactDOM, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
@@ -636,10 +641,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	_ = __webpack_require__(9);
 
-	if (typeof ReactBootstrap !== "undefined" && ReactBootstrap !== null) {
-	  Popover = ReactBootstrap.Popover;
-	  OverlayTrigger = ReactBootstrap.OverlayTrigger;
-	}
+	Options = __webpack_require__(10);
 
 	module.exports = Datum = (function(superClass) {
 	  extend(Datum, superClass);
@@ -846,7 +848,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.renderEllipsizedValue = function(value, options) {
-	    var ellipsizeAt, ellipsizedValue, popover;
+	    var OverlayTrigger, Popover, ellipsizeAt, ellipsizedValue, popover;
 	    if (options == null) {
 	      options = {};
 	    }
@@ -859,6 +861,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (this.props.noPopover) {
 	        value = ellipsizedValue;
 	      } else {
+	        if (Options.ReactBootstrap != null) {
+	          Popover = Options.ReactBootstrap.Popover;
+	          OverlayTrigger = Options.ReactBootstrap.OverlayTrigger;
+	        }
 	        if (Popover != null) {
 	          popover = React.createElement(Popover, {
 	            "id": 'datumTextEllisize'
@@ -899,9 +905,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.renderIcons = function() {
-	    var error, errors, i, len, popover, ref;
+	    var OverlayTrigger, Popover, ReactBootstrap, className, error, errorIcon, errorIconClass, errors, i, len, popover, ref;
 	    if (this.isEditing() && this.state.errors.length > 0) {
 	      errors = [];
+	      className = "error validation";
+	      errorIconClass = Options.get('errorIconClass');
+	      errorIcon = errorIconClass != null ? React.createElement("i", {
+	        "className": errorIconClass
+	      }) : '!';
+	      ReactBootstrap = Options.get('ReactBootstrap');
+	      if (ReactBootstrap != null) {
+	        Popover = ReactBootstrap.Popover;
+	        OverlayTrigger = ReactBootstrap.OverlayTrigger;
+	      }
 	      if (Popover != null) {
 	        ref = this.state.errors;
 	        for (i = 0, len = ref.length; i < len; i++) {
@@ -917,14 +933,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	          "placement": "bottom",
 	          "overlay": popover
 	        }, React.createElement("span", {
-	          "className": "error validation"
-	        }, "!"));
+	          "className": className
+	        }, errorIcon));
 	      } else {
 	        errors = this.state.errors.join('\n');
 	        return React.createElement("span", {
-	          "className": "error validation",
+	          "className": className,
 	          "title": errors
-	        }, "!");
+	        }, errorIcon);
 	      }
 	    }
 	    return null;
@@ -1294,6 +1310,83 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var Options, _, __options;
+
+	_ = __webpack_require__(9);
+
+	__options = {
+	  ReactBootstrap: (typeof window !== "undefined" && window !== null ? window.ReactBootstrap : void 0) || null,
+	  errorIconClass: null
+	};
+
+
+	/*
+	  These are global options used to control various aspects
+	  of ReactDatum rendering and functionality.
+	 */
+
+	module.exports = Options = (function() {
+	  function Options() {}
+
+
+	  /*
+	    Use to set a ReactDatum option.  Available options and defaults:
+	    
+	      ReactBootstrap: Defaults to global 'ReactBootstrap' if it exists.
+	        If set this option will use ReactBootstrap for popovers such as when
+	        a Datum is ellipsized and for validation errors. 
+	        If not set, ReactDatum will use the HTML5 title tooltips for popovers
+	        
+	      errorIconClass: default: null.  Icon css class to use for indicating 
+	        validation errors. If not set, a red unicode exclamation point is used.  
+	      
+	    Examples:
+	    ```
+	      ReactDatum = require('react-datum')
+	      
+	      // use the version of react bootstrap I got somewhere above
+	      ReactDatum.Options.set('ReactBootstrap', loadedBootstrapLib)
+	      
+	      // use the fontawesome 4.5 exclamation sign icon for errors
+	      ReactDatum.Options.set('errorIconClass', 'fa fa-exclamation-circle')
+	    
+	    ```
+	   */
+
+	  Options.set = function(option, value) {
+	    var extension;
+	    extension = _.isObject(option) ? option : {
+	      option: option,
+	      value: value
+	    };
+	    _.extend(__options, extension);
+	    return __options;
+	  };
+
+
+	  /*
+	    Get a previously set option or it's default if not set
+	   */
+
+	  Options.get = function(option) {
+	    if (option == null) {
+	      option = null;
+	    }
+	    if (option == null) {
+	      return _.extend({}, __options);
+	    }
+	    return __options[option];
+	  };
+
+	  return Options;
+
+	})();
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var Backbone, ContextualData, React, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1515,7 +1608,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, Collection, ContextualData, React, SelectableCollection, _,
@@ -1528,9 +1621,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	_ = __webpack_require__(9);
 
-	SelectableCollection = __webpack_require__(12);
+	SelectableCollection = __webpack_require__(13);
 
-	ContextualData = __webpack_require__(10);
+	ContextualData = __webpack_require__(11);
 
 	module.exports = Collection = (function(superClass) {
 	  extend(Collection, superClass);
@@ -1569,15 +1662,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(13);
+	module.exports = __webpack_require__(14);
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var SelectableCollection, _,
@@ -1767,7 +1860,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, CollectionStats, React,
@@ -1867,7 +1960,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, Model, React, _,
@@ -1880,7 +1973,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	_ = __webpack_require__(9);
 
-	ContextualData = __webpack_require__(10);
+	ContextualData = __webpack_require__(11);
 
 	module.exports = Model = (function(superClass) {
 	  extend(Model, superClass);
@@ -1909,7 +2002,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, React, SelectedModel,
@@ -1921,7 +2014,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	Backbone = __webpack_require__(8);
 
-	ContextualData = __webpack_require__(10);
+	ContextualData = __webpack_require__(11);
 
 	module.exports = SelectedModel = (function(superClass) {
 	  extend(SelectedModel, superClass);
@@ -2007,7 +2100,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Email, React, _,
@@ -2074,7 +2167,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, LazyPhoto, React,
@@ -2175,7 +2268,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Link, React, _,
@@ -2240,7 +2333,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Number, ONE_BILLION, ONE_MILLION, ONE_THOUSAND, RECOGNIZED_FORMATS, React, _,
@@ -2469,7 +2562,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, React, Text, _,
@@ -2536,7 +2629,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Number, React, WholeNumber,
@@ -2545,7 +2638,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	React = __webpack_require__(4);
 
-	Number = __webpack_require__(20);
+	Number = __webpack_require__(21);
 
 
 	/*
@@ -2569,7 +2662,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2578,7 +2671,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(24);
+	var _classnames = __webpack_require__(25);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -2671,7 +2764,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Option;
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -2717,7 +2810,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		if (typeof module !== 'undefined' && module.exports) {
 			module.exports = classNames;
-		} else if ("function" === 'function' && _typeof(__webpack_require__(25)) === 'object' && __webpack_require__(25)) {
+		} else if ("function" === 'function' && _typeof(__webpack_require__(26)) === 'object' && __webpack_require__(26)) {
 			// register as 'classnames', consistent with npm package name
 			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
 				return classNames;
@@ -2728,7 +2821,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	})();
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
@@ -2736,7 +2829,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, CollectionPicker, Datum, React, Select, Strhelp, _,
@@ -2750,13 +2843,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	_ = __webpack_require__(9);
 
-	Strhelp = __webpack_require__(27);
+	Strhelp = __webpack_require__(28);
 
 	Datum = __webpack_require__(7);
 
-	Select = __webpack_require__(29);
+	Select = __webpack_require__(30);
 
-	Select.Async = __webpack_require__(32);
+	Select.Async = __webpack_require__(33);
 
 	module.exports = CollectionPicker = (function(superClass) {
 	  extend(CollectionPicker, superClass);
@@ -3095,15 +3188,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(28);
+	module.exports = __webpack_require__(29);
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3261,7 +3354,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}).call(undefined);
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3282,27 +3375,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _reactInputAutosize = __webpack_require__(30);
+	var _reactInputAutosize = __webpack_require__(31);
 
 	var _reactInputAutosize2 = _interopRequireDefault(_reactInputAutosize);
 
-	var _classnames = __webpack_require__(24);
+	var _classnames = __webpack_require__(25);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _stripDiacritics = __webpack_require__(31);
+	var _stripDiacritics = __webpack_require__(32);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
-	var _Async = __webpack_require__(32);
+	var _Async = __webpack_require__(33);
 
 	var _Async2 = _interopRequireDefault(_Async);
 
-	var _Option = __webpack_require__(23);
+	var _Option = __webpack_require__(24);
 
 	var _Option2 = _interopRequireDefault(_Option);
 
-	var _Value = __webpack_require__(33);
+	var _Value = __webpack_require__(34);
 
 	var _Value2 = _interopRequireDefault(_Value);
 
@@ -4070,7 +4163,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Select;
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4195,7 +4288,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = AutosizeInput;
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4210,7 +4303,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4223,11 +4316,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Select = __webpack_require__(29);
+	var _Select = __webpack_require__(30);
 
 	var _Select2 = _interopRequireDefault(_Select);
 
-	var _stripDiacritics = __webpack_require__(31);
+	var _stripDiacritics = __webpack_require__(32);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
@@ -4385,7 +4478,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Async;
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4394,7 +4487,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(24);
+	var _classnames = __webpack_require__(25);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 

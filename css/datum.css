@@ -11,3 +11,7 @@
   cursor: default;
 }
 
+.datum-input .validation i {
+  margin-left: 4px;
+}
+

@@ -9,6 +9,8 @@ var ReactDatum = {
   Form:              require('./src/form'),
   Model:             require('./src/model'),
   SelectedModel:     require('./src/selectedModel'),
+  
+  // Datums
   Datum:             require('./src/datums/datum'),
   Email:             require('./src/datums/email'),
   LazyPhoto:         require('./src/datums/lazyPhoto'),
@@ -16,8 +18,11 @@ var ReactDatum = {
   Number:            require('./src/datums/number'),
   Text:              require('./src/datums/text'),
   WholeNumber:       require('./src/datums/wholeNumber'),
-  SelectOption:            require('./node_modules/react-select/src/Option.js'),
-
+  SelectOption:      require('./node_modules/react-select/src/Option.js'),
+  
+  // Global options
+  Options:           require('./src/options'),
+  
   // TODO : i think this will eventually go to a separate npm package so that the core doesn't
   //    have dependency on react-select
   CollectionPicker: require('./src/datums/collectionPicker/collectionPicker')
