@@ -88,5 +88,30 @@ describe 'Form when saving', ->
     afterEach ->
       model.save.restore()
   
+  
+describe "Form when saving with modelSaveMethod:'patch' prop", ->
+  model = new KittenModel()
+  model.patch = -> return true;   # stub for custom method
+  
+  component = Th.render(formWithValidations({model: model, modelSaveMethod: 'patch'}))
+
+  describe 'when Form.save is called', ->
+    saveStub = null 
+    patchStub = null
+    
+    beforeEach ->
+      saveStub = sinon.stub(model, "save").yieldsTo("success", [model, "Success"])
+      patchStub = sinon.stub(model, "patch").yieldsTo("success", [model, "Success"])
+      component.save()
+      
+    it 'should have called model.patch', ->
+      patchStub.should.have.been.called
+
+    it 'should not have called model.save', ->
+      saveStub.should.not.have.been.called
+
+    afterEach ->
+      model.save.restore()
+      model.patch.restore()
 
 

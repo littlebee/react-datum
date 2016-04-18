@@ -222,6 +222,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Form.propTypes = {
 	    model: Form.modelOrObject(),
+	    modelSaveMethod: React.PropTypes.string,
 	    readonly: React.PropTypes.bool,
 	    buttonPosition: React.PropTypes.oneOf(['top', 'bottom', 'none']),
 	    className: React.PropTypes.string,
@@ -232,7 +233,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Form.defaultProps = {
 	    readonly: false,
 	    buttonPosition: 'bottom',
-	    className: 'form'
+	    className: 'form',
+	    modelSaveMethod: 'save'
 	  };
 
 	  Form.contextTypes = {
@@ -490,7 +492,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    this.preceedOriginalCallback(options, 'success', this.onSaveSuccess);
 	    this.preceedOriginalCallback(options, 'error', this.onSaveError);
-	    return saved = model.save({}, options);
+	    return saved = model[this.props.modelSaveMethod]({}, options);
 	  };
 
 	  Form.prototype.onSaveClick = function(evt) {
