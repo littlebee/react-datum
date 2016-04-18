@@ -16,8 +16,11 @@ var ReactDatum = {
   LazyPhoto:         require('./src/datums/lazyPhoto'),
   Link:              require('./src/datums/link'),
   Number:            require('./src/datums/number'),
+  Percent:           require('./src/datums/percent'),
   Text:              require('./src/datums/text'),
   WholeNumber:       require('./src/datums/wholeNumber'),
+  
+  // react-select 
   SelectOption:      require('./node_modules/react-select/src/Option.js'),
   
   // Global options
@@ -33,3 +36,5 @@ if(window)
 
 if(module)
   module.exports = ReactDatum
+  
+  

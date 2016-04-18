@@ -79,16 +79,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  LazyPhoto: __webpack_require__(19),
 	  Link: __webpack_require__(20),
 	  Number: __webpack_require__(21),
-	  Text: __webpack_require__(22),
-	  WholeNumber: __webpack_require__(23),
-	  SelectOption: __webpack_require__(24),
+	  Percent: __webpack_require__(22),
+	  Text: __webpack_require__(23),
+	  WholeNumber: __webpack_require__(24),
+
+	  // react-select
+	  SelectOption: __webpack_require__(25),
 
 	  // Global options
 	  Options: __webpack_require__(10),
 
 	  // TODO : i think this will eventually go to a separate npm package so that the core doesn't
 	  //    have dependency on react-select
-	  CollectionPicker: __webpack_require__(27)
+	  CollectionPicker: __webpack_require__(28)
 
 	};
 	if (window) window.ReactDatum = ReactDatum;
@@ -705,7 +708,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.initializeState = function() {
 	    return this.state = {
-	      value: this.getModelValue(),
 	      errors: [],
 	      isDirty: false
 	    };
@@ -2395,6 +2397,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return value;
 	  };
 
+
+	  /*
+	    fail proof conversion from sting to float that will never return NaN
+	   */
+
+	  Number.safelyFloat = function(value) {
+	    var error, floatValue;
+	    if (value == null) {
+	      return 0;
+	    }
+	    try {
+	      floatValue = parseFloat(value);
+	    } catch (error) {
+	      console.error("unparseable float " + value);
+	      return 0;
+	    }
+	    if (_.isNaN(floatValue)) {
+	      return 0;
+	    } else {
+	      return floatValue;
+	    }
+	  };
+
 	  function Number(props) {
 	    this.validateMax = bind(this.validateMax, this);
 	    this.validateMin = bind(this.validateMin, this);
@@ -2567,6 +2592,112 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var Number, Percent, React,
+	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+	  hasProp = {}.hasOwnProperty;
+
+	React = __webpack_require__(4);
+
+	Number = __webpack_require__(21);
+
+
+	/*
+	  This datum is an extension of [ReactDatum.Number](http://zulily.github.io/react-datum/docs/api/#Number) for
+	  display and input of percent values.   
+	  
+	  - Display value is affixed with '%' 
+	  - Display and input value are model value * 100 (model value is assumed to be 
+	  fractional value)
+	  - User input is assumed to be number percentage (* 100)
+	  - props.decimalPlaces is respected for both display and input
+
+
+	  Number datum has (maybe use to have) a format called  'percent' that will also
+	  do a little part of what Percent datum does.  The Percent datum is meant to 
+	  supercede 'percent' format to Number datum.
+	 */
+
+	module.exports = Percent = (function(superClass) {
+	  extend(Percent, superClass);
+
+	  function Percent() {
+	    return Percent.__super__.constructor.apply(this, arguments);
+	  }
+
+	  Percent.displayName = "react-datum.Percent";
+
+
+	  /*
+	    Model value returned is multiplied by 100.  Internal value for Percent
+	    is always the whole number displayed percentage rounded to requested
+	    decimal places.
+	   */
+
+	  Percent.prototype.getModelValue = function() {
+	    var superValue;
+	    superValue = Percent.__super__.getModelValue.apply(this, arguments);
+	    return this.roundToDecimalPlaces(Number.safelyFloat(superValue) * 100);
+	  };
+
+
+	  /*
+	    What get's saved to the model is the user entered value divided by 100
+	   */
+
+	  Percent.prototype.setModelValue = function(value, options) {
+	    var floatValue;
+	    if (value == null) {
+	      value = this.getInputValue();
+	    }
+	    if (options == null) {
+	      options = {};
+	    }
+	    if (value == null) {
+	      return;
+	    }
+	    value || (value = 0);
+	    floatValue = Number.safelyFloat(value) / 100;
+	    return Percent.__super__.setModelValue.call(this, floatValue, options);
+	  };
+
+
+	  /*
+	    Other formats like 'money' and 'abbreviate' are ignored.  Override react-datum.Money
+	   */
+
+	  Percent.prototype.getFormats = function() {
+	    var superFormats;
+	    superFormats = Percent.__super__.getFormats.apply(this, arguments);
+	    if (superFormats.length > 0) {
+	      console.error('react-datum.Percent is not compatible with other number formats like: ' + JSON.stringify(superFormats) + '.  Ignoring.');
+	    }
+	    return [];
+	  };
+
+
+	  /*
+	    Renders value for display as nn.n%.
+	    
+	    Base number has (maybe use to have) a format called  'percent' that will also
+	    do this little part of it.  The Percent datum is meant to supercede 'percent' 
+	    format to Number datum.
+	   */
+
+	  Percent.prototype.renderValueForDisplay = function() {
+	    var superVal;
+	    superVal = Percent.__super__.renderValueForDisplay.apply(this, arguments);
+	    return superVal + '%';
+	  };
+
+	  return Percent;
+
+	})(Number);
+
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var Datum, React, Text, _,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
@@ -2631,7 +2762,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Number, React, WholeNumber,
@@ -2664,7 +2795,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2673,7 +2804,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(25);
+	var _classnames = __webpack_require__(26);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -2766,7 +2897,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Option;
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -2812,7 +2943,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		if (typeof module !== 'undefined' && module.exports) {
 			module.exports = classNames;
-		} else if ("function" === 'function' && _typeof(__webpack_require__(26)) === 'object' && __webpack_require__(26)) {
+		} else if ("function" === 'function' && _typeof(__webpack_require__(27)) === 'object' && __webpack_require__(27)) {
 			// register as 'classnames', consistent with npm package name
 			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
 				return classNames;
@@ -2823,7 +2954,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	})();
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
@@ -2831,7 +2962,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, CollectionPicker, Datum, React, Select, Strhelp, _,
@@ -2845,13 +2976,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	_ = __webpack_require__(9);
 
-	Strhelp = __webpack_require__(28);
+	Strhelp = __webpack_require__(29);
 
 	Datum = __webpack_require__(7);
 
-	Select = __webpack_require__(30);
+	Select = __webpack_require__(31);
 
-	Select.Async = __webpack_require__(33);
+	Select.Async = __webpack_require__(34);
 
 	module.exports = CollectionPicker = (function(superClass) {
 	  extend(CollectionPicker, superClass);
@@ -3190,15 +3321,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(29);
+	module.exports = __webpack_require__(30);
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3356,7 +3487,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}).call(undefined);
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3377,27 +3508,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _reactInputAutosize = __webpack_require__(31);
+	var _reactInputAutosize = __webpack_require__(32);
 
 	var _reactInputAutosize2 = _interopRequireDefault(_reactInputAutosize);
 
-	var _classnames = __webpack_require__(25);
+	var _classnames = __webpack_require__(26);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _stripDiacritics = __webpack_require__(32);
+	var _stripDiacritics = __webpack_require__(33);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
-	var _Async = __webpack_require__(33);
+	var _Async = __webpack_require__(34);
 
 	var _Async2 = _interopRequireDefault(_Async);
 
-	var _Option = __webpack_require__(24);
+	var _Option = __webpack_require__(25);
 
 	var _Option2 = _interopRequireDefault(_Option);
 
-	var _Value = __webpack_require__(34);
+	var _Value = __webpack_require__(35);
 
 	var _Value2 = _interopRequireDefault(_Value);
 
@@ -4165,7 +4296,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Select;
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4290,7 +4421,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = AutosizeInput;
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4305,7 +4436,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4318,11 +4449,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Select = __webpack_require__(30);
+	var _Select = __webpack_require__(31);
 
 	var _Select2 = _interopRequireDefault(_Select);
 
-	var _stripDiacritics = __webpack_require__(32);
+	var _stripDiacritics = __webpack_require__(33);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
@@ -4480,7 +4611,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Async;
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4489,7 +4620,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(25);
+	var _classnames = __webpack_require__(26);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 

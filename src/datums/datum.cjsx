@@ -106,7 +106,7 @@ module.exports = class Datum extends React.Component
 
   initializeState: ->
     @state = {
-      value: @getModelValue()
+      #value: @getModelValue()
       errors: []
       isDirty: false
     }

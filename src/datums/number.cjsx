@@ -22,6 +22,7 @@ module.exports = class Number extends Datum
   @propTypes: _.extend {}, Datum.propTypes,
     
     # format only effects display, not input.  Possible values:
+    #
     # 'abbreviate' - Add M and K to numbers greater than 1 million and 1 thousand respectively
     # 'money' - display dollar sign and two decimal places zero filled
     # 'comma' - add comma separators at thousands
@@ -69,6 +70,22 @@ module.exports = class Number extends Datum
     value += '.' + decimal if decimal?
 
     return value
+    
+    
+  ###
+    fail proof conversion from sting to float that will never return NaN
+  ###
+  @safelyFloat: (value) ->
+    return 0 unless value?
+    try
+      floatValue = parseFloat(value)
+    catch
+      console.error "unparseable float #{value}"
+      return 0
+      
+    return if _.isNaN(floatValue) then 0 else floatValue
+    
+
 
 
   constructor: (props) ->
@@ -204,6 +221,9 @@ module.exports = class Number extends Datum
     if 'money' in formats
       value = "$#{value}"
     return value
+    
+    
+  
 
     
   
