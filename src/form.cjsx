@@ -48,7 +48,7 @@ module.exports = class Form extends React.Component
   @defaultProps:
     readonly: false
     buttonPosition: 'bottom'
-    className: 'zform'
+    className: 'form'
 
 
   @contextTypes:
@@ -93,7 +93,7 @@ module.exports = class Form extends React.Component
 
     @_saveModelStateAtRender()
 
-    <div className={@props.className}>
+    <div className={"form #{@datumInputMode} #{@props.className}"}>
       {@renderTopButtons()}
       {@renderChildren()}
       {@renderBottomButtons()}

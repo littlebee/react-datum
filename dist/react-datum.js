@@ -232,7 +232,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Form.defaultProps = {
 	    readonly: false,
 	    buttonPosition: 'bottom',
-	    className: 'zform'
+	    className: 'form'
 	  };
 
 	  Form.contextTypes = {
@@ -276,7 +276,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    this._saveModelStateAtRender();
 	    return React.createElement("div", {
-	      "className": this.props.className
+	      "className": "form " + this.datumInputMode + " " + this.props.className
 	    }, this.renderTopButtons(), this.renderChildren(), this.renderBottomButtons(), this.renderMessages());
 	  };
 

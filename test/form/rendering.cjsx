@@ -82,8 +82,8 @@ describe 'Form when rendering', ->
     component = Th.render(<div>{simpleTestForm(model: model)}</div>)
     formNode = Th.domNode(component).children[0]
 
-    it 'form node should have zform class', ->
-      expect($(formNode).hasClass('zform')).to.equal(true)
+    it 'form node should have form class', ->
+      expect($(formNode).hasClass('form')).to.equal(true)
 
 
   describe "with readonly prop", ->
@@ -103,8 +103,11 @@ describe 'Form when rendering', ->
     it 'form node should have test-form class', ->
       expect($(formNode).hasClass('test-form')).to.equal(true)
 
-    it 'form node should not have zform class', ->
-      expect($(formNode).hasClass('zform')).to.equal(false)
+    it 'form node should also have form class', ->
+      expect($(formNode).hasClass('form')).to.equal(true)
+            
+    it 'form node should also have edit class', ->
+      expect($(formNode).hasClass('edit')).to.equal(true)
       
       
   describe "with buttonPosition='top' prop", ->
