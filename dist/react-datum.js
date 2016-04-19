@@ -2640,6 +2640,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Percent.prototype.getModelValue = function() {
 	    var superValue;
 	    superValue = Percent.__super__.getModelValue.apply(this, arguments);
+	    if (superValue == null) {
+	      return superValue;
+	    }
 	    return this.roundToDecimalPlaces(Number.safelyFloat(superValue) * 100);
 	  };
 
