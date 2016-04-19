@@ -149,11 +149,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (this.isEditing) {
 	      return ClickToEditForm.__super__.renderButtons.apply(this, arguments);
 	    }
-	    return React.createElement("button", {
-	      "key": "edit",
-	      "className": "btn btn-primary",
-	      "onClick": this.onEditClick
-	    }, "Edit");
+	    if (this.props.readonly) {
+	      return React.createElement("span", null);
+	    } else {
+	      return React.createElement("button", {
+	        "key": "edit",
+	        "className": "btn btn-primary",
+	        "onClick": this.onEditClick
+	      }, "Edit");
+	    }
 	  };
 
 	  ClickToEditForm.prototype.onEditClick = function() {

@@ -7,3 +7,7 @@ This component is an extension of **Form** that initially presents an
 
 See react-datum **Form** component for more props.  All **Form** properties are
 supported by **ClickToEditForm**
+
+Note that the readonly prop is observed.  If @props.readonly == true then the
+edit button will not render and the form acts like a static container.  This
+is for programatic setting of the form to readonly
