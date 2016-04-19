@@ -28,6 +28,8 @@ module.exports = class Percent extends Number
   ###
   getModelValue: () ->
     superValue = super
+    return superValue if !superValue?
+    
     return @roundToDecimalPlaces(Number.safelyFloat(superValue) * 100)
     
     
