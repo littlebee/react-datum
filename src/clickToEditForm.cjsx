@@ -19,7 +19,10 @@ module.exports = class ClickToEditForm extends Form
   renderButtons: (options) ->
     if @isEditing
       return super
-    return <button key="edit" className="btn btn-primary" onClick={@onEditClick}>Edit</button>
+    if @props.readonly
+      return <span/>
+    else
+      return <button key="edit" className="btn btn-primary" onClick={@onEditClick}>Edit</button>
 
 
   onEditClick: () =>

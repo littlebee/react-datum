@@ -22,6 +22,10 @@ module.exports = class Form extends React.Component
     # can also accept model instance as context var. prop has precendence 
     model: @modelOrObject()
     
+    # you can specify any method on the model to call when save is clicked
+    # TODO : add ability to also pass in a func?  would need to accept model, attrs, options
+    modelSaveMethod: React.PropTypes.string
+    
     #  no formMode like zform, but we have to support programatic readonly
     #  see also ClickToEditForm component.   readonly should always take precendence
     readonly: React.PropTypes.bool
@@ -48,7 +52,8 @@ module.exports = class Form extends React.Component
   @defaultProps:
     readonly: false
     buttonPosition: 'bottom'
-    className: 'zform'
+    className: 'form'
+    modelSaveMethod: 'save'
 
 
   @contextTypes:
@@ -93,7 +98,7 @@ module.exports = class Form extends React.Component
 
     @_saveModelStateAtRender()
 
-    <div className={@props.className}>
+    <div className={"form #{@datumInputMode} #{@props.className}"}>
       {@renderTopButtons()}
       {@renderChildren()}
       {@renderBottomButtons()}
@@ -258,7 +263,7 @@ module.exports = class Form extends React.Component
     
     @preceedOriginalCallback(options, 'success', @onSaveSuccess)
     @preceedOriginalCallback(options, 'error', @onSaveError)
-    saved = model.save {}, options
+    saved = model[@props.modelSaveMethod]({}, options)
       
 
   onSaveClick: (evt) =>

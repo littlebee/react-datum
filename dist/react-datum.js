@@ -66,24 +66,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ReactDatum = {
 	  // contextual components
 	  ClickToEditForm: __webpack_require__(3),
-	  ContextualData: __webpack_require__(10),
-	  Collection: __webpack_require__(11),
-	  CollectionStats: __webpack_require__(14),
+	  ContextualData: __webpack_require__(11),
+	  Collection: __webpack_require__(12),
+	  CollectionStats: __webpack_require__(15),
 	  Form: __webpack_require__(5),
-	  Model: __webpack_require__(15),
-	  SelectedModel: __webpack_require__(16),
+	  Model: __webpack_require__(16),
+	  SelectedModel: __webpack_require__(17),
+
+	  // Datums
 	  Datum: __webpack_require__(7),
-	  Email: __webpack_require__(17),
-	  LazyPhoto: __webpack_require__(18),
-	  Link: __webpack_require__(19),
-	  Number: __webpack_require__(20),
-	  Text: __webpack_require__(21),
-	  WholeNumber: __webpack_require__(22),
-	  SelectOption: __webpack_require__(23),
+	  Email: __webpack_require__(18),
+	  LazyPhoto: __webpack_require__(19),
+	  Link: __webpack_require__(20),
+	  Number: __webpack_require__(21),
+	  Percent: __webpack_require__(22),
+	  Text: __webpack_require__(23),
+	  WholeNumber: __webpack_require__(24),
+
+	  // react-select
+	  SelectOption: __webpack_require__(25),
+
+	  // Global options
+	  Options: __webpack_require__(10),
 
 	  // TODO : i think this will eventually go to a separate npm package so that the core doesn't
 	  //    have dependency on react-select
-	  CollectionPicker: __webpack_require__(26)
+	  CollectionPicker: __webpack_require__(28)
 
 	};
 	if (window) window.ReactDatum = ReactDatum;
@@ -141,11 +149,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (this.isEditing) {
 	      return ClickToEditForm.__super__.renderButtons.apply(this, arguments);
 	    }
-	    return React.createElement("button", {
-	      "key": "edit",
-	      "className": "btn btn-primary",
-	      "onClick": this.onEditClick
-	    }, "Edit");
+	    if (this.props.readonly) {
+	      return React.createElement("span", null);
+	    } else {
+	      return React.createElement("button", {
+	        "key": "edit",
+	        "className": "btn btn-primary",
+	        "onClick": this.onEditClick
+	      }, "Edit");
+	    }
 	  };
 
 	  ClickToEditForm.prototype.onEditClick = function() {
@@ -217,6 +229,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Form.propTypes = {
 	    model: Form.modelOrObject(),
+	    modelSaveMethod: React.PropTypes.string,
 	    readonly: React.PropTypes.bool,
 	    buttonPosition: React.PropTypes.oneOf(['top', 'bottom', 'none']),
 	    className: React.PropTypes.string,
@@ -227,7 +240,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Form.defaultProps = {
 	    readonly: false,
 	    buttonPosition: 'bottom',
-	    className: 'zform'
+	    className: 'form',
+	    modelSaveMethod: 'save'
 	  };
 
 	  Form.contextTypes = {
@@ -271,7 +285,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    this._saveModelStateAtRender();
 	    return React.createElement("div", {
-	      "className": this.props.className
+	      "className": "form " + this.datumInputMode + " " + this.props.className
 	    }, this.renderTopButtons(), this.renderChildren(), this.renderBottomButtons(), this.renderMessages());
 	  };
 
@@ -485,7 +499,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    this.preceedOriginalCallback(options, 'success', this.onSaveSuccess);
 	    this.preceedOriginalCallback(options, 'error', this.onSaveError);
-	    return saved = model.save({}, options);
+	    return saved = model[this.props.modelSaveMethod]({}, options);
 	  };
 
 	  Form.prototype.onSaveClick = function(evt) {
@@ -623,7 +637,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Backbone, Datum, OverlayTrigger, Popover, React, ReactDOM, _,
+	var Backbone, Datum, Options, React, ReactDOM, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
@@ -636,10 +650,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	_ = __webpack_require__(9);
 
-	if (typeof ReactBootstrap !== "undefined" && ReactBootstrap !== null) {
-	  Popover = ReactBootstrap.Popover;
-	  OverlayTrigger = ReactBootstrap.OverlayTrigger;
-	}
+	Options = __webpack_require__(10);
 
 	module.exports = Datum = (function(superClass) {
 	  extend(Datum, superClass);
@@ -652,7 +663,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    attr: React.PropTypes.string.isRequired,
 	    label: React.PropTypes.string,
 	    ellipsizeAt: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.bool]),
-	    placeholder: React.PropTypes.string,
+	    placeholder: React.PropTypes.node,
 	    inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit']),
 	    noPopover: React.PropTypes.bool,
 	    setOnChange: React.PropTypes.bool,
@@ -660,6 +671,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    readonly: React.PropTypes.bool,
 	    required: React.PropTypes.bool,
 	    style: React.PropTypes.object,
+	    asDiv: React.PropTypes.bool,
 	    onChange: React.PropTypes.func
 	  };
 
@@ -700,7 +712,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.initializeState = function() {
 	    return this.state = {
-	      value: this.getModelValue(),
 	      errors: [],
 	      isDirty: false
 	    };
@@ -758,11 +769,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.renderDatumWrapper = function(contentFn) {
-	    return React.createElement("span", {
-	      "className": this.getFullClassName(),
-	      "data-zattr": this.props.attr,
-	      "style": this.props.style || {}
-	    }, contentFn());
+	    if (this.props.asDiv) {
+	      return React.createElement("div", {
+	        "className": this.getFullClassName(),
+	        "data-zattr": this.props.attr,
+	        "style": this.props.style || {}
+	      }, contentFn());
+	    } else {
+	      return React.createElement("span", {
+	        "className": this.getFullClassName(),
+	        "data-zattr": this.props.attr,
+	        "style": this.props.style || {}
+	      }, contentFn());
+	    }
 	  };
 
 	  Datum.prototype.renderForDisplay = function() {
@@ -837,7 +856,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.renderEllipsizedValue = function(value, options) {
-	    var ellipsizeAt, ellipsizedValue, popover;
+	    var OverlayTrigger, Popover, ellipsizeAt, ellipsizedValue, popover;
 	    if (options == null) {
 	      options = {};
 	    }
@@ -850,6 +869,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (this.props.noPopover) {
 	        value = ellipsizedValue;
 	      } else {
+	        if (Options.ReactBootstrap != null) {
+	          Popover = Options.ReactBootstrap.Popover;
+	          OverlayTrigger = Options.ReactBootstrap.OverlayTrigger;
+	        }
 	        if (Popover != null) {
 	          popover = React.createElement(Popover, {
 	            "id": 'datumTextEllisize'
@@ -890,9 +913,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.renderIcons = function() {
-	    var error, errors, i, len, popover, ref;
+	    var OverlayTrigger, Popover, ReactBootstrap, className, error, errorIcon, errorIconClass, errors, i, len, popover, ref;
 	    if (this.isEditing() && this.state.errors.length > 0) {
 	      errors = [];
+	      className = "error validation";
+	      errorIconClass = Options.get('errorIconClass');
+	      errorIcon = errorIconClass != null ? React.createElement("i", {
+	        "className": errorIconClass
+	      }) : '!';
+	      ReactBootstrap = Options.get('ReactBootstrap');
+	      if (ReactBootstrap != null) {
+	        Popover = ReactBootstrap.Popover;
+	        OverlayTrigger = ReactBootstrap.OverlayTrigger;
+	      }
 	      if (Popover != null) {
 	        ref = this.state.errors;
 	        for (i = 0, len = ref.length; i < len; i++) {
@@ -908,14 +941,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	          "placement": "bottom",
 	          "overlay": popover
 	        }, React.createElement("span", {
-	          "className": "error validation"
-	        }, "!"));
+	          "className": className
+	        }, errorIcon));
 	      } else {
 	        errors = this.state.errors.join('\n');
 	        return React.createElement("span", {
-	          "className": "error validation",
+	          "className": className,
 	          "title": errors
-	        }, "!");
+	        }, errorIcon);
 	      }
 	    }
 	    return null;
@@ -1285,6 +1318,83 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var Options, _, __options;
+
+	_ = __webpack_require__(9);
+
+	__options = {
+	  ReactBootstrap: (typeof window !== "undefined" && window !== null ? window.ReactBootstrap : void 0) || null,
+	  errorIconClass: null
+	};
+
+
+	/*
+	  These are global options used to control various aspects
+	  of ReactDatum rendering and functionality.
+	 */
+
+	module.exports = Options = (function() {
+	  function Options() {}
+
+
+	  /*
+	    Use to set a ReactDatum option.  Available options and defaults:
+	    
+	      ReactBootstrap: Defaults to global 'ReactBootstrap' if it exists.
+	        If set this option will use ReactBootstrap for popovers such as when
+	        a Datum is ellipsized and for validation errors. 
+	        If not set, ReactDatum will use the HTML5 title tooltips for popovers
+	        
+	      errorIconClass: default: null.  Icon css class to use for indicating 
+	        validation errors. If not set, a red unicode exclamation point is used.  
+	      
+	    Examples:
+	    ```
+	      ReactDatum = require('react-datum')
+	      
+	      // use the version of react bootstrap I got somewhere above
+	      ReactDatum.Options.set('ReactBootstrap', loadedBootstrapLib)
+	      
+	      // use the fontawesome 4.5 exclamation sign icon for errors
+	      ReactDatum.Options.set('errorIconClass', 'fa fa-exclamation-circle')
+	    
+	    ```
+	   */
+
+	  Options.set = function(option, value) {
+	    var extension;
+	    extension = _.isObject(option) ? option : {
+	      option: option,
+	      value: value
+	    };
+	    _.extend(__options, extension);
+	    return __options;
+	  };
+
+
+	  /*
+	    Get a previously set option or it's default if not set
+	   */
+
+	  Options.get = function(option) {
+	    if (option == null) {
+	      option = null;
+	    }
+	    if (option == null) {
+	      return _.extend({}, __options);
+	    }
+	    return __options[option];
+	  };
+
+	  return Options;
+
+	})();
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var Backbone, ContextualData, React, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1334,7 +1444,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    debouncedUpdate: React.PropTypes.bool,
 	    debounceMs: React.PropTypes.number,
 	    debug: React.PropTypes.bool,
-	    styleObj: React.PropTypes.object
+	    style: React.PropTypes.object
 	  };
 
 	  ContextualData.childContextTypes = {};
@@ -1343,7 +1453,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    fetch: false,
 	    fetchOptions: {},
 	    placeholder: void 0,
-	    styleObj: {},
+	    style: {},
 	    debouncedUpdate: true,
 	    debounceMs: 0
 	  };
@@ -1377,7 +1487,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      className += " " + this.props.className;
 	    }
 	    return React.createElement("span", {
-	      "style": _.extend({}, this.props.styleObj),
+	      "style": _.extend({}, this.props.style),
 	      "className": className
 	    }, this.renderContent());
 	  };
@@ -1506,7 +1616,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, Collection, ContextualData, React, SelectableCollection, _,
@@ -1519,9 +1629,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	_ = __webpack_require__(9);
 
-	SelectableCollection = __webpack_require__(12);
+	SelectableCollection = __webpack_require__(13);
 
-	ContextualData = __webpack_require__(10);
+	ContextualData = __webpack_require__(11);
 
 	module.exports = Collection = (function(superClass) {
 	  extend(Collection, superClass);
@@ -1560,15 +1670,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(13);
+	module.exports = __webpack_require__(14);
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var SelectableCollection, _,
@@ -1758,7 +1868,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, CollectionStats, React,
@@ -1858,7 +1968,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, Model, React, _,
@@ -1871,7 +1981,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	_ = __webpack_require__(9);
 
-	ContextualData = __webpack_require__(10);
+	ContextualData = __webpack_require__(11);
 
 	module.exports = Model = (function(superClass) {
 	  extend(Model, superClass);
@@ -1900,7 +2010,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, ContextualData, React, SelectedModel,
@@ -1912,7 +2022,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	Backbone = __webpack_require__(8);
 
-	ContextualData = __webpack_require__(10);
+	ContextualData = __webpack_require__(11);
 
 	module.exports = SelectedModel = (function(superClass) {
 	  extend(SelectedModel, superClass);
@@ -1998,7 +2108,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Email, React, _,
@@ -2065,7 +2175,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, LazyPhoto, React,
@@ -2166,7 +2276,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Link, React, _,
@@ -2231,7 +2341,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, Number, ONE_BILLION, ONE_MILLION, ONE_THOUSAND, RECOGNIZED_FORMATS, React, _,
@@ -2289,6 +2399,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	      value += '.' + decimal;
 	    }
 	    return value;
+	  };
+
+
+	  /*
+	    fail proof conversion from sting to float that will never return NaN
+	   */
+
+	  Number.safelyFloat = function(value) {
+	    var error, floatValue;
+	    if (value == null) {
+	      return 0;
+	    }
+	    try {
+	      floatValue = parseFloat(value);
+	    } catch (error) {
+	      console.error("unparseable float " + value);
+	      return 0;
+	    }
+	    if (_.isNaN(floatValue)) {
+	      return 0;
+	    } else {
+	      return floatValue;
+	    }
 	  };
 
 	  function Number(props) {
@@ -2409,6 +2542,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return value;
 	  };
 
+
+	  /*  
+	    returns a string with number value abbreviated and rounded to user 
+	    requested props.decimalPlaces
+	   */
+
 	  Number.prototype.abbreviate = function(value, formats) {
 	    var absValue, affix, ref;
 	    if (formats == null) {
@@ -2417,10 +2556,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (indexOf.call(formats, 'abbreviate') >= 0) {
 	      value = parseFloat(value);
 	      absValue = Math.abs(value);
-	      ref = absValue >= ONE_MILLION ? [value / ONE_MILLION, "M"] : absValue >= ONE_THOUSAND ? [value / ONE_THOUSAND, "K"] : [value, ""], value = ref[0], affix = ref[1];
+	      ref = absValue >= ONE_BILLION ? [value / ONE_BILLION, "B"] : absValue >= ONE_MILLION ? [value / ONE_MILLION, "M"] : absValue >= ONE_THOUSAND ? [value / ONE_THOUSAND, "K"] : [value, ""], value = ref[0], affix = ref[1];
 	      value = "" + (this.roundToDecimalPlaces(value, {
 	        formats: formats
-	      })) + affix;
+	      }));
+	      if ((affix != null ? affix.length : void 0) > 0) {
+	        value += " " + affix;
+	      }
 	    }
 	    return value;
 	  };
@@ -2451,7 +2593,116 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 21 */
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Number, Percent, React,
+	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+	  hasProp = {}.hasOwnProperty;
+
+	React = __webpack_require__(4);
+
+	Number = __webpack_require__(21);
+
+
+	/*
+	  This datum is an extension of [ReactDatum.Number](http://zulily.github.io/react-datum/docs/api/#Number) for
+	  display and input of percent values.   
+	  
+	  - Display value is affixed with '%' 
+	  - Display and input value are model value * 100 (model value is assumed to be 
+	  fractional value)
+	  - User input is assumed to be number percentage (* 100)
+	  - props.decimalPlaces is respected for both display and input
+
+
+	  Number datum has (maybe use to have) a format called  'percent' that will also
+	  do a little part of what Percent datum does.  The Percent datum is meant to 
+	  supercede 'percent' format to Number datum.
+	 */
+
+	module.exports = Percent = (function(superClass) {
+	  extend(Percent, superClass);
+
+	  function Percent() {
+	    return Percent.__super__.constructor.apply(this, arguments);
+	  }
+
+	  Percent.displayName = "react-datum.Percent";
+
+
+	  /*
+	    Model value returned is multiplied by 100.  Internal value for Percent
+	    is always the whole number displayed percentage rounded to requested
+	    decimal places.
+	   */
+
+	  Percent.prototype.getModelValue = function() {
+	    var superValue;
+	    superValue = Percent.__super__.getModelValue.apply(this, arguments);
+	    if (superValue == null) {
+	      return superValue;
+	    }
+	    return this.roundToDecimalPlaces(Number.safelyFloat(superValue) * 100);
+	  };
+
+
+	  /*
+	    What get's saved to the model is the user entered value divided by 100
+	   */
+
+	  Percent.prototype.setModelValue = function(value, options) {
+	    var floatValue;
+	    if (value == null) {
+	      value = this.getInputValue();
+	    }
+	    if (options == null) {
+	      options = {};
+	    }
+	    if (value == null) {
+	      return;
+	    }
+	    value || (value = 0);
+	    floatValue = Number.safelyFloat(value) / 100;
+	    return Percent.__super__.setModelValue.call(this, floatValue, options);
+	  };
+
+
+	  /*
+	    Other formats like 'money' and 'abbreviate' are ignored.  Override react-datum.Money
+	   */
+
+	  Percent.prototype.getFormats = function() {
+	    var superFormats;
+	    superFormats = Percent.__super__.getFormats.apply(this, arguments);
+	    if (superFormats.length > 0) {
+	      console.error('react-datum.Percent is not compatible with other number formats like: ' + JSON.stringify(superFormats) + '.  Ignoring.');
+	    }
+	    return [];
+	  };
+
+
+	  /*
+	    Renders value for display as nn.n%.
+	    
+	    Base number has (maybe use to have) a format called  'percent' that will also
+	    do this little part of it.  The Percent datum is meant to supercede 'percent' 
+	    format to Number datum.
+	   */
+
+	  Percent.prototype.renderValueForDisplay = function() {
+	    var superVal;
+	    superVal = Percent.__super__.renderValueForDisplay.apply(this, arguments);
+	    return superVal + '%';
+	  };
+
+	  return Percent;
+
+	})(Number);
+
+
+/***/ },
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Datum, React, Text, _,
@@ -2518,7 +2769,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 22 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Number, React, WholeNumber,
@@ -2527,7 +2778,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	React = __webpack_require__(4);
 
-	Number = __webpack_require__(20);
+	Number = __webpack_require__(21);
 
 
 	/*
@@ -2551,7 +2802,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 23 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2560,7 +2811,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(24);
+	var _classnames = __webpack_require__(26);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -2653,7 +2904,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Option;
 
 /***/ },
-/* 24 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -2699,7 +2950,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		if (typeof module !== 'undefined' && module.exports) {
 			module.exports = classNames;
-		} else if ("function" === 'function' && _typeof(__webpack_require__(25)) === 'object' && __webpack_require__(25)) {
+		} else if ("function" === 'function' && _typeof(__webpack_require__(27)) === 'object' && __webpack_require__(27)) {
 			// register as 'classnames', consistent with npm package name
 			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
 				return classNames;
@@ -2710,7 +2961,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	})();
 
 /***/ },
-/* 25 */
+/* 27 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
@@ -2718,7 +2969,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ },
-/* 26 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Backbone, CollectionPicker, Datum, React, Select, Strhelp, _,
@@ -2732,13 +2983,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	_ = __webpack_require__(9);
 
-	Strhelp = __webpack_require__(27);
+	Strhelp = __webpack_require__(29);
 
 	Datum = __webpack_require__(7);
 
-	Select = __webpack_require__(29);
+	Select = __webpack_require__(31);
 
-	Select.Async = __webpack_require__(32);
+	Select.Async = __webpack_require__(34);
 
 	module.exports = CollectionPicker = (function(superClass) {
 	  extend(CollectionPicker, superClass);
@@ -3077,15 +3328,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 27 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(28);
+	module.exports = __webpack_require__(30);
 
 /***/ },
-/* 28 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3243,7 +3494,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}).call(undefined);
 
 /***/ },
-/* 29 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3264,27 +3515,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _reactInputAutosize = __webpack_require__(30);
+	var _reactInputAutosize = __webpack_require__(32);
 
 	var _reactInputAutosize2 = _interopRequireDefault(_reactInputAutosize);
 
-	var _classnames = __webpack_require__(24);
+	var _classnames = __webpack_require__(26);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _stripDiacritics = __webpack_require__(31);
+	var _stripDiacritics = __webpack_require__(33);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
-	var _Async = __webpack_require__(32);
+	var _Async = __webpack_require__(34);
 
 	var _Async2 = _interopRequireDefault(_Async);
 
-	var _Option = __webpack_require__(23);
+	var _Option = __webpack_require__(25);
 
 	var _Option2 = _interopRequireDefault(_Option);
 
-	var _Value = __webpack_require__(33);
+	var _Value = __webpack_require__(35);
 
 	var _Value2 = _interopRequireDefault(_Value);
 
@@ -4077,7 +4328,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Select;
 
 /***/ },
-/* 30 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4202,7 +4453,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = AutosizeInput;
 
 /***/ },
-/* 31 */
+/* 33 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4217,7 +4468,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 32 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4230,11 +4481,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Select = __webpack_require__(29);
+	var _Select = __webpack_require__(31);
 
 	var _Select2 = _interopRequireDefault(_Select);
 
-	var _stripDiacritics = __webpack_require__(31);
+	var _stripDiacritics = __webpack_require__(33);
 
 	var _stripDiacritics2 = _interopRequireDefault(_stripDiacritics);
 
@@ -4397,7 +4648,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Async;
 
 /***/ },
-/* 33 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4406,7 +4657,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(24);
+	var _classnames = __webpack_require__(26);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 

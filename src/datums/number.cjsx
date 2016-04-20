@@ -22,6 +22,7 @@ module.exports = class Number extends Datum
   @propTypes: _.extend {}, Datum.propTypes,
     
     # format only effects display, not input.  Possible values:
+    #
     # 'abbreviate' - Add M and K to numbers greater than 1 million and 1 thousand respectively
     # 'money' - display dollar sign and two decimal places zero filled
     # 'comma' - add comma separators at thousands
@@ -69,6 +70,22 @@ module.exports = class Number extends Datum
     value += '.' + decimal if decimal?
 
     return value
+    
+    
+  ###
+    fail proof conversion from sting to float that will never return NaN
+  ###
+  @safelyFloat: (value) ->
+    return 0 unless value?
+    try
+      floatValue = parseFloat(value)
+    catch
+      console.error "unparseable float #{value}"
+      return 0
+      
+    return if _.isNaN(floatValue) then 0 else floatValue
+    
+
 
 
   constructor: (props) ->
@@ -170,19 +187,26 @@ module.exports = class Number extends Datum
         
     return value
     
-    
+  ###  
+    returns a string with number value abbreviated and rounded to user 
+    requested props.decimalPlaces 
+  ###  
   abbreviate: (value, formats=@getFormats()) ->
     if 'abbreviate' in formats
       value = parseFloat(value)
       absValue = Math.abs(value)
-      [value, affix] = if absValue >= ONE_MILLION
+      [value, affix] = if absValue >= ONE_BILLION
+        [value / ONE_BILLION, "B" ]
+      else if absValue >= ONE_MILLION
         [value / ONE_MILLION, "M" ]
       else if absValue >= ONE_THOUSAND
         [value / ONE_THOUSAND, "K"]
       else
         [value, ""]
 
-      value = "#{@roundToDecimalPlaces(value, formats: formats)}#{affix}"
+      value = "#{@roundToDecimalPlaces(value, formats: formats)}"
+      value += " #{affix}" if affix?.length > 0
+        
     return value
         
         
@@ -197,6 +221,9 @@ module.exports = class Number extends Datum
     if 'money' in formats
       value = "$#{value}"
     return value
+    
+    
+  
 
     
   
