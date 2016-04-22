@@ -21,6 +21,7 @@ var ReactDatum = {
   WholeNumber:       require('./src/datums/wholeNumber'),
   
   // react-select 
+  ReactSelect:       require('./node_modules/react-select'),
   SelectOption:      require('./node_modules/react-select/src/Option.js'),
   
   // Global options
