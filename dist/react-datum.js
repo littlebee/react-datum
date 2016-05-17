@@ -665,6 +665,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    label: React.PropTypes.string,
 	    ellipsizeAt: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.bool]),
 	    placeholder: React.PropTypes.node,
+	    reverseEllipsis: React.PropTypes.bool,
 	    inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit']),
 	    noPopover: React.PropTypes.bool,
 	    setOnChange: React.PropTypes.bool,
@@ -678,7 +679,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.defaultProps = {
 	    ellipsizeAt: 35,
-	    setOnBlur: true
+	    setOnBlur: true,
+	    reverseEllipsis: false
 	  };
 
 	  Datum.contextTypes = {
@@ -867,7 +869,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    ellipsizeAt = this.getEllipsizeAt();
 	    if (value && _.isString(value) && ellipsizeAt && value.length > ellipsizeAt) {
-	      ellipsizedValue = value.slice(0, ellipsizeAt - 3) + '...';
+	      if (this.props.reverseEllipsis) {
+	        ellipsizedValue = '...' + value.slice(value.length - (ellipsizeAt - 3), value.length - 1);
+	      } else {
+	        ellipsizedValue = value.slice(0, ellipsizeAt - 3) + '...';
+	      }
 	      if (this.props.noPopover) {
 	        value = ellipsizedValue;
 	      } else {
@@ -1069,15 +1075,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	  /*
-	    returns the Backbone Model currently associated with the datum
+	    returns the Backbone Model currently associated with the datum.
 	   */
 
-	  Datum.prototype.getModel = function(newProps) {
-	    var ref;
+	  Datum.prototype.getModel = function(newProps, newContext) {
 	    if (newProps == null) {
 	      newProps = this.props;
 	    }
-	    return (newProps != null ? newProps.model : void 0) || ((ref = this.context) != null ? ref.model : void 0) || new Backbone.Model();
+	    if (newContext == null) {
+	      newContext = this.context;
+	    }
+	    return (newProps != null ? newProps.model : void 0) || (newContext != null ? newContext.model : void 0) || new Backbone.Model();
 	  };
 
 
@@ -1087,12 +1095,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    warning: Do not override this method to return a component element or jsx; bad things will happen.
 	   */
 
-	  Datum.prototype.getModelValue = function(newProps) {
+	  Datum.prototype.getModelValue = function(newProps, newContext) {
 	    var model, value;
 	    if (newProps == null) {
 	      newProps = this.props;
 	    }
-	    if (!(model = this.getModel(newProps))) {
+	    if (newContext == null) {
+	      newContext = this.context;
+	    }
+	    if (!(model = this.getModel(newProps, newContext))) {
 	      return null;
 	    }
 	    value = _.isFunction(model.get) ? model.get(newProps.attr) : model[newProps.attr];
@@ -2733,11 +2744,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Text.propTypes = _.extend({}, Datum.propTypes, {
 	    displayAsHtml: React.PropTypes.bool,
-	    ellipsizeAt: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.bool])
+	    ellipsizeAt: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.bool]),
+	    reverseEllipsis: React.PropTypes.bool
 	  });
 
 	  Text.defaultProps = _.extend({}, Datum.defaultProps, {
-	    ellipsizeAt: 35
+	    ellipsizeAt: 35,
+	    reverseEllipsis: false
 	  });
 
 	  Text.prototype.render = function() {

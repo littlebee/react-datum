@@ -22,10 +22,13 @@ module.exports = class Text extends Datum
       React.PropTypes.number
       React.PropTypes.bool
     ])
+    # If we want the ellipsis to be like ...Long Name we need to make this true
+    reverseEllipsis: React.PropTypes.bool
 
   @defaultProps: _.extend {}, Datum.defaultProps,
     # ellipsizeAt is defaulted to prevent really long strings from breaking layouts
     ellipsizeAt: 35
+    reverseEllipsis: false
     
 
   render: ->
