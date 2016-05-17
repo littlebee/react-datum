@@ -31,9 +31,12 @@ module.exports = class Datum extends React.Component
       React.PropTypes.number
       React.PropTypes.bool
     ])
-    
+
     placeholder: React.PropTypes.node
-    
+
+    # If we want the ellipsis to be like '...Long Name'. We need to make this true.
+    reverseEllipsis: React.PropTypes.bool
+
     # 'readonly' = render for display;
     # 'edit' = render for input;
     inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit'])
@@ -68,6 +71,7 @@ module.exports = class Datum extends React.Component
     # ellipsizeAt is defaulted to prevent really long strings from breaking layouts
     ellipsizeAt: 35
     setOnBlur: true
+    reverseEllipsis: false
 
 
   @contextTypes:
@@ -228,7 +232,11 @@ module.exports = class Datum extends React.Component
     # a value that is a react component.  this still doesn't catch the case where
     # a subclass component sent us HTML as a string.  Why would you?
     if ( value && _.isString(value) && ellipsizeAt && value.length > ellipsizeAt )
-      ellipsizedValue = value.slice(0, ellipsizeAt-3) + '...'
+      # If the option is 'reverseEllipsis' then we need to add ... at the start.
+      if @props.reverseEllipsis
+        ellipsizedValue = '...' + value.slice(value.length-(ellipsizeAt-3), value.length - 1)
+      else
+        ellipsizedValue = value.slice(0, ellipsizeAt-3) + '...'
       if @props.noPopover
         value = ellipsizedValue
       else
@@ -397,10 +405,10 @@ module.exports = class Datum extends React.Component
     
     
   ###
-    returns the Backbone Model currently associated with the datum
+    returns the Backbone Model currently associated with the datum.
   ###
-  getModel: (newProps = @props)->
-    return newProps?.model || @context?.model || new Backbone.Model()
+  getModel: (newProps = @props, newContext = @context)->
+    return newProps?.model || newContext?.model || new Backbone.Model()
 
 
   ###
@@ -408,8 +416,8 @@ module.exports = class Datum extends React.Component
     
     warning: Do not override this method to return a component element or jsx; bad things will happen.
   ###
-  getModelValue: (newProps = @props)->
-    return null unless model = @getModel(newProps)
+  getModelValue: (newProps = @props, newContext = @context)->
+    return null unless model = @getModel(newProps, newContext)
     value = if _.isFunction(model.get)
       model.get(newProps.attr) 
     else 
@@ -554,6 +562,7 @@ module.exports = class Datum extends React.Component
     return errors.length == 0
 
 
+  # Jut comment
   validateRequired: (value) =>
     # Check for value only if the element is visible and has required class. If not return true
     return true unless @props.required
