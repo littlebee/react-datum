@@ -798,12 +798,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.renderValueOrPlaceholder = function() {
-	    var displayValue;
+	    var displayValue, placeholderValue;
 	    if (this.getModelValue() != null) {
 	      displayValue = this.renderValueForDisplay();
 	      return this.renderWrappedDisplayValue(displayValue);
 	    } else {
-	      return this.renderPlaceholder();
+	      placeholderValue = this.renderPlaceholder();
+	      return this.renderWrappedDisplayValue(placeholderValue);
 	    }
 	  };
 

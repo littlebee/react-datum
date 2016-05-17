@@ -184,7 +184,8 @@ module.exports = class Datum extends React.Component
       displayValue = @renderValueForDisplay()
       @renderWrappedDisplayValue(displayValue)
     else
-      @renderPlaceholder()
+      placeholderValue = @renderPlaceholder()
+      @renderWrappedDisplayValue(placeholderValue)
 
 
   ###
