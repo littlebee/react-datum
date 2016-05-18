@@ -92,6 +92,10 @@ module.exports = class CollectionPicker extends Datum
     #  array or comma separated value.  
     multi: React.PropTypes.bool
 
+    # editPlaceholder will be useful in inlineEdit mode when you want to display a 
+    # placeholder text which is different from the placeholder which you display before the select editor is displayed
+    editPlaceholder: React.PropTypes.string
+
   @defaultProps: _.extend {}, Datum.defaultProps,
     optionSaveAttr: 'id'
     fetchUnknownModelsInCollection: true
@@ -229,7 +233,7 @@ module.exports = class CollectionPicker extends Datum
     collection = @getCollection()
     return _.extend {}, @props,
       loadOptions: @onLoadOptions
-      placeholder: @props.placeholder || @renderPlaceholder()
+      placeholder: @props.editPlaceholder || @props.placeholder || @renderPlaceholder()
       value: @state.value
       onChange: @onChange
       onBlur: @onBlur

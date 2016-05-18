@@ -4366,7 +4366,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    optionSaveAttr: React.PropTypes.string.isRequired,
 	    displayComponent: React.PropTypes.func,
 	    asyncSuggestionCallback: React.PropTypes.func,
-	    multi: React.PropTypes.bool
+	    multi: React.PropTypes.bool,
+	    editPlaceholder: React.PropTypes.string
 	  });
 
 	  CollectionPicker.defaultProps = _.extend({}, Datum.defaultProps, {
@@ -4541,7 +4542,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    collection = this.getCollection();
 	    return _.extend({}, this.props, {
 	      loadOptions: this.onLoadOptions,
-	      placeholder: this.props.placeholder || this.renderPlaceholder(),
+	      placeholder: this.props.editPlaceholder || this.props.placeholder || this.renderPlaceholder(),
 	      value: this.state.value,
 	      onChange: this.onChange,
 	      onBlur: this.onBlur,
