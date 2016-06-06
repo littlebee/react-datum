@@ -63,9 +63,6 @@ describe 'Datum (base class)', ->
     it 'should be showing a placeholder', ->
       datumNode.innerHTML.should.contain(TEST_PLACEHOLDER_TEXT)
     
-    it 'should not have rendered a datum-display-value', ->
-      $(datumNode).find('.datum-display-value').length.should.equal 0
-      
     it 'should not have rendered "undefined" or [object Object]', ->
       datumNode.innerHTML.should.not.contain("undefined")
       datumNode.innerHTML.should.not.contain("[object Object")
