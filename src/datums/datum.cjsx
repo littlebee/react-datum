@@ -476,7 +476,7 @@ module.exports = class Datum extends React.Component
     if @shouldSetOnChange()
       @toDisplayMode()
 
-    if options.callOnChangeHandler? and options.callOnChangeHandler and @props.onChange?
+    if @props.onChange? and (!options.callOnChangeHandler?  or options.callOnChangeHandler)
       @props.onChange(event)
 
 

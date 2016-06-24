@@ -296,7 +296,7 @@ module.exports = class CollectionPicker extends Datum
     filteredModels ||= @props.asyncSuggestionCallback?(collection, userInput, chainedCallback, @props.asyncOptions)
     filteredModels ||= @filterSuggestionModels(collection, userInput, chainedCallback, @props.asyncOptions)
     
-    unless filterModels?
+    unless filteredModels?
       chainedCallback(collection.models)
       return;
       
