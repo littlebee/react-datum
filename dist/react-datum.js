@@ -1183,7 +1183,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.toDisplayMode();
 	    }
 	    if ((this.props.onChange != null) && ((options.callOnChangeHandler == null) || options.callOnChangeHandler)) {
-	      return this.props.onChange(event);
+	      return this.props.onChange(event, this);
 	    }
 	  };
 
