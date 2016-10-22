@@ -59,7 +59,7 @@ to{opacity:1}
 }
 .Select-menu-outer{border-bottom-right-radius:4px;border-bottom-left-radius:4px;background-color:#fff;border:1px solid #ccc;border-top-color:#e6e6e6;box-shadow:0 1px 0 rgba(0,0,0,.06);box-sizing:border-box;margin-top:-1px;max-height:200px;position:absolute;top:100%;width:100%;z-index:1;-webkit-overflow-scrolling:touch}
 .Select-menu{max-height:198px;overflow-y:auto}
-.Select-option{background-color:#fff;color:#666;cursor:pointer}
+.Select-option{color:#666;cursor:pointer}
 .Select-option:last-child{border-bottom-right-radius:4px;border-bottom-left-radius:4px}
 .Select-option.is-focused{background-color:rgba(0,126,255,.08);color:#333}
 .Select-option.is-disabled{color:#ccc;cursor:default}

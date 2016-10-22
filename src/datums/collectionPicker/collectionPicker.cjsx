@@ -315,6 +315,7 @@ module.exports = class CollectionPicker extends Datum
     return filteredModels
 
 
+  # TODO  - this should be optional to allow presorted or custom sorted collections 
   groupSuggestionModels: (userInput, models) =>
     topHits = []
     bottomHits = []
