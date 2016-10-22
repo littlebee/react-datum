@@ -41,7 +41,7 @@
     "react": "0.14.1",
     "react-bootstrap": "0.27.3",
     "react-dom": "0.14.1",
-    "react-select": "1.0.0-beta5",
+    "react-select": "git+https://github.com/zulily/react-select.git",
     "selectable-collection": "0.2.1",
     "underscore": "1.8.3"
   },
@@ -53,10 +53,12 @@
   },
   "devDependencies": {
     "async": "1.5.0",
+    "babel-cli": "^6.16.0",
     "babel-core": "6.5.2",
     "babel-loader": "6.2.3",
     "babel-preset-es2015": "6.5.0",
     "babel-preset-react": "6.5.0",
+    "babel-preset-stage-2": "6.17.0",
     "bumble-build": "0.3.8",
     "bumble-docs": "0.4.9",
     "bumble-strings": "0.5.1",

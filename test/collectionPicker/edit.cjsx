@@ -3,10 +3,11 @@ Backbone = require 'backbone'
 $ = require 'jquery'
 _ = require 'underscore'
 
+Th = require '../lib/testHelpers'
+
 Select = require('react-select/src/Select')
 Select.Async = require('react-select/src/Async')
 
-Th = require '../lib/testHelpers'
 CollectionPicker = require '../../src/datums/collectionPicker/collectionPicker'
 
 NameCollection = require('../lib/nameCollection')

@@ -5,8 +5,7 @@ Strhelp = require('bumble-strings')
 
 Datum = require('../datum')
 
-Select = require('react-select/src/Select')
-Select.Async = require('react-select/src/Async')
+Select = require('react-select')
 
 # See ./collectionPicker.md 
 module.exports = class CollectionPicker extends Datum
@@ -127,6 +126,10 @@ module.exports = class CollectionPicker extends Datum
         value: newModelValue
       })  
 
+
+  render: ->
+    super
+    
 
   #override - if multi, returns an array of values that renderEllipsizeValue wraps in spans
   renderValueForDisplay: ->
