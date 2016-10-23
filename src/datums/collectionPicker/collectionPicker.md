@@ -33,6 +33,18 @@ In `inputMode ='readonly'`, the CollectionPicker above will display the fullName
 
 In `inputMode='edit'`, the suggestions would also render the displayAttr because we didn't specify a suggestionAttr prop
 
+
+#### onChange
+
+The first parameter passed to the @props.onChange callback will be either one or an array of
+option objects of the currently selected options. The option objects have look like,
+```
+  label: "30 Days until Christmas (Chatties Gifts)"
+  model: Event
+  value: 206802
+```
+If the `multi` prop is used, an array of option objects is passed else a single object is passed.
+
 #### Asynchronous suggestions
 
 Use the asyncLoadCallback prop to load suggestions asynchronously from a server:
@@ -54,6 +66,7 @@ Use the asyncLoadCallback prop to load suggestions asynchronously from a server:
     asyncLoadCallback={loadData} 
   />
 ```
+
 #### Custom display
 
 By default the CollectionPicker will display the value of props.model.get(props.displayAttr),

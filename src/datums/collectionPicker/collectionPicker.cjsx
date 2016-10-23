@@ -272,15 +272,20 @@ module.exports = class CollectionPicker extends Datum
     }    
       
   
-  # override - react-select returns array of options and not a synth event 
-  # super expects a synth event but only uses value   
+  ###
+   Extends Datum class - react-select returns array of options and not a synth event 
+   super expects a synth event but only uses value.
+   
+   Also note that the value passed back to the usage through @props.onChange is
+   the option object(s) for the currently selected option(s) 
+  ###
   onChange: (optionsSelected) =>
     if @props.multi
       values = _.pluck(optionsSelected, 'value')
       values = values.join(',') if @props.setAsString
-      super values
+      super values, propsOnChangeValue: optionsSelected
     else
-      super optionsSelected?.value
+      super optionsSelected?.value, propsOnChangeValue: optionsSelected
       
     
 

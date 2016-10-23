@@ -1172,13 +1172,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.props.setOnBlur === true && !this.shouldSetOnChange() && !this.props.multi;
 	  };
 
+
+	  /*
+	    options are passed through to props.onChange,  CollectionPicker for example
+	    adds anonymous optionsSelected with the full models associated with the 
+	    option(s) selected
+	   */
+
 	  Datum.prototype.onChange = function(event, options) {
 	    var ref, ref1, value;
 	    if (options == null) {
 	      options = {};
 	    }
 	    options = _.defaults(options, {
-	      silent: false
+	      silent: false,
+	      event: event,
+	      propsOnChangeValue: null
 	    });
 	    value = (event != null ? (ref = event.target) != null ? ref.value : void 0 : void 0) != null ? event != null ? (ref1 = event.target) != null ? ref1.value : void 0 : void 0 : event;
 	    this.setValue(value, {
@@ -1188,7 +1197,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.toDisplayMode();
 	    }
 	    if ((this.props.onChange != null) && !options.silent) {
-	      return this.props.onChange(value, this, event);
+	      return this.props.onChange(options.propsOnChangeValue || value, this, options);
 	    }
 	  };
 
@@ -4708,6 +4717,13 @@ return /******/ (function(modules) { // webpackBootstrap
 					onInputChange: this._onInputChange
 				}));
 			}
+		}, {
+			key: 'focus',
+			value: function focus() {
+				if (this.refs.select !== null) {
+					this.refs.select.focus();
+				}
+			}
 		}]);
 
 		return Async;
@@ -4719,7 +4735,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Async.defaultProps = defaultProps;
 
 	function defaultChildren(props) {
-		return _react2['default'].createElement(_Select2['default'], props);
+		return _react2['default'].createElement(_Select2['default'], _extends({}, props, { ref: 'select' }));
 	};
 	module.exports = exports['default'];
 
@@ -5658,6 +5674,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    })(this));
 	  };
 
+
+	  /*
+	   Extends Datum class - react-select returns array of options and not a synth event 
+	   super expects a synth event but only uses value.
+	   
+	   Also note that the value passed back to the usage through @props.onChange is
+	   the option object(s) for the currently selected option(s)
+	   */
+
 	  CollectionPicker.prototype.onChange = function(optionsSelected) {
 	    var values;
 	    if (this.props.multi) {
@@ -5665,9 +5690,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (this.props.setAsString) {
 	        values = values.join(',');
 	      }
-	      return CollectionPicker.__super__.onChange.call(this, values);
+	      return CollectionPicker.__super__.onChange.call(this, values, {
+	        propsOnChangeValue: optionsSelected
+	      });
 	    } else {
-	      return CollectionPicker.__super__.onChange.call(this, optionsSelected != null ? optionsSelected.value : void 0);
+	      return CollectionPicker.__super__.onChange.call(this, optionsSelected != null ? optionsSelected.value : void 0, {
+	        propsOnChangeValue: optionsSelected
+	      });
 	    }
 	  };
 

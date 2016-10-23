@@ -467,12 +467,14 @@ module.exports = class Datum extends React.Component
     @props.setOnBlur == true && !@shouldSetOnChange() && !@props.multi
 
 
-  # on every change, it needs to set the value in state (see @setValue()) with
-  # the event.target.value in the input.  On next render the value in state
-  # is what the user sees, so you could also intercept this method
   onChange: (event, options = {}) =>
+    #options are passed through to props.onChange
     options = _.defaults options,
       silent: false
+      event: event
+      # this can be set to another value to send to the @props.onChange handler
+      #   see CollectionPicker#onChange
+      propsOnChangeValue: null
       
     # NOTE: don't assume that event arg contains anything more than
     #     target.value.  Some wrapped components like react-select don't
@@ -486,7 +488,7 @@ module.exports = class Datum extends React.Component
 
     # it should be very rare that options.silent is used
     if @props.onChange? and !options.silent
-      @props.onChange(value, @, event)
+      @props.onChange(options.propsOnChangeValue||value, @, options)
 
 
   # onChange above captures the value in state.  
