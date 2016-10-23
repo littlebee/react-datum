@@ -3027,7 +3027,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		displayName: 'Select',
 
 		propTypes: {
-			addLabelText: _react2['default'].PropTypes.string, // placeholder displayed when you want to add a label on a multi-value input
+			LabelText: _react2['default'].PropTypes.string, // placeholder displayed when you want to add a label on a multi-value input
 			'aria-label': _react2['default'].PropTypes.string, // Aria label (for assistive tech)
 			'aria-labelledby': _react2['default'].PropTypes.string, // HTML ID of an element that should be used as the label (for assistive tech)
 			arrowRenderer: _react2['default'].PropTypes.func, // Create drop-down caret element
@@ -3626,7 +3626,7 @@ return /******/ (function(modules) { // webpackBootstrap
 					inputValue: '',
 					focusedIndex: null
 				}, function () {
-					_this3.addValue(value);
+					_this3.addRemoveValue(value);
 				});
 			} else {
 				this.setState({
@@ -3637,6 +3637,21 @@ return /******/ (function(modules) { // webpackBootstrap
 					_this3.setValue(value);
 				});
 			}
+		},
+
+		addRemoveValue: function addRemoveValue(valueObj) {
+			var valueArray = this.getValueArray(this.props.value);
+			if (!this.arrayContains(valueArray, valueObj.value)) {
+				this.setValue(valueArray.concat(valueObj));
+			} else {
+				this.removeValue(valueObj);
+			}
+		},
+
+		arrayContains: function arrayContains(values, value) {
+			return values.map(function (valueObj) {
+				return valueObj.value;
+			}).indexOf(value) > -1;
 		},
 
 		addValue: function addValue(value) {
@@ -4083,7 +4098,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				onTouchEnd: this.handleTouchEnd,
 				onTouchStart: this.handleTouchStart,
 				onTouchMove: this.handleTouchMove
-			}, _react2['default'].createElement('span', { className: 'Select-multi-value-wrapper', id: this._instancePrefix + '-value' }, this.renderValue(valueArray, isOpen), this.renderInput(valueArray, focusedOptionIndex)), removeMessage, this.renderLoading(), this.renderClear(), this.renderArrow()), isOpen ? this.renderOuter(options, !this.props.multi ? valueArray : null, focusedOption) : null);
+			}, _react2['default'].createElement('span', { className: 'Select-multi-value-wrapper', id: this._instancePrefix + '-value' }, this.renderValue(valueArray, isOpen), this.renderInput(valueArray, focusedOptionIndex)), removeMessage, this.renderLoading(), this.renderClear(), this.renderArrow()), isOpen ? this.renderOuter(options, !this.props.multi || this.props.singleValue ? valueArray : null, focusedOption) : null);
 		}
 
 	});
