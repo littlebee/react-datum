@@ -390,8 +390,8 @@ module.exports = class Datum extends React.Component
     
 
   ###
-    Extend this method to coerce or intepret the value from that model
-    that this displayed when in input
+    Extend this method to coerce or intepret the value from the model
+    that is displayed when in input
   ###
   getValueForInput: () ->
     #console.log "Datum::getValueForInput", @state.value, @getModelValue(), JSON.stringify({value: @state.value})
@@ -471,14 +471,22 @@ module.exports = class Datum extends React.Component
   # the event.target.value in the input.  On next render the value in state
   # is what the user sees, so you could also intercept this method
   onChange: (event, options = {}) =>
-    @setValue(event.target.value, setModelValue: @shouldSetOnChange())
+    options = _.defaults options,
+      silent: false
+      
+    # NOTE: don't assume that event arg contains anything more than
+    #     target.value.  Some wrapped components like react-select don't
+    #     provide the synth event on change 
+    value = if event?.target?.value? then event?.target?.value else event
+    
+    @setValue(value, setModelValue: @shouldSetOnChange())
       
     if @shouldSetOnChange()
-      @toDisplayMode()
+      @toDisplayMode()  # only happens if this is the inline editor
 
-    # This neds to be called if there onChangeHandler is provided an if callOnChangeHandler is null or true
-    if @props.onChange? and (!options.callOnChangeHandler? or options.callOnChangeHandler)
-      @props.onChange(event, @)
+    # it should be very rare that options.silent is used
+    if @props.onChange? and !options.silent
+      @props.onChange(value, @, event)
 
 
   # onChange above captures the value in state.  

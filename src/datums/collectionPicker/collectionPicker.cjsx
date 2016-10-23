@@ -94,6 +94,10 @@ module.exports = class CollectionPicker extends Datum
     # editPlaceholder will be useful in inlineEdit mode when you want to display a 
     # placeholder text which is different from the placeholder which you display before the select editor is displayed
     editPlaceholder: React.PropTypes.string
+    
+    # if setAsString and multi, set the value of the model as a comma delimited string instead of array of values
+    setAsString: React.PropTypes.bool
+     
 
   @defaultProps: _.extend {}, Datum.defaultProps,
     optionSaveAttr: 'id'
@@ -268,18 +272,17 @@ module.exports = class CollectionPicker extends Datum
     }    
       
   
-  # override - react-select returns array of options and not an event    
+  # override - react-select returns array of options and not a synth event 
+  # super expects a synth event but only uses value   
   onChange: (optionsSelected) =>
     if @props.multi
       values = _.pluck(optionsSelected, 'value')
-      values = values.join(',') unless @getInputMode() == 'edit' 
-      super {target: {value: values}}, {callOnChangeHandler: false}
+      values = values.join(',') if @props.setAsString
+      super values
     else
-      super {target: {value: optionsSelected?.value}}, {callOnChangeHandler: false}
+      super optionsSelected?.value
       
-    if @props.onChange?
-      @props.onChange optionsSelected
-
+    
 
   # async callback for react-select      
   onLoadOptions: (userInput, callback) =>

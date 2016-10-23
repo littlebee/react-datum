@@ -1052,8 +1052,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	  /*
-	    Extend this method to coerce or intepret the value from that model
-	    that this displayed when in input
+	    Extend this method to coerce or intepret the value from the model
+	    that is displayed when in input
 	   */
 
 	  Datum.prototype.getValueForInput = function() {
@@ -1173,17 +1173,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.onChange = function(event, options) {
+	    var ref, ref1, value;
 	    if (options == null) {
 	      options = {};
 	    }
-	    this.setValue(event.target.value, {
+	    options = _.defaults(options, {
+	      silent: false
+	    });
+	    value = (event != null ? (ref = event.target) != null ? ref.value : void 0 : void 0) != null ? event != null ? (ref1 = event.target) != null ? ref1.value : void 0 : void 0 : event;
+	    this.setValue(value, {
 	      setModelValue: this.shouldSetOnChange()
 	    });
 	    if (this.shouldSetOnChange()) {
 	      this.toDisplayMode();
 	    }
-	    if ((this.props.onChange != null) && ((options.callOnChangeHandler == null) || options.callOnChangeHandler)) {
-	      return this.props.onChange(event, this);
+	    if ((this.props.onChange != null) && !options.silent) {
+	      return this.props.onChange(value, this, event);
 	    }
 	  };
 
@@ -5432,7 +5437,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    displayComponent: React.PropTypes.func,
 	    asyncSuggestionCallback: React.PropTypes.func,
 	    multi: React.PropTypes.bool,
-	    editPlaceholder: React.PropTypes.string
+	    editPlaceholder: React.PropTypes.string,
+	    setAsString: React.PropTypes.bool
 	  });
 
 	  CollectionPicker.defaultProps = _.extend({}, Datum.defaultProps, {
@@ -5656,27 +5662,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var values;
 	    if (this.props.multi) {
 	      values = _.pluck(optionsSelected, 'value');
-	      if (this.getInputMode() !== 'edit') {
+	      if (this.props.setAsString) {
 	        values = values.join(',');
 	      }
-	      CollectionPicker.__super__.onChange.call(this, {
-	        target: {
-	          value: values
-	        }
-	      }, {
-	        callOnChangeHandler: false
-	      });
+	      return CollectionPicker.__super__.onChange.call(this, values);
 	    } else {
-	      CollectionPicker.__super__.onChange.call(this, {
-	        target: {
-	          value: optionsSelected != null ? optionsSelected.value : void 0
-	        }
-	      }, {
-	        callOnChangeHandler: false
-	      });
-	    }
-	    if (this.props.onChange != null) {
-	      return this.props.onChange(optionsSelected);
+	      return CollectionPicker.__super__.onChange.call(this, optionsSelected != null ? optionsSelected.value : void 0);
 	    }
 	  };
 
