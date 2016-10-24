@@ -1172,13 +1172,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.props.setOnBlur === true && !this.shouldSetOnChange() && !this.props.multi;
 	  };
 
-
-	  /*
-	    options are passed through to props.onChange,  CollectionPicker for example
-	    adds anonymous optionsSelected with the full models associated with the 
-	    option(s) selected
-	   */
-
 	  Datum.prototype.onChange = function(event, options) {
 	    var ref, ref1, value;
 	    if (options == null) {
@@ -5478,10 +5471,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  CollectionPicker.prototype.componentWillReceiveProps = function(nextProps) {
-	    var newModelValue, prevModelValue;
-	    prevModelValue = this.props.multi ? this.getModelValues(this.props) : this.getModelValue(this.props);
+	    var newModelValue;
 	    newModelValue = nextProps.multi ? this.getModelValues(nextProps) : this.getModelValue(nextProps);
-	    if (JSON.stringify(prevModelValue) !== JSON.stringify(newModelValue)) {
+	    if (JSON.stringify(this.state.value || {}) !== JSON.stringify(newModelValue)) {
 	      return this.setState({
 	        value: newModelValue
 	      });

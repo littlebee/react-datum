@@ -122,10 +122,9 @@ module.exports = class CollectionPicker extends Datum
 
 
   componentWillReceiveProps: (nextProps) ->
-    prevModelValue = if @props.multi then @getModelValues(@props) else @getModelValue(@props)
     newModelValue = if nextProps.multi then @getModelValues(nextProps) else @getModelValue(nextProps)
     
-    if JSON.stringify(prevModelValue) != JSON.stringify(newModelValue)
+    if JSON.stringify(@state.value||{}) != JSON.stringify(newModelValue)
       @setState({
         value: newModelValue
       })  
