@@ -57,6 +57,10 @@ module.exports = class Number extends Datum
     # setting zerofill to false
     zeroFill: null
     
+    # This might be controversial, but our standard here at the zoo is to always use
+    # thousand ticks
+    format: ['comma']
+    
 
   # TODO : push down this feature to Datum? with default to all   
   # will not allow characters to be entered that do not match this pattern

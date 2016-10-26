@@ -2501,7 +2501,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Number.defaultProps = _.extend({}, Datum.defaultProps, {
 	    decimalPlaces: null,
-	    zeroFill: null
+	    zeroFill: null,
+	    format: ['comma']
 	  });
 
 	  Number.prototype.charactersMustMatch = /^\-?[0-9]*\.?[0-9]*$/;
