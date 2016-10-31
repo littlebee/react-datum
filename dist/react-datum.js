@@ -2441,12 +2441,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Link.prototype._getTagContent = function() {
+	    var contentValue;
 	    if (this.props.nameAttr != null) {
-	      return this.getModel().get(this.props.nameAttr);
+	      contentValue = this.getModel().get(this.props.nameAttr);
+	      if (_.isArray(contentValue)) {
+	        contentValue = contentValue.map(function(v) {
+	          return v.toString();
+	        }).join(', ');
+	      }
+	      return this.renderEllipsizedValue(contentValue);
 	    } else if (this.props.children != null) {
 	      return React.createElement("span", null, this.props.children);
 	    } else {
-	      return this.getModelValue();
+	      return this.renderEllipsizedValue(this.getModelValue());
 	    }
 	  };
 

@@ -43,8 +43,11 @@ module.exports = class Link extends Datum
 
   _getTagContent: ->
     if @props.nameAttr?
-      return @getModel().get(@props.nameAttr)
+      contentValue = @getModel().get(@props.nameAttr)
+      if _.isArray(contentValue)
+        contentValue = contentValue.map((v) -> v.toString()).join(', ')
+      return @renderEllipsizedValue(contentValue)
     else if @props.children?
       return <span>{@props.children}</span>
     else
-      return @getModelValue()
+      return @renderEllipsizedValue(@getModelValue())
