@@ -47,11 +47,14 @@ module.exports = class Percent extends Number
     Other formats like 'money' and 'abbreviate' are ignored.  Override react-datum.Money
   ###
   getFormats: () ->
-    superFormats = super
-    if superFormats.length > 0
-      # use error to give a stack trace
-      console.error 'react-datum.Percent is not compatible with other number formats like: ' + 
-        JSON.stringify(superFormats) + '.  Ignoring.'
+    #   TODO: do a better job of this, allow or restrict only those formats from 
+    #         super that are in conflict.   If someone wants to show 1000 percent then
+    #         they may need 'comma'
+    # superFormats = super
+    # if superFormats.length > 0
+    #   # use error to give a stack trace
+    #   console.error 'react-datum.Percent is not compatible with other number formats like: ' + 
+    #     JSON.stringify(superFormats) + '.  Ignoring.'
     return []
     
   
