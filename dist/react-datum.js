@@ -2796,11 +2796,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Percent.prototype.getFormats = function() {
-	    var superFormats;
-	    superFormats = Percent.__super__.getFormats.apply(this, arguments);
-	    if (superFormats.length > 0) {
-	      console.error('react-datum.Percent is not compatible with other number formats like: ' + JSON.stringify(superFormats) + '.  Ignoring.');
-	    }
 	    return [];
 	  };
 
@@ -3239,26 +3234,14 @@ return /******/ (function(modules) { // webpackBootstrap
 		},
 
 		componentWillUnmount: function componentWillUnmount() {
-			if (!document.removeEventListener && document.detachEvent) {
-				document.detachEvent('ontouchstart', this.handleTouchOutside);
-			} else {
-				document.removeEventListener('touchstart', this.handleTouchOutside);
-			}
+			document.removeEventListener('touchstart', this.handleTouchOutside);
 		},
 
 		toggleTouchOutsideEvent: function toggleTouchOutsideEvent(enabled) {
 			if (enabled) {
-				if (!document.addEventListener && document.attachEvent) {
-					document.attachEvent('ontouchstart', this.handleTouchOutside);
-				} else {
-					document.addEventListener('touchstart', this.handleTouchOutside);
-				}
+				document.addEventListener('touchstart', this.handleTouchOutside);
 			} else {
-				if (!document.removeEventListener && document.detachEvent) {
-					document.detachEvent('ontouchstart', this.handleTouchOutside);
-				} else {
-					document.removeEventListener('touchstart', this.handleTouchOutside);
-				}
+				document.removeEventListener('touchstart', this.handleTouchOutside);
 			}
 		},
 
@@ -3937,7 +3920,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				}
 
 				if (this.props.autosize) {
-					return _react2['default'].createElement(_reactInputAutosize2['default'], _extends({}, inputProps, { minWidth: '5' }));
+					return _react2['default'].createElement(_reactInputAutosize2['default'], _extends({}, inputProps, { minWidth: '5px' }));
 				}
 				return _react2['default'].createElement('div', { className: className }, _react2['default'].createElement('input', inputProps));
 			}
@@ -4579,26 +4562,18 @@ return /******/ (function(modules) { // webpackBootstrap
 		children: _react2['default'].PropTypes.func.isRequired, // Child function responsible for creating the inner Select component; (props: Object): PropTypes.element
 		ignoreAccents: _react2['default'].PropTypes.bool, // strip diacritics when filtering; defaults to true
 		ignoreCase: _react2['default'].PropTypes.bool, // perform case-insensitive filtering; defaults to true
-		loadingPlaceholder: _react2['default'].PropTypes.oneOfType([// replaces the placeholder while options are loading
-		_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]),
+		loadingPlaceholder: _react.PropTypes.string.isRequired, // replaces the placeholder while options are loading
 		loadOptions: _react2['default'].PropTypes.func.isRequired, // callback to load options asynchronously; (inputValue: string, callback: Function): ?Promise
 		options: _react.PropTypes.array.isRequired, // array of options
 		placeholder: _react2['default'].PropTypes.oneOfType([// field placeholder, displayed when there's no value (shared with Select)
 		_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]),
-		noResultsText: _react2['default'].PropTypes.oneOfType([// field noResultsText, displayed when no options come back from the server
-		_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]),
-		onChange: _react2['default'].PropTypes.func, // onChange handler: function (newValue) {}
 		searchPromptText: _react2['default'].PropTypes.oneOfType([// label to prompt for search input
-		_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]),
-		onInputChange: _react2['default'].PropTypes.func, // optional for keeping track of what is being typed
-		value: _react2['default'].PropTypes.any };
-
-	// initial field value
-	var defaultCache = {};
+		_react2['default'].PropTypes.string, _react2['default'].PropTypes.node])
+	};
 
 	var defaultProps = {
 		autoload: true,
-		cache: defaultCache,
+		cache: {},
 		children: defaultChildren,
 		ignoreAccents: true,
 		ignoreCase: true,
@@ -4614,8 +4589,6 @@ return /******/ (function(modules) { // webpackBootstrap
 			_classCallCheck(this, Async);
 
 			_get(Object.getPrototypeOf(Async.prototype), 'constructor', this).call(this, props, context);
-
-			this._cache = props.cache === defaultCache ? {} : props.cache;
 
 			this.state = {
 				isLoading: false,
@@ -4647,18 +4620,13 @@ return /******/ (function(modules) { // webpackBootstrap
 				});
 			}
 		}, {
-			key: 'clearOptions',
-			value: function clearOptions() {
-				this.setState({ options: [] });
-			}
-		}, {
 			key: 'loadOptions',
 			value: function loadOptions(inputValue) {
 				var _this2 = this;
 
-				var loadOptions = this.props.loadOptions;
-
-				var cache = this._cache;
+				var _props = this.props;
+				var cache = _props.cache;
+				var loadOptions = _props.loadOptions;
 
 				if (cache && cache.hasOwnProperty(inputValue)) {
 					this.setState({
@@ -4708,10 +4676,9 @@ return /******/ (function(modules) { // webpackBootstrap
 		}, {
 			key: '_onInputChange',
 			value: function _onInputChange(inputValue) {
-				var _props = this.props;
-				var ignoreAccents = _props.ignoreAccents;
-				var ignoreCase = _props.ignoreCase;
-				var onInputChange = _props.onInputChange;
+				var _props2 = this.props;
+				var ignoreAccents = _props2.ignoreAccents;
+				var ignoreCase = _props2.ignoreCase;
 
 				if (ignoreAccents) {
 					inputValue = (0, _utilsStripDiacritics2['default'])(inputValue);
@@ -4721,65 +4688,24 @@ return /******/ (function(modules) { // webpackBootstrap
 					inputValue = inputValue.toLowerCase();
 				}
 
-				if (onInputChange) {
-					onInputChange(inputValue);
-				}
-
 				return this.loadOptions(inputValue);
-			}
-		}, {
-			key: 'inputValue',
-			value: function inputValue() {
-				if (this.select) {
-					return this.select.state.inputValue;
-				}
-				return '';
-			}
-		}, {
-			key: 'noResultsText',
-			value: function noResultsText() {
-				var _props2 = this.props;
-				var loadingPlaceholder = _props2.loadingPlaceholder;
-				var noResultsText = _props2.noResultsText;
-				var searchPromptText = _props2.searchPromptText;
-				var isLoading = this.state.isLoading;
-
-				var inputValue = this.inputValue();
-
-				if (isLoading) {
-					return loadingPlaceholder;
-				}
-				if (inputValue && noResultsText) {
-					return noResultsText;
-				}
-				return searchPromptText;
 			}
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this3 = this;
-
 				var _props3 = this.props;
 				var children = _props3.children;
 				var loadingPlaceholder = _props3.loadingPlaceholder;
 				var placeholder = _props3.placeholder;
+				var searchPromptText = _props3.searchPromptText;
 				var _state = this.state;
 				var isLoading = _state.isLoading;
 				var options = _state.options;
 
 				var props = {
-					noResultsText: this.noResultsText(),
+					noResultsText: isLoading ? loadingPlaceholder : searchPromptText,
 					placeholder: isLoading ? loadingPlaceholder : placeholder,
-					options: isLoading && loadingPlaceholder ? [] : options,
-					ref: function ref(_ref) {
-						return _this3.select = _ref;
-					},
-					onChange: function onChange(newValues) {
-						if (_this3.props.value && newValues.length > _this3.props.value.length) {
-							_this3.clearOptions();
-						}
-						_this3.props.onChange(newValues);
-					}
+					options: isLoading ? [] : options
 				};
 
 				return children(_extends({}, this.props, props, {
@@ -4928,9 +4854,6 @@ return /******/ (function(modules) { // webpackBootstrap
 			// ({ label: string, labelKey: string, valueKey: string }): Object
 			newOptionCreator: _react2['default'].PropTypes.func,
 
-			// input keyDown handler: function (event) {}
-			onInputKeyDown: _react2['default'].PropTypes.func,
-
 			// See Select.propTypes.options
 			options: _react2['default'].PropTypes.array,
 
@@ -5059,9 +4982,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		},
 
 		onInputKeyDown: function onInputKeyDown(event) {
-			var _props3 = this.props;
-			var shouldKeyDownEventCreateNewOption = _props3.shouldKeyDownEventCreateNewOption;
-			var onInputKeyDown = _props3.onInputKeyDown;
+			var shouldKeyDownEventCreateNewOption = this.props.shouldKeyDownEventCreateNewOption;
 
 			var focusedOption = this.select.getFocusedOption();
 
@@ -5070,8 +4991,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 				// Prevent decorated Select from doing anything additional with this keyDown event
 				event.preventDefault();
-			} else if (onInputKeyDown) {
-				onInputKeyDown(event);
 			}
 		},
 
@@ -5086,13 +5005,13 @@ return /******/ (function(modules) { // webpackBootstrap
 		render: function render() {
 			var _this = this;
 
-			var _props4 = this.props;
-			var _props4$children = _props4.children;
-			var children = _props4$children === undefined ? defaultChildren : _props4$children;
-			var newOptionCreator = _props4.newOptionCreator;
-			var shouldKeyDownEventCreateNewOption = _props4.shouldKeyDownEventCreateNewOption;
+			var _props3 = this.props;
+			var _props3$children = _props3.children;
+			var children = _props3$children === undefined ? defaultChildren : _props3$children;
+			var newOptionCreator = _props3.newOptionCreator;
+			var shouldKeyDownEventCreateNewOption = _props3.shouldKeyDownEventCreateNewOption;
 
-			var restProps = _objectWithoutProperties(_props4, ['children', 'newOptionCreator', 'shouldKeyDownEventCreateNewOption']);
+			var restProps = _objectWithoutProperties(_props3, ['children', 'newOptionCreator', 'shouldKeyDownEventCreateNewOption']);
 
 			var props = _extends({}, restProps, {
 				allowCreate: true,
