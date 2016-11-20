@@ -18,7 +18,7 @@ Datum = require('./datum')
 module.exports = class LazyPhoto extends Datum
   @displayName: "react-datum.LazyPhoto"
 
-  # ...and again the promise of webpack falls should of the reality
+  # ...and again the promise of webpack falls short of the reality
   # This works great for bundling, but when you require the react-datum npm package
   # for server side use, it chokes on these
   #notFoundUrl: require("../../img/petals.png")

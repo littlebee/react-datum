@@ -15,26 +15,16 @@ A set of [React](https://facebook.github.io/react/) components for interacting w
 npm install react-datum --save
 ```
 
-**Install using Bower:**
-```bash
-TBD:  ...
-```
-
-** Install like grandpa: ** (from the web)  
+** Install from the web: **
 
 Copy development (.js) or optimized (.min.js) distribution file from (https://github.com/zulily/react-datum/tree/master/dist) in with your other vendor js and use a script tag or AMD to load it.  
 
-## What are "Datums"
-*and you do realize that the plural of "datum" is "data", don't you?*
+## What is it?
 
-Datums are the presentation of attributes from a Backbone model.  All are object oriented extentions of the Datum class that provide a display `inputMode='readonly'` (default) and optionally an input presentation `inputMode='edit'`. Datums interact with the model only by .get() and .set().  Datums do not directly listen to any model events.  
-
-The ReactDatum Collection, Model, SelectedModel, Form, Tilegrid, ... components provide a context for the datums within.  These components listen for changes in models, which model is selected, etc and cause the datums to rerender in reponse to changes. 
-
+A set of React components for the presentation and input of attributes from a Backbone model.  
 
 ## Usage
 ```javascript
-var Rd = ReactDatum
 
 // Say you have this model:
 
@@ -57,15 +47,15 @@ var kittenCard = React.createClass({
   render: function(){
     return (
       <div className='kitten-card'>
-        <Rd.Model model={kittenModel}>
-          <h3>Adopt <Rd.Text attr="name"/> Today!</h3>
-          <div><Rd.LazyPhoto attr="imgUrl"/></div>
-          <div><Rd.Text attr="name" label="Name"/> (<Rd.Text attr="title"/>)</div>
-          <div><Rd.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/></div>
-          <Rd.Text attr="description"/>
+        <ReactDatum.Model model={kittenModel}>
+          <h3>Adopt <ReactDatum.Text attr="name"/> Today!</h3>
+          <div><ReactDatum.LazyPhoto attr="imgUrl"/></div>
+          <div><ReactDatum.Text attr="name" label="Name"/> (<ReactDatum.Text attr="title"/>)</div>
+          <div><ReactDatum.Email attr="sponsorEmail" label="Adoption Sponsor" displayLink/></div>
+          <ReactDatum.Text attr="description"/>
           <h5>Leave a comment</h5>
-          <Rd.Text attr="comment" inputMode="edit"/>
-        </Rd.Model>
+          <ReactDatum.Text attr="comment" inputMode="edit"/>
+        </ReactDatum.Model>
       </div>
     )
   }
@@ -117,16 +107,19 @@ When the user presses save, model.save() is called.   All of the attributes were
 
 By wrapping the datums in the **ReactDatum.Form** tag, they implicitedly recieve `inputMode='edit'` props that make them all render as inputs.  Almost all.  Some Datums, like **ReactDatum.LazyPhoto**, only have a display presentation, no update.  If given an `inputMode='edit'` they will ignore, and continue showing their display (`inputMode='readonly'``) representation.  
  
-#### *Shhhh, don't call it "2 way data-binding"*
+#### Reacting to Model changes
 
-In the form example above, the **ReactDatum.Text** input component labeled "Name" in the form was given a 'setOnChange' prop.  When the name input is changed by the user, every character entered causes `kittenModel.set('name', userEnteredValue)` to be called.  Since all children of the **ReactDatum.model** component virtually rerender on every triggered event, the form updates as you type and the two other references to the 'name' attribute in labels on the form are updated as you type.  Pretty cool, but mostly just a parlor trick.  The reasoning behind using `{silent: true}` on set() by default is that, in most cases, users will get confused as to the saved state of the data. Since `model.save()` is not called until the user presses the 'Save' button, a table or grid cell changing as you type in the edit form is probably not what you want because it may imply that the changes have been saved.   
+In the form example above, the **ReactDatum.Text** input component labeled "Name" in the form was given a 'setOnChange' prop.  When the name input is changed by the user, every character entered causes `kittenModel.set('name', userEnteredValue)` to be called.  Since all children of the **ReactDatum.model** component virtually rerender on every triggered event, the form updates as you type and the two other references to the 'name' attribute in labels on the form are updated as you type.  
 
+Pretty cool, but mostly just a parlor trick.  The reasoning behind using `{silent: true}` on set() by default is that, in most cases, users will get confused as to the saved state of the data. Since `model.save()` is not called until the user presses the 'Save' button, a table or grid cell changing as you type in the edit form is probably not what you want because it may imply that the changes have been saved.   
 
-## Implied Context, Deterministic Props
+## ReactDatum.Model
 
-The **ReactDatum.Model** and **ReactDatum.Form** components introduce the concept of contextual data.
+The **ReactDatum.Model** component provides a 'model' context, that is the Backbone model instance, to any of it's descendants that want to use it.  All datums will also accept a model by means of a prop called 'model'.  
 
-The **ReactDatum.Model** component provides a 'model' context, that is the Backbone model instance, to any of it's descendants that want to use it.  All datums will also accept a model by means of a prop called 'model'.  The **ReactDatum.Model** component is also responsible for listening to Backbone model events and rerendering descendants anytime a change occurs to the model.   
+The **ReactDatum.Model** component is also responsible for listening to Backbone model events and rerendering descendants anytime a change occurs to the model.   
+
+## Forms and Input
 
 The **ReactDatum.Form** component provides an 'inputMode' context to it's descendants.
 
@@ -152,3 +145,43 @@ Some validations are implicit.  For example, the **ReactDatum.Date** input will 
 All validations are instant and complete.  For example, if you have a whole number that is both required and has a minValue=10, erasing the input value will result in immediate error indicator with both errors displayed in the popover.
 
 **ReactDatum.Form** will not save a form (will not call model.save()) if any of the Datums in it are invalid.  An error message is displayed requesting the user to correct the errors to continue.
+
+## Extensible and Reusable!
+
+All of the Datums can be extended using either ES6:  `class myClass extends ReactDatum.Number` or using CoffeeScript: 
+```coffeescript
+  ###
+    A lightweight extension of ReactDatum number for hightlighting certain numbers,
+    by default negative,  in red when thresholds are exceeded 
+  ###
+  class x.RedNumber extends ReactDatum.Number
+    @displayName: "widgets.react.RedNumber"
+
+    @propTypes = _.extend {}, ReactDatum.Number.propTypes,
+      upperThreshold: React.PropTypes.number
+      lowerThreshold: React.PropTypes.number
+      
+    
+    @defaultProps = _.extend {}, ReactDatum.Number.defaultProps,
+      lowerThreshold: 0
+      # no upper threshold by default makes all numbers less than zero red
+      
+      
+    renderValueForDisplay: ->
+      superRendering = super
+      value = @getValueForDisplay()
+      upperExceeded = @props.upperThreshold? && value > @props.upperThreshold
+      lowerExceeded = @props.lowerThreshold? && value < @props.lowerThreshold
+      style = if upperExceeded || lowerExceeded
+        {color: 'red'}
+      else
+        {}
+      
+      <span style={style}>{superRendering}</span>
+``` 
+
+The example above simply extends ReactDatum.Number, adds a couple of additional props and extends the renderValueForDisplay method.  
+
+The object oriented API of ReactDatum is documented in our [API Docs](http://zulily.github.io/react-datum/docs/).   
+
+Enough reading, [check out the demos!](http://zulily.github.io/react-datum/docs/examples/)
