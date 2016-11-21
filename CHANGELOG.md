@@ -1,4 +1,28 @@
 
+## [0.9.0](https://github.com/zulily/react-datum.git/compare/0.3.1...0.9.0) (2016-11-326)
+In preparation for our 1.0 release, bumping version to 0.9x and releasing the development branch we've been accumulating.   Lots of work by three really smart and hard working engineers in this one.  Thank you guys!
+
+### Bugs Fixed in this Release
+* [96d00bf](https://github.com/zulily/react-datum.git/commit/96d00bf256df7da296eb51532c18a9a021c12e18)  Number don't force space on abbreviate
+* [678faa5](https://github.com/zulily/react-datum.git/commit/678faa5c8ddac2999e3ecf69fac65dfcab37c0d8)  fix for SelectedModel not registering selection change + test
+
+### New Features
+* [545dbd5](https://github.com/zulily/react-datum.git/commit/545dbd5cbe6eb64527f20fc540eed3dcd8cc24bd)  ClickToEdit form supports readonly prop for dynamic setting of form to always be readonly (no buttons)
+* [6c07e98](https://github.com/zulily/react-datum.git/commit/6c07e9843dde891362845eac3894c0efe65a8bc8)  introduces ReactDatum.Percent component for display and input of percentages
+* [e5f3097](https://github.com/zulily/react-datum.git/commit/e5f30976264417478ac634cf04d03bf53591d0c2)  forms now accept a modelSaveMethod prop that allows custom save methods on model to be called
+* [7440d45](https://github.com/zulily/react-datum.git/commit/7440d45159f206b8c690fed2d5076660be1232e9)  form should always have form class + form should have edit class if editable
+* [87d606a](https://github.com/zulily/react-datum.git/commit/87d606ad3b945909fd7b8e40a6ca5eb6efdaef21)  Add Options export for getting and setting global ReactDatum options like ReactBootstrap lib, etc.
+* [4295f5f](https://github.com/zulily/react-datum.git/commit/4295f5f368b3f678cd6d078d39b0ace664e7f475)  placeholder can be anything React can render - string, component, array of components...
+* [e8c6b6e](https://github.com/zulily/react-datum.git/commit/e8c6b6e10c55d98ee13854a3dfc52121c61cd341)  Number datum should abbreviate billions with B
+* [4b740ec](https://github.com/zulily/react-datum.git/commit/4b740ec246b81f39e9e8b1834b21dec6e2272491)  adds ability to optionally render outer element 'asDiv'
+* [0c9e038](https://github.com/zulily/react-datum.git/commit/0c9e038d2bee8c29d962e34fcb9fe1575fb5964e)  datum should accept style property and apply styles to outer span
+* [690f136](https://github.com/zulily/react-datum.git/commit/690f1366dd36c287e4d8f290e346295f5dcc7a88)  added user configurable (props) debounce and debug settings to all ContextualData components
+
+### Other Commits
+* [14ab8aa](https://github.com/zulily/react-datum.git/commit/14ab8aa8b1b054537c675e949bba32c237311660) Making CollectionPicker for multi inputs
+* [2ac53bb](https://github.com/zulily/react-datum.git/commit/2ac53bbbad0ff7bbc9187ebcf2ed53a33408b704) make datums work with plain javascript object as model prop/context
+* [ae691d1](https://github.com/zulily/react-datum.git/commit/ae691d1bd9ef405f6c970af08d93a1b6eea49cf8) CollectionPicker should refresh on change of props and fix other issues
+
 ## [0.3.1](https://github.com/zulily/react-datum.git/compare/0.3.0...0.3.1) (2016-02-54)
 Minor build system changes
 
