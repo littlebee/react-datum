@@ -6,10 +6,10 @@ module.exports =
   # these get added to the css linked to the static examples and docs and copied to 
   # docs/css
   styleSheets: [{
-    path: "/css/docs/docs.css"
+    path: "css/docs/docs.css"
     media: "screen"
   },{
-    path: "/css/docs/tilegridExample.css"
+    path: "css/docs/tilegridExample.css"
     media: "screen"
   }]
 

@@ -1,4 +1,5 @@
 
 .toc li {
-  list-style-type: "bob";
+  list-style-type: none;
+  margin-left: 5px;
 }
