@@ -23,7 +23,8 @@ module.exports = class Datum extends React.Component
     # the backbone attribute on the model to get and set
     attr: React.PropTypes.string.isRequired
     
-    label: React.PropTypes.string
+    # optional label to render before value or input.  text values get wrapped in <label></label>
+    label: React.PropTypes.node
     
     # set ellipsizeAt to false to display whole value. Only effects 'readonly' display
     # values displayed in 'edit' mode are never truncated.
@@ -32,6 +33,7 @@ module.exports = class Datum extends React.Component
       React.PropTypes.bool
     ])
 
+    # optional value or component to display if model.get(attr) returns null or undefined
     placeholder: React.PropTypes.node
 
     # If we want the ellipsis to be like '...Long Name'. We need to make this true.
@@ -39,6 +41,7 @@ module.exports = class Datum extends React.Component
 
     # 'readonly' = render for display;
     # 'edit' = render for input;
+    # 'inlineEdit' = datum will transition from readonly to edit on click
     inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit'])
     
     # set to true to not render a popover on ellipsized values
@@ -65,12 +68,16 @@ module.exports = class Datum extends React.Component
     # call back for when the datum changes
     onChange: React.PropTypes.func
 
-  # no default for inputMode because we can also get from context, but default is
-  # 'readonly'.  see @getInputMode()
+
   @defaultProps:
+    # no default for inputMode because we can also get from context, see @getInputMode()
+    # inputMode: 'readonly'
+    
     # ellipsizeAt is defaulted to prevent really long strings from breaking layouts
     ellipsizeAt: 35
+    
     setOnBlur: true
+    
     reverseEllipsis: false
 
 

@@ -1,5 +1,5 @@
 
-This react-datum component is for the presentation of text. See also ReactDatum.Datum. The Datum base class does much of the work by default of handling text. 
+This react-datum component is for the presentation and input of text. See also ReactDatum.Datum. The Datum base class does much of the work by default of handling text. 
 
 Text Component provides the following additional features:
 - Display values can be ellipsized via ellipsizeAt prop.  

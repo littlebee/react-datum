@@ -1,7 +1,7 @@
 react-datum
 ============
 
-A set of [React](https://facebook.github.io/react/) components for interacting with Backbone collections and models.
+A set of [React](https://facebook.github.io/react/) components for display and input of attributes from Backbone collections and models.
 [<img alt="Screenshot from doc/examples/model/model.html" src="https://travis-ci.org/zulily/react-datum.svg?branch=master"
 />](https://travis-ci.org/zulily/react-datum)
 
@@ -18,10 +18,6 @@ npm install react-datum --save
 ** Install from the web: **
 
 Copy development (.js) or optimized (.min.js) distribution file from (https://github.com/zulily/react-datum/tree/master/dist) in with your other vendor js and use a script tag or AMD to load it.  
-
-## What is it?
-
-A set of React components for the presentation and input of attributes from a Backbone model.  
 
 ## Usage
 ```javascript
@@ -157,12 +153,12 @@ All of the Datums can be extended using either ES6:  `class myClass extends Reac
   class x.RedNumber extends ReactDatum.Number
     @displayName: "widgets.react.RedNumber"
 
-    @propTypes = _.extend {}, ReactDatum.Number.propTypes,
+    @propTypes: _.extend {}, ReactDatum.Number.propTypes,
       upperThreshold: React.PropTypes.number
       lowerThreshold: React.PropTypes.number
       
     
-    @defaultProps = _.extend {}, ReactDatum.Number.defaultProps,
+    @defaultProps: _.extend {}, ReactDatum.Number.defaultProps,
       lowerThreshold: 0
       # no upper threshold by default makes all numbers less than zero red
       

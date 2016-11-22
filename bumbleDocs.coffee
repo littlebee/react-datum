@@ -19,10 +19,13 @@ module.exports =
   
   apiDocs: {
     sections: [{
-      label: "Datum Components" 
-      path: "src/datums/**/*"
+      label: "Datums" 
+      path: "src/datums/*"
     },{
-      label: "Contextual Components" 
+      label: "More Datums" 
+      path: "src/datums/collectionPicker/*"
+    },{
+      label: "Forms, Models and Collections" 
       path: "src/*"
     }]
   }
@@ -46,9 +49,8 @@ module.exports =
       id: "bigKittens",
       name: "Big Kittens Demo!",
       path: "tilegrid/tilegrid.jsx",
-      description: "This demo shows the pieces all come together to make a function CRUD app. " +
-        "<br>...with Kittens!<br><br>Try maximizing your browser or zooming out.  The " +
-        "tiles can be variable height and width or fixed via css.",
+      description: "This demo shows the pieces all come together to make a functional CRUD app. " +
+        "<br>...with Kittens!<br>(data from petfinder.org api)",
     },{
       id: "examplesView",
       name: "Demos Within Demos",
@@ -56,8 +58,5 @@ module.exports =
       description: "<p>This demo is this demo viewer!</p> " +
         "<p>The demo viewer you are looking at right now, is really just a ReactDatum Tilegrid, a few "+
         "datums and a custom iframe component.</p>"+
-        "<p>Be careful you don't fall in the rabbit hole by clicking too deep. :)</p>" + 
-        "<p>All joking and parlor tricks aside, if you scroll past the the static data, you "+
-        "can see a nice example of how to make use of a contextually provided model in a custom "+
-        "react component</p> ",
+        "<p>Be careful you don't fall in the rabbit hole by clicking too deep. :)</p>",
     }]    

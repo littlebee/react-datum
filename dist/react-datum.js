@@ -662,7 +662,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    className: React.PropTypes.string,
 	    model: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Model), React.PropTypes.object]),
 	    attr: React.PropTypes.string.isRequired,
-	    label: React.PropTypes.string,
+	    label: React.PropTypes.node,
 	    ellipsizeAt: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.bool]),
 	    placeholder: React.PropTypes.node,
 	    reverseEllipsis: React.PropTypes.bool,
