@@ -26,18 +26,8 @@ module.exports = class Datum extends React.Component
     # optional label to render before value or input.  text values get wrapped in <label></label>
     label: React.PropTypes.node
     
-    # set ellipsizeAt to false to display whole value. Only effects 'readonly' display
-    # values displayed in 'edit' mode are never truncated.
-    ellipsizeAt: React.PropTypes.oneOfType([
-      React.PropTypes.number
-      React.PropTypes.bool
-    ])
-
     # optional value or component to display if model.get(attr) returns null or undefined
     placeholder: React.PropTypes.node
-
-    # If we want the ellipsis to be like '...Long Name'. We need to make this true.
-    reverseEllipsis: React.PropTypes.bool
 
     # 'readonly' = render for display;
     # 'edit' = render for input;
@@ -72,13 +62,7 @@ module.exports = class Datum extends React.Component
   @defaultProps:
     # no default for inputMode because we can also get from context, see @getInputMode()
     # inputMode: 'readonly'
-    
-    # ellipsizeAt is defaulted to prevent really long strings from breaking layouts
-    ellipsizeAt: 35
-    
     setOnBlur: true
-    
-    reverseEllipsis: false
 
 
   @contextTypes:
@@ -227,9 +211,9 @@ module.exports = class Datum extends React.Component
 
   ###
     Note that this method is not called by Datum directly.  It is 
-    provided here so that any Datum extensions can ellipsize whatever
-    part of their rendering neccessary and have a consistent prop and 
-    method for doing so.
+    provided here in the Datum base class so that any Datum extensions 
+    can ellipsize whatever part of their rendering neccessary and have 
+    a consistent prop and method for doing so.
   ###
   renderEllipsizedValue: (value, options={}) ->
     return value unless value?

@@ -25,6 +25,7 @@ module.exports = class Text extends Datum
     # If we want the ellipsis to be like ...Long Name we need to make this true
     reverseEllipsis: React.PropTypes.bool
 
+
   @defaultProps: _.extend {}, Datum.defaultProps,
     # ellipsizeAt is defaulted to prevent really long strings from breaking layouts
     ellipsizeAt: 35
@@ -39,6 +40,10 @@ module.exports = class Text extends Datum
     @renderEllipsizedValue super
 
   
+  ### 
+    Extends Datum#renderWrappedDisplayValue to provide support for displayAsHtml
+    option.
+  ###
   renderWrappedDisplayValue: (value)->
     if @props.displayAsHtml
       <span className="datum-display-value" dangerouslySetInnerHTML={@getMarkup(value)}/>
