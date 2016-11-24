@@ -663,9 +663,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    model: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Model), React.PropTypes.object]),
 	    attr: React.PropTypes.string.isRequired,
 	    label: React.PropTypes.node,
-	    ellipsizeAt: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.bool]),
+	    tooltip: React.PropTypes.string,
 	    placeholder: React.PropTypes.node,
-	    reverseEllipsis: React.PropTypes.bool,
 	    inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit']),
 	    noPopover: React.PropTypes.bool,
 	    setOnChange: React.PropTypes.bool,
@@ -678,9 +677,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.defaultProps = {
-	    ellipsizeAt: 35,
-	    setOnBlur: true,
-	    reverseEllipsis: false
+	    setOnBlur: true
 	  };
 
 	  Datum.contextTypes = {
@@ -772,18 +769,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.renderDatumWrapper = function(contentFn) {
+	    var wrapperProps;
+	    wrapperProps = {
+	      className: this.getFullClassName(),
+	      'data-zattr': this.props.att,
+	      style: this.props.style || {},
+	      title: this.props.tooltip
+	    };
 	    if (this.props.asDiv) {
-	      return React.createElement("div", {
-	        "className": this.getFullClassName(),
-	        "data-zattr": this.props.attr,
-	        "style": this.props.style || {}
-	      }, contentFn());
+	      return React.createElement("div", React.__spread({}, wrapperProps), contentFn());
 	    } else {
-	      return React.createElement("span", {
-	        "className": this.getFullClassName(),
-	        "data-zattr": this.props.attr,
-	        "style": this.props.style || {}
-	      }, contentFn());
+	      return React.createElement("span", React.__spread({}, wrapperProps), contentFn());
 	    }
 	  };
 
@@ -854,9 +850,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  /*
 	    Note that this method is not called by Datum directly.  It is 
-	    provided here so that any Datum extensions can ellipsize whatever
-	    part of their rendering neccessary and have a consistent prop and 
-	    method for doing so.
+	    provided here in the Datum base class so that any Datum extensions 
+	    can ellipsize whatever part of their rendering neccessary and have 
+	    a consistent prop and method for doing so.
 	   */
 
 	  Datum.prototype.renderEllipsizedValue = function(value, options) {
@@ -2420,10 +2416,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Link.propTypes = _.extend({}, Datum.propTypes, {
 	    nameAttr: React.PropTypes.string,
-	    target: React.PropTypes.string
+	    target: React.PropTypes.string,
+	    ellipsizeAt: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.bool]),
+	    reverseEllipsis: React.PropTypes.bool
 	  });
 
 	  Link.defaultProps = _.extend({}, Datum.defaultProps, {
+	    ellipsizeAt: 35,
 	    target: '_blank'
 	  });
 
@@ -2865,6 +2864,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Text.prototype.renderValueForDisplay = function() {
 	    return this.renderEllipsizedValue(Text.__super__.renderValueForDisplay.apply(this, arguments));
 	  };
+
+
+	  /* 
+	    Extends Datum#renderWrappedDisplayValue to provide support for displayAsHtml
+	    option.
+	   */
 
 	  Text.prototype.renderWrappedDisplayValue = function(value) {
 	    if (this.props.displayAsHtml) {
@@ -5516,6 +5521,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  CollectionPicker.propTypes = _.extend({}, Datum.propTypes, {
 	    collection: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Collection), React.PropTypes.string, React.PropTypes.array]),
+	    ellipsizeAt: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.bool]),
+	    reverseEllipsis: React.PropTypes.bool,
 	    optionComponent: React.PropTypes.func,
 	    valueComponent: React.PropTypes.func,
 	    fetchUnknownModelsInCollection: React.PropTypes.bool,
@@ -5530,6 +5537,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  });
 
 	  CollectionPicker.defaultProps = _.extend({}, Datum.defaultProps, {
+	    ellipsizeAt: 35,
 	    optionSaveAttr: 'id',
 	    fetchUnknownModelsInCollection: true
 	  });

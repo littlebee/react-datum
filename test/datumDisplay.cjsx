@@ -85,6 +85,16 @@ describe 'Datum (base class)', ->
     it 'should render a div wrapper', ->
       datumNode.outerHTML.should.contain('div')
       
+      
+  describe 'when rendered with tooltip prop', ->
+    tooltipTestText = "An informative tooltip with useful help about this attribute being displayed"
+    datum = Th.render <Datum model={model} attr="name" tooltip={tooltipTestText}/>
+    datumNode = Th.domNode(datum)
+  
+    it 'should have added title attribute to only the outermost element', ->
+      $(datumNode).attr('title').should.equal tooltipTestText
+      $(datumNode).find("[title='#{tooltipTestText}']").length.should.equal 0
+      
   
       
 

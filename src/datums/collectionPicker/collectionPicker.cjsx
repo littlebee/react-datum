@@ -22,7 +22,18 @@ module.exports = class CollectionPicker extends Datum
       React.PropTypes.string
       React.PropTypes.array
     ])
+    
+    # The selected values from the collection when in in display mode, can be individually 
+    # ellipsized. Set ellipsizeAt to false to display whole value. Only effects 'readonly' 
+    # display; values displayed in 'edit' mode are never truncated.
+    ellipsizeAt: React.PropTypes.oneOfType([
+      React.PropTypes.number
+      React.PropTypes.bool
+    ])
 
+    # If we want the ellipsis to be like ...Long Name we need to make this true
+    reverseEllipsis: React.PropTypes.bool
+    
     # Component for rendering the custom options
     optionComponent: React.PropTypes.func
 
@@ -100,6 +111,8 @@ module.exports = class CollectionPicker extends Datum
      
 
   @defaultProps: _.extend {}, Datum.defaultProps,
+    # ellipsizeAt is defaulted to prevent really long strings from breaking layouts
+    ellipsizeAt: 35
     optionSaveAttr: 'id'
     fetchUnknownModelsInCollection: true
     

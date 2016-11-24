@@ -26,6 +26,11 @@ module.exports = class Datum extends React.Component
     # optional label to render before value or input.  text values get wrapped in <label></label>
     label: React.PropTypes.node
     
+    # optional tooltip / help text to show on hover.  You can use this to display a more
+    # wordy & helpful description of this attribute.  Get's applied to the title attribute
+    # of our outermost element 
+    tooltip: React.PropTypes.string
+    
     # optional value or component to display if model.get(attr) returns null or undefined
     placeholder: React.PropTypes.node
 
@@ -57,6 +62,8 @@ module.exports = class Datum extends React.Component
 
     # call back for when the datum changes
     onChange: React.PropTypes.func
+    
+    
 
 
   @defaultProps:
@@ -148,13 +155,18 @@ module.exports = class Datum extends React.Component
 
 
   renderDatumWrapper: (contentFn)->
-    # TODO: add data-zattr attribute for backward compatibility?
+    wrapperProps =
+      className: @getFullClassName()
+      'data-zattr': @props.att
+      style: @props.style || {}
+      title: @props.tooltip
+    
     if @props.asDiv 
-      <div className={@getFullClassName()} data-zattr={@props.attr} style={@props.style||{}}>
+      <div {... wrapperProps}>
         {contentFn()}
       </div>
     else
-      <span className={@getFullClassName()} data-zattr={@props.attr} style={@props.style||{}}>
+      <span {... wrapperProps}>
         {contentFn()}
       </span>
 

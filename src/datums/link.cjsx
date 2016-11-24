@@ -19,8 +19,22 @@ module.exports = class Link extends Datum
     # passed to <a> as the target
     target: React.PropTypes.string
     
+    # The link's content between the A tags can be ellisized.  Set ellipsizeAt to false 
+    # to display whole value. Only effects 'readonly' display, values displayed 
+    # in 'edit' mode are never truncated.
+    ellipsizeAt: React.PropTypes.oneOfType([
+      React.PropTypes.number
+      React.PropTypes.bool
+    ])
+
+    # If we want the ellipsis to be like ...Long Name we need to make this true
+    reverseEllipsis: React.PropTypes.bool
+    
+    
     
   @defaultProps: _.extend {}, Datum.defaultProps,
+    # ellipsizeAt is defaulted to prevent really long strings from breaking layouts
+    ellipsizeAt: 35
     target: '_blank'
     
 

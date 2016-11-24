@@ -8,9 +8,28 @@ Model = require '../src/model'
 Link = require '../src/datums/link'
 Text = require '../src/datums/text'
 
+chai.use(require('chai-string'))
+
+
+model = new Backbone.Model({
+  url: "http://www.zulily.com"
+  name: "Zulily"
+  reallyLongName: "Zulily, something special every day and then some, Mom.  And then some."
+})
+
+
+renderComponent = (props={}) ->
+  props = _.defaults props,
+    attr: 'url'
+    nameAttr: 'name'
+    model: model
+
+  component = Th.render <Link {... props}/>
+  $atag = $(Th.domNode(component)).find('a')
+  return [component, $atag]
+  
 
 describe 'Link datum', ->
-  model = new Backbone.Model({url: "http://www.zulily.com", name: "Zulily"})
 
   describe 'as display without props', ->
     component = Th.render <Link attr='url' model={model}/>
@@ -25,12 +44,29 @@ describe 'Link datum', ->
 
 
   describe 'as display with nameAttr prop', ->
-    component = Th.render <Link attr='url' nameAttr='name' model={model}/>
-    $atag = $(Th.domNode(component)).find('a')
+    [component, $atag] = renderComponent()
     
     it 'should have rendered name enclosed in <a> tag', ->
       $atag.length.should.equal(1)
       $atag.html().should.equal model.get('name')
+      
+
+  describe 'as display with really really long name', ->
+
+    it 'should ellipsize at 35 by default', ->
+      [component, $atag] = renderComponent(nameAttr: 'reallyLongName')
+      $atag.text().should.endWith '...'
+      $atag.text().length.should.equal(35)
+
+    it 'should respect ellipsizeAt=55 prop', ->
+      [component, $atag] = renderComponent(nameAttr: 'reallyLongName', ellipsizeAt: 55)
+      $atag.text().should.endWith '...'
+      $atag.text().length.should.equal(55)
+
+    it 'should respect ellipsizeAt=false prop', ->
+      [component, $atag] = renderComponent(nameAttr: 'reallyLongName', ellipsizeAt: false)
+      $atag.text().should.not.endWith '...'
+      $atag.text().length.should.equal(model.get('reallyLongName').length)
       
 
   
