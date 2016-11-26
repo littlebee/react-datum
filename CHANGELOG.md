@@ -1,5 +1,5 @@
 
-## [0.9.1](https://github.com/zulily/react-datum.git/compare/0.3.1...0.9.1) (2016-11-331)
+## [0.9.1](https://github.com/zulily/react-datum.git/compare/0.3.1...0.9.1) (2016-11-26)
 
 
 ### Bugs Fixed in this Release
@@ -30,13 +30,13 @@
 * [ac8175d](https://github.com/zulily/react-datum.git/commit/ac8175dd6fa2726ca5f8bad774f4c7b343a44880) Ability to reverse ellipsize in Text datum
 * [d76a1c0](https://github.com/zulily/react-datum.git/commit/d76a1c0870a25b8bb3d1226723f02bb23abacc9c) Inline Edit on a placeholder should trigger the edit box
 
-## [0.3.1](https://github.com/zulily/react-datum.git/compare/0.3.0...0.3.1) (2016-02-54)
+## [0.3.1](https://github.com/zulily/react-datum.git/compare/0.3.0...0.3.1) (2016-02-23)
 Minor build system changes
 
 ### Other Commits
 * [548f906](https://github.com/zulily/react-datum.git/commit/548f906fee367bfacb6b107f9485cc6e5d730c27) clean up package deps, update versions of bumble- libs and rebuild
 
-## [0.3.0](https://github.com/zulily/react-datum.git/compare/0.0.0...0.3.0) (2016-02-52)
+## [0.3.0](https://github.com/zulily/react-datum.git/compare/0.0.0...0.3.0) (2016-02-21)
 We've been working with this library here at Zulily for the last couple of months to build some cool new stuff and improving it as we go.   We have a lot more tests, documentation, new features for numbers including decimal places and abbreviated formats... Below is a subset of notable commits.
 
 ### Bugs Fixed in this Release
