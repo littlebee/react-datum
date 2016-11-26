@@ -17,9 +17,9 @@ class TestModel extends Backbone.Model
       tooltip: "The first name of the person"
     lastName:
       label: "Last Name",
+      tooltip: "This is the user's legal last name or family name"
       placeholder: "no last name (sorta like Madonna)"
     age:
-      tooltip: "Age entered must be above 0 and less than 200"
       minValue: 1
       maxValue: 199
       
