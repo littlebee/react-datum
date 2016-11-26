@@ -1,4 +1,10 @@
 
+## [0.9.2](https://github.com/zulily/react-datum.git/compare/0.9.1...0.9.2) (2016-11-331)
+
+
+### Bugs Fixed in this Release
+* [525e35b](https://github.com/zulily/react-datum.git/commit/525e35b0b128d95f33c36b962362e248b7773451)  should definitely not render 'false' title attributes
+
 ## [0.9.1](https://github.com/zulily/react-datum.git/compare/0.3.1...0.9.1) (2016-11-26)
 
 
