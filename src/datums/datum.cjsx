@@ -176,7 +176,10 @@ module.exports = class Datum extends React.Component
       className: @getFullClassName()
       'data-zattr': @props.attr
       style: @props.style || {}
-      title: @getPropOrMetadata('tooltip')
+      
+    if tooltip = @getPropOrMetadata('tooltip')
+      wrapperProps.title = tooltip
+      wrapperProps.style.cursor = "help"
     
     if @props.asDiv 
       <div {... wrapperProps}>

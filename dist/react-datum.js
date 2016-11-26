@@ -770,13 +770,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.renderDatumWrapper = function(contentFn) {
-	    var wrapperProps;
+	    var tooltip, wrapperProps;
 	    wrapperProps = {
 	      className: this.getFullClassName(),
 	      'data-zattr': this.props.attr,
-	      style: this.props.style || {},
-	      title: this.getPropOrMetadata('tooltip')
+	      style: this.props.style || {}
 	    };
+	    if (tooltip = this.getPropOrMetadata('tooltip')) {
+	      wrapperProps.title = tooltip;
+	      wrapperProps.style.cursor = "help";
+	    }
 	    if (this.props.asDiv) {
 	      return React.createElement("div", React.__spread({}, wrapperProps), contentFn());
 	    } else {
