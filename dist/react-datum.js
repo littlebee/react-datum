@@ -666,6 +666,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    tooltip: React.PropTypes.string,
 	    placeholder: React.PropTypes.node,
 	    inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit']),
+	    getMetadata: React.PropTypes.func,
 	    noPopover: React.PropTypes.bool,
 	    setOnChange: React.PropTypes.bool,
 	    setOnBlur: React.PropTypes.bool,
@@ -772,9 +773,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var wrapperProps;
 	    wrapperProps = {
 	      className: this.getFullClassName(),
-	      'data-zattr': this.props.att,
+	      'data-zattr': this.props.attr,
 	      style: this.props.style || {},
-	      title: this.props.tooltip
+	      title: this.getPropOrMetadata('tooltip')
 	    };
 	    if (this.props.asDiv) {
 	      return React.createElement("div", React.__spread({}, wrapperProps), contentFn());
@@ -788,8 +789,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.renderLabel = function() {
-	    if (this.props.label != null) {
-	      return React.createElement("label", null, this.props.label, " ");
+	    if (this.getPropOrMetadata('label') != null) {
+	      return React.createElement("label", null, this.getPropOrMetadata('label'), " ");
 	    } else {
 	      return null;
 	    }
@@ -838,7 +839,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.renderPlaceholder = function() {
 	    var placeholder;
-	    placeholder = this.props.placeholder;
+	    placeholder = this.getPropOrMetadata('placeholder');
 	    if (placeholder == null) {
 	      return null;
 	    }
@@ -1019,7 +1020,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.getInputComponentOptions = function() {
 	    var placeholder, value;
-	    placeholder = this.props.placeholder || "";
+	    placeholder = this.getPropOrMetadata('placeholder') || "";
 	    value = this.getValueForInput();
 	    return {
 	      type: "text",
@@ -1158,6 +1159,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	      className += " " + this.props.className;
 	    }
 	    return className;
+	  };
+
+	  Datum.prototype.getPropOrMetadata = function(prop) {
+	    var base, ref;
+	    return ((this.props[prop] != null) && this.props[prop]) || (typeof (base = this.props).getMetadata === "function" ? base.getMetadata(prop, this) : void 0) || ((ref = this.getModel()) != null ? typeof ref.getDatumMetadata === "function" ? ref.getDatumMetadata(prop, this) : void 0 : void 0);
 	  };
 
 	  Datum.prototype.shouldSetOnChange = function() {
@@ -2583,7 +2589,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Number.prototype.renderPlaceHolder = function() {
-	    if (this.props.placeholder != null) {
+	    if (this.getPropOrMetadata('placeholder') != null) {
 	      Number.__super__.renderPlaceHolder.apply(this, arguments);
 	    }
 	    return React.createElement("span", null, "0");
@@ -2611,23 +2617,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Number.prototype.validateMin = function(value) {
-	    if (this.props.minValue == null) {
+	    var minValue;
+	    minValue = this.getPropOrMetadata('minValue');
+	    if (minValue == null) {
 	      return true;
 	    }
-	    if (value >= this.props.minValue) {
+	    if (value >= minValue) {
 	      return true;
 	    }
-	    return "The value must be equal or greater than " + this.props.minValue;
+	    return "The value must be equal or greater than " + minValue;
 	  };
 
 	  Number.prototype.validateMax = function(value) {
-	    if (this.props.maxValue == null) {
+	    var maxValue;
+	    maxValue = this.getPropOrMetadata('maxValue');
+	    if (maxValue == null) {
 	      return true;
 	    }
-	    if (value <= this.props.maxValue) {
+	    if (value <= maxValue) {
 	      return true;
 	    }
-	    return "The value must be equal or less than " + this.props.maxValue;
+	    return "The value must be equal or less than " + maxValue;
 	  };
 
 
@@ -5712,7 +5722,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    collection = this.getCollection();
 	    return _.extend({}, this.props, {
 	      loadOptions: this.onLoadOptions,
-	      placeholder: this.props.editPlaceholder || this.props.placeholder || this.renderPlaceholder(),
+	      placeholder: this.props.editPlaceholder || this.getPropOrMetadata('placeholder') || this.renderPlaceholder(),
 	      value: this.state.value,
 	      onChange: this.onChange,
 	      onBlur: this.onBlur,

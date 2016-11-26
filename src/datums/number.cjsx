@@ -40,10 +40,12 @@ module.exports = class Number extends Datum
     # if decimalPlaces, zeroFill={true} will round out to n places 
     zeroFill: React.PropTypes.bool
     
-    # when input, validate value is at least this value on change
+    # when input, validate value is at least this value on change. 
+    # Can also be specified via metadata.
     minValue: React.PropTypes.number
     
     # when input, validate value is at most this value on change
+    # Can also be specified via metadata.
     maxValue: React.PropTypes.number
     
   
@@ -130,7 +132,7 @@ module.exports = class Number extends Datum
 
   # extends super
   renderPlaceHolder: ->
-    if @props.placeholder?
+    if @getPropOrMetadata('placeholder')?
       super
     # if we don't have a placeholder, render zero by default without the placeholder classes
     return <span>0</span>
@@ -158,15 +160,18 @@ module.exports = class Number extends Datum
 
 
   validateMin: (value) =>
-    return true unless @props.minValue?
-    return true if value >= @props.minValue
-    return "The value must be equal or greater than #{@props.minValue}"
+    minValue = @getPropOrMetadata('minValue')
+    return true unless minValue?
+    return true if value >= minValue
+    return "The value must be equal or greater than #{minValue}"
 
 
   validateMax: (value) =>
-    return true unless @props.maxValue?
-    return true if value <= @props.maxValue
-    return "The value must be equal or less than #{@props.maxValue}"
+    maxValue = @getPropOrMetadata('maxValue')
+    return true unless maxValue?
+    return true if value <= maxValue
+    return "The value must be equal or less than #{maxValue}"
+    
     
   ###  
     returns a string with number value input rounded to user requested props.decimalPlaces 

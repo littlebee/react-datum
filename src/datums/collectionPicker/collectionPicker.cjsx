@@ -252,7 +252,7 @@ module.exports = class CollectionPicker extends Datum
     collection = @getCollection()
     return _.extend {}, @props,
       loadOptions: @onLoadOptions
-      placeholder: @props.editPlaceholder || @props.placeholder || @renderPlaceholder()
+      placeholder: @props.editPlaceholder || @getPropOrMetadata('placeholder') || @renderPlaceholder()
       value: @state.value
       onChange: @onChange
       onBlur: @onBlur

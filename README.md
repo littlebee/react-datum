@@ -73,7 +73,6 @@ Adding the **ReactDatum.Form** component, you can easily convert the above into 
 
 ```javascript
 var kittenCard = React.createClass({
-  displayName:"KittenCard",
   render: function(){
     return (
       <div className='kitten-card'>
@@ -107,7 +106,7 @@ By wrapping the datums in the **ReactDatum.Form** tag, they implicitedly recieve
 
 In the form example above, the **ReactDatum.Text** input component labeled "Name" in the form was given a 'setOnChange' prop.  When the name input is changed by the user, every character entered causes `kittenModel.set('name', userEnteredValue)` to be called.  Since all children of the **ReactDatum.model** component virtually rerender on every triggered event, the form updates as you type and the two other references to the 'name' attribute in labels on the form are updated as you type.  
 
-Pretty cool, but mostly just a parlor trick.  The reasoning behind using `{silent: true}` on set() by default is that, in most cases, users will get confused as to the saved state of the data. Since `model.save()` is not called until the user presses the 'Save' button, a table or grid cell changing as you type in the edit form is probably not what you want because it may imply that the changes have been saved.   
+Pretty cool, but mostly just a parlor trick.  The reasoning behind setOnChange false by default is that, in most cases, users will get confused as to the saved state of the data. Since `model.save()` is not called until the user presses the 'Save' button, a table or grid cell changing as you type in the edit form is probably not what you want because it may imply that the changes have been saved.   
 
 ## ReactDatum.Model
 

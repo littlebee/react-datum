@@ -24,20 +24,37 @@ module.exports = class Datum extends React.Component
     attr: React.PropTypes.string.isRequired
     
     # optional label to render before value or input.  text values get wrapped in <label></label>
+    # Can also be specified via metadata.
     label: React.PropTypes.node
     
     # optional tooltip / help text to show on hover.  You can use this to display a more
     # wordy & helpful description of this attribute.  Get's applied to the title attribute
-    # of our outermost element 
+    # of our outermost element.  Can also be specified via metadata.  
     tooltip: React.PropTypes.string
     
     # optional value or component to display if model.get(attr) returns null or undefined
+    # Can also be specified via metadata
     placeholder: React.PropTypes.node
 
     # 'readonly' = render for display;
     # 'edit' = render for input;
     # 'inlineEdit' = datum will transition from readonly to edit on click
     inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit'])
+    
+    # getMetadata is an optional function that will be called to retrieve the props above where
+    # metadata support is indicated.  The getMetadata method is passed the following 
+    # arguments:  
+    #     (prop, datumInstance) 
+    # where `prop` is the datum prop for which metadata is being requested.  `datumInstance` is a reference 
+    # to the datum component instance.  You can use the documented API methods on datumInstance, such
+    # as getModel() to get the model associated with datumInstance, add datumInstance.props.attr to 
+    # get the associated attr.
+    #
+    # In addition to this prop, which has first precedence, ReactDatum will also look for a 
+    # getDatumMetadata method on the model instance and, if found, call it with the same arguments
+    # to acquire the label, tooltip, placeholder and any other props supported by metadata. 
+    # See [discussion and example above on model driven metadata](#metadata).
+    getMetadata: React.PropTypes.func  
     
     # set to true to not render a popover on ellipsized values
     noPopover: React.PropTypes.bool
@@ -157,9 +174,9 @@ module.exports = class Datum extends React.Component
   renderDatumWrapper: (contentFn)->
     wrapperProps =
       className: @getFullClassName()
-      'data-zattr': @props.att
+      'data-zattr': @props.attr
       style: @props.style || {}
-      title: @props.tooltip
+      title: @getPropOrMetadata('tooltip')
     
     if @props.asDiv 
       <div {... wrapperProps}>
@@ -180,8 +197,8 @@ module.exports = class Datum extends React.Component
 
 
   renderLabel: ->
-    if @props.label?
-      return <label>{@props.label} </label>
+    if @getPropOrMetadata('label')?
+      return <label>{@getPropOrMetadata('label')} </label>
     else
       return null
 
@@ -216,7 +233,7 @@ module.exports = class Datum extends React.Component
 
 
   renderPlaceholder: ->
-    placeholder = @props.placeholder
+    placeholder = @getPropOrMetadata('placeholder')
     return null unless placeholder?
     <span className="placeholder">{placeholder}</span>
 
@@ -368,7 +385,7 @@ module.exports = class Datum extends React.Component
     
     
   getInputComponentOptions: () ->
-    placeholder = @props.placeholder || ""
+    placeholder = @getPropOrMetadata('placeholder') || ""
     value = @getValueForInput()
     return {
       type: "text" 
@@ -460,7 +477,11 @@ module.exports = class Datum extends React.Component
     className += " invalid" if @state.errors.length > 0
     className += " #{@props.className}" if @props.className?
     return className
+    
 
+  getPropOrMetadata: (prop) ->
+    (@props[prop]? && @props[prop]) || @props.getMetadata?(prop, @) || @getModel()?.getDatumMetadata?(prop, @)
+    
 
   shouldSetOnChange: ->
     @props.setOnChange == true || (@getInputMode() == 'inlineEdit' && !@props.setOnChange == false)
