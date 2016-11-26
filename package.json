@@ -1,6 +1,6 @@
 {
   "name": "react-datum",
-  "version": "0.3.1",
+  "version": "0.9.1",
   "description": "A set of React components for interacting with Backbone collections and models",
   "main": "./index.js",
   "scripts": {
