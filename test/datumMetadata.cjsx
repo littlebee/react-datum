@@ -56,10 +56,11 @@ describe 'Datum Metadata', ->
       $test.find('[title]').length.should.equal 2
       
     it 'should have rendered the metadata tooltip for firstName', ->
-      $test.find("[data-zattr='firstName']").attr('title').should.equal TestModel.metadata['firstName']['tooltip']
+      expectedTooltip = TestModel.metadata['firstName']['tooltip']
+      $test.find("[data-zattr='firstName']").find("[title='#{expectedTooltip}']").length.should.equal 1
       
     it 'should have rendered the tooltip specified via prop for lastName', ->
-      $test.find("[data-zattr='lastName']").attr('title').should.equal testTooltip
+      $test.find("[data-zattr='lastName']").find("[title='#{testTooltip}']").length.should.equal 1
       
     it 'should have rendered the metadata placeholder for lastName', ->
       $test.find("[data-zattr='lastName']").find('.placeholder').text().should.equal TestModel.metadata['lastName']['placeholder']

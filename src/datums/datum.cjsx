@@ -27,9 +27,11 @@ module.exports = class Datum extends React.Component
     # Can also be specified via metadata.
     label: React.PropTypes.node
     
-    # optional tooltip / help text to show on hover.  You can use this to display a more
-    # wordy & helpful description of this attribute.  Get's applied to the title attribute
-    # of our outermost element.  Can also be specified via metadata.  
+    # optional tooltip / help text to show on hover over datum label.  You can use this to display 
+    # a more wordy & helpful description of this attribute.  Get's applied as the title attribute
+    # of our label element.  Can also be specified via metadata.  
+    #
+    # Ignored if props.label or metadata label does not exist or are both null
     tooltip: React.PropTypes.string
     
     # optional value or component to display if model.get(attr) returns null or undefined
@@ -177,10 +179,6 @@ module.exports = class Datum extends React.Component
       'data-zattr': @props.attr
       style: @props.style || {}
       
-    if tooltip = @getPropOrMetadata('tooltip')
-      wrapperProps.title = tooltip
-      wrapperProps.style.cursor = "help"
-    
     if @props.asDiv 
       <div {... wrapperProps}>
         {contentFn()}
@@ -200,10 +198,18 @@ module.exports = class Datum extends React.Component
 
 
   renderLabel: ->
-    if @getPropOrMetadata('label')?
-      return <label>{@getPropOrMetadata('label')} </label>
+    labelProps = {}
+    if tooltip = @getPropOrMetadata('tooltip')
+      labelProps.title = tooltip
+      
+    label = if @getPropOrMetadata('label')?
+      <label {... labelProps}>{@getPropOrMetadata('label')}</label>
     else
-      return null
+      null
+    
+    return label
+
+  
 
 
   renderValueOrPlaceholder: ->
@@ -274,11 +280,11 @@ module.exports = class Datum extends React.Component
           popover = <Popover id='datumTextEllisize'>{value}</Popover>
           value = (
             <OverlayTrigger trigger={['hover','focus']} placement="bottom" overlay={popover}>
-              <span>{ellipsizedValue}</span>
+              <span className='datum-ellipsized'>{ellipsizedValue}</span>
             </OverlayTrigger>
           )
         else
-          value = <span title={value}>{ellipsizedValue}</span>
+          value = <span className='datum-ellipsized' title={value}>{ellipsizedValue}</span>
 
     return value
 

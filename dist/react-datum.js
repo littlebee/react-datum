@@ -770,16 +770,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.renderDatumWrapper = function(contentFn) {
-	    var tooltip, wrapperProps;
+	    var wrapperProps;
 	    wrapperProps = {
 	      className: this.getFullClassName(),
 	      'data-zattr': this.props.attr,
 	      style: this.props.style || {}
 	    };
-	    if (tooltip = this.getPropOrMetadata('tooltip')) {
-	      wrapperProps.title = tooltip;
-	      wrapperProps.style.cursor = "help";
-	    }
 	    if (this.props.asDiv) {
 	      return React.createElement("div", React.__spread({}, wrapperProps), contentFn());
 	    } else {
@@ -792,11 +788,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.renderLabel = function() {
-	    if (this.getPropOrMetadata('label') != null) {
-	      return React.createElement("label", null, this.getPropOrMetadata('label'), " ");
-	    } else {
-	      return null;
+	    var label, labelProps, tooltip;
+	    labelProps = {};
+	    if (tooltip = this.getPropOrMetadata('tooltip')) {
+	      labelProps.title = tooltip;
 	    }
+	    label = this.getPropOrMetadata('label') != null ? React.createElement("label", React.__spread({}, labelProps), this.getPropOrMetadata('label')) : null;
+	    return label;
 	  };
 
 	  Datum.prototype.renderValueOrPlaceholder = function() {
@@ -889,9 +887,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            "trigger": ['hover', 'focus'],
 	            "placement": "bottom",
 	            "overlay": popover
-	          }, React.createElement("span", null, ellipsizedValue));
+	          }, React.createElement("span", {
+	            "className": 'datum-ellipsized'
+	          }, ellipsizedValue));
 	        } else {
 	          value = React.createElement("span", {
+	            "className": 'datum-ellipsized',
 	            "title": value
 	          }, ellipsizedValue);
 	        }

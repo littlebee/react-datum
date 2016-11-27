@@ -86,14 +86,23 @@ describe 'Datum (base class)', ->
       datumNode.outerHTML.should.contain('div')
       
       
-  describe 'when rendered with tooltip prop', ->
+  describe 'when rendered with tooltip prop and no label', ->
     tooltipTestText = "An informative tooltip with useful help about this attribute being displayed"
     datum = Th.render <Datum model={model} attr="name" tooltip={tooltipTestText}/>
     datumNode = Th.domNode(datum)
   
-    it 'should have added title attribute to only the outermost element', ->
-      $(datumNode).attr('title').should.equal tooltipTestText
-      $(datumNode).find("[title='#{tooltipTestText}']").length.should.equal 0
+    it 'should not have added any title attributes', ->
+      $(datumNode).find('[title]').length.should.equal 0
+      expect($(datumNode).attr('title')).to.not.exist
+      
+
+  describe 'when rendered with tooltip prop and a label', ->
+    tooltipTestText = "An informative tooltip with useful help about this attribute being displayed"
+    datum = Th.render <Datum model={model} attr="name" label="Kitten Name" tooltip={tooltipTestText}/>
+    datumNode = Th.domNode(datum)
+  
+    it 'should not have a single title attribute within with supplied tooltip', ->
+      $(datumNode).find("[title='#{tooltipTestText}']").length.should.equal 1
       
   
       
