@@ -661,7 +661,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.propTypes = {
 	    className: React.PropTypes.string,
 	    model: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Model), React.PropTypes.object]),
-	    attr: React.PropTypes.string.isRequired,
+	    attr: React.PropTypes.string,
 	    label: React.PropTypes.node,
 	    tooltip: React.PropTypes.string,
 	    placeholder: React.PropTypes.node,
@@ -674,7 +674,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    required: React.PropTypes.bool,
 	    style: React.PropTypes.object,
 	    asDiv: React.PropTypes.bool,
-	    onChange: React.PropTypes.func
+	    onChange: React.PropTypes.func,
+	    value: React.PropTypes.node
 	  };
 
 	  Datum.defaultProps = {
@@ -716,6 +717,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      errors: [],
 	      isDirty: false
 	    };
+	  };
+
+	  Datum.prototype.componentWillMount = function() {
+	    return this.initializeState();
 	  };
 
 	  Datum.prototype.componentDidMount = function() {
@@ -1087,6 +1092,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    if (newContext == null) {
 	      newContext = this.context;
+	    }
+	    if (newProps.value != null) {
+	      return newProps.value;
 	    }
 	    if (!(model = this.getModel(newProps, newContext))) {
 	      return null;
@@ -2877,10 +2885,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Text = (function(superClass) {
 	  extend(Text, superClass);
 
-	  function Text() {
-	    return Text.__super__.constructor.apply(this, arguments);
-	  }
-
 	  Text.displayName = "react-datum.Text";
 
 	  Text.propTypes = _.extend({}, Datum.propTypes, {
@@ -2893,6 +2897,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    ellipsizeAt: 35,
 	    reverseEllipsis: false
 	  });
+
+	  function Text() {
+	    Text.__super__.constructor.apply(this, arguments);
+	  }
 
 	  Text.prototype.render = function() {
 	    return Text.__super__.render.apply(this, arguments);

@@ -30,6 +30,9 @@ module.exports = class Text extends Datum
     # ellipsizeAt is defaulted to prevent really long strings from breaking layouts
     ellipsizeAt: 35
     reverseEllipsis: false
+
+  constructor: ->
+    super
     
 
   render: ->

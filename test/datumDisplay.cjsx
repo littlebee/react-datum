@@ -15,6 +15,7 @@ describe 'Datum (base class)', ->
     
   TEST_LABEL = 'stop labeling me'
   TEST_PLACEHOLDER_TEXT = "whatever it is you are looking for isn't here"
+  TEST_TEXT_VALUE = 'Some important value'
   
   describe 'when rendered without props', ->
     datum = Th.render <Datum model={model} attr="name"/>
@@ -105,11 +106,32 @@ describe 'Datum (base class)', ->
       $(datumNode).find("[title='#{tooltipTestText}']").length.should.equal 1
       
   
-      
-
-
+  describe 'when rendered with value prop without model and attr', ->
+    datum = Th.render <Datum value={TEST_TEXT_VALUE}/>
+    datumNode = Th.domNode(datum)
+    it 'should have rendered the value provided via prop', ->
+      datumNode.outerHTML.should.contain TEST_TEXT_VALUE
       
     
+  describe 'when rendered with value prop without model and attr', ->
+    datum = Th.render <Datum value={TEST_TEXT_VALUE}/>
+    datumNode = Th.domNode(datum)
+    it 'should have rendered the value provided via prop', ->
+      datumNode.outerHTML.should.contain TEST_TEXT_VALUE
+        
+        
+  describe 'when rendered with value prop with model and attr', ->
+    datum = Th.render <Datum model={model} attr="name" value={TEST_TEXT_VALUE}/>
+    datumNode = Th.domNode(datum)
+    it 'should still have rendered the value provided via prop', ->
+      datumNode.outerHTML.should.contain TEST_TEXT_VALUE
+      datumNode.outerHTML.should.not.contain model.get('name')
+      
+      
+  
+      
+  
+  
 
 
   

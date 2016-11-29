@@ -21,7 +21,7 @@ module.exports = class Datum extends React.Component
     ])
     
     # the backbone attribute on the model to get and set
-    attr: React.PropTypes.string.isRequired
+    attr: React.PropTypes.string
     
     # optional label to render before value or input.  text values get wrapped in <label></label>
     # Can also be specified via metadata.
@@ -84,9 +84,12 @@ module.exports = class Datum extends React.Component
     # call back for when the datum changes
     onChange: React.PropTypes.func
     
+    # value to use instead of model attribute.  You can use this instead of a model and attr to manually set 
+    # the initial value of the component.   Model value is ignored for display, but still updated of in an
+    # editable state
+    value: React.PropTypes.node
     
-
-
+    
   @defaultProps:
     # no default for inputMode because we can also get from context, see @getInputMode()
     # inputMode: 'readonly'
@@ -134,9 +137,11 @@ module.exports = class Datum extends React.Component
       isDirty: false
     }
 
-  
   #..................................................React life cycle methods...........................................
 
+  componentWillMount: ->
+    @initializeState()
+    
 
   componentDidMount: ->
     # note that we don't need a form to work. this is for it's benefit, mostly
@@ -439,7 +444,9 @@ module.exports = class Datum extends React.Component
     warning: Do not override this method to return a component element or jsx; bad things will happen.
   ###
   getModelValue: (newProps = @props, newContext = @context)->
+    return newProps.value if newProps.value? 
     return null unless model = @getModel(newProps, newContext)
+    
     value = if _.isFunction(model.get)
       model.get(newProps.attr) 
     else 
@@ -488,7 +495,6 @@ module.exports = class Datum extends React.Component
     # if available globally or user called ReactDatum.set('ReactBootstrap', someLib)
     return Options.get('ReactBootstrap') || window?.ReactBootstrap
 
-    
 
   shouldSetOnChange: ->
     @props.setOnChange == true || (@getInputMode() == 'inlineEdit' && !@props.setOnChange == false)
