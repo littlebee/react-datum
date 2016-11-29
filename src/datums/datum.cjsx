@@ -201,11 +201,10 @@ module.exports = class Datum extends React.Component
 
   renderLabel: ->
     labelProps = {}
-    if tooltip = @getPropOrMetadata('tooltip')
-      labelProps.title = tooltip
+    tooltip = @getPropOrMetadata('tooltip')
       
     label = if @getPropOrMetadata('label')?
-      <label {... labelProps}>{@getPropOrMetadata('label')}</label>
+      @renderWithPopover(<label {... labelProps}>{@getPropOrMetadata('label')}</label>, tooltip, 'datumTooltip', 'datum-tooltip')
     else
       null
     
@@ -323,6 +322,8 @@ module.exports = class Datum extends React.Component
     
     
   renderWithPopover: (value, tooltip, popoverId, valueClass) ->
+    return value unless tooltip?
+    
     # if available globally or user called ReactDatum.set('ReactBootstrap', someLib)
     Rb = @getReactBootstrap()
             

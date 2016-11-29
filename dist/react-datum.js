@@ -790,10 +790,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.prototype.renderLabel = function() {
 	    var label, labelProps, tooltip;
 	    labelProps = {};
-	    if (tooltip = this.getPropOrMetadata('tooltip')) {
-	      labelProps.title = tooltip;
-	    }
-	    label = this.getPropOrMetadata('label') != null ? React.createElement("label", React.__spread({}, labelProps), this.getPropOrMetadata('label')) : null;
+	    tooltip = this.getPropOrMetadata('tooltip');
+	    label = this.getPropOrMetadata('label') != null ? this.renderWithPopover(React.createElement("label", React.__spread({}, labelProps), this.getPropOrMetadata('label')), tooltip, 'datumTooltip', 'datum-tooltip') : null;
 	    return label;
 	  };
 
@@ -927,6 +925,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.renderWithPopover = function(value, tooltip, popoverId, valueClass) {
 	    var Rb, popover, rValue;
+	    if (tooltip == null) {
+	      return value;
+	    }
 	    Rb = this.getReactBootstrap();
 	    if ((Rb != null) && !this.props.noPopover) {
 	      popover = React.createElement(Rb.Popover, {
