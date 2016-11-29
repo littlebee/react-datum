@@ -797,6 +797,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return label;
 	  };
 
+
+	  /*
+	    Override this method only if you need to not render the placeholder.
+	   */
+
 	  Datum.prototype.renderValueOrPlaceholder = function() {
 	    var displayValue, placeholderValue;
 	    if (this.getModelValue() != null) {
@@ -858,7 +863,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.renderEllipsizedValue = function(value, options) {
-	    var OverlayTrigger, Popover, ellipsizeAt, ellipsizedValue, popover;
+	    var Rb, ellipsizeAt, ellipsizedValue, popover;
 	    if (options == null) {
 	      options = {};
 	    }
@@ -875,19 +880,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (this.props.noPopover) {
 	        value = ellipsizedValue;
 	      } else {
-	        if (Options.ReactBootstrap != null) {
-	          Popover = Options.ReactBootstrap.Popover;
-	          OverlayTrigger = Options.ReactBootstrap.OverlayTrigger;
-	        }
-	        if (Popover != null) {
-	          popover = React.createElement(Popover, {
+	        Rb = Options.get('ReactBootstrap') || (typeof window !== "undefined" && window !== null ? window.ReactBootstrap : void 0);
+	        if (Rb != null) {
+	          popover = React.createElement(Rb.Popover, {
 	            "id": 'datumTextEllisize'
 	          }, value);
-	          value = React.createElement(OverlayTrigger, {
-	            "trigger": ['hover', 'focus'],
-	            "placement": "bottom",
+	          value = React.createElement(Rb.OverlayTrigger, React.__spread({
 	            "overlay": popover
-	          }, React.createElement("span", {
+	          }, Options.get('RbOverlayProps')), React.createElement("span", {
 	            "className": 'datum-ellipsized'
 	          }, ellipsizedValue));
 	        } else {
@@ -1357,6 +1357,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	/*
 	  These are global options used to control various aspects
 	  of ReactDatum rendering and functionality.
+
+	  Currently supported configurable options:
+
+	    ReactBootstrap: Defaults to global 'ReactBootstrap' if it exists.
+	      If set this option will use ReactBootstrap for popovers such as when
+	      a Datum is ellipsized and for validation errors. 
+	      If not set, ReactDatum will use the HTML5 title tooltips for popovers
+	      
+	    RbOverlayProps: 
+	      You can change the placement, trigger, etc used for popovers when using
+	      ReactBootstrap.
+	      
+	    errorIconClass: default: null.  Icon css class to use for indicating 
+	      validation errors. If not set, a red unicode exclamation point is used.
 	 */
 
 	module.exports = Options = (function() {
@@ -1364,42 +1378,63 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	  /*
-	    Use to set a ReactDatum option.  Available options and defaults:
-	    
-	      ReactBootstrap: Defaults to global 'ReactBootstrap' if it exists.
-	        If set this option will use ReactBootstrap for popovers such as when
-	        a Datum is ellipsized and for validation errors. 
-	        If not set, ReactDatum will use the HTML5 title tooltips for popovers
-	        
-	      errorIconClass: default: null.  Icon css class to use for indicating 
-	        validation errors. If not set, a red unicode exclamation point is used.  
+	    These are defaulted onto whatever is provided via ReactDatum.Options.set().
+	   */
+
+	  Options._defaults = {
+	    errorIconClass: null,
+	    ReactBootstrap: null,
+	    RbOverlayProps: {
+	      trigger: ['hover', 'focus'],
+	      placement: 'right'
+	    }
+	  };
+
+	  Options._options = _.extend({}, Options._defaults);
+
+
+	  /*
+	    Use to set a ReactDatum option.  Arguments can be either `(key, value)` or `({key: value, key: value})`
 	      
 	    Examples:
 	    ```
 	      ReactDatum = require('react-datum')
 	      
-	      // use the version of react bootstrap I got somewhere above
+	      // use the version of react bootstrap I got somewhere 
 	      ReactDatum.Options.set('ReactBootstrap', loadedBootstrapLib)
 	      
 	      // use the fontawesome 4.5 exclamation sign icon for errors
 	      ReactDatum.Options.set('errorIconClass', 'fa fa-exclamation-circle')
 	    
+	      // change the placement of the popover (if using ReactBootstrap)
+	      ReactDatum.Options.set({RbOverlayProps: {placement: 'bottom'}})
 	    ```
 	   */
 
 	  Options.set = function(option, value) {
-	    var extension;
-	    extension = _.isObject(option) ? option : {
-	      option: option,
-	      value: value
-	    };
-	    _.extend(__options, extension);
-	    return __options;
+	    var _options, extension, key;
+	    _options = Options._options;
+	    extension = {};
+	    if (_.isObject(option)) {
+	      extension = option;
+	    } else {
+	      extension[option] = value;
+	    }
+	    for (key in extension) {
+	      value = extension[key];
+	      if ((this._options[key] != null) && _.isObject(this._options[key]) && _.isObject(value)) {
+	        _.extend(this._options[key], value);
+	      } else {
+	        this._options[key] = value;
+	      }
+	    }
+	    return this._options;
 	  };
 
 
 	  /*
-	    Get a previously set option or it's default if not set
+	    Get a previously set option or it's default if not set.  Returns full set of options if no option arg 
+	    is provided.
 	   */
 
 	  Options.get = function(option) {
@@ -1407,9 +1442,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      option = null;
 	    }
 	    if (option == null) {
-	      return _.extend({}, __options);
+	      return _.extend({}, this._options);
 	    }
-	    return __options[option];
+	    return this._options[option];
 	  };
 
 	  return Options;

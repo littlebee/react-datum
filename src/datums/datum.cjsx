@@ -211,7 +211,9 @@ module.exports = class Datum extends React.Component
 
   
 
-
+  ###
+    Override this method only if you need to not render the placeholder. 
+  ###
   renderValueOrPlaceholder: ->
     if @getModelValue()?
       displayValue = @renderValueForDisplay()
@@ -271,17 +273,15 @@ module.exports = class Datum extends React.Component
         value = ellipsizedValue
       else
         # if available globally or user called ReactDatum.set('ReactBootstrap', someLib)
-        if Options.ReactBootstrap?        
-          Popover = Options.ReactBootstrap.Popover
-          OverlayTrigger = Options.ReactBootstrap.OverlayTrigger
-
+        Rb = Options.get('ReactBootstrap') || window?.ReactBootstrap
+                
         # if react-bootstrap is available globally use it
-        if Popover?
-          popover = <Popover id='datumTextEllisize'>{value}</Popover>
+        if Rb?
+          popover = <Rb.Popover id='datumTextEllisize'>{value}</Rb.Popover>
           value = (
-            <OverlayTrigger trigger={['hover','focus']} placement="bottom" overlay={popover}>
+            <Rb.OverlayTrigger overlay={popover} {... Options.get('RbOverlayProps')}>
               <span className='datum-ellipsized'>{ellipsizedValue}</span>
-            </OverlayTrigger>
+            </Rb.OverlayTrigger>
           )
         else
           value = <span className='datum-ellipsized' title={value}>{ellipsizedValue}</span>
