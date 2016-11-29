@@ -31,7 +31,9 @@ module.exports = class Datum extends React.Component
     # a more wordy & helpful description of this attribute.  Get's applied as the title attribute
     # of our label element.  Can also be specified via metadata.  
     #
-    # Ignored if props.label or metadata label does not exist or are both null
+    # Ignored if props.label or metadata label does not exist or are both null.
+    # 
+    # Uses ReactBootstrap if provided.  See [ReactDatum.Options](#Options) below.
     tooltip: React.PropTypes.string
     
     # optional value or component to display if model.get(attr) returns null or undefined
@@ -269,22 +271,8 @@ module.exports = class Datum extends React.Component
         ellipsizedValue = '...' + value.slice(value.length-(ellipsizeAt-3), value.length - 1)
       else
         ellipsizedValue = value.slice(0, ellipsizeAt-3) + '...'
-      if @props.noPopover
-        value = ellipsizedValue
-      else
-        # if available globally or user called ReactDatum.set('ReactBootstrap', someLib)
-        Rb = Options.get('ReactBootstrap') || window?.ReactBootstrap
-                
-        # if react-bootstrap is available globally use it
-        if Rb?
-          popover = <Rb.Popover id='datumTextEllisize'>{value}</Rb.Popover>
-          value = (
-            <Rb.OverlayTrigger overlay={popover} {... Options.get('RbOverlayProps')}>
-              <span className='datum-ellipsized'>{ellipsizedValue}</span>
-            </Rb.OverlayTrigger>
-          )
-        else
-          value = <span className='datum-ellipsized' title={value}>{ellipsizedValue}</span>
+
+      return @renderWithPopover(ellipsizedValue, value, 'datumEllipsizedValue', 'datum-ellipsized')
 
     return value
 
@@ -322,31 +310,34 @@ module.exports = class Datum extends React.Component
       else
         '!'
 
-      # if available globally or user called ReactDatum.set('ReactBootstrap', someLib)
-      ReactBootstrap = Options.get('ReactBootstrap')
-      if ReactBootstrap?        
-        Popover = ReactBootstrap.Popover
-        OverlayTrigger = ReactBootstrap.OverlayTrigger
-  
-      # if react-bootstrap is globally available, we will use that
-      if Popover?
+      # multiple errors should be on their on line
+      # if we are using ReactBootstrap, format the error messages with HTML
+      if @getReactBootstrap()? && !@props.noPopover
         errors.push(<div>{error}</div>) for error in @state.errors
-        popover = <Popover id='datumInvalid' bsStyle='danger'>
-          {errors}
-        </Popover>
-
-        return (
-          <OverlayTrigger trigger={['hover','focus']} placement="bottom" overlay={popover}>
-            <span className={className}>{errorIcon}</span>
-          </OverlayTrigger>
-        )
       else
         errors = @state.errors.join('\n')
-        return (
-          <span className={className} title={errors}>{errorIcon}</span>
-        )
+    
+      return @renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid')
 
     return null
+    
+    
+  renderWithPopover: (value, tooltip, popoverId, valueClass) ->
+    # if available globally or user called ReactDatum.set('ReactBootstrap', someLib)
+    Rb = @getReactBootstrap()
+            
+    # if react-bootstrap is available use it
+    if Rb? && !@props.noPopover
+      popover = <Rb.Popover id={popoverId}>{tooltip}</Rb.Popover>
+      rValue = (
+        <Rb.OverlayTrigger overlay={popover} {... Options.get('RbOverlayProps')}>
+          <span className={valueClass}>{value}</span>
+        </Rb.OverlayTrigger>
+      )
+    else
+      rValue = <span className={valueClass} title={tooltip}>{value}</span>
+    
+    return rValue
 
 
   ###
@@ -491,6 +482,12 @@ module.exports = class Datum extends React.Component
   getPropOrMetadata: (prop) ->
     (@props[prop]? && @props[prop]) || @props.getMetadata?(prop, @) || @getModel()?.getDatumMetadata?(prop, @) || undefined
     
+    
+  getReactBootstrap: ->
+    # if available globally or user called ReactDatum.set('ReactBootstrap', someLib)
+    return Options.get('ReactBootstrap') || window?.ReactBootstrap
+
+    
 
   shouldSetOnChange: ->
     @props.setOnChange == true || (@getInputMode() == 'inlineEdit' && !@props.setOnChange == false)
@@ -614,4 +611,6 @@ module.exports = class Datum extends React.Component
     return true if !(_.isNull(value) || _.isEmpty(value) || _.isUndefined(value))
     return "This input is required"
 
+
+  
 

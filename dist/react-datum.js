@@ -863,7 +863,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.renderEllipsizedValue = function(value, options) {
-	    var Rb, ellipsizeAt, ellipsizedValue, popover;
+	    var ellipsizeAt, ellipsizedValue;
 	    if (options == null) {
 	      options = {};
 	    }
@@ -877,26 +877,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      } else {
 	        ellipsizedValue = value.slice(0, ellipsizeAt - 3) + '...';
 	      }
-	      if (this.props.noPopover) {
-	        value = ellipsizedValue;
-	      } else {
-	        Rb = Options.get('ReactBootstrap') || (typeof window !== "undefined" && window !== null ? window.ReactBootstrap : void 0);
-	        if (Rb != null) {
-	          popover = React.createElement(Rb.Popover, {
-	            "id": 'datumTextEllisize'
-	          }, value);
-	          value = React.createElement(Rb.OverlayTrigger, React.__spread({
-	            "overlay": popover
-	          }, Options.get('RbOverlayProps')), React.createElement("span", {
-	            "className": 'datum-ellipsized'
-	          }, ellipsizedValue));
-	        } else {
-	          value = React.createElement("span", {
-	            "className": 'datum-ellipsized',
-	            "title": value
-	          }, ellipsizedValue);
-	        }
-	      }
+	      return this.renderWithPopover(ellipsizedValue, value, 'datumEllipsizedValue', 'datum-ellipsized');
 	    }
 	    return value;
 	  };
@@ -922,7 +903,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.renderIcons = function() {
-	    var OverlayTrigger, Popover, ReactBootstrap, className, error, errorIcon, errorIconClass, errors, i, len, popover, ref;
+	    var className, error, errorIcon, errorIconClass, errors, i, len, ref;
 	    if (this.isEditing() && this.state.errors.length > 0) {
 	      errors = [];
 	      className = "error validation";
@@ -930,37 +911,39 @@ return /******/ (function(modules) { // webpackBootstrap
 	      errorIcon = errorIconClass != null ? React.createElement("i", {
 	        "className": errorIconClass
 	      }) : '!';
-	      ReactBootstrap = Options.get('ReactBootstrap');
-	      if (ReactBootstrap != null) {
-	        Popover = ReactBootstrap.Popover;
-	        OverlayTrigger = ReactBootstrap.OverlayTrigger;
-	      }
-	      if (Popover != null) {
+	      if ((this.getReactBootstrap() != null) && !this.props.noPopover) {
 	        ref = this.state.errors;
 	        for (i = 0, len = ref.length; i < len; i++) {
 	          error = ref[i];
 	          errors.push(React.createElement("div", null, error));
 	        }
-	        popover = React.createElement(Popover, {
-	          "id": 'datumInvalid',
-	          "bsStyle": 'danger'
-	        }, errors);
-	        return React.createElement(OverlayTrigger, {
-	          "trigger": ['hover', 'focus'],
-	          "placement": "bottom",
-	          "overlay": popover
-	        }, React.createElement("span", {
-	          "className": className
-	        }, errorIcon));
 	      } else {
 	        errors = this.state.errors.join('\n');
-	        return React.createElement("span", {
-	          "className": className,
-	          "title": errors
-	        }, errorIcon);
 	      }
+	      return this.renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid');
 	    }
 	    return null;
+	  };
+
+	  Datum.prototype.renderWithPopover = function(value, tooltip, popoverId, valueClass) {
+	    var Rb, popover, rValue;
+	    Rb = this.getReactBootstrap();
+	    if ((Rb != null) && !this.props.noPopover) {
+	      popover = React.createElement(Rb.Popover, {
+	        "id": popoverId
+	      }, tooltip);
+	      rValue = React.createElement(Rb.OverlayTrigger, React.__spread({
+	        "overlay": popover
+	      }, Options.get('RbOverlayProps')), React.createElement("span", {
+	        "className": valueClass
+	      }, value));
+	    } else {
+	      rValue = React.createElement("span", {
+	        "className": valueClass,
+	        "title": tooltip
+	      }, value);
+	    }
+	    return rValue;
 	  };
 
 
@@ -1168,6 +1151,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.prototype.getPropOrMetadata = function(prop) {
 	    var base, ref;
 	    return ((this.props[prop] != null) && this.props[prop]) || (typeof (base = this.props).getMetadata === "function" ? base.getMetadata(prop, this) : void 0) || ((ref = this.getModel()) != null ? typeof ref.getDatumMetadata === "function" ? ref.getDatumMetadata(prop, this) : void 0 : void 0) || void 0;
+	  };
+
+	  Datum.prototype.getReactBootstrap = function() {
+	    return Options.get('ReactBootstrap') || (typeof window !== "undefined" && window !== null ? window.ReactBootstrap : void 0);
 	  };
 
 	  Datum.prototype.shouldSetOnChange = function() {

@@ -55,7 +55,7 @@ module.exports = class TestHelpers
   @changeDatumAndTestValid = (component, newValue, shouldBeValid=true) ->
     @changeDatumValue(component, newValue)
     iconsExpected = if shouldBeValid then 0 else 1
-    @findByClass(component, 'error').length.should.be.equal(iconsExpected, "expected to find one icon")
+    @findByClass(component, 'datum-invalid').length.should.be.equal(iconsExpected, "expected to find one icon")
 
 
   @changeDatumValue = (component, newValue, options={}) ->
