@@ -2651,7 +2651,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (value >= minValue) {
 	      return true;
 	    }
-	    return "The value must be equal or greater than " + minValue;
+	    return "The value must be greater than or equal to " + minValue;
 	  };
 
 	  Number.prototype.validateMax = function(value) {
@@ -2663,7 +2663,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (value <= maxValue) {
 	      return true;
 	    }
-	    return "The value must be equal or less than " + maxValue;
+	    return "The value must be less than or equal to " + maxValue;
 	  };
 
 

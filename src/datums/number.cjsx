@@ -163,14 +163,14 @@ module.exports = class Number extends Datum
     minValue = @getPropOrMetadata('minValue')
     return true unless minValue?
     return true if value >= minValue
-    return "The value must be equal or greater than #{minValue}"
+    return "The value must be greater than or equal to #{minValue}"
 
 
   validateMax: (value) =>
     maxValue = @getPropOrMetadata('maxValue')
     return true unless maxValue?
     return true if value <= maxValue
-    return "The value must be equal or less than #{maxValue}"
+    return "The value must be less than or equal to #{maxValue}"
     
     
   ###  
