@@ -18,7 +18,9 @@ module.exports = class Label extends Text
   renderValueForDisplay: ->
     superVal = super
     
-    labelProps = {}
+    labelProps = {
+      style: @props.style
+    }
     tooltip = @getPropOrMetadata('tooltip')
       
     label = if superVal?

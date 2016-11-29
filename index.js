@@ -18,6 +18,7 @@ var ReactDatum = {
   Number:            require('./src/datums/number'),
   Percent:           require('./src/datums/percent'),
   Text:              require('./src/datums/text'),
+  Label:             require('./src/datums/label'),
   WholeNumber:       require('./src/datums/wholeNumber'),
   
   // react-select 
