@@ -32,8 +32,8 @@ module.exports = class Label extends Text
     
     
   getModelValue: (newProps = @props, newContext = @context) ->
-    if @props.children?
-      return @props.children
+    if newProps.children?
+      return newProps.children
     
     return super
     

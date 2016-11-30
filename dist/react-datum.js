@@ -2989,8 +2989,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (newContext == null) {
 	      newContext = this.context;
 	    }
-	    if (this.props.children != null) {
-	      return this.props.children;
+	    if (newProps.children != null) {
+	      return newProps.children;
 	    }
 	    return Label.__super__.getModelValue.apply(this, arguments);
 	  };
@@ -5887,8 +5887,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  CollectionPicker.prototype.onLoadOptions = function(userInput, callback) {
-	    var base, chainedCallback, collection, filteredModels;
+	    var chainedCallback, collection;
 	    collection = this.getCollection();
+	    this.lastAsyncCallback = callback;
 	    chainedCallback = (function(_this) {
 	      return function(error, models) {
 	        var optionsForReactSelect;
@@ -5898,17 +5899,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        models = _this.groupSuggestionModels(userInput, models);
 	        optionsForReactSelect = _this.getOptionValuesForReactSelect(models);
-	        return callback(null, {
+	        return _this.lastAsyncCallback(null, {
 	          options: optionsForReactSelect
 	        });
 	      };
 	    })(this);
-	    filteredModels = typeof collection.filterForPicker === "function" ? collection.filterForPicker(userInput, chainedCallback, this.props.asyncOptions) : void 0;
-	    filteredModels || (filteredModels = typeof (base = this.props).asyncSuggestionCallback === "function" ? base.asyncSuggestionCallback(collection, userInput, chainedCallback, this.props.asyncOptions) : void 0);
-	    filteredModels || (filteredModels = this.filterSuggestionModels(collection, userInput, chainedCallback, this.props.asyncOptions));
-	    if (filteredModels == null) {
-	      chainedCallback(collection.models);
+	    switch (false) {
+	      case collection.filterForPicker == null:
+	        collection.filterForPicker(userInput, chainedCallback, this.props.asyncOptions);
+	        break;
+	      case this.props.asyncSuggestionCallback == null:
+	        this.props.asyncSuggestionCallback(collection, userInput, chainedCallback, this.props.asyncOptions);
+	        break;
+	      default:
+	        this.filterSuggestionModels(collection, userInput, chainedCallback, this.props.asyncOptions);
 	    }
+	    return null;
 	  };
 
 

@@ -305,24 +305,27 @@ module.exports = class CollectionPicker extends Datum
   onLoadOptions: (userInput, callback) =>
     collection = @getCollection()
     
+    # TODO : consider debouncing in here 
+    # we may be debounce in the filtering methods below or they may take longer than 
+    # then how fast the user can type.   ReactSelect will ignore calling anything but the 
+    # last callback passed to this method. 
+    @lastAsyncCallback = callback
+
     chainedCallback = (error, models) =>
       if arguments.length < 2
         models = error
         error = false
       models = @groupSuggestionModels(userInput, models)
       optionsForReactSelect = @getOptionValuesForReactSelect(models)
-      
-      callback(null, {options: optionsForReactSelect})
+      @lastAsyncCallback(null, {options: optionsForReactSelect})
+  
+    switch
+      when collection.filterForPicker? then collection.filterForPicker(userInput, chainedCallback, @props.asyncOptions)
+      when @props.asyncSuggestionCallback? then @props.asyncSuggestionCallback(collection, userInput, chainedCallback, @props.asyncOptions)
+      else @filterSuggestionModels(collection, userInput, chainedCallback, @props.asyncOptions)
     
+    return null   # ReactSelect Async expects this to be a promise or null
     
-    filteredModels = collection.filterForPicker?(userInput, chainedCallback, @props.asyncOptions)
-    filteredModels ||= @props.asyncSuggestionCallback?(collection, userInput, chainedCallback, @props.asyncOptions)
-    filteredModels ||= @filterSuggestionModels(collection, userInput, chainedCallback, @props.asyncOptions)
-    
-    unless filteredModels?
-      chainedCallback(collection.models)
-      return;
-      
     
   ### weak string compare userInput to suggestion model's display value ###
   filterSuggestionModels: (collection, userInput, callback) =>
