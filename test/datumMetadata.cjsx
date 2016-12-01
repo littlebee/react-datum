@@ -41,7 +41,7 @@ describe 'Datum Metadata', ->
     Component = React.createClass
       render: ->
         <Model model={testModel}>
-          <Text attr="firstName"/>
+          <Text attr="firstName" label={null}/>
           <Text attr="lastName" tooltip={testTooltip}/>
           <Number attr="age" ref="number" inputMode='edit'/>
         </Model>
@@ -49,15 +49,15 @@ describe 'Datum Metadata', ->
     testDom = Th.domNode(component)
     $test = $(testDom)
   
-    it 'should have rendered a label for two of the datums', ->
-      $test.find('label').length.should.equal 2
+    it 'should not render the metadata label if prop provided for label is null', ->
+      $test.find(".datum[data-zattr='firstName'] label").length.should.be.equal 0
       
-    it 'should have rendered a tooltip for two of the datums', ->
-      $test.find('[title]').length.should.equal 2
+    it 'should have rendered the metadata label for component with no label prop', ->
+      $test.find(".datum[data-zattr='lastName'] label").length.should.be.equal 1
       
-    it 'should have rendered the metadata tooltip for firstName', ->
-      expectedTooltip = TestModel.metadata['firstName']['tooltip']
-      $test.find("[data-zattr='firstName']").find("[title='#{expectedTooltip}']").length.should.equal 1
+    it 'should have have only rendered a tooltip for the component with a label', ->
+      $test.find("[title]").length.should.be.equal 1
+      $test.find(".datum[data-zattr='lastName'] [title]").length.should.be.equal 1
       
     it 'should have rendered the tooltip specified via prop for lastName', ->
       $test.find("[data-zattr='lastName']").find("[title='#{testTooltip}']").length.should.equal 1

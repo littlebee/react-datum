@@ -488,7 +488,10 @@ module.exports = class Datum extends React.Component
     
 
   getPropOrMetadata: (prop) ->
-    (@props[prop]? && @props[prop]) || @props.getMetadata?(prop, @) || @getModel()?.getDatumMetadata?(prop, @) || undefined
+    unless @props[prop] == undefined
+      return @props[prop] 
+    
+    return @props.getMetadata?(prop, @) || @getModel()?.getDatumMetadata?(prop, @) || undefined
     
     
   getReactBootstrap: ->

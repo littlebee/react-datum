@@ -1160,7 +1160,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.getPropOrMetadata = function(prop) {
 	    var base, ref;
-	    return ((this.props[prop] != null) && this.props[prop]) || (typeof (base = this.props).getMetadata === "function" ? base.getMetadata(prop, this) : void 0) || ((ref = this.getModel()) != null ? typeof ref.getDatumMetadata === "function" ? ref.getDatumMetadata(prop, this) : void 0 : void 0) || void 0;
+	    if (this.props[prop] !== void 0) {
+	      return this.props[prop];
+	    }
+	    return (typeof (base = this.props).getMetadata === "function" ? base.getMetadata(prop, this) : void 0) || ((ref = this.getModel()) != null ? typeof ref.getDatumMetadata === "function" ? ref.getDatumMetadata(prop, this) : void 0 : void 0) || void 0;
 	  };
 
 	  Datum.prototype.getReactBootstrap = function() {
