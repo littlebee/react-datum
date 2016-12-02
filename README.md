@@ -149,7 +149,7 @@ All of the Datums can be extended using either ES6:  `class myClass extends Reac
     A lightweight extension of ReactDatum number for hightlighting certain numbers,
     by default negative,  in red when thresholds are exceeded 
   ###
-  class x.RedNumber extends ReactDatum.Number
+  class RedNumber extends ReactDatum.Number
     @displayName: "widgets.react.RedNumber"
 
     @propTypes: _.extend {}, ReactDatum.Number.propTypes,
@@ -177,6 +177,6 @@ All of the Datums can be extended using either ES6:  `class myClass extends Reac
 
 The example above simply extends ReactDatum.Number, adds a couple of additional props and extends the renderValueForDisplay method.  
 
-The object oriented API of ReactDatum is documented in our [API Docs](http://zulily.github.io/react-datum/docs/).   
+The object oriented API of ReactDatum is documented in our [API Docs](http://zulily.github.io/react-datum/docs/api).   
 
 Enough reading, [check out the demos!](http://zulily.github.io/react-datum/docs/examples/)
