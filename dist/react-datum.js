@@ -5640,6 +5640,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    optionDisplayAttr: React.PropTypes.string,
 	    optionSaveAttr: React.PropTypes.string.isRequired,
 	    displayComponent: React.PropTypes.func,
+	    synchronousLoading: React.PropTypes.bool,
+	    isLoading: React.PropTypes.bool,
 	    asyncSuggestionCallback: React.PropTypes.func,
 	    multi: React.PropTypes.bool,
 	    editPlaceholder: React.PropTypes.string,
@@ -5649,7 +5651,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  CollectionPicker.defaultProps = _.extend({}, Datum.defaultProps, {
 	    ellipsizeAt: 35,
 	    optionSaveAttr: 'id',
-	    fetchUnknownModelsInCollection: true
+	    fetchUnknownModelsInCollection: true,
+	    loading: false,
+	    attr: 'value'
 	  });
 
 	  CollectionPicker.contextTypes = _.extend({}, Datum.contextTypes, {
@@ -5717,7 +5721,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  CollectionPicker.prototype.renderInput = function() {
-	    return React.createElement(Select.Async, React.__spread({}, this.getSelectAsyncOptions()));
+	    if (this.props.synchronousLoading) {
+	      return React.createElement(Select, React.__spread({}, this.getSelectOptions()));
+	    } else {
+	      return React.createElement(Select.Async, React.__spread({}, this.getSelectAsyncOptions()));
+	    }
 	  };
 
 	  CollectionPicker.prototype.cancelEdit = function() {
@@ -5817,11 +5825,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return modelValues;
 	  };
 
-	  CollectionPicker.prototype.getSelectAsyncOptions = function() {
+	  CollectionPicker.prototype.getSelectOptions = function() {
 	    var collection;
 	    collection = this.getCollection();
 	    return _.extend({}, this.props, {
-	      loadOptions: this.onLoadOptions,
 	      placeholder: this.props.editPlaceholder || this.getPropOrMetadata('placeholder') || this.renderPlaceholder(),
 	      value: this.state.value,
 	      onChange: this.onChange,
@@ -5830,6 +5837,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      labelKey: "label",
 	      valueKey: "value",
 	      ref: this.selectRef
+	    });
+	  };
+
+	  CollectionPicker.prototype.getSelectAsyncOptions = function() {
+	    var collection;
+	    collection = this.getCollection();
+	    return _.extend(this.getSelectOptions(), {
+	      loadOptions: this.onLoadOptions
 	    });
 	  };
 
@@ -5954,6 +5969,46 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	    }
 	    return topHits.concat(bottomHits);
+	  };
+
+
+	  /*
+	    This is the model associated with the collectionPicker. This is required to exist because
+	    this is the model in which the value is saved. If this does not exist or re-created every time we
+	    will not be able to show the value option on the picker.
+	   */
+
+	  CollectionPicker.prototype.getModel = function(newProps, newContext) {
+	    if (newProps == null) {
+	      newProps = this.props;
+	    }
+	    if (newContext == null) {
+	      newContext = this.context;
+	    }
+	    this.valueModel = (newProps != null ? newProps.model : void 0) || (newContext != null ? newContext.model : void 0) || this.valueModel || new Backbone.Model();
+	    return this.valueModel;
+	  };
+
+
+	  /*
+	    We need to override this to enable null values to be set. When clearing options for single select
+	    the value is null. Thats a valid value for CollectionPicker.
+	   */
+
+	  CollectionPicker.prototype.setModelValue = function(value, options) {
+	    var model;
+	    if (options == null) {
+	      options = {};
+	    }
+	    model = this.getModel();
+	    if (model == null) {
+	      return;
+	    }
+	    if (_.isFunction(model.set)) {
+	      return model.set(this.props.attr, value, options);
+	    } else {
+	      return model[this.props.attr] = value;
+	    }
 	  };
 
 	  return CollectionPicker;
