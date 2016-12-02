@@ -337,7 +337,7 @@ module.exports = class CollectionPicker extends Datum
         error = false
       models = @groupSuggestionModels(userInput, models)
       optionsForReactSelect = @getOptionValuesForReactSelect(models)
-      @lastAsyncCallback(null, {options: optionsForReactSelect})``
+      @lastAsyncCallback(null, {options: optionsForReactSelect})
   
     switch
       when collection.filterForPicker? then collection.filterForPicker(userInput, chainedCallback, @props.asyncOptions)
