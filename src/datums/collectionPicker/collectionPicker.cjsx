@@ -23,7 +23,7 @@ module.exports = class CollectionPicker extends Datum
       React.PropTypes.array
     ])
     
-    # The selected values from the collection when in in display mode, can be individually 
+    # The selected values from the collection when in in display mode, can be individually
     # ellipsized. Set ellipsizeAt to false to display whole value. Only effects 'readonly' 
     # display; values displayed in 'edit' mode are never truncated.
     ellipsizeAt: React.PropTypes.oneOfType([
@@ -58,6 +58,15 @@ module.exports = class CollectionPicker extends Datum
 
     # react component to render when in inputMode='readonly'. 
     displayComponent: React.PropTypes.func
+
+    # This is to be set if the loading need not happen asynchronously for every search.
+    # External/collection fetch loading can happen for the first time.
+    # If loading externally/using collection fetch, set loading prop to true until external load is complete.
+    synchronousLoading: React.PropTypes.bool
+
+    # This makes sense only in conjunction with synchronousLoading.
+    # Set to true if loading externally until loading is complete.
+    isLoading: React.PropTypes.bool
     
     #  Specify a callback to load suggestions asynchronously.  
     #  The callback method  should accept the following arguments: 
@@ -69,7 +78,7 @@ module.exports = class CollectionPicker extends Datum
     #        the first argument, `error` should be false or an error that will be thrown
     #        `data` argument should be an array of Backbone.Models or array of 
     #              {label: "string", value: "string"} pairs
-    #    `asyncOptions` is the options object passed via prop to CollectionPicker 
+    #    `asyncOptions` is the options object passed via prop to CollectionPicker
     #
     #  Note that internally, CollectionPicker always renders a Select.Async when inputMode='edit' 
     #  and provides an internal loadOptions method to pull suggestions from the models in 
@@ -115,7 +124,10 @@ module.exports = class CollectionPicker extends Datum
     ellipsizeAt: 35
     optionSaveAttr: 'id'
     fetchUnknownModelsInCollection: true
-    
+    loading: false
+    # This is required as this is used to set the value to model which is shown on the picker.
+    attr: 'value'
+
 
   @contextTypes: _.extend {}, Datum.contextTypes,
     # see @proptypes.collection above 
@@ -178,7 +190,10 @@ module.exports = class CollectionPicker extends Datum
 
   #override
   renderInput: ->
-    <Select.Async {... @getSelectAsyncOptions()}/>
+    if @props.synchronousLoading
+      <Select {... @getSelectOptions()}/>
+    else
+      <Select.Async {... @getSelectAsyncOptions()}/>
 
 
   cancelEdit: () ->
@@ -246,12 +261,11 @@ module.exports = class CollectionPicker extends Datum
         [modelValue]
     
     return modelValues
-    
-    
-  getSelectAsyncOptions: () ->
+
+
+  getSelectOptions: () ->
     collection = @getCollection()
     return _.extend {}, @props,
-      loadOptions: @onLoadOptions
       placeholder: @props.editPlaceholder || @getPropOrMetadata('placeholder') || @renderPlaceholder()
       value: @state.value
       onChange: @onChange
@@ -260,6 +274,12 @@ module.exports = class CollectionPicker extends Datum
       labelKey: "label"
       valueKey: "value"
       ref: @selectRef
+
+
+  getSelectAsyncOptions: () ->
+    collection = @getCollection()
+    return _.extend @getSelectOptions(),
+      loadOptions: @onLoadOptions
 
 
   isInputValueChanged: ->
@@ -352,7 +372,31 @@ module.exports = class CollectionPicker extends Datum
         bottomHits.push model
       
     return topHits.concat(bottomHits)
-    
+
+
+  ###
+    This is the model associated with the collectionPicker. This is required to exist because
+    this is the model in which the value is saved. If this does not exist or re-created every time we
+    will not be able to show the value option on the picker.
+  ###
+  getModel: (newProps = @props, newContext = @context)->
+    @valueModel = newProps?.model || newContext?.model || @valueModel || new Backbone.Model()
+    return @valueModel
+
+
+  ###
+    We need to override this to enable null values to be set. When clearing options for single select
+    the value is null. Thats a valid value for CollectionPicker.
+  ###
+  setModelValue: (value, options={}) ->
+    model = @getModel()
+    return unless model?
+
+    if _.isFunction(model.set)
+      model.set(@props.attr, value, options)
+    else
+      model[@props.attr] = value
+
       
       
     
