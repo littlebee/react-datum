@@ -8,14 +8,22 @@ Th = require './lib/testHelpers'
 
 Datum = require '../src/datums/datum'  
 
-
-describe 'Datum (base class)', ->          
+model = new Backbone.Model 
+  name: "Fluffy"
   
-  model = new Backbone.Model 
-    name: "Fluffy"
-    
-  TEST_LABEL = 'something different'
-  TEST_PLACEHOLDER_TEXT = "more different then display test placeholder text"
+TEST_LABEL = 'something different'
+TEST_PLACEHOLDER_TEXT = "more different then display test placeholder text"
+TEST_VALUE = "something different every day"
+
+
+testDatumInput = (datumNode, value=model.get('name')) ->
+  $input = $(datumNode).find('input')
+  $input.length.should.equal 1
+  $input.val().should.equal value
+  return $input
+  
+
+describe 'Datum Input', ->          
   
   describe 'when rendered as input without props', ->
     datum = null;
@@ -32,8 +40,7 @@ describe 'Datum (base class)', ->
       datum.isDirty().should.equal false
       
     it 'should have rendered an input w/o placeholder attribute', ->
-      $input = $(datumNode).find('input')
-      $input.length.should.equal 1
+      $input = testDatumInput(datumNode)
       $input.attr('placeholder').should.be.equal ''
       
     it 'should set model value on blur by default', ->
@@ -92,5 +99,36 @@ describe 'Datum (base class)', ->
       datumNode.innerHTML.should.not.contain("undefined")
       datumNode.innerHTML.should.not.contain("[object Object")
       
+  
+  describe 'when rendered as input with no model, value prop', ->
+    datum = Th.render <Datum value={TEST_VALUE} inputMode="edit"/>
+    datumNode = Th.domNode(datum)
+
+    it "should think it's editable", ->
+      datum.isEditable().should.equal true
+      
+    it 'should have rendered an input with value = TEST_VALUE', ->
+      testDatumInput(datumNode, TEST_VALUE)
+    
+    describe 'and then changed', =>
+      before ->
+        Th.changeDatumValue(datum, 'fred', blur: true)
+      
+      it 'should not think it is dirty', ->
+        datum.isDirty().should.equal false
+        
+      it 'input should have new value', ->
+        testDatumInput(datumNode, 'fred')
+        
+    describe 'and then forced to update', ->
+      before ->
+        datum.forceUpdate()
+      
+      it 'input should still have new value', ->
+        testDatumInput(datumNode, 'fred')
+        
+        
+    
+    
   
         

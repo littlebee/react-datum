@@ -439,12 +439,14 @@ module.exports = class Datum extends React.Component
 
 
   ###
-    returns the value currently set on the model
+    Returns the value set via value prop or the value currently set on the model
     
     warning: Do not override this method to return a component element or jsx; bad things will happen.
   ###
   getModelValue: (newProps = @props, newContext = @context)->
-    return newProps.value if newProps.value? 
+    if newProps.value != undefined
+      return  @state.shadowValue || newProps.value
+      
     return null unless model = @getModel(newProps, newContext)
     
     value = if _.isFunction(model.get)
@@ -462,13 +464,19 @@ module.exports = class Datum extends React.Component
   ###
   setModelValue: (value=@getInputValue(), options={}) ->
     return unless value?   # value == null means the user didn't change it
-    model = @getModel()
-    return unless model?
     
-    if _.isFunction(model.set) 
-      model.set(@props.attr, value, options) 
-    else 
-      model[@props.attr] = value
+    model = @getModel()
+    if model?
+      if _.isFunction(model.set) 
+        model.set(@props.attr, value, options) 
+      else 
+        model[@props.attr] = value
+
+    # if we were provided a value in a prop and the datum allowed a change to it,
+    # then we need to return that value in getModelValue
+    if @props.value != undefined 
+      @setState shadowValue: value
+    
 
 
   saveModel: ->

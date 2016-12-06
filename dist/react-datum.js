@@ -93,7 +93,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  // TODO : i think this will eventually go to a separate npm package so that the core doesn't
 	  //    have dependency on react-select
-	  CollectionPicker: __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./src/datums/collectionPicker/collectionPicker\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()))
+	  CollectionPicker: __webpack_require__(40)
 
 	};
 	if (window) window.ReactDatum = ReactDatum;
@@ -1081,7 +1081,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	  /*
-	    returns the value currently set on the model
+	    Returns the value set via value prop or the value currently set on the model
 	    
 	    warning: Do not override this method to return a component element or jsx; bad things will happen.
 	   */
@@ -1094,8 +1094,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (newContext == null) {
 	      newContext = this.context;
 	    }
-	    if (newProps.value != null) {
-	      return newProps.value;
+	    if (newProps.value !== void 0) {
+	      return this.state.shadowValue || newProps.value;
 	    }
 	    if (!(model = this.getModel(newProps, newContext))) {
 	      return null;
@@ -1124,13 +1124,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return;
 	    }
 	    model = this.getModel();
-	    if (model == null) {
-	      return;
+	    if (model != null) {
+	      if (_.isFunction(model.set)) {
+	        model.set(this.props.attr, value, options);
+	      } else {
+	        model[this.props.attr] = value;
+	      }
 	    }
-	    if (_.isFunction(model.set)) {
-	      return model.set(this.props.attr, value, options);
-	    } else {
-	      return model[this.props.attr] = value;
+	    if (this.props.value !== void 0) {
+	      return this.setState({
+	        shadowValue: value
+	      });
 	    }
 	  };
 
@@ -5591,6 +5595,774 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 
 	module.exports = Option;
+
+/***/ },
+/* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Backbone, CollectionPicker, Datum, React, Select, Strhelp, _,
+	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+	  hasProp = {}.hasOwnProperty;
+
+	React = __webpack_require__(4);
+
+	Backbone = __webpack_require__(8);
+
+	_ = __webpack_require__(9);
+
+	Strhelp = __webpack_require__(41);
+
+	Datum = __webpack_require__(7);
+
+	Select = __webpack_require__(26);
+
+	module.exports = CollectionPicker = (function(superClass) {
+	  extend(CollectionPicker, superClass);
+
+	  function CollectionPicker() {
+	    this.groupSuggestionModels = bind(this.groupSuggestionModels, this);
+	    this.filterSuggestionModels = bind(this.filterSuggestionModels, this);
+	    this.onLoadOptions = bind(this.onLoadOptions, this);
+	    this.onChange = bind(this.onChange, this);
+	    this.getOptionValuesForReactSelect = bind(this.getOptionValuesForReactSelect, this);
+	    this.focus = bind(this.focus, this);
+	    this.getInputComponent = bind(this.getInputComponent, this);
+	    return CollectionPicker.__super__.constructor.apply(this, arguments);
+	  }
+
+	  CollectionPicker.displayName = "react-datum.CollectionPicker";
+
+	  CollectionPicker.propTypes = _.extend({}, Datum.propTypes, {
+	    collection: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Collection), React.PropTypes.string, React.PropTypes.array]),
+	    ellipsizeAt: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.bool]),
+	    reverseEllipsis: React.PropTypes.bool,
+	    optionComponent: React.PropTypes.func,
+	    valueComponent: React.PropTypes.func,
+	    fetchUnknownModelsInCollection: React.PropTypes.bool,
+	    displayAttr: React.PropTypes.string,
+	    optionDisplayAttr: React.PropTypes.string,
+	    optionSaveAttr: React.PropTypes.string.isRequired,
+	    displayComponent: React.PropTypes.func,
+	    synchronousLoading: React.PropTypes.bool,
+	    isLoading: React.PropTypes.bool,
+	    asyncSuggestionCallback: React.PropTypes.func,
+	    multi: React.PropTypes.bool,
+	    editPlaceholder: React.PropTypes.string,
+	    setAsString: React.PropTypes.bool
+	  });
+
+	  CollectionPicker.defaultProps = _.extend({}, Datum.defaultProps, {
+	    ellipsizeAt: 35,
+	    optionSaveAttr: 'id',
+	    fetchUnknownModelsInCollection: true,
+	    loading: false,
+	    attr: 'value'
+	  });
+
+	  CollectionPicker.contextTypes = _.extend({}, Datum.contextTypes, {
+	    collection: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Collection), React.PropTypes.string])
+	  });
+
+	  CollectionPicker.prototype.subClassName = "collection-picker";
+
+	  CollectionPicker.prototype.selectRef = "reactSelect";
+
+	  CollectionPicker.prototype.initializeState = function() {
+	    return this.state = {
+	      value: this._getValue(),
+	      errors: []
+	    };
+	  };
+
+	  CollectionPicker.prototype.componentWillReceiveProps = function(nextProps) {
+	    var newModelValue;
+	    newModelValue = nextProps.multi ? this.getModelValues(nextProps) : this.getModelValue(nextProps);
+	    if (JSON.stringify(this.state.value || {}) !== JSON.stringify(newModelValue)) {
+	      return this.setState({
+	        value: newModelValue
+	      });
+	    }
+	  };
+
+	  CollectionPicker.prototype.render = function() {
+	    return CollectionPicker.__super__.render.apply(this, arguments);
+	  };
+
+	  CollectionPicker.prototype.renderValueForDisplay = function() {
+	    var collection, modelValues;
+	    collection = this.getCollection();
+	    if (this.props.multi) {
+	      modelValues = this.getModelValues();
+	      return modelValues.map((function(_this) {
+	        return function(modelValue) {
+	          return _this.renderCollectionDisplayValue(modelValue, collection);
+	        };
+	      })(this));
+	    } else {
+	      return this.renderCollectionDisplayValue(this.getModelValue(), collection);
+	    }
+	  };
+
+	  CollectionPicker.prototype.renderCollectionDisplayValue = function(modelId, collection) {
+	    var modelValue, valueProps;
+	    if (collection == null) {
+	      collection = this.getCollection();
+	    }
+	    modelValue = this.getCollectionModelDisplayValue(modelId, collection);
+	    if (modelValue) {
+	      modelValue = this.renderEllipsizedValue(modelValue);
+	    }
+	    valueProps = {
+	      key: modelValue,
+	      className: "collection-picker-display-value"
+	    };
+	    if (this.props.displayComponent != null) {
+	      valueProps.value = this._getCollectionModelById(modelId);
+	      return React.createElement(this.props.displayComponent, React.__spread({}, valueProps));
+	    }
+	    return React.createElement("span", React.__spread({}, valueProps), modelValue || this.renderPlaceholder() || "unknown");
+	  };
+
+	  CollectionPicker.prototype.renderInput = function() {
+	    if (this.props.synchronousLoading) {
+	      return React.createElement(Select, React.__spread({}, this.getSelectOptions()));
+	    } else {
+	      return React.createElement(Select.Async, React.__spread({}, this.getSelectAsyncOptions()));
+	    }
+	  };
+
+	  CollectionPicker.prototype.cancelEdit = function() {
+	    return this.setState({
+	      errors: [],
+	      value: this._getValue()
+	    });
+	  };
+
+	  CollectionPicker.prototype.getCollection = function() {
+	    var collection;
+	    collection = this.props.collection || this.context.collection;
+	    if (collection == null) {
+	      throw this.constructor.displayName + " requires a collection prop or context";
+	    }
+	    if (!(collection instanceof Backbone.Collection)) {
+	      return new Backbone.Collection(collection);
+	    }
+	    return collection;
+	  };
+
+	  CollectionPicker.prototype._getValue = function(newProps) {
+	    if (newProps == null) {
+	      newProps = this.props;
+	    }
+	    return (newProps.multi ? this.getModelValues(newProps) : this.getModelValue(newProps));
+	  };
+
+	  CollectionPicker.prototype._getCollectionModelById = function(modelOrId) {
+	    var model, ref;
+	    if (_.isNumber(modelOrId) || _.isString(modelOrId)) {
+	      return model = (ref = this.getCollection()) != null ? ref.get(modelOrId, {
+	        add: this.props.fetchUnknownModelsInCollection
+	      }) : void 0;
+	    } else {
+	      return model = modelOrId;
+	    }
+	  };
+
+	  CollectionPicker.prototype.getCollectionModelDisplayValue = function(modelId, collection) {
+	    var model;
+	    if (!modelId) {
+	      return null;
+	    }
+	    model = this._getCollectionModelById(modelId);
+	    if ((model != null) && !_.isFunction(model.toString) && (this.props.displayAttr == null)) {
+	      throw this.constructor.displayName + ": You need to specify a displayAttr prop or model must have toString() method";
+	    }
+	    if (this.props.displayAttr != null) {
+	      return model != null ? model.get(this.props.displayAttr) : void 0;
+	    } else {
+	      return typeof model.toString === "function" ? model.toString() : void 0;
+	    }
+	  };
+
+	  CollectionPicker.prototype.getOptionDisplayValue = function(modelId, collection) {
+	    var model;
+	    if (!modelId) {
+	      return null;
+	    }
+	    model = this._getCollectionModelById(modelId);
+	    if ((model != null) && !_.isFunction(model.toString) && (this.props.optionDisplayAttr == null)) {
+	      throw this.constructor.displayName + ": You need to specify an optionDisplayAttr prop or model must have toString() method";
+	    }
+	    if (this.props.optionDisplayAttr != null) {
+	      return model != null ? model.get(this.props.optionDisplayAttr) : void 0;
+	    } else {
+	      return typeof model.toString === "function" ? model.toString() : void 0;
+	    }
+	  };
+
+	  CollectionPicker.prototype.getOptionSaveValue = function(modelId, collection) {
+	    var model;
+	    model = this._getCollectionModelById(modelId);
+	    if ((model != null) && (this.props.optionsSaveAttr == null)) {
+	      return model.id;
+	    }
+	    return model != null ? model.get(this.props.optionSaveAttr) : void 0;
+	  };
+
+	  CollectionPicker.prototype.getModelValues = function(newProps) {
+	    var modelValue, modelValues;
+	    if (newProps == null) {
+	      newProps = this.props;
+	    }
+	    modelValue = this.getModelValue(newProps);
+	    modelValues = (function() {
+	      switch (false) {
+	        case !_.isString(modelValue):
+	          return modelValue.split(',');
+	        case !_.isArray(modelValue):
+	          return modelValue;
+	        default:
+	          return [modelValue];
+	      }
+	    })();
+	    return modelValues;
+	  };
+
+	  CollectionPicker.prototype.getSelectOptions = function() {
+	    var collection;
+	    collection = this.getCollection();
+	    return _.extend({}, this.props, {
+	      placeholder: this.props.editPlaceholder || this.getPropOrMetadata('placeholder') || this.renderPlaceholder(),
+	      value: this.state.value,
+	      onChange: this.onChange,
+	      onBlur: this.onBlur,
+	      options: this.getOptionValuesForReactSelect(collection.models),
+	      labelKey: "label",
+	      valueKey: "value",
+	      ref: this.selectRef
+	    });
+	  };
+
+	  CollectionPicker.prototype.getSelectAsyncOptions = function() {
+	    var collection;
+	    collection = this.getCollection();
+	    return _.extend(this.getSelectOptions(), {
+	      loadOptions: this.onLoadOptions
+	    });
+	  };
+
+	  CollectionPicker.prototype.isInputValueChanged = function() {
+	    return this.getInputValue() === this._getValue();
+	  };
+
+	  CollectionPicker.prototype.getInputComponent = function() {
+	    var ref;
+	    return (ref = this.refs) != null ? ref[this.selectRef] : void 0;
+	  };
+
+	  CollectionPicker.prototype.focus = function() {
+	    if (this.getInputComponent() != null) {
+	      return this.getInputComponent().focus();
+	    }
+	  };
+
+	  CollectionPicker.prototype.getOptionValuesForReactSelect = function(models) {
+	    if (models == null) {
+	      return [];
+	    }
+	    return _.map(models, (function(_this) {
+	      return function(m) {
+	        return {
+	          label: _this.getCollectionModelDisplayValue(m),
+	          value: _this.getOptionSaveValue(m),
+	          model: m
+	        };
+	      };
+	    })(this));
+	  };
+
+
+	  /*
+	   Extends Datum class - react-select returns array of options and not a synth event 
+	   super expects a synth event but only uses value.
+	   
+	   Also note that the value passed back to the usage through @props.onChange is
+	   the option object(s) for the currently selected option(s)
+	   */
+
+	  CollectionPicker.prototype.onChange = function(optionsSelected) {
+	    var values;
+	    if (this.props.multi) {
+	      values = _.pluck(optionsSelected, 'value');
+	      if (this.props.setAsString) {
+	        values = values.join(',');
+	      }
+	      return CollectionPicker.__super__.onChange.call(this, values, {
+	        propsOnChangeValue: optionsSelected
+	      });
+	    } else {
+	      return CollectionPicker.__super__.onChange.call(this, optionsSelected != null ? optionsSelected.value : void 0, {
+	        propsOnChangeValue: optionsSelected
+	      });
+	    }
+	  };
+
+	  CollectionPicker.prototype.onLoadOptions = function(userInput, callback) {
+	    var chainedCallback, collection;
+	    collection = this.getCollection();
+	    this.lastAsyncCallback = callback;
+	    chainedCallback = (function(_this) {
+	      return function(error, models) {
+	        var optionsForReactSelect;
+	        if (arguments.length < 2) {
+	          models = error;
+	          error = false;
+	        }
+	        models = _this.groupSuggestionModels(userInput, models);
+	        optionsForReactSelect = _this.getOptionValuesForReactSelect(models);
+	        return _this.lastAsyncCallback(null, {
+	          options: optionsForReactSelect
+	        });
+	      };
+	    })(this);
+	    switch (false) {
+	      case collection.filterForPicker == null:
+	        collection.filterForPicker(userInput, chainedCallback, this.props.asyncOptions);
+	        break;
+	      case this.props.asyncSuggestionCallback == null:
+	        this.props.asyncSuggestionCallback(collection, userInput, chainedCallback, this.props.asyncOptions);
+	        break;
+	      default:
+	        this.filterSuggestionModels(collection, userInput, chainedCallback, this.props.asyncOptions);
+	    }
+	    return null;
+	  };
+
+
+	  /* weak string compare userInput to suggestion model's display value */
+
+	  CollectionPicker.prototype.filterSuggestionModels = function(collection, userInput, callback) {
+	    var filteredModels;
+	    filteredModels = _.filter(collection.models, (function(_this) {
+	      return function(model) {
+	        return Strhelp.weaklyHas(_this.getOptionDisplayValue(model), userInput);
+	      };
+	    })(this));
+	    filteredModels = filteredModels.sort((function(_this) {
+	      return function(a, b) {
+	        return Strhelp.weaklyCompare(_this.getOptionDisplayValue(a), _this.getOptionDisplayValue(b));
+	      };
+	    })(this));
+	    if (typeof callback === "function") {
+	      callback(filteredModels);
+	    }
+	    return filteredModels;
+	  };
+
+	  CollectionPicker.prototype.groupSuggestionModels = function(userInput, models) {
+	    var bottomHits, i, len, model, topHits;
+	    topHits = [];
+	    bottomHits = [];
+	    for (i = 0, len = models.length; i < len; i++) {
+	      model = models[i];
+	      if (Strhelp.weaklyStartsWith(this.getOptionDisplayValue(model), userInput)) {
+	        topHits.push(model);
+	      } else {
+	        bottomHits.push(model);
+	      }
+	    }
+	    return topHits.concat(bottomHits);
+	  };
+
+
+	  /*
+	    This is the model associated with the collectionPicker. This is required to exist because
+	    this is the model in which the value is saved. If this does not exist or re-created every time we
+	    will not be able to show the value option on the picker.
+	   */
+
+	  CollectionPicker.prototype.getModel = function(newProps, newContext) {
+	    if (newProps == null) {
+	      newProps = this.props;
+	    }
+	    if (newContext == null) {
+	      newContext = this.context;
+	    }
+	    this.valueModel = (newProps != null ? newProps.model : void 0) || (newContext != null ? newContext.model : void 0) || this.valueModel || new Backbone.Model();
+	    return this.valueModel;
+	  };
+
+
+	  /*
+	    We need to override this to enable null values to be set. When clearing options for single select
+	    the value is null. Thats a valid value for CollectionPicker.
+	   */
+
+	  CollectionPicker.prototype.setModelValue = function(value, options) {
+	    var model;
+	    if (options == null) {
+	      options = {};
+	    }
+	    model = this.getModel();
+	    if (model == null) {
+	      return;
+	    }
+	    if (_.isFunction(model.set)) {
+	      return model.set(this.props.attr, value, options);
+	    } else {
+	      return model[this.props.attr] = value;
+	    }
+	  };
+
+	  return CollectionPicker;
+
+	})(Datum);
+
+
+/***/ },
+/* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(42);
+
+/***/ },
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	// Generated by CoffeeScript 1.10.0
+	(function () {
+	  var StringHelpers, _;
+
+	  _ = __webpack_require__(9);
+
+	  module.exports = StringHelpers = function () {
+	    function StringHelpers() {}
+
+	    /*
+	      Trims leading and trailing spaces.  Also optionally trims internal excess spaces
+	     */
+
+	    StringHelpers.trim = function (str, options) {
+	      if (options == null) {
+	        options = {};
+	      }
+	      options = _.defaults(options, {
+	        all: false
+	      });
+	      str = str.replace(/^\s+|\s+$/g, "");
+	      if (options.all) {
+	        str = str.replace(/\s+/g, ' ');
+	      }
+	      return str;
+	    };
+
+	    /*
+	      Adds elipsis to string, if neccessary, for maximum string length not
+	      to exceed maxLength
+	     */
+
+	    StringHelpers.elipsize = function (str, maxLength) {
+	      if (maxLength == null || str.length <= maxLength) {
+	        return str;
+	      }
+	      return str.slice(0, maxLength - 3) + '...';
+	    };
+
+	    /*
+	      Returns true if the string is all whitespace characters
+	     */
+
+	    StringHelpers.isEmpty = function (str) {
+	      if (this.weaklyEqual(str, "")) {
+	        return true;
+	      }
+	    };
+
+	    /*
+	      Returns true if string starts with any of otherStrings.  
+	      otherStrings = one or array to compare to
+	     */
+
+	    StringHelpers.startsWith = function (str, otherStrings) {
+	      return this._withOneOrArray(otherStrings, function (otherStr) {
+	        if (str.slice(0, otherStr.length) === otherStr) {
+	          return true;
+	        }
+	      });
+	    };
+
+	    /*
+	      Returns true if string ends with any of otherStrings.  
+	      otherStrings = one or array to compare to
+	     */
+
+	    StringHelpers.endsWith = function (str, otherStrings) {
+	      return this._withOneOrArray(otherStrings, function (otherStr) {
+	        if (!((otherStr != null ? otherStr.length : void 0) > 0)) {
+	          return true;
+	        }
+	        if (str.slice(-1 * otherStr.length) === otherStr) {
+	          return true;
+	        }
+	      });
+	    };
+
+	    /*
+	      Returns true if string contains any of otherStrings.  
+	      otherStrings = one or array to compare to
+	     */
+
+	    StringHelpers.has = function (str, otherStrings) {
+	      return this._withOneOrArray(otherStrings, function (otherStr) {
+	        if (str.indexOf(otherStr) !== -1) {
+	          return true;
+	        }
+	      });
+	    };
+
+	    /*
+	      Returns the weak value of the string -- all lowercase, plus trimmed
+	      and with excess inner whitespace ignored, locale ignored by default. 
+	      
+	      The weakly... functions below use this method on both strings being
+	      compared to return positive match of mismatched case, etc.
+	     */
+
+	    StringHelpers.weakValue = function (str, options) {
+	      if (options == null) {
+	        options = {};
+	      }
+	      _.defaults(options, {
+	        ignoreCase: true,
+	        useLocale: false,
+	        trim: true
+	      });
+	      if (options.trim) {
+	        str = this.trim(str, {
+	          all: true
+	        });
+	      }
+	      if (options.ignoreCase) {
+	        if (options.useLocale) {
+	          return str = str.toLocaleLowerCase();
+	        } else {
+	          return str = str.toLowerCase();
+	        }
+	      }
+	    };
+
+	    /*
+	      Returns true if the first string weakly equals any of the otherStrings. 
+	      see weakValue() comments
+	     */
+
+	    StringHelpers.weaklyEqual = function (str, otherStrings, options) {
+	      if (options == null) {
+	        options = {};
+	      }
+	      return this._withOneOrArray(otherStrings, function (_this) {
+	        return function (otherStr) {
+	          if (_this.weakValue(str, options) === _this.weakValue(otherStr, options)) {
+	            return true;
+	          }
+	        };
+	      }(this));
+	    };
+
+	    /*
+	      Returns -1, 0 or 1 like javascript localeCompare.  Comppares the weak values.  
+	      see weakValue() comments
+	     */
+
+	    StringHelpers.weaklyCompare = function (str, otherStrings, options) {
+	      if (options == null) {
+	        options = {};
+	      }
+	      return this._withOneOrArray(otherStrings, function (_this) {
+	        return function (otherStr) {
+	          if (_this.weakValue(str, options).localeCompare(_this.weakValue(otherStr, options))) {
+	            return true;
+	          }
+	        };
+	      }(this));
+	    };
+
+	    /*
+	      Returns true if the first string weakly contains any of the otherStrings. 
+	      see weakValue() comments
+	     */
+
+	    StringHelpers.weaklyHas = function (str, otherStrings) {
+	      return this._withOneOrArray(otherStrings, function (_this) {
+	        return function (otherStr) {
+	          if (_this.weakValue(str).indexOf(_this.weakValue(otherStr)) !== -1) {
+	            return true;
+	          }
+	        };
+	      }(this));
+	    };
+
+	    /*
+	      Returns true if the first string weakly starts with any of the otherStrings. 
+	      see weakValue() comments
+	     */
+
+	    StringHelpers.weaklyStartsWith = function (str, otherStrings) {
+	      return this._withOneOrArray(otherStrings, function (_this) {
+	        return function (otherStr) {
+	          if (_this.startsWith(_this.weakValue(str), _this.weakValue(otherStr))) {
+	            return true;
+	          }
+	        };
+	      }(this));
+	    };
+
+	    /*
+	      Returns true if the first string weakly ends with any of the otherStrings. 
+	      see weakValue() comments
+	     */
+
+	    StringHelpers.weaklyEndsWith = function (str, otherStrings) {
+	      return this._withOneOrArray(otherStrings, function (_this) {
+	        return function (otherStr) {
+	          if (_this.endsWith(_this.weakValue(str), _this.weakValue(otherStr))) {
+	            return true;
+	          }
+	        };
+	      }(this));
+	    };
+
+	    /*
+	      makes strings like "this_string", "ThisString", "this-string", "this.string" into
+	      "this string"
+	     */
+
+	    StringHelpers.humanize = function (str) {
+	      var out;
+	      out = str.replace(/([A-Z])/g, " $1").replace(/[_\-\.](.)/g, " $1");
+	      return out.trim().toLowerCase();
+	    };
+
+	    /*  
+	      converts a string like "dropCamelCase".decamelize() => "Drop Camel Case"
+	     */
+
+	    StringHelpers.decamelize = function (str) {
+	      var result;
+	      result = str.replace(/_?([A-Z])/g, " $1");
+	      result = result.charAt(0).toUpperCase() + result.slice(1);
+	      return result.toLowerCase();
+	    };
+
+	    /*
+	      converts a string like "Drop Camel Case".dropcamelize() => "dropCamelCase"
+	     */
+
+	    StringHelpers.dropcamelize = function (str) {
+	      var result;
+	      result = str.replace(/\s/g, "");
+	      return result.charAt(0).toLowerCase() + result.slice(1);
+	    };
+
+	    /*
+	      capitalize the first letter of a string
+	     */
+
+	    StringHelpers.capitalize = function (str) {
+	      return str.charAt(0).toUpperCase() + str.substring(1);
+	    };
+
+	    /*
+	      decapitalize the first letter of a string
+	     */
+
+	    StringHelpers.decapitalize = function (str) {
+	      return str.charAt(0).toLowerCase() + str.substring(1);
+	    };
+
+	    /*
+	      returns true if the first letter of a string is capitalized
+	     */
+
+	    StringHelpers.isCapitalized = function (str) {
+	      return str.match(/^[A-Z].*/) !== null;
+	    };
+
+	    /*
+	      returns true if all alphabetic characters of string are upper case letters.
+	      ignores numbers and punctuation
+	     */
+
+	    StringHelpers.isAllCaps = function (str) {
+	      return str.match(/^[A-Z\s0-9]*$/) !== null;
+	    };
+
+	    /*
+	      returns true if string is numeric
+	     */
+
+	    StringHelpers.isNumeric = function (str) {
+	      return str.toString().match(/^[\-,\+]?[\s\d\.]*$/) !== null;
+	    };
+
+	    /*
+	      adds thousands separaters optionally truncates decimal portion to decimalPlaces characters
+	      slightly enhanced from
+	      http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
+	     */
+
+	    StringHelpers.numerize = function (str, decimalPlaces, zeroFill) {
+	      var parts, pow;
+	      if (decimalPlaces == null) {
+	        decimalPlaces = null;
+	      }
+	      if (zeroFill == null) {
+	        zeroFill = false;
+	      }
+	      if (decimalPlaces) {
+	        pow = Math.pow(10, decimalPlaces);
+	        parts = (Math.round(parseFloat(str) * pow) / pow).toString().split(".");
+	      } else {
+	        parts = str.toString().split('.');
+	      }
+	      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	      if (decimalPlaces) {
+	        if (parts.length > 1) {
+	          parts[1] = parts[1].slice(0, decimalPlaces);
+	          if (zeroFill) {
+	            while (parts[1].length < decimalPlaces) {
+	              parts[1] += '0';
+	            }
+	          }
+	        } else if (zeroFill) {
+	          parts.push(Array(decimalPlaces + 1).join('0'));
+	        }
+	      }
+	      return parts.join(".");
+	    };
+
+	    StringHelpers._withOneOrArray = function (strOrArray, fn) {
+	      var array, i, len, str, truth;
+	      array = _.isArray(strOrArray) ? strOrArray : [strOrArray];
+	      truth = false;
+	      for (i = 0, len = array.length; i < len; i++) {
+	        str = array[i];
+	        if (fn(str) === true) {
+	          truth = true;
+	          break;
+	        }
+	      }
+	      return truth;
+	    };
+
+	    return StringHelpers;
+	  }();
+	}).call(undefined);
 
 /***/ }
 /******/ ])

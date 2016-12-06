@@ -8,7 +8,7 @@ Th = require './lib/testHelpers'
 Datum = require '../src/datums/datum'  
 
 
-describe 'Datum (base class)', ->          
+describe 'Datum Display', ->          
   
   model = new Backbone.Model 
     name: "Fluffy"
