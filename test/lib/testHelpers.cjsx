@@ -69,3 +69,19 @@ module.exports = class TestHelpers
     
     return inputNode
     
+    
+  @testDatumInput = (datum, value) ->
+    datum.isEditing().should.equal true, "datum.isEditing()" 
+    datumNode = @domNode(datum)
+    $input = $(datumNode).find('input')
+    $input.length.should.equal 1, 'should have found an input'
+    $input.val().should.equal value, "input should have val() = '#{value}'"
+    return $input
+    
+    
+  @testDatumDisplay = (datum, value) ->
+    datum.isEditing().should.equal false, "datum.isEditing()" 
+    datumNode = @domNode(datum)
+    $(datumNode).find('input').length.should.equal 0, "should not have found an input"  
+    datumNode.innerHTML.should.contain value, 'should have found test value in the HTML'
+    

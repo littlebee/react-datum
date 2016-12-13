@@ -16,13 +16,6 @@ TEST_PLACEHOLDER_TEXT = "more different then display test placeholder text"
 TEST_VALUE = "something different every day"
 
 
-testDatumInput = (datumNode, value=model.get('name')) ->
-  $input = $(datumNode).find('input')
-  $input.length.should.equal 1
-  $input.val().should.equal value
-  return $input
-  
-
 describe 'Datum Input', ->          
   
   describe 'when rendered as input without props', ->
@@ -40,7 +33,7 @@ describe 'Datum Input', ->
       datum.isDirty().should.equal false
       
     it 'should have rendered an input w/o placeholder attribute', ->
-      $input = testDatumInput(datumNode)
+      $input = Th.testDatumInput(datum, model.get('name'))
       $input.attr('placeholder').should.be.equal ''
       
     it 'should set model value on blur by default', ->
@@ -108,7 +101,7 @@ describe 'Datum Input', ->
       datum.isEditable().should.equal true
       
     it 'should have rendered an input with value = TEST_VALUE', ->
-      testDatumInput(datumNode, TEST_VALUE)
+      Th.testDatumInput(datum, TEST_VALUE)
     
     describe 'and then changed', =>
       before ->
@@ -118,14 +111,14 @@ describe 'Datum Input', ->
         datum.isDirty().should.equal false
         
       it 'input should have new value', ->
-        testDatumInput(datumNode, 'fred')
+        Th.testDatumInput(datum, 'fred')
         
     describe 'and then forced to update', ->
       before ->
         datum.forceUpdate()
       
       it 'input should still have new value', ->
-        testDatumInput(datumNode, 'fred')
+        Th.testDatumInput(datum, 'fred')
         
         
     

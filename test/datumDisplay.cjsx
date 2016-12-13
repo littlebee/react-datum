@@ -21,22 +21,15 @@ describe 'Datum Display', ->
     datum = Th.render <Datum model={model} attr="name"/>
     datumNode = Th.domNode(datum)
   
-    it 'should initially render model name', ->
-      datumNode.innerHTML.should.contain(model.get('name'))
-      
-    it 'should default to readonly "', ->
-      datum.isEditing().should.equal false 
-      
-    it 'should not have rendered an input', ->
-      $(datumNode).find('input').length.should.equal 0  
-    
+    it 'should initially render in display mode with model name', ->
+      Th.testDatumDisplay(datum, model.get('name'))
     
   describe 'when rendered with label', ->
     datum = Th.render <Datum model={model} attr="name" label={TEST_LABEL}/>
     datumNode = Th.domNode(datum)
   
-    it 'should render model name', ->
-      datumNode.innerHTML.should.contain(model.get('name'))
+    it 'should render display mode', ->
+      Th.testDatumDisplay(datum, model.get('name'))
       
     it 'should not have rendered a label', ->
       datumNode.innerHTML.should.contain(TEST_LABEL) 
@@ -46,8 +39,8 @@ describe 'Datum Display', ->
     datum = Th.render <Datum model={model} attr="name" label={TEST_LABEL} placeholder={TEST_PLACEHOLDER_TEXT}/>
     datumNode = Th.domNode(datum)
   
-    it 'should render model name', ->
-      datumNode.innerHTML.should.contain(model.get('name'))
+    it 'should render display mode', ->
+      Th.testDatumDisplay(datum, model.get('name'))
 
     it 'should have rendered a label', ->
       datumNode.innerHTML.should.contain(TEST_LABEL) 
@@ -61,9 +54,9 @@ describe 'Datum Display', ->
     datum = Th.render <Datum model={model} attr="bogus" label={TEST_LABEL} placeholder={TEST_PLACEHOLDER_TEXT}/>
     datumNode = Th.domNode(datum)
   
-    it 'should be showing a placeholder', ->
-      datumNode.innerHTML.should.contain(TEST_PLACEHOLDER_TEXT)
-    
+    it 'should render display mode', ->
+      Th.testDatumDisplay(datum, TEST_PLACEHOLDER_TEXT)
+
     it 'should not have rendered "undefined" or [object Object]', ->
       datumNode.innerHTML.should.not.contain("undefined")
       datumNode.innerHTML.should.not.contain("[object Object")

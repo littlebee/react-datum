@@ -766,7 +766,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.prototype.render = function() {
 	    return this.renderDatumWrapper((function(_this) {
 	      return function() {
-	        if (_this.isEditable()) {
+	        if (_this.isEditing()) {
 	          return _this.renderForInput();
 	        } else {
 	          return _this.renderForDisplay();
@@ -838,13 +838,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.onEditClick = function() {
-	    this.constructor.inlineEditor = this;
-	    this.forceUpdate();
-	    return _.defer((function(_this) {
-	      return function() {
-	        return _this.focus();
-	      };
-	    })(this));
+	    return this.inlineToEditMode();
 	  };
 
 	  Datum.prototype.renderPlaceholder = function() {
@@ -908,25 +902,25 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.renderIcons = function() {
 	    var className, error, errorIcon, errorIconClass, errors, i, len, ref;
-	    if (this.isEditing() && this.state.errors.length > 0) {
-	      errors = [];
-	      className = "error validation";
-	      errorIconClass = Options.get('errorIconClass');
-	      errorIcon = errorIconClass != null ? React.createElement("i", {
-	        "className": errorIconClass
-	      }) : '!';
-	      if ((this.getReactBootstrap() != null) && !this.props.noPopover) {
-	        ref = this.state.errors;
-	        for (i = 0, len = ref.length; i < len; i++) {
-	          error = ref[i];
-	          errors.push(React.createElement("div", null, error));
-	        }
-	      } else {
-	        errors = this.state.errors.join('\n');
-	      }
-	      return this.renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid');
+	    if (!(this.state.errors.length > 0)) {
+	      return null;
 	    }
-	    return null;
+	    errors = [];
+	    className = "error validation";
+	    errorIconClass = Options.get('errorIconClass');
+	    errorIcon = errorIconClass != null ? React.createElement("i", {
+	      "className": errorIconClass
+	    }) : '!';
+	    if ((this.getReactBootstrap() != null) && !this.props.noPopover) {
+	      ref = this.state.errors;
+	      for (i = 0, len = ref.length; i < len; i++) {
+	        error = ref[i];
+	        errors.push(React.createElement("div", null, error));
+	      }
+	    } else {
+	      errors = this.state.errors.join('\n');
+	    }
+	    return this.renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid');
 	  };
 
 	  Datum.prototype.renderWithPopover = function(value, tooltip, popoverId, valueClass) {
@@ -964,18 +958,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.state.isDirty;
 	  };
 
+
+	  /*
+	    This method is called to determine if the inputMode (prop, context) is one
+	    of the editable types.  ('edit' or 'inlineEdit')
+	    
+	    Note that a return of true does NOT indicate that the Datum is in its 
+	    edit display.  If the component is an inputMode='inlineEdit', in may be
+	    showing it's display presentation.  See also isEditing()
+	   */
+
 	  Datum.prototype.isEditable = function() {
 	    var inputMode;
 	    inputMode = this.getInputMode();
-	    if (inputMode === "edit" || (inputMode === "inlineEdit" && this.isEditing())) {
+	    if (inputMode === "edit" || inputMode === "inlineEdit") {
 	      return true;
 	    }
 	  };
 
+
+	  /*
+	    This method is called to determine if the Datum is displaying its input
+	    presentation.
+	   */
+
 	  Datum.prototype.isEditing = function() {
 	    var inputMode;
 	    inputMode = this.getInputMode();
-	    return inputMode === 'edit' || (inputMode === 'inlineEdit' && this.constructor.inlineEditor === this);
+	    return inputMode === 'edit' || (this.isInlineEdit() && this.constructor.inlineEditor === this);
+	  };
+
+	  Datum.prototype.isInlineEdit = function() {
+	    return this.getInputMode() === 'inlineEdit';
 	  };
 
 	  Datum.prototype.cancelEdit = function() {
@@ -1175,7 +1189,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.shouldSetOnChange = function() {
-	    return this.props.setOnChange === true || (this.getInputMode() === 'inlineEdit' && !this.props.setOnChange === false);
+	    return this.props.setOnChange === true || (this.isInlineEdit() && !this.props.setOnChange === false);
 	  };
 
 	  Datum.prototype.shouldSetOnBlur = function() {
@@ -1197,7 +1211,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      setModelValue: this.shouldSetOnChange()
 	    });
 	    if (this.shouldSetOnChange()) {
-	      this.toDisplayMode();
+	      this.inlineToDisplayMode();
 	    }
 	    if ((this.props.onChange != null) && !options.silent) {
 	      return this.props.onChange(options.propsOnChangeValue || value, this, options);
@@ -1213,20 +1227,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.setValue(value, {
 	      setModelValue: this.shouldSetOnBlur()
 	    });
-	    if (this.shouldSetOnBlur() || this.getInputMode() === 'inlineEdit') {
-	      return this.toDisplayMode();
-	    }
+	    return this.inlineToDisplayMode();
 	  };
 
 	  Datum.prototype.isInputValueChanged = function() {
 	    return this.getInputValue() === this.getModelValue();
 	  };
 
-	  Datum.prototype.toDisplayMode = function() {
+	  Datum.prototype.inlineToDisplayMode = function() {
+	    if (!this.isInlineEdit()) {
+	      return;
+	    }
 	    if (this.constructor.inlineEditor === this) {
 	      this.constructor.inlineEditor = null;
 	      return this.forceUpdate();
 	    }
+	  };
+
+	  Datum.prototype.inlineToEditMode = function() {
+	    if (!this.isInlineEdit()) {
+	      return;
+	    }
+	    if (this.constructor.inlineEditor != null) {
+	      this.constructor.inlineEditor.inlineToDisplayMode();
+	    }
+	    this.constructor.inlineEditor = this;
+	    return this.forceUpdate();
 	  };
 
 	  Datum.prototype.onInputKeyDown = function(event) {
@@ -1295,9 +1321,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var errors, i, len, ref, valid, validation;
 	    if (value == null) {
 	      value = this.getValueForInput();
-	    }
-	    if (!this.isEditable()) {
-	      return true;
 	    }
 	    this.setState({
 	      errors: []

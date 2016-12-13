@@ -174,7 +174,7 @@ module.exports = class Datum extends React.Component
 
   render: ->
     @renderDatumWrapper =>
-      if @isEditable()
+      if @isEditing()
         @renderForInput()
       else
         @renderForDisplay()
@@ -244,9 +244,7 @@ module.exports = class Datum extends React.Component
 
 
   onEditClick: =>
-    @constructor.inlineEditor = @
-    @forceUpdate()
-    _.defer => @focus()
+    @inlineToEditMode()   # ...if it's an inlineEdit
 
 
   renderPlaceholder: ->
@@ -304,27 +302,26 @@ module.exports = class Datum extends React.Component
       
 
   renderIcons: ->
-    if @isEditing() && @state.errors.length > 0
-      errors = []
-      className = "error validation"
-      
-      errorIconClass = Options.get('errorIconClass')
-      errorIcon = if errorIconClass?
-        <i className={errorIconClass}/>
-      else
-        '!'
-
-      # multiple errors should be on their on line
-      # if we are using ReactBootstrap, format the error messages with HTML
-      if @getReactBootstrap()? && !@props.noPopover
-        errors.push(<div>{error}</div>) for error in @state.errors
-      else
-        errors = @state.errors.join('\n')
+    return null unless @state.errors.length > 0
     
-      return @renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid')
-
-    return null
+    errors = []
+    className = "error validation"
     
+    errorIconClass = Options.get('errorIconClass')
+    errorIcon = if errorIconClass?
+      <i className={errorIconClass}/>
+    else
+      '!'
+
+    # multiple errors should be on their on line
+    # if we are using ReactBootstrap, format the error messages with HTML
+    if @getReactBootstrap()? && !@props.noPopover
+      errors.push(<div>{error}</div>) for error in @state.errors
+    else
+      errors = @state.errors.join('\n')
+  
+    return @renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid')
+
     
   renderWithPopover: (value, tooltip, popoverId, valueClass) ->
     return value unless tooltip?
@@ -354,17 +351,31 @@ module.exports = class Datum extends React.Component
   isDirty: () ->
     return @state.isDirty
 
-
-  isEditable: () ->
+  ###
+    This method is called to determine if the inputMode (prop, context) is one
+    of the editable types.  ('edit' or 'inlineEdit')
+    
+    Note that a return of true does NOT indicate that the Datum is in its 
+    edit display.  If the component is an inputMode='inlineEdit', in may be
+    showing it's display presentation.  See also isEditing() 
+  ###
+  isEditable: ->
     inputMode = @getInputMode()
-    return true if inputMode == "edit" || (inputMode == "inlineEdit" && @isEditing())
+    return true if inputMode in ["edit", "inlineEdit"]
 
 
-  # if this input is an inlineEdit
-  isEditing: () ->
+  ###
+    This method is called to determine if the Datum is displaying its input
+    presentation.  
+  ###
+  isEditing: ->
     inputMode = @getInputMode()
-    return inputMode == 'edit' || (inputMode == 'inlineEdit' && @constructor.inlineEditor == @)
+    return inputMode == 'edit' || (@isInlineEdit() && @constructor.inlineEditor == @)
 
+
+  isInlineEdit: ->
+    @getInputMode() == 'inlineEdit'
+    
 
   cancelEdit: () ->
     @setState { errors: [], value: @getModelValue() }
@@ -508,7 +519,7 @@ module.exports = class Datum extends React.Component
 
 
   shouldSetOnChange: ->
-    @props.setOnChange == true || (@getInputMode() == 'inlineEdit' && !@props.setOnChange == false)
+    @props.setOnChange == true || (@isInlineEdit() && !@props.setOnChange == false)
 
 
   shouldSetOnBlur: ->
@@ -532,7 +543,7 @@ module.exports = class Datum extends React.Component
     @setValue(value, setModelValue: @shouldSetOnChange())
       
     if @shouldSetOnChange()
-      @toDisplayMode()  # only happens if this is the inline editor
+      @inlineToDisplayMode()  # only happens if this is the inline editor
 
     # it should be very rare that options.silent is used
     if @props.onChange? and !options.silent
@@ -547,20 +558,31 @@ module.exports = class Datum extends React.Component
     return if @isInputValueChanged()
     @setValue(value, setModelValue: @shouldSetOnBlur())
 
-    if @shouldSetOnBlur() || @getInputMode() == 'inlineEdit' # if inline edit should get back to display mode.
-      @toDisplayMode()
+    # if inline edit should get back to display mode.
+    @inlineToDisplayMode()
 
 
   isInputValueChanged: ->    
     @getInputValue() == @getModelValue()
 
 
-  toDisplayMode: () ->
+  inlineToDisplayMode: () ->
+    return unless @isInlineEdit()
+    
     if @constructor.inlineEditor == @
       @constructor.inlineEditor = null
       @forceUpdate()
 
-
+    
+  inlineToEditMode: () ->
+    return unless @isInlineEdit()
+    
+    if @constructor.inlineEditor?
+      @constructor.inlineEditor.inlineToDisplayMode()
+  
+    @constructor.inlineEditor = @
+    @forceUpdate()
+  
   
   onInputKeyDown: (event) =>
     @props.onKeyDown?(event)
@@ -610,7 +632,6 @@ module.exports = class Datum extends React.Component
     not made changes. 
   ###
   validate: (value=@getValueForInput())->
-    return true unless @isEditable()
     @setState errors: []
     errors = []
     for validation in @validations
