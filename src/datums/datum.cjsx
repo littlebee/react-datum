@@ -150,6 +150,10 @@ module.exports = class Datum extends React.Component
     @context?.form?.addDatum?(@)
     modelValue = @getModelValue()
 
+    # for click off and esc to cancel inline edit
+    document.addEventListener 'click', @onDocumentClick
+    document.addEventListener 'keydown', @onDocumentKeydown
+
 
   componentWillReceiveProps: (nextProps) ->
     prevModelValue = @getModelValue(@props)
@@ -169,6 +173,11 @@ module.exports = class Datum extends React.Component
     if @isDirty() && @shouldSetOnBlur()
       @setValue(@state.value, setModelValue: true)
       
+    # for click off and esc to cancel inline edit
+    document.removeEventListener 'click', @onDocumentClick
+    document.removeEventListener 'keydown', @onDocumentKeydown
+    
+    
       
   #                           Rendering methods
 
@@ -241,10 +250,6 @@ module.exports = class Datum extends React.Component
 
   renderWrappedDisplayValue: (value)->
     <span className="datum-display-value" onClick={@onEditClick} style={@props.style}>{value}</span>
-
-
-  onEditClick: =>
-    @inlineToEditMode()   # ...if it's an inlineEdit
 
 
   renderPlaceholder: ->
@@ -526,6 +531,12 @@ module.exports = class Datum extends React.Component
     @props.setOnBlur == true && !@shouldSetOnChange() && !@props.multi
 
 
+  onEditClick: (synthEvent) =>
+    if @inlineToEditMode()   # ...if it's an inlineEdit
+      synthEvent.stopPropagation()
+      synthEvent.nativeEvent?.stopImmediatePropagation?()
+
+
   onChange: (event, options = {}) =>
     #options are passed through to props.onChange
     options = _.defaults options,
@@ -562,20 +573,41 @@ module.exports = class Datum extends React.Component
     @inlineToDisplayMode()
 
 
+  onDocumentClick: (evt) =>
+    if @isInlineEdit() && @isEditing() && !@isElementOrParentOf(evt.target, ReactDOM.findDOMNode(this))
+      @inlineToDisplayMode()
+
+
+  onDocumentKeydown: (evt) =>
+    if @isInlineEdit() && @isEditing() && evt.keyCode == 27          # escape to close edit
+      @inlineToDisplayMode()
+      
+
+  isElementOrParentOf: (elementInQuestion, parentElement) ->
+    el = elementInQuestion
+    while el? 
+      return true if el == parentElement
+      el = el.parentElement
+    
+    return false
+
+
   isInputValueChanged: ->    
     @getInputValue() == @getModelValue()
 
 
   inlineToDisplayMode: () ->
-    return unless @isInlineEdit()
+    return false unless @isInlineEdit()
     
     if @constructor.inlineEditor == @
       @constructor.inlineEditor = null
       @forceUpdate()
+    
+    return true
 
     
   inlineToEditMode: () ->
-    return unless @isInlineEdit()
+    return false unless @isInlineEdit()
     
     if @constructor.inlineEditor?
       @constructor.inlineEditor.inlineToDisplayMode()
@@ -583,6 +615,7 @@ module.exports = class Datum extends React.Component
     @constructor.inlineEditor = @
     @forceUpdate()
   
+    return true
   
   onInputKeyDown: (event) =>
     @props.onKeyDown?(event)

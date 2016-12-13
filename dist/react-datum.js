@@ -704,10 +704,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.getInputComponent = bind(this.getInputComponent, this);
 	    this.setValue = bind(this.setValue, this);
 	    this.onInputKeyDown = bind(this.onInputKeyDown, this);
+	    this.onDocumentKeydown = bind(this.onDocumentKeydown, this);
+	    this.onDocumentClick = bind(this.onDocumentClick, this);
 	    this.onBlur = bind(this.onBlur, this);
 	    this.onChange = bind(this.onChange, this);
-	    this.addValidations = bind(this.addValidations, this);
 	    this.onEditClick = bind(this.onEditClick, this);
+	    this.addValidations = bind(this.addValidations, this);
 	    Datum.__super__.constructor.call(this, props);
 	    this.initializeState();
 	    this.addValidations(this.validateRequired);
@@ -733,7 +735,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	      }
 	    }
-	    return modelValue = this.getModelValue();
+	    modelValue = this.getModelValue();
+	    document.addEventListener('click', this.onDocumentClick);
+	    return document.addEventListener('keydown', this.onDocumentKeydown);
 	  };
 
 	  Datum.prototype.componentWillReceiveProps = function(nextProps) {
@@ -757,10 +761,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	    }
 	    if (this.isDirty() && this.shouldSetOnBlur()) {
-	      return this.setValue(this.state.value, {
+	      this.setValue(this.state.value, {
 	        setModelValue: true
 	      });
 	    }
+	    document.removeEventListener('click', this.onDocumentClick);
+	    return document.removeEventListener('keydown', this.onDocumentKeydown);
 	  };
 
 	  Datum.prototype.render = function() {
@@ -835,10 +841,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      "onClick": this.onEditClick,
 	      "style": this.props.style
 	    }, value);
-	  };
-
-	  Datum.prototype.onEditClick = function() {
-	    return this.inlineToEditMode();
 	  };
 
 	  Datum.prototype.renderPlaceholder = function() {
@@ -1196,6 +1198,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.props.setOnBlur === true && !this.shouldSetOnChange() && !this.props.multi;
 	  };
 
+	  Datum.prototype.onEditClick = function(synthEvent) {
+	    var ref;
+	    if (this.inlineToEditMode()) {
+	      synthEvent.stopPropagation();
+	      return (ref = synthEvent.nativeEvent) != null ? typeof ref.stopImmediatePropagation === "function" ? ref.stopImmediatePropagation() : void 0 : void 0;
+	    }
+	  };
+
 	  Datum.prototype.onChange = function(event, options) {
 	    var ref, ref1, value;
 	    if (options == null) {
@@ -1230,29 +1240,55 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.inlineToDisplayMode();
 	  };
 
+	  Datum.prototype.onDocumentClick = function(evt) {
+	    if (this.isInlineEdit() && this.isEditing() && !this.isElementOrParentOf(evt.target, ReactDOM.findDOMNode(this))) {
+	      return this.inlineToDisplayMode();
+	    }
+	  };
+
+	  Datum.prototype.onDocumentKeydown = function(evt) {
+	    if (this.isInlineEdit() && this.isEditing() && evt.keyCode === 27) {
+	      return this.inlineToDisplayMode();
+	    }
+	  };
+
+	  Datum.prototype.isElementOrParentOf = function(elementInQuestion, parentElement) {
+	    var el;
+	    el = elementInQuestion;
+	    while (el != null) {
+	      if (el === parentElement) {
+	        return true;
+	      }
+	      el = el.parentElement;
+	    }
+	    return false;
+	  };
+
 	  Datum.prototype.isInputValueChanged = function() {
 	    return this.getInputValue() === this.getModelValue();
 	  };
 
 	  Datum.prototype.inlineToDisplayMode = function() {
 	    if (!this.isInlineEdit()) {
-	      return;
+	      return false;
 	    }
 	    if (this.constructor.inlineEditor === this) {
 	      this.constructor.inlineEditor = null;
-	      return this.forceUpdate();
+	      this.forceUpdate();
 	    }
+	    return true;
 	  };
 
 	  Datum.prototype.inlineToEditMode = function() {
 	    if (!this.isInlineEdit()) {
-	      return;
+	      return false;
 	    }
 	    if (this.constructor.inlineEditor != null) {
 	      this.constructor.inlineEditor.inlineToDisplayMode();
 	    }
 	    this.constructor.inlineEditor = this;
-	    return this.forceUpdate();
+	    this.forceUpdate();
+	    return true;
 	  };
 
 	  Datum.prototype.onInputKeyDown = function(event) {

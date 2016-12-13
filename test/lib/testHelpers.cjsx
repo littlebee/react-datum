@@ -8,6 +8,8 @@ React = require 'react'
 ReactDOM = require 'react-dom'
 ReactTest = require 'react-addons-test-utils'
 
+$ = require 'jquery'
+
 ###
   leave this in here so tests can be debugged using node-inspector using
   ```
