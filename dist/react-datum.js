@@ -1288,6 +1288,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    this.constructor.inlineEditor = this;
 	    this.forceUpdate();
+	    _.defer((function(_this) {
+	      return function() {
+	        return _this.focus();
+	      };
+	    })(this));
 	    return true;
 	  };
 

@@ -614,6 +614,8 @@ module.exports = class Datum extends React.Component
   
     @constructor.inlineEditor = @
     @forceUpdate()
+
+    _.defer => @focus()
   
     return true
   
