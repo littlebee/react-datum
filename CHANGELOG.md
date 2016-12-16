@@ -6,12 +6,14 @@
 * [6513f82](https://github.com/zulily/react-datum.git/commit/6513f8241f54ab4968ffd5aceeb16cc5abe37c8e)  fix for issues in collection picker when one of either filterForPicker or asyncSuggestionCallback is debounced
 
 ### New Features
+
+The Big new feature in version 0.10.0 is inputMode={'inlineEdit'}.  Thank you @bkuraku for that feature.   We also added better support for informational help tooltips on labels and better support (optional) for react-bootstrap.  
+
 * [971ae12](https://github.com/zulily/react-datum.git/commit/971ae124e994f6a3e1b2c36e0bbd53684c200130)  add new props, saveOnSet to save model whenever datum sets model value; and modelSaveMethod which allows changing the method called to save the model to 'patch' for example.
 * [58d23d6](https://github.com/zulily/react-datum.git/commit/58d23d6df4d93187a3bb65a9fb63e1980b465c48)  inline edit datum should go back to display mode on click outside or escape key.
 * [f94d6c6](https://github.com/zulily/react-datum.git/commit/f94d6c615571527916ea8ba768284126cd2345b8)  add cursor:help to outer element if tooltip provided
 
 ### Other Commits
-* [014012a](https://github.com/zulily/react-datum.git/commit/014012a8b4ab65b68d7059ae3cde3c08a92772da) docs build
 * [3efcc4d](https://github.com/zulily/react-datum.git/commit/3efcc4d57b2502e7bbf37d61f747d94aafd42eeb) add tests for inline edit mode
 * [901ba45](https://github.com/zulily/react-datum.git/commit/901ba456a3afe5614fa472a6390e08c3355862b6) datum should focus when after going into inline edit mode
 * [b2b0bff](https://github.com/zulily/react-datum.git/commit/b2b0bff4c6806f442b33f087a917f92ed6e4859f) refactor / cleanup + add tests for inline editing feature
