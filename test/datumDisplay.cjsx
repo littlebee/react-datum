@@ -12,6 +12,7 @@ describe 'Datum Display', ->
   
   model = new Backbone.Model 
     name: "Fluffy"
+    nullAttribute: null
     
   TEST_LABEL = 'stop labeling me'
   TEST_PLACEHOLDER_TEXT = "whatever it is you are looking for isn't here"
@@ -54,7 +55,19 @@ describe 'Datum Display', ->
     datum = Th.render <Datum model={model} attr="bogus" label={TEST_LABEL} placeholder={TEST_PLACEHOLDER_TEXT}/>
     datumNode = Th.domNode(datum)
   
-    it 'should render display mode', ->
+    it 'should render display mode with placeholder text', ->
+      Th.testDatumDisplay(datum, TEST_PLACEHOLDER_TEXT)
+
+    it 'should not have rendered "undefined" or [object Object]', ->
+      datumNode.innerHTML.should.not.contain("undefined")
+      datumNode.innerHTML.should.not.contain("[object Object")
+      
+      
+  describe 'when rendered with a placeholder and model attribute that returns null', ->
+    datum = Th.render <Datum model={model} attr="nullAttribute" placeholder={TEST_PLACEHOLDER_TEXT}/>
+    datumNode = Th.domNode(datum)
+  
+    it 'should render display mode with placeholder text', ->
       Th.testDatumDisplay(datum, TEST_PLACEHOLDER_TEXT)
 
     it 'should not have rendered "undefined" or [object Object]', ->

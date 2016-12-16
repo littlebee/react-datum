@@ -671,6 +671,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    noPopover: React.PropTypes.bool,
 	    setOnChange: React.PropTypes.bool,
 	    setOnBlur: React.PropTypes.bool,
+	    saveOnSet: React.PropTypes.bool,
+	    modelSaveMethod: React.PropTypes.string,
 	    readonly: React.PropTypes.bool,
 	    required: React.PropTypes.bool,
 	    style: React.PropTypes.object,
@@ -680,7 +682,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.defaultProps = {
-	    setOnBlur: true
+	    setOnBlur: true,
+	    saveOnSet: false,
+	    modelSaveMethod: 'save'
 	  };
 
 	  Datum.contextTypes = {
@@ -1146,6 +1150,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	      } else {
 	        model[this.props.attr] = value;
 	      }
+	      if (this.props.saveOnSet) {
+	        if (!_.isFunction(model[this.props.modelSaveMethod])) {
+	          throw "Datum:setModelValue - saveOnSet true but modelSaveMethod (" + this.props.modelSaveMethod + ") is not a function on model";
+	        }
+	        model[this.props.modelSaveMethod]();
+	      }
 	    }
 	    if (this.props.value !== void 0) {
 	      return this.setState({
@@ -1231,7 +1241,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.prototype.onBlur = function(event) {
 	    var value;
 	    value = this.getInputValue();
-	    if (this.isInputValueChanged()) {
+	    if (!this.hasInputValueChanged()) {
 	      return;
 	    }
 	    this.setValue(value, {
@@ -1264,8 +1274,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return false;
 	  };
 
-	  Datum.prototype.isInputValueChanged = function() {
-	    return this.getInputValue() === this.getModelValue();
+	  Datum.prototype.hasInputValueChanged = function() {
+	    var inputValue;
+	    inputValue = this.getInputValue();
+	    return inputValue !== void 0 && inputValue !== this.getModelValue();
 	  };
 
 	  Datum.prototype.inlineToDisplayMode = function() {
@@ -5916,8 +5928,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	  };
 
-	  CollectionPicker.prototype.isInputValueChanged = function() {
-	    return this.getInputValue() === this._getValue();
+	  CollectionPicker.prototype.hasInputValueChanged = function() {
+	    return this.getInputValue() !== this._getValue();
 	  };
 
 	  CollectionPicker.prototype.getInputComponent = function() {

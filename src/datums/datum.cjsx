@@ -66,8 +66,14 @@ module.exports = class Datum extends React.Component
     # set to true to set the model value on change. this defaults to true if inputMode = inlineEdit
     setOnChange: React.PropTypes.bool
     
-    # setOnBlur = true model value is set when the input is blurred
+    # set to true to set model value when the input is blurred
     setOnBlur: React.PropTypes.bool
+    
+    # set to true to save the model whenever it's value is set by this Datum
+    saveOnSet: React.PropTypes.bool
+    
+    # set to the name of the method on model to use to save (typically 'save', but could be 'patch')
+    modelSaveMethod: React.PropTypes.string 
         
     # make this input readonly regardless of context or inputMode prop
     readonly: React.PropTypes.bool
@@ -94,6 +100,8 @@ module.exports = class Datum extends React.Component
     # no default for inputMode because we can also get from context, see @getInputMode()
     # inputMode: 'readonly'
     setOnBlur: true
+    saveOnSet: false
+    modelSaveMethod: 'save'
 
 
   @contextTypes:
@@ -482,17 +490,21 @@ module.exports = class Datum extends React.Component
     return unless value?   # value == null means the user didn't change it
     
     model = @getModel()
-    if model?
+    if model? 
       if _.isFunction(model.set) 
         model.set(@props.attr, value, options) 
       else 
         model[@props.attr] = value
+        
+      if @props.saveOnSet
+        unless _.isFunction(model[@props.modelSaveMethod])
+          throw "Datum:setModelValue - saveOnSet true but modelSaveMethod (#{@props.modelSaveMethod}) is not a function on model"
+        model[@props.modelSaveMethod]()
 
     # if we were provided a value in a prop and the datum allowed a change to it,
     # then we need to return that value in getModelValue
     if @props.value != undefined 
       @setState shadowValue: value
-    
 
 
   saveModel: ->
@@ -566,7 +578,8 @@ module.exports = class Datum extends React.Component
   #   only if state value is not null 
   onBlur: (event) =>
     value = @getInputValue()
-    return if @isInputValueChanged()
+    return unless @hasInputValueChanged()
+    
     @setValue(value, setModelValue: @shouldSetOnBlur())
 
     # if inline edit should get back to display mode.
@@ -592,8 +605,10 @@ module.exports = class Datum extends React.Component
     return false
 
 
-  isInputValueChanged: ->    
-    @getInputValue() == @getModelValue()
+  hasInputValueChanged: ->    
+    inputValue = @getInputValue() 
+    # inputValue comes from state.value which is not set until the user makes a change
+    return inputValue != undefined && inputValue != @getModelValue()
 
 
   inlineToDisplayMode: () ->

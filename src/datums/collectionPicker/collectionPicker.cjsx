@@ -282,8 +282,8 @@ module.exports = class CollectionPicker extends Datum
       loadOptions: @onLoadOptions
 
 
-  isInputValueChanged: ->
-    @getInputValue() == @_getValue()
+  hasInputValueChanged: ->
+    @getInputValue() != @_getValue()
       
 
   getInputComponent: () =>

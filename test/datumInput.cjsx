@@ -8,13 +8,24 @@ Th = require './lib/testHelpers'
 
 Datum = require '../src/datums/datum'  
 
-model = new Backbone.Model 
+class TestModel extends Backbone.Model 
+  save: -> return true
+  patch: -> return true
+  
+model = new TestModel
   name: "Fluffy"
   
 TEST_LABEL = 'something different'
 TEST_PLACEHOLDER_TEXT = "more different then display test placeholder text"
 TEST_VALUE = "something different every day"
 
+spies = [
+  setSpy = sinon.spy(model, 'set')
+  saveSpy = sinon.spy(model, 'save')
+  patchSpy = sinon.spy(model, 'patch')
+]
+resetSpies = ->
+  spy.reset() for spy in spies
 
 describe 'Datum Input', ->          
   
@@ -47,11 +58,11 @@ describe 'Datum Input', ->
       datum.isDirty().should.equal true, "...and it should think it's dirty"
       
     it 'should not set model value on blur if not changed', ->
-      sinon.spy model, 'set'
+      resetSpies()
       inputNode = Th.domNodeByTag(datum, 'input')
-      model.set.called.should.equal false, "sanity check: model.set should not have been called yet, becuase we haven't done anything yet"
+      assert !model.set.called, "sanity check: model.set should not have been called yet, becuase we haven't done anything yet"
       Th.Simulate.blur inputNode
-      model.set.called.should.equal false, "model.set should still not have been called"
+      assert !model.set.called, "model.set was called"
       datum.isDirty().should.equal false, "...and it should not think it's dirty"
 
     
@@ -62,6 +73,33 @@ describe 'Datum Input', ->
     it 'should set not set model value on blur', ->
       Th.changeDatumValue(datum, 'ginger', blur: true)
       model.get('name').should.not.equal 'ginger'
+
+      
+  describe 'when rendered as input with saveOnSet=true', ->
+    datum = Th.render <Datum model={model} attr="name" inputMode="edit" saveOnSet={true}/>
+    datumNode = Th.domNode(datum)
+    
+    it 'should set and save model value on blur', ->
+      resetSpies()
+      inputNode = Th.domNodeByTag(datum, 'input')
+      Th.changeDatumValue(datum, 'ginger', blur: true)
+      model.get('name').should.equal 'ginger'
+      assert model.save.called, "model.save should have been called"
+      datum.isDirty().should.equal false, "...and it should not think it's dirty"
+
+      
+  describe 'when rendered as input with saveOnSet=true and modelSaveMethod=patch', ->
+    datum = Th.render <Datum model={model} attr="name" inputMode="edit" saveOnSet={true} modelSaveMethod='patch'/>
+    datumNode = Th.domNode(datum)
+    
+    it 'should set and save model value on blur', ->
+      resetSpies()
+      inputNode = Th.domNodeByTag(datum, 'input')
+      Th.changeDatumValue(datum, 'mary', blur: true)
+      model.get('name').should.equal 'mary'
+      assert !model.save.called, "model.save() should not have been called"
+      assert model.patch.called, "model.patch() should have been called"
+      datum.isDirty().should.equal false, "...and it should not think it's dirty"
 
       
   describe 'when rendered as input with model value, placeholder & label', ->
