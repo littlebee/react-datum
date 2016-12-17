@@ -9,7 +9,9 @@ Th = require './lib/testHelpers'
 Datum = require '../src/datums/datum'  
 
 class TestModel extends Backbone.Model 
-  save: -> return true
+  save: (attrs={}, options={})-> 
+    options.success?(@)
+    return true
   patch: -> return true
   
 model = new TestModel
@@ -23,6 +25,7 @@ spies = [
   setSpy = sinon.spy(model, 'set')
   saveSpy = sinon.spy(model, 'save')
   patchSpy = sinon.spy(model, 'patch')
+  saveSuccessSpy = sinon.spy()
 ]
 resetSpies = ->
   spy.reset() for spy in spies
@@ -70,7 +73,7 @@ describe 'Datum Input', ->
     datum = Th.render <Datum model={model} attr="name" inputMode="edit" setOnBlur={false}/>
     datumNode = Th.domNode(datum)
     
-    it 'should set not set model value on blur', ->
+    it 'should not set model value on blur', ->
       Th.changeDatumValue(datum, 'ginger', blur: true)
       model.get('name').should.not.equal 'ginger'
 
@@ -81,7 +84,6 @@ describe 'Datum Input', ->
     
     it 'should set and save model value on blur', ->
       resetSpies()
-      inputNode = Th.domNodeByTag(datum, 'input')
       Th.changeDatumValue(datum, 'ginger', blur: true)
       model.get('name').should.equal 'ginger'
       assert model.save.called, "model.save should have been called"
@@ -94,13 +96,25 @@ describe 'Datum Input', ->
     
     it 'should set and save model value on blur', ->
       resetSpies()
-      inputNode = Th.domNodeByTag(datum, 'input')
       Th.changeDatumValue(datum, 'mary', blur: true)
       model.get('name').should.equal 'mary'
       assert !model.save.called, "model.save() should not have been called"
-      assert model.patch.called, "model.patch() should have been called"
+      assert model.patch.calledOnce, "model.patch() should have been called"
       datum.isDirty().should.equal false, "...and it should not think it's dirty"
 
+  describe 'when rendered as input with saveOnSet=true and modelSaveOptions', ->
+    modelSaveOptions = {success: saveSuccessSpy}
+    
+    datum = Th.render <Datum model={model} attr="name" inputMode="edit" saveOnSet={true} modelSaveOptions={modelSaveOptions}/>
+    datumNode = Th.domNode(datum)
+    
+    it 'should call my success handler when passed via modelSaveOptions', ->
+      resetSpies()
+      Th.changeDatumValue(datum, 'Treble', blur: true)
+      assert model.save.calledOnce, 'model.save should have been called'
+      assert saveSuccessSpy.calledOnce, 'should have called the success handler provided via modelSaveOptions'
+
+      
       
   describe 'when rendered as input with model value, placeholder & label', ->
     datum = Th.render <Datum model={model} attr="name" label={TEST_LABEL} placeholder={TEST_PLACEHOLDER_TEXT} inputMode="edit"/>

@@ -69,11 +69,21 @@ module.exports = class Datum extends React.Component
     # set to true to set model value when the input is blurred
     setOnBlur: React.PropTypes.bool
     
-    # set to true to save the model whenever it's value is set by this Datum
+    # set to true to save the model whenever it's attribute value is set by this Datum
     saveOnSet: React.PropTypes.bool
     
     # set to the name of the method on model to use to save (typically 'save', but could be 'patch')
+    # Note that the model save method is expected to accept (attributesToSet, options) in accordance
+    # with the Backbone Model.save arguments.  See also modelSaveOptions which allows you to 
+    # specify additional options passed as the second argument.  
+    #
+    # Requires saveOnSet={true}
     modelSaveMethod: React.PropTypes.string 
+    
+    # this prop is passed to modelSaveMethod (eg. `model.save({}, modelSaveOptions)`) 
+    #
+    # Requires saveOnSet={true}
+    modelSaveOptions: React.PropTypes.object
         
     # make this input readonly regardless of context or inputMode prop
     readonly: React.PropTypes.bool
@@ -100,6 +110,7 @@ module.exports = class Datum extends React.Component
     # no default for inputMode because we can also get from context, see @getInputMode()
     # inputMode: 'readonly'
     setOnBlur: true
+    setOnChange: false
     saveOnSet: false
     modelSaveMethod: 'save'
 
@@ -140,6 +151,8 @@ module.exports = class Datum extends React.Component
 
   initializeState: ->
     @state = {
+      # don't initialize state.value until our first on changed for 
+      # faster isDirty determination
       #value: @getModelValue()
       errors: []
       isDirty: false
@@ -487,7 +500,7 @@ module.exports = class Datum extends React.Component
     options pass through to model.set() 
   ###
   setModelValue: (value=@getInputValue(), options={}) ->
-    return unless value?   # value == null means the user didn't change it
+    return if value == undefined   # value == undefined means the user didn't change it
     
     model = @getModel()
     if model? 
@@ -497,9 +510,11 @@ module.exports = class Datum extends React.Component
         model[@props.attr] = value
         
       if @props.saveOnSet
-        unless _.isFunction(model[@props.modelSaveMethod])
-          throw "Datum:setModelValue - saveOnSet true but modelSaveMethod (#{@props.modelSaveMethod}) is not a function on model"
-        model[@props.modelSaveMethod]()
+        if _.isFunction(model[@props.modelSaveMethod])
+          model[@props.modelSaveMethod]({}, @props.modelSaveOptions)
+        else
+          console.error "Datum:setModelValue - saveOnSet true but modelSaveMethod (#{@props.modelSaveMethod}) is not a function on model"
+        
 
     # if we were provided a value in a prop and the datum allowed a change to it,
     # then we need to return that value in getModelValue
@@ -550,10 +565,10 @@ module.exports = class Datum extends React.Component
 
 
   onChange: (event, options = {}) =>
-    #options are passed through to props.onChange
+    
     options = _.defaults options,
       silent: false
-      event: event
+      event: event    #options are passed through to props.onChange
       # this can be set to another value to send to the @props.onChange handler
       #   see CollectionPicker#onChange
       propsOnChangeValue: null

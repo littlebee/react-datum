@@ -384,19 +384,6 @@ module.exports = class CollectionPicker extends Datum
     return @valueModel
 
 
-  ###
-    We need to override this to enable null values to be set. When clearing options for single select
-    the value is null. Thats a valid value for CollectionPicker.
-  ###
-  setModelValue: (value, options={}) ->
-    model = @getModel()
-    return unless model?
-
-    if _.isFunction(model.set)
-      model.set(@props.attr, value, options)
-    else
-      model[@props.attr] = value
-
       
       
     

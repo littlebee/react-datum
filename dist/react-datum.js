@@ -673,6 +673,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    setOnBlur: React.PropTypes.bool,
 	    saveOnSet: React.PropTypes.bool,
 	    modelSaveMethod: React.PropTypes.string,
+	    modelSaveOptions: React.PropTypes.object,
 	    readonly: React.PropTypes.bool,
 	    required: React.PropTypes.bool,
 	    style: React.PropTypes.object,
@@ -683,6 +684,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.defaultProps = {
 	    setOnBlur: true,
+	    setOnChange: false,
 	    saveOnSet: false,
 	    modelSaveMethod: 'save'
 	  };
@@ -1140,7 +1142,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (options == null) {
 	      options = {};
 	    }
-	    if (value == null) {
+	    if (value === void 0) {
 	      return;
 	    }
 	    model = this.getModel();
@@ -1151,10 +1153,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        model[this.props.attr] = value;
 	      }
 	      if (this.props.saveOnSet) {
-	        if (!_.isFunction(model[this.props.modelSaveMethod])) {
-	          throw "Datum:setModelValue - saveOnSet true but modelSaveMethod (" + this.props.modelSaveMethod + ") is not a function on model";
+	        if (_.isFunction(model[this.props.modelSaveMethod])) {
+	          model[this.props.modelSaveMethod]({}, this.props.modelSaveOptions);
+	        } else {
+	          console.error("Datum:setModelValue - saveOnSet true but modelSaveMethod (" + this.props.modelSaveMethod + ") is not a function on model");
 	        }
-	        model[this.props.modelSaveMethod]();
 	      }
 	    }
 	    if (this.props.value !== void 0) {
@@ -6067,28 +6070,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    this.valueModel = (newProps != null ? newProps.model : void 0) || (newContext != null ? newContext.model : void 0) || this.valueModel || new Backbone.Model();
 	    return this.valueModel;
-	  };
-
-
-	  /*
-	    We need to override this to enable null values to be set. When clearing options for single select
-	    the value is null. Thats a valid value for CollectionPicker.
-	   */
-
-	  CollectionPicker.prototype.setModelValue = function(value, options) {
-	    var model;
-	    if (options == null) {
-	      options = {};
-	    }
-	    model = this.getModel();
-	    if (model == null) {
-	      return;
-	    }
-	    if (_.isFunction(model.set)) {
-	      return model.set(this.props.attr, value, options);
-	    } else {
-	      return model[this.props.attr] = value;
-	    }
 	  };
 
 	  return CollectionPicker;
