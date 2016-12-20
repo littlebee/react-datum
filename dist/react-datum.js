@@ -674,6 +674,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    saveOnSet: React.PropTypes.bool,
 	    modelSaveMethod: React.PropTypes.string,
 	    modelSaveOptions: React.PropTypes.object,
+	    savedIndicatorTimeout: React.PropTypes.number,
 	    readonly: React.PropTypes.bool,
 	    required: React.PropTypes.bool,
 	    style: React.PropTypes.object,
@@ -686,7 +687,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    setOnBlur: true,
 	    setOnChange: false,
 	    saveOnSet: false,
-	    modelSaveMethod: 'save'
+	    modelSaveMethod: 'save',
+	    savedIndicatorTimeout: 5000
 	  };
 
 	  Datum.contextTypes = {
@@ -712,6 +714,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.onInputKeyDown = bind(this.onInputKeyDown, this);
 	    this.onDocumentKeydown = bind(this.onDocumentKeydown, this);
 	    this.onDocumentClick = bind(this.onDocumentClick, this);
+	    this.onModelSaveError = bind(this.onModelSaveError, this);
+	    this.onModelSaveSuccess = bind(this.onModelSaveSuccess, this);
 	    this.onBlur = bind(this.onBlur, this);
 	    this.onChange = bind(this.onChange, this);
 	    this.onEditClick = bind(this.onEditClick, this);
@@ -724,7 +728,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.prototype.initializeState = function() {
 	    return this.state = {
 	      errors: [],
-	      isDirty: false
+	      isDirty: false,
+	      saving: false,
+	      saved: null
 	    };
 	  };
 
@@ -1153,11 +1159,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        model[this.props.attr] = value;
 	      }
 	      if (this.props.saveOnSet) {
-	        if (_.isFunction(model[this.props.modelSaveMethod])) {
-	          model[this.props.modelSaveMethod]({}, this.props.modelSaveOptions);
-	        } else {
-	          console.error("Datum:setModelValue - saveOnSet true but modelSaveMethod (" + this.props.modelSaveMethod + ") is not a function on model");
-	        }
+	        this.saveModel();
 	      }
 	    }
 	    if (this.props.value !== void 0) {
@@ -1168,8 +1170,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.saveModel = function() {
-	    var ref;
-	    return (ref = this.getModel()) != null ? ref.save() : void 0;
+	    var model;
+	    model = this.getModel();
+	    if (model == null) {
+	      return;
+	    }
+	    if (_.isFunction(model[this.props.modelSaveMethod])) {
+	      return this.setState({
+	        saving: true
+	      }, (function(_this) {
+	        return function() {
+	          return model[_this.props.modelSaveMethod]({}, _this.getModelSaveOptions());
+	        };
+	      })(this));
+	    } else {
+	      return console.error("Datum:setModelValue - saveOnSet true but modelSaveMethod (" + this.props.modelSaveMethod + ") is not a function on model");
+	    }
+	  };
+
+	  Datum.prototype.getModelSaveOptions = function() {
+	    var originalError, originalSuccess, saveOptions;
+	    saveOptions = _.extend({}, this.props.modelSaveOptions);
+	    originalSuccess = saveOptions.success;
+	    originalError = saveOptions.error;
+	    saveOptions.success = (function(_this) {
+	      return function(model, resp) {
+	        _this.onModelSaveSuccess(model, resp);
+	        return typeof originalSuccess === "function" ? originalSuccess(model, resp, _this) : void 0;
+	      };
+	    })(this);
+	    saveOptions.error = (function(_this) {
+	      return function(model, resp) {
+	        _this.onModelSaveError(model, resp);
+	        return typeof originalError === "function" ? originalError(model, resp, _this) : void 0;
+	      };
+	    })(this);
+	    return saveOptions;
 	  };
 
 	  Datum.prototype.getEllipsizeAt = function() {
@@ -1184,6 +1220,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    if (this.state.errors.length > 0) {
 	      className += " invalid";
+	    }
+	    if (this.state.saving) {
+	      className += " saving";
+	    }
+	    if (this.state.saved === false) {
+	      className += " not-saved";
+	    }
+	    if (this.state.saved === true) {
+	      className += " saved";
 	    }
 	    if (this.props.className != null) {
 	      className += " " + this.props.className;
@@ -1251,6 +1296,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	      setModelValue: this.shouldSetOnBlur()
 	    });
 	    return this.inlineToDisplayMode();
+	  };
+
+	  Datum.prototype.onModelSaveSuccess = function(model, resp) {
+	    this.setState({
+	      saving: false,
+	      saved: true
+	    });
+	    if (this.props.savedIndicatorTimeout != null) {
+	      return _.delay(((function(_this) {
+	        return function() {
+	          return _this.setState({
+	            saved: null
+	          });
+	        };
+	      })(this)), this.props.savedIndicatorTimeout);
+	    }
+	  };
+
+	  Datum.prototype.onModelSaveError = function(model, resp) {
+	    var errors;
+	    errors = this.state.errors || [];
+	    errors.push(resp);
+	    return this.setState({
+	      saving: false,
+	      saved: false,
+	      errors: errors
+	    });
 	  };
 
 	  Datum.prototype.onDocumentClick = function(evt) {
@@ -4968,7 +5040,8 @@ return /******/ (function(modules) { // webpackBootstrap
 						return _this3.select = _ref;
 					},
 					onChange: function onChange(newValues) {
-						if (_this3.props.value && newValues.length > _this3.props.value.length) {
+						var newValuesExist = typeof newValues !== '' && newValues !== null;
+						if (_this3.props.value && newValuesExist && newValues.length > _this3.props.value.length) {
 							_this3.clearOptions();
 						}
 						_this3.props.onChange(newValues);

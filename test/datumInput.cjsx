@@ -25,7 +25,7 @@ spies = [
   setSpy = sinon.spy(model, 'set')
   saveSpy = sinon.spy(model, 'save')
   patchSpy = sinon.spy(model, 'patch')
-  saveSuccessSpy = sinon.spy()
+  # saveSuccessSpy = sinon.spy()
 ]
 resetSpies = ->
   spy.reset() for spy in spies
@@ -103,7 +103,13 @@ describe 'Datum Input', ->
       datum.isDirty().should.equal false, "...and it should not think it's dirty"
 
   describe 'when rendered as input with saveOnSet=true and modelSaveOptions', ->
-    modelSaveOptions = {success: saveSuccessSpy}
+    datumNode = null
+    successCalled = false
+    modelSaveOptions = {
+      success: =>
+        successCalled = true
+        $(datumNode).attr('class').should.contain 'saving'
+    }
     
     datum = Th.render <Datum model={model} attr="name" inputMode="edit" saveOnSet={true} modelSaveOptions={modelSaveOptions}/>
     datumNode = Th.domNode(datum)
@@ -112,7 +118,8 @@ describe 'Datum Input', ->
       resetSpies()
       Th.changeDatumValue(datum, 'Treble', blur: true)
       assert model.save.calledOnce, 'model.save should have been called'
-      assert saveSuccessSpy.calledOnce, 'should have called the success handler provided via modelSaveOptions'
+      assert successCalled, 'should have called the success handler provided via modelSaveOptions'
+      $(datumNode).attr('class').should.contain 'saved'
 
       
       

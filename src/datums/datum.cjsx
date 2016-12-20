@@ -84,6 +84,9 @@ module.exports = class Datum extends React.Component
     #
     # Requires saveOnSet={true}
     modelSaveOptions: React.PropTypes.object
+    
+    # (ms) set the length of time 'saved' css class stays on outer datum element after saving
+    savedIndicatorTimeout: React.PropTypes.number
         
     # make this input readonly regardless of context or inputMode prop
     readonly: React.PropTypes.bool
@@ -113,6 +116,7 @@ module.exports = class Datum extends React.Component
     setOnChange: false
     saveOnSet: false
     modelSaveMethod: 'save'
+    savedIndicatorTimeout: 5000
 
 
   @contextTypes:
@@ -156,6 +160,8 @@ module.exports = class Datum extends React.Component
       #value: @getModelValue()
       errors: []
       isDirty: false
+      saving: false
+      saved: null
     }
 
   #..................................................React life cycle methods...........................................
@@ -509,11 +515,7 @@ module.exports = class Datum extends React.Component
       else 
         model[@props.attr] = value
         
-      if @props.saveOnSet
-        if _.isFunction(model[@props.modelSaveMethod])
-          model[@props.modelSaveMethod]({}, @props.modelSaveOptions)
-        else
-          console.error "Datum:setModelValue - saveOnSet true but modelSaveMethod (#{@props.modelSaveMethod}) is not a function on model"
+      @saveModel() if @props.saveOnSet
         
 
     # if we were provided a value in a prop and the datum allowed a change to it,
@@ -523,8 +525,32 @@ module.exports = class Datum extends React.Component
 
 
   saveModel: ->
-    @getModel()?.save();
-
+    model = @getModel()
+    return unless model?
+  
+    if _.isFunction(model[@props.modelSaveMethod])
+      @setState saving: true, =>
+        model[@props.modelSaveMethod]({}, @getModelSaveOptions())
+    else
+      console.error "Datum:setModelValue - saveOnSet true but modelSaveMethod (#{@props.modelSaveMethod}) is not a function on model"
+    
+    
+  getModelSaveOptions: ->
+    saveOptions = _.extend {}, @props.modelSaveOptions
+    
+    originalSuccess = saveOptions.success
+    originalError = saveOptions.error
+    
+    saveOptions.success = (model, resp)=>
+      @onModelSaveSuccess(model, resp)
+      originalSuccess?(model, resp, @)
+      
+    saveOptions.error = (model, resp)=>
+      @onModelSaveError(model, resp)
+      originalError?(model, resp, @)
+      
+    return saveOptions
+      
 
   getEllipsizeAt: ->
     return @props.ellipsizeAt
@@ -534,6 +560,11 @@ module.exports = class Datum extends React.Component
     className = if @subClassName? then "#{@className} #{@subClassName}" else @className
     className += " required" if @props.required
     className += " invalid" if @state.errors.length > 0
+    className += " saving" if @state.saving
+    # ignore null value in state.saved
+    className +=  " not-saved" if @state.saved == false
+    className +=  " saved" if @state.saved == true
+    
     className += " #{@props.className}" if @props.className?
     return className
     
@@ -599,6 +630,21 @@ module.exports = class Datum extends React.Component
 
     # if inline edit should get back to display mode.
     @inlineToDisplayMode()
+    
+  
+  onModelSaveSuccess: (model, resp) =>
+    @setState saving: false, saved: true
+    # this can be styled to 'flash' the color or temporarily show the components
+    # as recently saved 
+    if @props.savedIndicatorTimeout?
+      _.delay (=> @setState saved: null), @props.savedIndicatorTimeout
+  
+  
+  onModelSaveError: (model, resp) =>
+    errors = @state.errors || []
+    errors.push resp
+    @setState saving: false, saved: false, errors: errors
+    # don't nullify saved state on errors
 
 
   onDocumentClick: (evt) =>
