@@ -1341,7 +1341,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.onDocumentKeydown = function(evt) {
-	    if (this.isInlineEdit() && this.isEditing() && evt.keyCode === 27) {
+	    if (evt.keyCode === 27 && (typeof this.isInlineEdit === "function" ? this.isInlineEdit() : void 0) && (typeof this.isEditing === "function" ? this.isEditing() : void 0)) {
 	      return this.inlineToDisplayMode();
 	    }
 	  };
