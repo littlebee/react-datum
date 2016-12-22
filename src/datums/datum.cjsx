@@ -642,9 +642,14 @@ module.exports = class Datum extends React.Component
   
   onModelSaveError: (model, resp) =>
     errors = @state.errors || []
-    errors.push resp
+    errors.push "Unable to save value. Error: " + resp
+
     @setState saving: false, saved: false, errors: errors
-    # don't nullify saved state on errors
+    # we also populate errors which will change this to an error icon
+    if @props.savedIndicatorTimeout?
+      _.delay => 
+        @setState saved: null
+      , @props.savedIndicatorTimeout
 
 
   onDocumentClick: (evt) =>
@@ -653,7 +658,7 @@ module.exports = class Datum extends React.Component
 
 
   onDocumentKeydown: (evt) =>
-    if @isInlineEdit() && @isEditing() && evt.keyCode == 27          # escape to close edit
+    if evt.keyCode == 27 && @isInlineEdit?() && @isEditing?()          # escape to close edit
       @inlineToDisplayMode()
       
 

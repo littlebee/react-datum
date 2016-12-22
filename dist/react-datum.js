@@ -1317,12 +1317,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.prototype.onModelSaveError = function(model, resp) {
 	    var errors;
 	    errors = this.state.errors || [];
-	    errors.push(resp);
-	    return this.setState({
+	    errors.push("Unable to save value. Error: " + resp);
+	    this.setState({
 	      saving: false,
 	      saved: false,
 	      errors: errors
 	    });
+	    if (this.props.savedIndicatorTimeout != null) {
+	      return _.delay((function(_this) {
+	        return function() {
+	          return _this.setState({
+	            saved: null
+	          });
+	        };
+	      })(this), this.props.savedIndicatorTimeout);
+	    }
 	  };
 
 	  Datum.prototype.onDocumentClick = function(evt) {
