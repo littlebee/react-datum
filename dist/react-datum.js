@@ -1810,12 +1810,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  ContextualData.prototype.bindEvents = function() {
 	    var ref;
-	    return (ref = this.state.collectionOrModel) != null ? ref.on('all', this.onDataChanged, this) : void 0;
+	    return (ref = this.state.collectionOrModel) != null ? typeof ref.on === "function" ? ref.on('all', this.onDataChanged, this) : void 0 : void 0;
 	  };
 
 	  ContextualData.prototype.unbindEvents = function() {
 	    var ref;
-	    return (ref = this.state.collectionOrModel) != null ? ref.off('all', this.onDataChanged) : void 0;
+	    return (ref = this.state.collectionOrModel) != null ? typeof ref.off === "function" ? ref.off('all', this.onDataChanged) : void 0 : void 0;
 	  };
 
 	  ContextualData.prototype.onDataChanged = function() {

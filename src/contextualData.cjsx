@@ -204,11 +204,11 @@ module.exports = class ContextualData extends React.Component
 
 
   bindEvents: () ->
-    @state.collectionOrModel?.on 'all', @onDataChanged, @
+    @state.collectionOrModel?.on?('all', @onDataChanged, @)
 
 
   unbindEvents: () ->
-    @state.collectionOrModel?.off 'all', @onDataChanged
+    @state.collectionOrModel?.off?('all', @onDataChanged)
 
 
   onDataChanged: () =>
