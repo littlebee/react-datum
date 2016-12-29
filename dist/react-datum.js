@@ -1315,9 +1315,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.onModelSaveError = function(model, resp) {
-	    var errors;
+	    var errors, ref, ref1;
 	    errors = this.state.errors || [];
-	    errors.push("Unable to save value. Error: " + resp);
+	    errors.push((ref = (ref1 = "Unable to save value. Error: " + resp.responseText) != null ? ref1 : resp.statusText) != null ? ref : resp);
 	    this.setState({
 	      saving: false,
 	      saved: false,
