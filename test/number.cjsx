@@ -197,6 +197,12 @@ describe 'Number datum', ->
       Th.changeDatumValue(component, '123.456', blur: true)
       component.getInputValue().should.equal testValue.toString()
     
+    it 'should allow input of numeric with trailing decimal', ->
+      testValue = "123."
+      Th.changeDatumValue(component, testValue, blur: false)
+      component.state.value.should.equal testValue
+      Th.testDatumInput(component, testValue)
+    
     it 'should not allow input of non-numerics', ->
       testValue = 'whatever'
       Th.changeDatumValue(component, testValue, blur: true)

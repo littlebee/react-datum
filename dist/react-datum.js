@@ -2809,7 +2809,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (_.isNaN(floatVal)) {
 	      return null;
 	    } else {
-	      return floatVal;
+	      return value;
 	    }
 	  };
 
