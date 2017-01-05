@@ -2807,7 +2807,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value = Number.__super__.getValueForInput.apply(this, arguments);
 	    floatVal = parseFloat(value);
 	    if (_.isNaN(floatVal)) {
-	      return null;
+	      return '';
 	    } else {
 	      return value;
 	    }

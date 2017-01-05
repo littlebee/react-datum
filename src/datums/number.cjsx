@@ -146,7 +146,7 @@ module.exports = class Number extends Datum
     floatVal = parseFloat(value)
     # note that we don't return the floatVal because when user is typing and gets to say, 55.
     # that would get floated to just 55 and the . would never get to the input.
-    return if _.isNaN floatVal then null else value
+    return if _.isNaN floatVal then '' else value
 
     
   getFormats: ->
