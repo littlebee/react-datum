@@ -159,6 +159,49 @@ describe 'Number datum', ->
       model.set('foo', 1012505178000.57)
       component.forceUpdate()        
       $(domNode).find('.datum-display-value').text().should.be.equal("$1,012.5052 B")
+  
+  
+  describe 'as display with non-numeric input value', ->
+    testValue = 'whatever'
+    component = Th.render <Number value={testValue} format='abbreviate money comma' decimalPlaces={4}/>
+    domNode = Th.domNode(component)
+    
+    it 'should have rendered non-numeric value', ->
+      $(domNode).find('.datum-display-value').text().should.equal testValue
+      
+  
+  ###  
+                            Input Tests (inputMode='edit')
+  ###
+
+    
+  describe 'as input with numeric value', ->
+    testValue = 12.99
+    component = Th.render <Number inputMode='edit' value={testValue}/>
+    domNode = Th.domNode(component)
+    
+    it "should have rendered an input with value set to testValue (#{testValue})", ->
+      Th.testDatumInput component, testValue.toString()
+      
+      
+  describe 'as input with non-numeric value', ->
+    testValue = 'whatever'
+    component = Th.render <Number inputMode='edit' value={testValue}/>
+    domNode = Th.domNode(component)
+    
+    it "should have rendered an input with value set to blank", ->
+      Th.testDatumInput(component, '')
+      
+    it 'should allow input of numerics', ->
+      testValue = 123.456
+      Th.changeDatumValue(component, '123.456', blur: true)
+      component.getInputValue().should.equal testValue.toString()
+    
+    it 'should not allow input of non-numerics', ->
+      testValue = 'whatever'
+      Th.changeDatumValue(component, testValue, blur: true)
+      component.getInputValue().should.not.equal testValue
+      
     
     
     

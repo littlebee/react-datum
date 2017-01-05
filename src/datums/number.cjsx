@@ -108,7 +108,10 @@ module.exports = class Number extends Datum
     overrides super - adds formatting
   ###
   renderValueForDisplay: ->
-    value = parseFloat(@getModelValue())
+    modelValue = @getModelValue()
+    value = parseFloat(modelValue)
+    return modelValue if _.isNaN value
+      
     formats = @getFormats()
 
     if 'percent' in formats
@@ -138,6 +141,12 @@ module.exports = class Number extends Datum
     return <span>0</span>
     
     
+  getValueForInput: ->
+    value = super
+    floatVal = parseFloat(value)
+    return if _.isNaN floatVal then null else floatVal
+
+    
   getFormats: ->
     if _.isArray(@props.format) 
       return @props.format 
@@ -145,13 +154,6 @@ module.exports = class Number extends Datum
       return @props.format?.toString().split(' ') || []
       
       
-  getValueForInput: () ->
-    # TODO : this is either the greatest idea or worst ever - but if you are
-    # displaying a rounded value maybe you want an option to edited as rounded?
-    #return @state.value || @roundToDecimalPlaces(@getModelValue())
-    return super
-    
-
   # extend super, ignore invalid input characters
   onChange: (event) =>
     inputValue = event.target.value

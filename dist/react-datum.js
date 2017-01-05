@@ -2773,8 +2773,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Number.prototype.renderValueForDisplay = function() {
-	    var formats, value;
-	    value = parseFloat(this.getModelValue());
+	    var formats, modelValue, value;
+	    modelValue = this.getModelValue();
+	    value = parseFloat(modelValue);
+	    if (_.isNaN(value)) {
+	      return modelValue;
+	    }
 	    formats = this.getFormats();
 	    if (indexOf.call(formats, 'percent') >= 0) {
 	      value *= 100;
@@ -2798,6 +2802,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return React.createElement("span", null, "0");
 	  };
 
+	  Number.prototype.getValueForInput = function() {
+	    var floatVal, value;
+	    value = Number.__super__.getValueForInput.apply(this, arguments);
+	    floatVal = parseFloat(value);
+	    if (_.isNaN(floatVal)) {
+	      return null;
+	    } else {
+	      return floatVal;
+	    }
+	  };
+
 	  Number.prototype.getFormats = function() {
 	    var ref;
 	    if (_.isArray(this.props.format)) {
@@ -2805,10 +2820,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    } else {
 	      return ((ref = this.props.format) != null ? ref.toString().split(' ') : void 0) || [];
 	    }
-	  };
-
-	  Number.prototype.getValueForInput = function() {
-	    return Number.__super__.getValueForInput.apply(this, arguments);
 	  };
 
 	  Number.prototype.onChange = function(event) {
