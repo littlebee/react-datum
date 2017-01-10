@@ -354,7 +354,10 @@ module.exports = class Datum extends React.Component
   
     return @renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid')
 
-    
+  ###
+    You can use this to render a value with the standard popover treatment or 
+    extend and override to effect the standard popover treatment
+  ###  
   renderWithPopover: (value, tooltip, popoverId, valueClass) ->
     return value unless tooltip?
     
@@ -556,6 +559,9 @@ module.exports = class Datum extends React.Component
     return @props.ellipsizeAt
 
 
+  ###
+    Override / extend this method to add conditional css classes to the outer datum element
+  ###
   getFullClassName: ->
     className = if @subClassName? then "#{@className} #{@subClassName}" else @className
     className += " required" if @props.required

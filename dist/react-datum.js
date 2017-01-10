@@ -937,6 +937,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid');
 	  };
 
+
+	  /*
+	    You can use this to render a value with the standard popover treatment or 
+	    extend and override to effect the standard popover treatment
+	   */
+
 	  Datum.prototype.renderWithPopover = function(value, tooltip, popoverId, valueClass) {
 	    var Rb, popover, rValue;
 	    if (tooltip == null) {
@@ -1211,6 +1217,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.prototype.getEllipsizeAt = function() {
 	    return this.props.ellipsizeAt;
 	  };
+
+
+	  /*
+	    Override / extend this method to add conditional css classes to the outer datum element
+	   */
 
 	  Datum.prototype.getFullClassName = function() {
 	    var className;
@@ -3086,7 +3097,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Text.prototype.renderValueForDisplay = function() {
-	    return this.renderEllipsizedValue(Text.__super__.renderValueForDisplay.apply(this, arguments));
+	    var superValue, value;
+	    superValue = Text.__super__.renderValueForDisplay.apply(this, arguments);
+	    value = (function() {
+	      switch (false) {
+	        case !_.isArray(superValue):
+	          return superValue.join(', ');
+	        case !_.isObject(superValue):
+	          return JSON.stringify(superValue);
+	        default:
+	          return superValue.toString();
+	      }
+	    })();
+	    return this.renderEllipsizedValue(value);
 	  };
 
 
