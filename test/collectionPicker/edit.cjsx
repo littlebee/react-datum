@@ -57,7 +57,8 @@ describe 'CollectionPicker uses Select instead of Select.Async when synchronousL
 describe 'CollectionPicker clear value should clear the value and set it to null', ->
   model = new Backbone.Model({nameId: 11})
   component = Th.render <CollectionPicker clearable={true} attr='nameId' displayAttr="name" model={model}
-                                          synchronousLoading={true} collection={nameCollection} inputMode='edit'/>
+                                          synchronousLoading={true} collection={nameCollection} inputMode='edit'
+                                          setOnChange={true} />
   testBasicCollectionPickerRender(component, model)
 
   domNode = Th.domNode(component)
@@ -69,7 +70,9 @@ describe 'CollectionPicker clear value should clear the value and set it to null
     it 'should show no label values', ->
       $valueLabels = $(domNode).find('.Select-value-label')
       $valueLabels.length.should.equal(0)
-
+      
+    it 'the model should have a null value', ->
+      expect(model.get('nameId')).to.equal null
 
 
 describe 'CollectionPicker should show label value when option selected and when model is not provided to collection picker', ->

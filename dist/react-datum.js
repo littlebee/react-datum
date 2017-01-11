@@ -1148,14 +1148,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.setModelValue = function(value, options) {
 	    var model;
-	    if (value == null) {
-	      value = this.getInputValue();
-	    }
 	    if (options == null) {
 	      options = {};
 	    }
 	    if (value === void 0) {
-	      return;
+	      value = this.getInputValue();
+	      if (value === void 0) {
+	        return;
+	      }
 	    }
 	    model = this.getModel();
 	    if (model != null) {
@@ -6087,7 +6087,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  CollectionPicker.prototype.onChange = function(optionsSelected) {
-	    var values;
+	    var value, values;
 	    if (this.props.multi) {
 	      values = _.pluck(optionsSelected, 'value');
 	      if (this.props.setAsString) {
@@ -6097,7 +6097,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        propsOnChangeValue: optionsSelected
 	      });
 	    } else {
-	      return CollectionPicker.__super__.onChange.call(this, optionsSelected != null ? optionsSelected.value : void 0, {
+	      value = optionsSelected === null ? null : optionsSelected != null ? optionsSelected.value : void 0;
+	      return CollectionPicker.__super__.onChange.call(this, value, {
 	        propsOnChangeValue: optionsSelected
 	      });
 	    }

@@ -317,7 +317,8 @@ module.exports = class CollectionPicker extends Datum
       values = values.join(',') if @props.setAsString
       super values, propsOnChangeValue: optionsSelected
     else
-      super optionsSelected?.value, propsOnChangeValue: optionsSelected
+      value = if optionsSelected == null then null else optionsSelected?.value
+      super value, propsOnChangeValue: optionsSelected
       
     
 

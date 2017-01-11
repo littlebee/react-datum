@@ -508,8 +508,12 @@ module.exports = class Datum extends React.Component
     
     options pass through to model.set() 
   ###
-  setModelValue: (value=@getInputValue(), options={}) ->
-    return if value == undefined   # value == undefined means the user didn't change it
+  setModelValue: (value, options={}) ->
+    # allow for null value
+    if value == undefined   
+      value = @getInputValue()
+      # value == undefined means the user didn't change it
+      return if value == undefined  
     
     model = @getModel()
     if model? 
