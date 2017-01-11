@@ -333,6 +333,11 @@ module.exports = class Datum extends React.Component
     <input {... @getInputComponentOptions()}/>
       
 
+  ###
+    Override / extend this method to add or alter icons presented after datum.
+    
+    Datum implementation renders the error icon if needed.
+  ###
   renderIcons: ->
     return null unless @state.errors.length > 0
     
@@ -345,6 +350,14 @@ module.exports = class Datum extends React.Component
     else
       '!'
 
+    errors = @renderErrors()
+    return @renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid')
+
+
+  ###
+    Override / extend this method to control what is rendered in the error icon popup 
+  ###
+  renderErrors: ->
     # multiple errors should be on their on line
     # if we are using ReactBootstrap, format the error messages with HTML
     if @getReactBootstrap()? && !@props.noPopover
@@ -352,7 +365,7 @@ module.exports = class Datum extends React.Component
     else
       errors = @state.errors.join('\n')
   
-    return @renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid')
+
 
   ###
     You can use this to render a value with the standard popover treatment or 

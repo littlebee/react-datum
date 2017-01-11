@@ -914,8 +914,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return React.createElement("input", React.__spread({}, this.getInputComponentOptions()));
 	  };
 
+
+	  /*
+	    Override / extend this method to add or alter icons presented after datum.
+	    
+	    Datum implementation renders the error icon if needed.
+	   */
+
 	  Datum.prototype.renderIcons = function() {
-	    var className, error, errorIcon, errorIconClass, errors, i, len, ref;
+	    var className, errorIcon, errorIconClass, errors;
 	    if (!(this.state.errors.length > 0)) {
 	      return null;
 	    }
@@ -925,16 +932,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	    errorIcon = errorIconClass != null ? React.createElement("i", {
 	      "className": errorIconClass
 	    }) : '!';
+	    errors = this.renderErrors();
+	    return this.renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid');
+	  };
+
+
+	  /*
+	    Override / extend this method to control what is rendered in the error icon popup
+	   */
+
+	  Datum.prototype.renderErrors = function() {
+	    var error, errors, i, len, ref, results;
 	    if ((this.getReactBootstrap() != null) && !this.props.noPopover) {
 	      ref = this.state.errors;
+	      results = [];
 	      for (i = 0, len = ref.length; i < len; i++) {
 	        error = ref[i];
-	        errors.push(React.createElement("div", null, error));
+	        results.push(errors.push(React.createElement("div", null, error)));
 	      }
+	      return results;
 	    } else {
-	      errors = this.state.errors.join('\n');
+	      return errors = this.state.errors.join('\n');
 	    }
-	    return this.renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid');
 	  };
 
 
