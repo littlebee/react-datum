@@ -358,6 +358,7 @@ module.exports = class Datum extends React.Component
     Override / extend this method to control what is rendered in the error icon popup 
   ###
   renderErrors: ->
+    errors = []
     # multiple errors should be on their on line
     # if we are using ReactBootstrap, format the error messages with HTML
     if @getReactBootstrap()? && !@props.noPopover
@@ -365,6 +366,7 @@ module.exports = class Datum extends React.Component
     else
       errors = @state.errors.join('\n')
   
+    return errors
 
 
   ###

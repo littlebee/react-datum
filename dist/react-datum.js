@@ -942,18 +942,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.renderErrors = function() {
-	    var error, errors, i, len, ref, results;
+	    var error, errors, i, len, ref;
+	    errors = [];
 	    if ((this.getReactBootstrap() != null) && !this.props.noPopover) {
 	      ref = this.state.errors;
-	      results = [];
 	      for (i = 0, len = ref.length; i < len; i++) {
 	        error = ref[i];
-	        results.push(errors.push(React.createElement("div", null, error)));
+	        errors.push(React.createElement("div", null, error));
 	      }
-	      return results;
 	    } else {
-	      return errors = this.state.errors.join('\n');
+	      errors = this.state.errors.join('\n');
 	    }
+	    return errors;
 	  };
 
 
