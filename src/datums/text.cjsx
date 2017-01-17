@@ -13,7 +13,8 @@ module.exports = class Text extends Datum
 
   
   @propTypes: _.extend {}, Datum.propTypes,
-    # set to true if rendering known, safe, html.  see https://facebook.github.io/react/tips/dangerously-set-inner-html.html. 
+    # set to true if rendering known, safe, html.  
+    # see https://facebook.github.io/react/tips/dangerously-set-inner-html.html. 
     displayAsHtml: React.PropTypes.bool
     
     # set ellipsizeAt to false to display whole value. Only effects 'readonly' display
@@ -40,7 +41,13 @@ module.exports = class Text extends Datum
 
 
   renderValueForDisplay: ->
-    @renderEllipsizedValue super
+    superValue = super
+    value = switch
+      when _.isArray(superValue) then superValue.join(', ')
+      when _.isObject(superValue ) then JSON.stringify(superValue)
+      else superValue.toString()
+    
+    @renderEllipsizedValue value
 
   
   ### 

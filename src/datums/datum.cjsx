@@ -69,11 +69,24 @@ module.exports = class Datum extends React.Component
     # set to true to set model value when the input is blurred
     setOnBlur: React.PropTypes.bool
     
-    # set to true to save the model whenever it's value is set by this Datum
+    # set to true to save the model whenever it's attribute value is set by this Datum
     saveOnSet: React.PropTypes.bool
     
     # set to the name of the method on model to use to save (typically 'save', but could be 'patch')
+    # Note that the model save method is expected to accept (attributesToSet, options) in accordance
+    # with the Backbone Model.save arguments.  See also modelSaveOptions which allows you to 
+    # specify additional options passed as the second argument.  
+    #
+    # Requires saveOnSet={true}
     modelSaveMethod: React.PropTypes.string 
+    
+    # this prop is passed to modelSaveMethod (eg. `model.save({}, modelSaveOptions)`) 
+    #
+    # Requires saveOnSet={true}
+    modelSaveOptions: React.PropTypes.object
+    
+    # (ms) set the length of time 'saved' css class stays on outer datum element after saving
+    savedIndicatorTimeout: React.PropTypes.number
         
     # make this input readonly regardless of context or inputMode prop
     readonly: React.PropTypes.bool
@@ -100,8 +113,10 @@ module.exports = class Datum extends React.Component
     # no default for inputMode because we can also get from context, see @getInputMode()
     # inputMode: 'readonly'
     setOnBlur: true
+    setOnChange: false
     saveOnSet: false
     modelSaveMethod: 'save'
+    savedIndicatorTimeout: 5000
 
 
   @contextTypes:
@@ -140,9 +155,13 @@ module.exports = class Datum extends React.Component
 
   initializeState: ->
     @state = {
+      # don't initialize state.value until our first on changed for 
+      # faster isDirty determination
       #value: @getModelValue()
       errors: []
       isDirty: false
+      saving: false
+      saved: null
     }
 
   #..................................................React life cycle methods...........................................
@@ -314,6 +333,11 @@ module.exports = class Datum extends React.Component
     <input {... @getInputComponentOptions()}/>
       
 
+  ###
+    Override / extend this method to add or alter icons presented after datum.
+    
+    Datum implementation renders the error icon if needed.
+  ###
   renderIcons: ->
     return null unless @state.errors.length > 0
     
@@ -326,6 +350,15 @@ module.exports = class Datum extends React.Component
     else
       '!'
 
+    errors = @renderErrors()
+    return @renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid')
+
+
+  ###
+    Override / extend this method to control what is rendered in the error icon popup 
+  ###
+  renderErrors: ->
+    errors = []
     # multiple errors should be on their on line
     # if we are using ReactBootstrap, format the error messages with HTML
     if @getReactBootstrap()? && !@props.noPopover
@@ -333,9 +366,13 @@ module.exports = class Datum extends React.Component
     else
       errors = @state.errors.join('\n')
   
-    return @renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid')
+    return errors
 
-    
+
+  ###
+    You can use this to render a value with the standard popover treatment or 
+    extend and override to effect the standard popover treatment
+  ###  
   renderWithPopover: (value, tooltip, popoverId, valueClass) ->
     return value unless tooltip?
     
@@ -345,8 +382,9 @@ module.exports = class Datum extends React.Component
     # if react-bootstrap is available use it
     if Rb? && !@props.noPopover
       popover = <Rb.Popover id={popoverId}>{tooltip}</Rb.Popover>
+      rbOverlayProps = @getRbOverlayProps(value, popoverId)
       rValue = (
-        <Rb.OverlayTrigger overlay={popover} {... Options.get('RbOverlayProps')}>
+        <Rb.OverlayTrigger overlay={popover} {... rbOverlayProps} >
           <span className={valueClass}>{value}</span>
         </Rb.OverlayTrigger>
       )
@@ -356,6 +394,13 @@ module.exports = class Datum extends React.Component
     return rValue
 
 
+  ###
+    Override this method to provide things like custom positioning of error popovers
+  ###
+  getRbOverlayProps: (value, popoverId) ->
+    return Options.get('RbOverlayProps')
+    
+  
   ###
     This method can be overriden to provide custom determination of dirty state.
     dirty meaning, has the input value changed.  The base implementation assumes
@@ -486,8 +531,12 @@ module.exports = class Datum extends React.Component
     
     options pass through to model.set() 
   ###
-  setModelValue: (value=@getInputValue(), options={}) ->
-    return unless value?   # value == null means the user didn't change it
+  setModelValue: (value, options={}) ->
+    # allow for null value
+    if value == undefined   
+      value = @getInputValue()
+      # value == undefined means the user didn't change it
+      return if value == undefined  
     
     model = @getModel()
     if model? 
@@ -496,10 +545,8 @@ module.exports = class Datum extends React.Component
       else 
         model[@props.attr] = value
         
-      if @props.saveOnSet
-        unless _.isFunction(model[@props.modelSaveMethod])
-          throw "Datum:setModelValue - saveOnSet true but modelSaveMethod (#{@props.modelSaveMethod}) is not a function on model"
-        model[@props.modelSaveMethod]()
+      @saveModel() if @props.saveOnSet
+        
 
     # if we were provided a value in a prop and the datum allowed a change to it,
     # then we need to return that value in getModelValue
@@ -508,17 +555,49 @@ module.exports = class Datum extends React.Component
 
 
   saveModel: ->
-    @getModel()?.save();
-
+    model = @getModel()
+    return unless model?
+  
+    if _.isFunction(model[@props.modelSaveMethod])
+      @setState saving: true, =>
+        model[@props.modelSaveMethod]({}, @getModelSaveOptions())
+    else
+      console.error "Datum:setModelValue - saveOnSet true but modelSaveMethod (#{@props.modelSaveMethod}) is not a function on model"
+    
+    
+  getModelSaveOptions: ->
+    saveOptions = _.extend {}, @props.modelSaveOptions
+    
+    originalSuccess = saveOptions.success
+    originalError = saveOptions.error
+    
+    saveOptions.success = (model, resp)=>
+      @onModelSaveSuccess(model, resp)
+      originalSuccess?(model, resp, @)
+      
+    saveOptions.error = (model, resp)=>
+      @onModelSaveError(model, resp)
+      originalError?(model, resp, @)
+      
+    return saveOptions
+      
 
   getEllipsizeAt: ->
     return @props.ellipsizeAt
 
 
+  ###
+    Override / extend this method to add conditional css classes to the outer datum element
+  ###
   getFullClassName: ->
     className = if @subClassName? then "#{@className} #{@subClassName}" else @className
     className += " required" if @props.required
     className += " invalid" if @state.errors.length > 0
+    className += " saving" if @state.saving
+    # ignore null value in state.saved
+    className +=  " not-saved" if @state.saved == false
+    className +=  " saved" if @state.saved == true
+    
     className += " #{@props.className}" if @props.className?
     return className
     
@@ -550,10 +629,10 @@ module.exports = class Datum extends React.Component
 
 
   onChange: (event, options = {}) =>
-    #options are passed through to props.onChange
+    
     options = _.defaults options,
       silent: false
-      event: event
+      event: event    #options are passed through to props.onChange
       # this can be set to another value to send to the @props.onChange handler
       #   see CollectionPicker#onChange
       propsOnChangeValue: null
@@ -584,6 +663,26 @@ module.exports = class Datum extends React.Component
 
     # if inline edit should get back to display mode.
     @inlineToDisplayMode()
+    
+  
+  onModelSaveSuccess: (model, resp) =>
+    @setState saving: false, saved: true
+    # this can be styled to 'flash' the color or temporarily show the components
+    # as recently saved 
+    if @props.savedIndicatorTimeout?
+      _.delay (=> @setState saved: null), @props.savedIndicatorTimeout
+  
+  
+  onModelSaveError: (model, resp) =>
+    errors = @state.errors || []
+    errors.push "Unable to save value. Error: " + resp.responseText ? resp.statusText ? resp
+
+    @setState saving: false, saved: false, errors: errors
+    # we also populate errors which will change this to an error icon
+    if @props.savedIndicatorTimeout?
+      _.delay => 
+        @setState saved: null
+      , @props.savedIndicatorTimeout
 
 
   onDocumentClick: (evt) =>
@@ -592,7 +691,7 @@ module.exports = class Datum extends React.Component
 
 
   onDocumentKeydown: (evt) =>
-    if @isInlineEdit() && @isEditing() && evt.keyCode == 27          # escape to close edit
+    if evt.keyCode == 27 && @isInlineEdit?() && @isEditing?()          # escape to close edit
       @inlineToDisplayMode()
       
 

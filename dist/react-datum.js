@@ -673,6 +673,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    setOnBlur: React.PropTypes.bool,
 	    saveOnSet: React.PropTypes.bool,
 	    modelSaveMethod: React.PropTypes.string,
+	    modelSaveOptions: React.PropTypes.object,
+	    savedIndicatorTimeout: React.PropTypes.number,
 	    readonly: React.PropTypes.bool,
 	    required: React.PropTypes.bool,
 	    style: React.PropTypes.object,
@@ -683,8 +685,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.defaultProps = {
 	    setOnBlur: true,
+	    setOnChange: false,
 	    saveOnSet: false,
-	    modelSaveMethod: 'save'
+	    modelSaveMethod: 'save',
+	    savedIndicatorTimeout: 5000
 	  };
 
 	  Datum.contextTypes = {
@@ -710,6 +714,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.onInputKeyDown = bind(this.onInputKeyDown, this);
 	    this.onDocumentKeydown = bind(this.onDocumentKeydown, this);
 	    this.onDocumentClick = bind(this.onDocumentClick, this);
+	    this.onModelSaveError = bind(this.onModelSaveError, this);
+	    this.onModelSaveSuccess = bind(this.onModelSaveSuccess, this);
 	    this.onBlur = bind(this.onBlur, this);
 	    this.onChange = bind(this.onChange, this);
 	    this.onEditClick = bind(this.onEditClick, this);
@@ -722,7 +728,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.prototype.initializeState = function() {
 	    return this.state = {
 	      errors: [],
-	      isDirty: false
+	      isDirty: false,
+	      saving: false,
+	      saved: null
 	    };
 	  };
 
@@ -906,8 +914,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return React.createElement("input", React.__spread({}, this.getInputComponentOptions()));
 	  };
 
+
+	  /*
+	    Override / extend this method to add or alter icons presented after datum.
+	    
+	    Datum implementation renders the error icon if needed.
+	   */
+
 	  Datum.prototype.renderIcons = function() {
-	    var className, error, errorIcon, errorIconClass, errors, i, len, ref;
+	    var className, errorIcon, errorIconClass, errors;
 	    if (!(this.state.errors.length > 0)) {
 	      return null;
 	    }
@@ -917,6 +932,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    errorIcon = errorIconClass != null ? React.createElement("i", {
 	      "className": errorIconClass
 	    }) : '!';
+	    errors = this.renderErrors();
+	    return this.renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid');
+	  };
+
+
+	  /*
+	    Override / extend this method to control what is rendered in the error icon popup
+	   */
+
+	  Datum.prototype.renderErrors = function() {
+	    var error, errors, i, len, ref;
+	    errors = [];
 	    if ((this.getReactBootstrap() != null) && !this.props.noPopover) {
 	      ref = this.state.errors;
 	      for (i = 0, len = ref.length; i < len; i++) {
@@ -926,11 +953,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    } else {
 	      errors = this.state.errors.join('\n');
 	    }
-	    return this.renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid');
+	    return errors;
 	  };
 
+
+	  /*
+	    You can use this to render a value with the standard popover treatment or 
+	    extend and override to effect the standard popover treatment
+	   */
+
 	  Datum.prototype.renderWithPopover = function(value, tooltip, popoverId, valueClass) {
-	    var Rb, popover, rValue;
+	    var Rb, popover, rValue, rbOverlayProps;
 	    if (tooltip == null) {
 	      return value;
 	    }
@@ -939,9 +972,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      popover = React.createElement(Rb.Popover, {
 	        "id": popoverId
 	      }, tooltip);
+	      rbOverlayProps = this.getRbOverlayProps(value, popoverId);
 	      rValue = React.createElement(Rb.OverlayTrigger, React.__spread({
 	        "overlay": popover
-	      }, Options.get('RbOverlayProps')), React.createElement("span", {
+	      }, rbOverlayProps), React.createElement("span", {
 	        "className": valueClass
 	      }, value));
 	    } else {
@@ -951,6 +985,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }, value);
 	    }
 	    return rValue;
+	  };
+
+
+	  /*
+	    Override this method to provide things like custom positioning of error popovers
+	   */
+
+	  Datum.prototype.getRbOverlayProps = function(value, popoverId) {
+	    return Options.get('RbOverlayProps');
 	  };
 
 
@@ -1134,14 +1177,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Datum.prototype.setModelValue = function(value, options) {
 	    var model;
-	    if (value == null) {
-	      value = this.getInputValue();
-	    }
 	    if (options == null) {
 	      options = {};
 	    }
-	    if (value == null) {
-	      return;
+	    if (value === void 0) {
+	      value = this.getInputValue();
+	      if (value === void 0) {
+	        return;
+	      }
 	    }
 	    model = this.getModel();
 	    if (model != null) {
@@ -1151,10 +1194,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        model[this.props.attr] = value;
 	      }
 	      if (this.props.saveOnSet) {
-	        if (!_.isFunction(model[this.props.modelSaveMethod])) {
-	          throw "Datum:setModelValue - saveOnSet true but modelSaveMethod (" + this.props.modelSaveMethod + ") is not a function on model";
-	        }
-	        model[this.props.modelSaveMethod]();
+	        this.saveModel();
 	      }
 	    }
 	    if (this.props.value !== void 0) {
@@ -1165,13 +1205,52 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.saveModel = function() {
-	    var ref;
-	    return (ref = this.getModel()) != null ? ref.save() : void 0;
+	    var model;
+	    model = this.getModel();
+	    if (model == null) {
+	      return;
+	    }
+	    if (_.isFunction(model[this.props.modelSaveMethod])) {
+	      return this.setState({
+	        saving: true
+	      }, (function(_this) {
+	        return function() {
+	          return model[_this.props.modelSaveMethod]({}, _this.getModelSaveOptions());
+	        };
+	      })(this));
+	    } else {
+	      return console.error("Datum:setModelValue - saveOnSet true but modelSaveMethod (" + this.props.modelSaveMethod + ") is not a function on model");
+	    }
+	  };
+
+	  Datum.prototype.getModelSaveOptions = function() {
+	    var originalError, originalSuccess, saveOptions;
+	    saveOptions = _.extend({}, this.props.modelSaveOptions);
+	    originalSuccess = saveOptions.success;
+	    originalError = saveOptions.error;
+	    saveOptions.success = (function(_this) {
+	      return function(model, resp) {
+	        _this.onModelSaveSuccess(model, resp);
+	        return typeof originalSuccess === "function" ? originalSuccess(model, resp, _this) : void 0;
+	      };
+	    })(this);
+	    saveOptions.error = (function(_this) {
+	      return function(model, resp) {
+	        _this.onModelSaveError(model, resp);
+	        return typeof originalError === "function" ? originalError(model, resp, _this) : void 0;
+	      };
+	    })(this);
+	    return saveOptions;
 	  };
 
 	  Datum.prototype.getEllipsizeAt = function() {
 	    return this.props.ellipsizeAt;
 	  };
+
+
+	  /*
+	    Override / extend this method to add conditional css classes to the outer datum element
+	   */
 
 	  Datum.prototype.getFullClassName = function() {
 	    var className;
@@ -1181,6 +1260,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    if (this.state.errors.length > 0) {
 	      className += " invalid";
+	    }
+	    if (this.state.saving) {
+	      className += " saving";
+	    }
+	    if (this.state.saved === false) {
+	      className += " not-saved";
+	    }
+	    if (this.state.saved === true) {
+	      className += " saved";
 	    }
 	    if (this.props.className != null) {
 	      className += " " + this.props.className;
@@ -1250,6 +1338,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.inlineToDisplayMode();
 	  };
 
+	  Datum.prototype.onModelSaveSuccess = function(model, resp) {
+	    this.setState({
+	      saving: false,
+	      saved: true
+	    });
+	    if (this.props.savedIndicatorTimeout != null) {
+	      return _.delay(((function(_this) {
+	        return function() {
+	          return _this.setState({
+	            saved: null
+	          });
+	        };
+	      })(this)), this.props.savedIndicatorTimeout);
+	    }
+	  };
+
+	  Datum.prototype.onModelSaveError = function(model, resp) {
+	    var errors, ref, ref1;
+	    errors = this.state.errors || [];
+	    errors.push((ref = (ref1 = "Unable to save value. Error: " + resp.responseText) != null ? ref1 : resp.statusText) != null ? ref : resp);
+	    this.setState({
+	      saving: false,
+	      saved: false,
+	      errors: errors
+	    });
+	    if (this.props.savedIndicatorTimeout != null) {
+	      return _.delay((function(_this) {
+	        return function() {
+	          return _this.setState({
+	            saved: null
+	          });
+	        };
+	      })(this), this.props.savedIndicatorTimeout);
+	    }
+	  };
+
 	  Datum.prototype.onDocumentClick = function(evt) {
 	    if (this.isInlineEdit() && this.isEditing() && !this.isElementOrParentOf(evt.target, ReactDOM.findDOMNode(this))) {
 	      return this.inlineToDisplayMode();
@@ -1257,7 +1381,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Datum.prototype.onDocumentKeydown = function(evt) {
-	    if (this.isInlineEdit() && this.isEditing() && evt.keyCode === 27) {
+	    if (evt.keyCode === 27 && (typeof this.isInlineEdit === "function" ? this.isInlineEdit() : void 0) && (typeof this.isEditing === "function" ? this.isEditing() : void 0)) {
 	      return this.inlineToDisplayMode();
 	    }
 	  };
@@ -1726,12 +1850,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  ContextualData.prototype.bindEvents = function() {
 	    var ref;
-	    return (ref = this.state.collectionOrModel) != null ? ref.on('all', this.onDataChanged, this) : void 0;
+	    return (ref = this.state.collectionOrModel) != null ? typeof ref.on === "function" ? ref.on('all', this.onDataChanged, this) : void 0 : void 0;
 	  };
 
 	  ContextualData.prototype.unbindEvents = function() {
 	    var ref;
-	    return (ref = this.state.collectionOrModel) != null ? ref.off('all', this.onDataChanged) : void 0;
+	    return (ref = this.state.collectionOrModel) != null ? typeof ref.off === "function" ? ref.off('all', this.onDataChanged) : void 0 : void 0;
 	  };
 
 	  ContextualData.prototype.onDataChanged = function() {
@@ -2689,8 +2813,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Number.prototype.renderValueForDisplay = function() {
-	    var formats, value;
-	    value = parseFloat(this.getModelValue());
+	    var formats, modelValue, value;
+	    modelValue = this.getModelValue();
+	    value = parseFloat(modelValue);
+	    if (_.isNaN(value)) {
+	      return modelValue;
+	    }
 	    formats = this.getFormats();
 	    if (indexOf.call(formats, 'percent') >= 0) {
 	      value *= 100;
@@ -2714,6 +2842,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return React.createElement("span", null, "0");
 	  };
 
+	  Number.prototype.getValueForInput = function() {
+	    var floatVal, value;
+	    value = Number.__super__.getValueForInput.apply(this, arguments);
+	    floatVal = parseFloat(value);
+	    if (_.isNaN(floatVal)) {
+	      return '';
+	    } else {
+	      return value;
+	    }
+	  };
+
 	  Number.prototype.getFormats = function() {
 	    var ref;
 	    if (_.isArray(this.props.format)) {
@@ -2721,10 +2860,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    } else {
 	      return ((ref = this.props.format) != null ? ref.toString().split(' ') : void 0) || [];
 	    }
-	  };
-
-	  Number.prototype.getValueForInput = function() {
-	    return Number.__super__.getValueForInput.apply(this, arguments);
 	  };
 
 	  Number.prototype.onChange = function(event) {
@@ -2991,7 +3126,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  Text.prototype.renderValueForDisplay = function() {
-	    return this.renderEllipsizedValue(Text.__super__.renderValueForDisplay.apply(this, arguments));
+	    var superValue, value;
+	    superValue = Text.__super__.renderValueForDisplay.apply(this, arguments);
+	    value = (function() {
+	      switch (false) {
+	        case !_.isArray(superValue):
+	          return superValue.join(', ');
+	        case !_.isObject(superValue):
+	          return JSON.stringify(superValue);
+	        default:
+	          return superValue.toString();
+	      }
+	    })();
+	    return this.renderEllipsizedValue(value);
 	  };
 
 
@@ -4965,7 +5112,8 @@ return /******/ (function(modules) { // webpackBootstrap
 						return _this3.select = _ref;
 					},
 					onChange: function onChange(newValues) {
-						if (_this3.props.value && newValues.length > _this3.props.value.length) {
+						var newValuesExist = typeof newValues !== '' && newValues !== null;
+						if (_this3.props.value && newValuesExist && newValues.length > _this3.props.value.length) {
 							_this3.clearOptions();
 						}
 						_this3.props.onChange(newValues);
@@ -5968,7 +6116,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  CollectionPicker.prototype.onChange = function(optionsSelected) {
-	    var values;
+	    var value, values;
 	    if (this.props.multi) {
 	      values = _.pluck(optionsSelected, 'value');
 	      if (this.props.setAsString) {
@@ -5978,7 +6126,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        propsOnChangeValue: optionsSelected
 	      });
 	    } else {
-	      return CollectionPicker.__super__.onChange.call(this, optionsSelected != null ? optionsSelected.value : void 0, {
+	      value = optionsSelected === null ? null : optionsSelected != null ? optionsSelected.value : void 0;
+	      return CollectionPicker.__super__.onChange.call(this, value, {
 	        propsOnChangeValue: optionsSelected
 	      });
 	    }
@@ -6067,28 +6216,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    this.valueModel = (newProps != null ? newProps.model : void 0) || (newContext != null ? newContext.model : void 0) || this.valueModel || new Backbone.Model();
 	    return this.valueModel;
-	  };
-
-
-	  /*
-	    We need to override this to enable null values to be set. When clearing options for single select
-	    the value is null. Thats a valid value for CollectionPicker.
-	   */
-
-	  CollectionPicker.prototype.setModelValue = function(value, options) {
-	    var model;
-	    if (options == null) {
-	      options = {};
-	    }
-	    model = this.getModel();
-	    if (model == null) {
-	      return;
-	    }
-	    if (_.isFunction(model.set)) {
-	      return model.set(this.props.attr, value, options);
-	    } else {
-	      return model[this.props.attr] = value;
-	    }
 	  };
 
 	  return CollectionPicker;

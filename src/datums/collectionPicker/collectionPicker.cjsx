@@ -317,7 +317,8 @@ module.exports = class CollectionPicker extends Datum
       values = values.join(',') if @props.setAsString
       super values, propsOnChangeValue: optionsSelected
     else
-      super optionsSelected?.value, propsOnChangeValue: optionsSelected
+      value = if optionsSelected == null then null else optionsSelected?.value
+      super value, propsOnChangeValue: optionsSelected
       
     
 
@@ -383,19 +384,6 @@ module.exports = class CollectionPicker extends Datum
     @valueModel = newProps?.model || newContext?.model || @valueModel || new Backbone.Model()
     return @valueModel
 
-
-  ###
-    We need to override this to enable null values to be set. When clearing options for single select
-    the value is null. Thats a valid value for CollectionPicker.
-  ###
-  setModelValue: (value, options={}) ->
-    model = @getModel()
-    return unless model?
-
-    if _.isFunction(model.set)
-      model.set(@props.attr, value, options)
-    else
-      model[@props.attr] = value
 
       
       
