@@ -1,4 +1,21 @@
 
+## [0.11.0](https://github.com/zulily/react-datum.git/compare/0.10.0...0.11.0) (2017-01-17)
+A big new featue is the ability to specify a 'value' prop to all Datum extensions.  Using the value prop enables Datums to be easily used without an associated Backbone model.
+
+### Bugs Fixed in this Release
+* [5ddd3bc](https://github.com/zulily/react-datum.git/commit/5ddd3bc24a9a3c9efaca41a7a1d87dc2fab38734)  fixed - collection picker click clear icon should set model value to null. +test
+* [6379ca7](https://github.com/zulily/react-datum.git/commit/6379ca7c40111825aedad1d65640ead124a6deca)  Number datum should gracefully handle non-numeric model values. +tests
+
+### New Features
+* [4093d11](https://github.com/zulily/react-datum.git/commit/4093d113652b0d5dba639903528fd5ea185811a1)  allow react bootstrap overlay props to be modified via extension
+* [0e0f2e7](https://github.com/zulily/react-datum.git/commit/0e0f2e7926865a3957d581297e11224e511e2167)  add css class to datum to indicate save status. One of 'saving', 'saved', 'not saved'.  Only applies if saveOnSet==true
+* [9781eed](https://github.com/zulily/react-datum.git/commit/9781eed88a7fc3eee8e7d9ce8ca49a21bc24ca02)  modelSaveOptions - new prop for all datums to allow you to specified options passed as second arg to model save method.
+
+### Other Commits
+* [1f39e6a](https://github.com/zulily/react-datum.git/commit/1f39e6a3779f5238f0dc33fb0371c8dcbfb5f023) Text datum should better handle non text model value types.  simple arrays & booleans tested.
+* [af42198](https://github.com/zulily/react-datum.git/commit/af421983ef215b94404e9732931d56a0b63b7dd0) errors from saving should show resp.responseText or resp.statusText
+* [1bd184d](https://github.com/zulily/react-datum.git/commit/1bd184dc566c07ca6a44476af760007ecdff2aa0) allow Model and Collection components to accept js objs
+
 ## [0.10.0](https://github.com/zulily/react-datum.git/compare/0.9.2...0.10.0) (2016-12-16)
 
 
