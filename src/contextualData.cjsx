@@ -76,9 +76,8 @@ module.exports = class ContextualData extends React.Component
     placeholder: undefined
     # We do not define any default style data.
     style: {}
-    
-    # effectively batch and defer multiple syncronous events into one defaults to zero 
-    # second debounce which will effectively ignore all but the last triggered event
+    # effectively batch and defer multiple syncronous events into one defaults to  
+    # 0s debounce which will effectively ignore all but the last triggered event
     # in a long sequence
     debouncedUpdate: true
     debounceMs: 0

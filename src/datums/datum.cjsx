@@ -382,8 +382,9 @@ module.exports = class Datum extends React.Component
     # if react-bootstrap is available use it
     if Rb? && !@props.noPopover
       popover = <Rb.Popover id={popoverId}>{tooltip}</Rb.Popover>
+      rbOverlayProps = @getRbOverlayProps(value, popoverId)
       rValue = (
-        <Rb.OverlayTrigger overlay={popover} {... Options.get('RbOverlayProps')}>
+        <Rb.OverlayTrigger overlay={popover} {... rbOverlayProps} >
           <span className={valueClass}>{value}</span>
         </Rb.OverlayTrigger>
       )
@@ -393,6 +394,13 @@ module.exports = class Datum extends React.Component
     return rValue
 
 
+  ###
+    Override this method to provide things like custom positioning of error popovers
+  ###
+  getRbOverlayProps: (value, popoverId) ->
+    return Options.get('RbOverlayProps')
+    
+  
   ###
     This method can be overriden to provide custom determination of dirty state.
     dirty meaning, has the input value changed.  The base implementation assumes

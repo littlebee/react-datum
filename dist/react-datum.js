@@ -963,7 +963,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.renderWithPopover = function(value, tooltip, popoverId, valueClass) {
-	    var Rb, popover, rValue;
+	    var Rb, popover, rValue, rbOverlayProps;
 	    if (tooltip == null) {
 	      return value;
 	    }
@@ -972,9 +972,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      popover = React.createElement(Rb.Popover, {
 	        "id": popoverId
 	      }, tooltip);
+	      rbOverlayProps = this.getRbOverlayProps(value, popoverId);
 	      rValue = React.createElement(Rb.OverlayTrigger, React.__spread({
 	        "overlay": popover
-	      }, Options.get('RbOverlayProps')), React.createElement("span", {
+	      }, rbOverlayProps), React.createElement("span", {
 	        "className": valueClass
 	      }, value));
 	    } else {
@@ -984,6 +985,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }, value);
 	    }
 	    return rValue;
+	  };
+
+
+	  /*
+	    Override this method to provide things like custom positioning of error popovers
+	   */
+
+	  Datum.prototype.getRbOverlayProps = function(value, popoverId) {
+	    return Options.get('RbOverlayProps');
 	  };
 
 
