@@ -208,6 +208,19 @@ describe 'Number datum', ->
       Th.changeDatumValue(component, testValue, blur: true)
       component.getInputValue().should.not.equal testValue
       
+
+  describe 'as input with numeric string spaces and symbols', ->
+    it 'should handle big numbers with commas and dollar signs', ->
+      testValue = '$4,009.95'
+      component = Th.render <Number inputMode='edit' value={testValue}/>
+      domNode = Th.domNode(component)
+      Th.testDatumInput(component, '4009.95')
     
+    it 'should handle spaces', ->
+      testValue = ' $409.95 '
+      component = Th.render <Number inputMode='edit' value={testValue}/>
+      domNode = Th.domNode(component)
+      Th.testDatumInput(component, '409.95')
+      
     
     
