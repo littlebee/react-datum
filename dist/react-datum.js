@@ -2845,7 +2845,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Number.prototype.getValueForInput = function() {
 	    var floatVal, value;
 	    value = Number.__super__.getValueForInput.apply(this, arguments);
-	    if (_.isString(value)) {
+	    if ((value != null) && _.isString(value)) {
 	      value = value.replace(/[\s\$\,]/g, '');
 	    }
 	    floatVal = parseFloat(value);
