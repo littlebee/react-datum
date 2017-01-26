@@ -1911,12 +1911,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Collection.prototype.contextKey = 'collection';
 
+	  Collection.collectionPropType = React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Collection), React.PropTypes.array]);
+
 	  Collection.propTypes = _.extend({}, ContextualData.propTypes, {
-	    collection: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Collection), React.PropTypes.func]).isRequired
+	    collection: Collection.collectionPropType.isRequired
 	  });
 
 	  Collection.childContextTypes = _.extend({}, ContextualData.childContextTypes, {
-	    collection: React.PropTypes.instanceOf(Backbone.Collection)
+	    collection: Collection.collectionPropType
 	  });
 
 	  Collection.prototype.setCollectionOrModel = function() {
@@ -2356,12 +2358,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Model.prototype.contextKey = 'model';
 
+	  Model.modelPropType = React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Model), React.PropTypes.object]);
+
 	  Model.propTypes = _.extend({}, ContextualData.propTypes, {
-	    model: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Model), React.PropTypes.func]).isRequired
+	    model: Model.modelPropType.isRequired
 	  });
 
 	  Model.childContextTypes = _.extend({}, ContextualData.childContextTypes, {
-	    model: React.PropTypes.instanceOf(Backbone.Model)
+	    model: Model.modelPropType
 	  });
 
 	  return Model;

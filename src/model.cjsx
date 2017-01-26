@@ -15,13 +15,14 @@ module.exports = class Model extends ContextualData
   # this is the key in @context children should use to access thing
   contextKey: 'model'
 
+  @modelPropType: React.PropTypes.oneOfType([
+    React.PropTypes.instanceOf(Backbone.Model)
+    React.PropTypes.object
+  ])
 
   @propTypes: _.extend {}, ContextualData.propTypes,
-    model: React.PropTypes.oneOfType([
-      React.PropTypes.instanceOf(Backbone.Model)
-      React.PropTypes.func
-    ]).isRequired
+    model: @modelPropType.isRequired
 
 
   @childContextTypes: _.extend {}, ContextualData.childContextTypes,
-    model: React.PropTypes.instanceOf(Backbone.Model)
+    model: @modelPropType
