@@ -2583,10 +2583,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  LazyPhoto.displayName = "react-datum.LazyPhoto";
 
-	  LazyPhoto.prototype.notFoundUrl = Options.get('LazyPhoto').notFoundUrl;
-
-	  LazyPhoto.prototype.loadingUrl = Options.get('LazyPhoto').loadingUrl;
-
 	  LazyPhoto.prototype.subClassName = 'lazy-image';
 
 	  LazyPhoto.prototype.notFound = false;
@@ -2598,20 +2594,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  LazyPhoto.prototype.renderForDisplay = function() {
-	    var modelValue, source;
+	    var loadingUrl, modelValue, notFoundUrl, source;
 	    modelValue = this.getModelValue();
 	    if (!modelValue || modelValue !== this.lastModelValue) {
 	      this.notFound = this.initialLoadComplete = !((modelValue != null ? modelValue.length : void 0) > 0);
 	      this.lastModelValue = modelValue;
 	    }
+	    notFoundUrl = Options.get('LazyPhoto').notFoundUrl;
+	    loadingUrl = Options.get('LazyPhoto').loadingUrl;
 	    source = (function() {
 	      switch (false) {
 	        case !this.notFound:
-	          return this.notFoundUrl;
+	          return notFoundUrl;
 	        case !this.initialLoadComplete:
 	          return modelValue;
 	        default:
-	          return this.loadingUrl;
+	          return loadingUrl;
 	      }
 	    }).call(this);
 	    return React.createElement("img", {
