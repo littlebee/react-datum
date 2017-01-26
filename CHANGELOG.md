@@ -1,4 +1,11 @@
 
+## [0.12.0](https://github.com/zulily/react-datum.git/compare/0.11.0...0.12.0) (2017-01-25)
+
+
+### New Features
+* [018380b](https://github.com/zulily/react-datum.git/commit/018380b726450724a911037232b83f1432753218)  LazyPhoto now alows setting LazyPhoto.notFoundUrl and LazyPhoto.loadingUrl through ReactDatum.Options.set()
+* [20c39b5](https://github.com/zulily/react-datum.git/commit/20c39b5150c7a069d48ca13139bb31456eef1848)  if model attribute value for a Number datum is given as string, strip dollar signs and commas
+
 ## [0.11.0](https://github.com/zulily/react-datum.git/compare/0.10.0...0.11.0) (2017-01-17)
 A big new featue is the ability to specify a 'value' prop to all Datum extensions.  Using the value prop enables Datums to be easily used without an associated Backbone model.
 

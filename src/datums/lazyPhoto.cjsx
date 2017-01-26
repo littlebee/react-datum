@@ -1,6 +1,8 @@
 
 React = require('react')
 Datum = require('./datum')
+Options = require('../options')
+
 
 ###
   This is a lazy loading image.
@@ -18,33 +20,28 @@ Datum = require('./datum')
 module.exports = class LazyPhoto extends Datum
   @displayName: "react-datum.LazyPhoto"
 
-  # ...and again the promise of webpack falls short of the reality
-  # This works great for bundling, but when you require the react-datum npm package
-  # for server side use, it chokes on these
-  #notFoundUrl: require("../../img/petals.png")
-  #loadingUrl: require("../../img/blank.jpg")
-  notFoundUrl: "http://zulily.github.io/react-datum/img/petals.png"
-  loadingUrl: "http://zulily.github.io/react-datum/img/blank.jpg"
-  
   subClassName: 'lazy-image'
 
   # these are updated as events are fired
   notFound: false
   initialLoadComplete: false
-
+  
   isEditable: -> false
-
+  
   # override
   renderForDisplay: () ->
     modelValue = @getModelValue()
     if !modelValue || modelValue != @lastModelValue
       @notFound = @initialLoadComplete = !(modelValue?.length > 0)
       @lastModelValue = modelValue
-    
+
+    notFoundUrl = Options.get('LazyPhoto').notFoundUrl 
+    loadingUrl = Options.get('LazyPhoto').loadingUrl 
+      
     source = switch
-      when @notFound then @notFoundUrl
+      when @notFound then notFoundUrl
       when @initialLoadComplete then modelValue
-      else @loadingUrl
+      else loadingUrl
 
     <img src={source}
          onLoad={@onLoad}

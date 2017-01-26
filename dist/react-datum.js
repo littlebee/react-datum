@@ -1591,6 +1591,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    RbOverlayProps: {
 	      trigger: ['hover', 'focus'],
 	      placement: 'right'
+	    },
+	    LazyPhoto: {
+	      notFoundUrl: "http://zulily.github.io/react-datum/img/petals.png",
+	      loadingUrl: "http://zulily.github.io/react-datum/img/blank.jpg"
 	    }
 	  };
 
@@ -1600,7 +1604,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /*
 	    Use to set a ReactDatum option.  Arguments can be either `(key, value)` or `({key: value, key: value})`
 	      
-	    Examples:
+	    Example:
 	    ```
 	      ReactDatum = require('react-datum')
 	      
@@ -1911,12 +1915,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Collection.prototype.contextKey = 'collection';
 
+	  Collection.collectionPropType = React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Collection), React.PropTypes.array]);
+
 	  Collection.propTypes = _.extend({}, ContextualData.propTypes, {
-	    collection: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Collection), React.PropTypes.func]).isRequired
+	    collection: Collection.collectionPropType.isRequired
 	  });
 
 	  Collection.childContextTypes = _.extend({}, ContextualData.childContextTypes, {
-	    collection: React.PropTypes.instanceOf(Backbone.Collection)
+	    collection: Collection.collectionPropType
 	  });
 
 	  Collection.prototype.setCollectionOrModel = function() {
@@ -2356,12 +2362,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Model.prototype.contextKey = 'model';
 
+	  Model.modelPropType = React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Model), React.PropTypes.object]);
+
 	  Model.propTypes = _.extend({}, ContextualData.propTypes, {
-	    model: React.PropTypes.oneOfType([React.PropTypes.instanceOf(Backbone.Model), React.PropTypes.func]).isRequired
+	    model: Model.modelPropType.isRequired
 	  });
 
 	  Model.childContextTypes = _.extend({}, ContextualData.childContextTypes, {
-	    model: React.PropTypes.instanceOf(Backbone.Model)
+	    model: Model.modelPropType
 	  });
 
 	  return Model;
@@ -2538,7 +2546,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Datum, LazyPhoto, React,
+	var Datum, LazyPhoto, Options, React,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
@@ -2546,6 +2554,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	React = __webpack_require__(4);
 
 	Datum = __webpack_require__(7);
+
+	Options = __webpack_require__(10);
 
 
 	/*
@@ -2573,10 +2583,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  LazyPhoto.displayName = "react-datum.LazyPhoto";
 
-	  LazyPhoto.prototype.notFoundUrl = "http://zulily.github.io/react-datum/img/petals.png";
-
-	  LazyPhoto.prototype.loadingUrl = "http://zulily.github.io/react-datum/img/blank.jpg";
-
 	  LazyPhoto.prototype.subClassName = 'lazy-image';
 
 	  LazyPhoto.prototype.notFound = false;
@@ -2588,20 +2594,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  LazyPhoto.prototype.renderForDisplay = function() {
-	    var modelValue, source;
+	    var loadingUrl, modelValue, notFoundUrl, source;
 	    modelValue = this.getModelValue();
 	    if (!modelValue || modelValue !== this.lastModelValue) {
 	      this.notFound = this.initialLoadComplete = !((modelValue != null ? modelValue.length : void 0) > 0);
 	      this.lastModelValue = modelValue;
 	    }
+	    notFoundUrl = Options.get('LazyPhoto').notFoundUrl;
+	    loadingUrl = Options.get('LazyPhoto').loadingUrl;
 	    source = (function() {
 	      switch (false) {
 	        case !this.notFound:
-	          return this.notFoundUrl;
+	          return notFoundUrl;
 	        case !this.initialLoadComplete:
 	          return modelValue;
 	        default:
-	          return this.loadingUrl;
+	          return loadingUrl;
 	      }
 	    }).call(this);
 	    return React.createElement("img", {
@@ -2845,7 +2853,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Number.prototype.getValueForInput = function() {
 	    var floatVal, value;
 	    value = Number.__super__.getValueForInput.apply(this, arguments);
-	    if (_.isString(value)) {
+	    if ((value != null) && _.isString(value)) {
 	      value = value.replace(/[\s\$\,]/g, '');
 	    }
 	    floatVal = parseFloat(value);

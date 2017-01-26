@@ -38,7 +38,12 @@ module.exports = class Options
     ReactBootstrap: null
     RbOverlayProps: 
       trigger: ['hover','focus']
-      placement: 'right'      
+      placement: 'right'  
+    LazyPhoto:
+      notFoundUrl: "http://zulily.github.io/react-datum/img/petals.png"
+      loadingUrl: "http://zulily.github.io/react-datum/img/blank.jpg"
+        
+        
       
   
   @_options: _.extend {}, @_defaults
@@ -47,7 +52,7 @@ module.exports = class Options
   ###
     Use to set a ReactDatum option.  Arguments can be either `(key, value)` or `({key: value, key: value})`
       
-    Examples:
+    Example:
     ```
       ReactDatum = require('react-datum')
       
