@@ -1591,6 +1591,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    RbOverlayProps: {
 	      trigger: ['hover', 'focus'],
 	      placement: 'right'
+	    },
+	    LazyPhoto: {
+	      notFoundUrl: "http://zulily.github.io/react-datum/img/petals.png",
+	      loadingUrl: "http://zulily.github.io/react-datum/img/blank.jpg"
 	    }
 	  };
 
@@ -1600,7 +1604,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /*
 	    Use to set a ReactDatum option.  Arguments can be either `(key, value)` or `({key: value, key: value})`
 	      
-	    Examples:
+	    Example:
 	    ```
 	      ReactDatum = require('react-datum')
 	      
@@ -2542,7 +2546,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Datum, LazyPhoto, React,
+	var Datum, LazyPhoto, Options, React,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
@@ -2550,6 +2554,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	React = __webpack_require__(4);
 
 	Datum = __webpack_require__(7);
+
+	Options = __webpack_require__(10);
 
 
 	/*
@@ -2577,9 +2583,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  LazyPhoto.displayName = "react-datum.LazyPhoto";
 
-	  LazyPhoto.prototype.notFoundUrl = "http://zulily.github.io/react-datum/img/petals.png";
+	  LazyPhoto.prototype.notFoundUrl = Options.get('LazyPhoto').notFoundUrl;
 
-	  LazyPhoto.prototype.loadingUrl = "http://zulily.github.io/react-datum/img/blank.jpg";
+	  LazyPhoto.prototype.loadingUrl = Options.get('LazyPhoto').loadingUrl;
 
 	  LazyPhoto.prototype.subClassName = 'lazy-image';
 

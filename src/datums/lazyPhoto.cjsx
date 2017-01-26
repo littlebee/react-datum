@@ -1,6 +1,8 @@
 
 React = require('react')
 Datum = require('./datum')
+Options = require('../options')
+
 
 ###
   This is a lazy loading image.
@@ -23,8 +25,8 @@ module.exports = class LazyPhoto extends Datum
   # for server side use, it chokes on these
   #notFoundUrl: require("../../img/petals.png")
   #loadingUrl: require("../../img/blank.jpg")
-  notFoundUrl: "http://zulily.github.io/react-datum/img/petals.png"
-  loadingUrl: "http://zulily.github.io/react-datum/img/blank.jpg"
+  notFoundUrl: Options.get('LazyPhoto').notFoundUrl 
+  loadingUrl: Options.get('LazyPhoto').loadingUrl 
   
   subClassName: 'lazy-image'
 
