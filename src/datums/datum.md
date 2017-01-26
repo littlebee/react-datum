@@ -34,6 +34,16 @@ Note that for clarity we have provided the **Text** datum which will also ellips
   <Text attr="firstName" label="FirstName"/>
 ```
 
+#### Validations
+
+Datums support validations.  All validation methods should return either true or an error message.  All datums should support 'required' validation prop.
+
+To make a datum required, simply add the required prop to the component.  Ex:
+```
+  <Text attr="name" required>
+```
+Validations are run at time of change and the datum element will get an invalid class for optional styling.  An exclamation icon is rendered and has a popup that will show all errors for that input.
+
 #### Metadata
 
 Several of the Datum props can be given values via metadata.   If the model associated with this datum has a getDatumMetadata() method, it will be called with the following arguments: `(prop, datumInstance)`  
@@ -86,16 +96,6 @@ Metadata values are only used if a prop is not specified.
 
 See also getMetadata callback prop in [DatumProps](#Datum-propTypes)
 
-
-#### Validations
-
-Datums support validations.  All validation methods should return either true or an error message.  All datums should support 'required' validation prop.
-
-To make a datum required, simply add the required prop to the component.  Ex:
-```
-  <Text attr="name" required>
-```
-Validations are run at time of change and the datum element will get an invalid class for optional styling.  An exclamation icon is rendered and has a popup that will show all errors for that input.
 
 #### ReactBootstrap 
 
