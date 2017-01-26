@@ -20,13 +20,13 @@ module.exports =
   apiDocs: {
     sections: [{
       label: "Datums" 
-      path: "src/datums/*"
+      path: "src/datums/?(*.coffee|*.cjsx)"
     },{
       label: "More Datums" 
-      path: "src/datums/collectionPicker/*"
+      path: "src/datums/collectionPicker/?(*.coffee|*.cjsx)"
     },{
       label: "Forms, Models and Collections" 
-      path: "src/*"
+      path: "src/?(*.coffee|*.cjsx)"
     }]
   }
 

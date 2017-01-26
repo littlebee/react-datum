@@ -312,9 +312,6 @@ module.exports = class Datum extends React.Component
 
 
   renderForInput: ->
-    # TODO : data-value is a hack, if the model value changes than the only thing that changes in our render
-    #        is the value= passed to the <input> and react ignores changes to just the value, I think?
-    #        without this the "Form with model context should respond to model changes" test fails
     <span className="datum-input" data-value={@getValueForInput()}>
       {@renderLabel()}
       {@renderInput()}
