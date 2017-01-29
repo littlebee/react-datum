@@ -1,4 +1,16 @@
 
+## [0.12.1](https://github.com/zulily/react-datum.git/compare/0.12.0...0.12.1) (2017-01-29)
+
+
+### Bugs Fixed in this Release
+* [0c0d570](https://github.com/zulily/react-datum.git/commit/0c0d5709a24a540425797fb6fea9f157c88b15ca)  tests for negative values Number
+
+### Other Commits
+* [8ab1285](https://github.com/zulily/react-datum.git/commit/8ab128577a12a9c65b8d46c67c234ebe543c505a) fix failing test (merge)
+* [f4a0872](https://github.com/zulily/react-datum.git/commit/f4a087298f55e325e04b0489227065907a068401) fix failing test
+* [e504c82](https://github.com/zulily/react-datum.git/commit/e504c828807f9db65c0b0f037807693dd2c40441) documentation correction for Link datum
+* [634b6ac](https://github.com/zulily/react-datum.git/commit/634b6aceb30f31911b1617a819f346fff4ba1ad3) datum.md validations should come before metadata which is anticipated to be used less often
+
 ## [0.12.0](https://github.com/zulily/react-datum.git/compare/0.11.0...0.12.0) (2017-01-25)
 
 
