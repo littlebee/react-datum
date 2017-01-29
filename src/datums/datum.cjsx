@@ -104,7 +104,7 @@ module.exports = class Datum extends React.Component
     onChange: React.PropTypes.func
     
     # value to use instead of model attribute.  You can use this instead of a model and attr to manually set 
-    # the initial value of the component.   Model value is ignored for display, but still updated of in an
+    # the initial value of the component.   Model value is ignored for display, but still updated if in an
     # editable state
     value: React.PropTypes.node
     

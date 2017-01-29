@@ -144,6 +144,7 @@ module.exports = class Number extends Datum
   getValueForInput: ->
     value = super
     value = value.replace(/[\s\$\,]/g, '') if value? && _.isString(value)
+    return value if value in ['-', '+']
     floatVal = parseFloat(value)
     # note that we don't return the floatVal because when user is typing and gets to say, 55.
     # that would get floated to just 55 and the . would never get to the input.

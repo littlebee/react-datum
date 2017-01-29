@@ -2856,6 +2856,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if ((value != null) && _.isString(value)) {
 	      value = value.replace(/[\s\$\,]/g, '');
 	    }
+	    if (value === '-' || value === '+') {
+	      return value;
+	    }
 	    floatVal = parseFloat(value);
 	    if (_.isNaN(floatVal)) {
 	      return '';

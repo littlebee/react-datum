@@ -169,6 +169,15 @@ describe 'Number datum', ->
     it 'should have rendered non-numeric value', ->
       $(domNode).find('.datum-display-value').text().should.equal testValue
       
+      
+  describe 'as display with negative number', ->
+    testValue = -5.099
+    component = Th.render <Number value={testValue}/>
+    domNode = Th.domNode(component)
+    
+    it 'should have rendered non-numeric value', ->
+      $(domNode).find('.datum-display-value').text().should.equal testValue.toString()
+    
   
   ###  
                             Input Tests (inputMode='edit')
@@ -222,5 +231,22 @@ describe 'Number datum', ->
       domNode = Th.domNode(component)
       Th.testDatumInput(component, '409.95')
       
+  
+  describe 'as input with negative number', ->
+    testFromTo = (initialValue, testValue) ->
+      component = Th.render <Number inputMode='edit' value={initialValue}/>
+      domNode = Th.domNode(component)
+      $(domNode).find('input').val().should.equal initialValue.toString(), 'failed to set initial value'
+      Th.changeDatumValue(component, testValue, blur: true)
+      Th.testDatumInput(component, testValue)
+      
+    it 'should handle negative value in model and negative input', ->
+      testFromTo(-6.99, -5.99)
+      
+    it 'should handle negative value in model and positive input', ->
+      testFromTo(-5.99, 5.99)
+      
+    it 'should handle positive value in model and negative input', ->
+      testFromTo(5.99, -4.99)
     
     
