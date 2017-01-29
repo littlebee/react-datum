@@ -5,7 +5,7 @@ _ = require 'underscore'
 
 Th = require './lib/testHelpers'
 
-LazyPhoto = require('../src/datums/LazyPhoto')
+LazyPhoto = require('../src/datums/lazyPhoto')
 Options = require '../src/options'
 
 TEST_IMG_URL = 'https://drpem3xzef3kf.cloudfront.net/photos/pets/32707403/1/?bust=1436666804&width=200&no_scale_up=1'

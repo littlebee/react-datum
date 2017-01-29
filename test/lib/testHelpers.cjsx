@@ -77,7 +77,7 @@ module.exports = class TestHelpers
     datumNode = @domNode(datum)
     $input = $(datumNode).find('input')
     $input.length.should.equal 1, 'should have found an input'
-    $input.val().should.equal value, "input should have val() = '#{value}'"
+    $input.val().should.equal value.toString(), "input should have val() = '#{value}'"
     return $input
     
     
