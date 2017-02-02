@@ -3462,9 +3462,10 @@ return /******/ (function(modules) { // webpackBootstrap
 			wrapperStyle: _react2['default'].PropTypes.object, // optional style to apply to the component wrapper
 			displayAll: _react2['default'].PropTypes.bool, // Display all the contents in the dropdown, even after selecting few of the entries from it, this is applicable only when multi is true
 			singleValue: _react2['default'].PropTypes.bool, // Send only a single value to the Custom Value Component
-			allowCreate: _react2['default'].PropTypes.bool },
+			allowCreate: _react2['default'].PropTypes.bool, // whether to allow creation of new entries
+			disabledOptions: _react2['default'].PropTypes.array // tells which tags are disabled
+		},
 
-		// whether to allow creation of new entries
 		statics: { Async: _Async2['default'], AsyncCreatable: _AsyncCreatable2['default'], Creatable: _Creatable2['default'] },
 
 		getDefaultProps: function getDefaultProps() {
@@ -4204,7 +4205,8 @@ return /******/ (function(modules) { // webpackBootstrap
 						disabled: this.props.disabled,
 						onClick: onClick,
 						onRemove: this.removeValue,
-						values: valueArray
+						values: valueArray,
+						disabledOptions: this.props.disabledOptions || []
 					}, valueArray.length);
 				} else {
 					return valueArray.map(function (value, i) {
@@ -4215,7 +4217,8 @@ return /******/ (function(modules) { // webpackBootstrap
 							key: 'value-' + i + '-' + value[_this4.props.valueKey],
 							onClick: onClick,
 							onRemove: _this4.removeValue,
-							value: value
+							value: value,
+							disabledOptions: _this4.props.disabledOptions || []
 						}, renderLabel(value, i), _react2['default'].createElement('span', { className: 'Select-aria-only' }, ' '));
 					});
 				}
@@ -4429,7 +4432,6 @@ return /******/ (function(modules) { // webpackBootstrap
 				onScroll: this.handleMenuScroll,
 				onMouseDown: this.handleMouseDownOnMenu }, menu));
 		},
-
 		render: function render() {
 			var _this8 = this;
 
