@@ -5,6 +5,7 @@
   "main": "./index.js",
   "scripts": {
     "test": "grunt test",
+    "coveralls": "grunt coveralls",
     "build": "grunt build"
   },
   "repository": {
@@ -79,6 +80,7 @@
     "grunt-contrib-coffee": "1.0.0",
     "grunt-contrib-cssmin": "0.14.0",
     "grunt-contrib-watch": "0.6.1",
+    "grunt-coveralls": "^1.0.1",
     "grunt-newer": "1.1.2",
     "grunt-react": "0.12.3",
     "grunt-scp": "0.1.8",
