@@ -2300,7 +2300,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  CollectionStats.prototype._renderSelected = function() {
-	    if (!this.collection.isSelectable) {
+	    if (!this.collection.hasSelectableCollection) {
 	      return null;
 	    }
 	    return React.createElement("span", {
