@@ -122,7 +122,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ClickToEditForm, Form, React,
+	var ClickToEditForm, Form, React, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
@@ -130,6 +130,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	React = __webpack_require__(4);
 
 	Form = __webpack_require__(5);
+
+	_ = __webpack_require__(9);
 
 	module.exports = ClickToEditForm = (function(superClass) {
 	  extend(ClickToEditForm, superClass);
@@ -156,6 +158,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    } else {
 	      return React.createElement("button", {
 	        "key": "edit",
+	        "ref": "editButton",
 	        "className": "btn btn-primary",
 	        "onClick": this.onEditClick
 	      }, "Edit");
