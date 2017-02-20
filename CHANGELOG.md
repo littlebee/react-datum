@@ -1,4 +1,7 @@
 
+## [0.13.0](https://github.com/zulily/react-datum.git/compare/0.12.1...0.13.0) (2017-02-20)
+No new features added, but lot's of tests added to fill in coverage.  
+
 ## [0.12.1](https://github.com/zulily/react-datum.git/compare/0.12.0...0.12.1) (2017-01-29)
 
 
