@@ -5884,9 +5884,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    valueComponent: React.PropTypes.func,
 	    fetchUnknownModelsInCollection: React.PropTypes.bool,
 	    displayAttr: React.PropTypes.string,
-	    optionDisplayAttr: React.PropTypes.string,
 	    optionSaveAttr: React.PropTypes.string.isRequired,
-	    displayComponent: React.PropTypes.func,
+	    displayComponent: React.PropTypes.any,
 	    synchronousLoading: React.PropTypes.bool,
 	    isLoading: React.PropTypes.bool,
 	    asyncSuggestionCallback: React.PropTypes.func,
@@ -5913,19 +5912,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  CollectionPicker.prototype.initializeState = function() {
 	    return this.state = {
-	      value: this._getValue(),
+	      value: this.getModelValue(),
 	      errors: []
 	    };
-	  };
-
-	  CollectionPicker.prototype.componentWillReceiveProps = function(nextProps) {
-	    var newModelValue;
-	    newModelValue = nextProps.multi ? this.getModelValues(nextProps) : this.getModelValue(nextProps);
-	    if (JSON.stringify(this.state.value || {}) !== JSON.stringify(newModelValue)) {
-	      return this.setState({
-	        value: newModelValue
-	      });
-	    }
 	  };
 
 	  CollectionPicker.prototype.render = function() {
@@ -5936,7 +5925,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var collection, modelValues;
 	    collection = this.getCollection();
 	    if (this.props.multi) {
-	      modelValues = this.getModelValues();
+	      modelValues = this.getModelValue();
 	      return modelValues.map((function(_this) {
 	        return function(modelValue) {
 	          return _this.renderCollectionDisplayValue(modelValue, collection);
@@ -5975,30 +5964,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  };
 
-	  CollectionPicker.prototype.cancelEdit = function() {
-	    return this.setState({
-	      errors: [],
-	      value: this._getValue()
-	    });
-	  };
-
 	  CollectionPicker.prototype.getCollection = function() {
 	    var collection;
 	    collection = this.props.collection || this.context.collection;
 	    if (collection == null) {
-	      throw this.constructor.displayName + " requires a collection prop or context";
+	      throw new Error(this.constructor.displayName + " requires a collection prop or context");
 	    }
 	    if (!(collection instanceof Backbone.Collection)) {
 	      return new Backbone.Collection(collection);
 	    }
 	    return collection;
-	  };
-
-	  CollectionPicker.prototype._getValue = function(newProps) {
-	    if (newProps == null) {
-	      newProps = this.props;
-	    }
-	    return (newProps.multi ? this.getModelValues(newProps) : this.getModelValue(newProps));
 	  };
 
 	  CollectionPicker.prototype._getCollectionModelById = function(modelOrId) {
@@ -6013,63 +5988,50 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  CollectionPicker.prototype.getCollectionModelDisplayValue = function(modelId, collection) {
-	    var model;
+	    var displayValue, model, ref;
 	    if (!modelId) {
 	      return null;
 	    }
 	    model = this._getCollectionModelById(modelId);
-	    if ((model != null) && !_.isFunction(model.toString) && (this.props.displayAttr == null)) {
-	      throw this.constructor.displayName + ": You need to specify a displayAttr prop or model must have toString() method";
-	    }
-	    if (this.props.displayAttr != null) {
-	      return model != null ? model.get(this.props.displayAttr) : void 0;
+	    if (model != null) {
+	      if (!_.isFunction(model.toString) && (this.props.displayAttr == null)) {
+	        throw new Error(this.constructor.displayName + ": You need to specify a displayAttr prop or model must have toString() method");
+	      }
+	      displayValue = this.props.displayAttr != null ? (ref = typeof model.get === "function" ? model.get(this.props.displayAttr) : void 0) != null ? ref : model[this.props.displayAttr] : typeof model.toString === "function" ? model.toString() : void 0;
 	    } else {
-	      return typeof model.toString === "function" ? model.toString() : void 0;
+	      displayValue = null;
 	    }
-	  };
-
-	  CollectionPicker.prototype.getOptionDisplayValue = function(modelId, collection) {
-	    var model;
-	    if (!modelId) {
-	      return null;
-	    }
-	    model = this._getCollectionModelById(modelId);
-	    if ((model != null) && !_.isFunction(model.toString) && (this.props.optionDisplayAttr == null)) {
-	      throw this.constructor.displayName + ": You need to specify an optionDisplayAttr prop or model must have toString() method";
-	    }
-	    if (this.props.optionDisplayAttr != null) {
-	      return model != null ? model.get(this.props.optionDisplayAttr) : void 0;
-	    } else {
-	      return typeof model.toString === "function" ? model.toString() : void 0;
-	    }
+	    return displayValue;
 	  };
 
 	  CollectionPicker.prototype.getOptionSaveValue = function(modelId, collection) {
-	    var model;
+	    var model, ref, ref1;
 	    model = this._getCollectionModelById(modelId);
-	    if ((model != null) && (this.props.optionsSaveAttr == null)) {
+	    if ((model != null) && (this.props.optionSaveAttr == null)) {
 	      return model.id;
 	    }
-	    return model != null ? model.get(this.props.optionSaveAttr) : void 0;
+	    return (ref = (ref1 = model != null ? model.get(this.props.optionSaveAttr) : void 0) != null ? ref1 : model != null ? model[this.props.optionSaveAttr] : void 0) != null ? ref : model != null ? model.id : void 0;
 	  };
 
-	  CollectionPicker.prototype.getModelValues = function(newProps) {
-	    var modelValue, modelValues;
+	  CollectionPicker.prototype.getModelValue = function(newProps) {
+	    var modelValue;
 	    if (newProps == null) {
 	      newProps = this.props;
 	    }
-	    modelValue = this.getModelValue(newProps);
-	    modelValues = (function() {
-	      switch (false) {
-	        case !_.isString(modelValue):
-	          return modelValue.split(',');
-	        case !_.isArray(modelValue):
-	          return modelValue;
-	        default:
-	          return [modelValue];
-	      }
-	    })();
-	    return modelValues;
+	    modelValue = CollectionPicker.__super__.getModelValue.apply(this, arguments);
+	    if (newProps.multi) {
+	      modelValue = (function() {
+	        switch (false) {
+	          case !_.isString(modelValue):
+	            return modelValue.split(',');
+	          case !_.isArray(modelValue):
+	            return modelValue;
+	          default:
+	            return [modelValue];
+	        }
+	      })();
+	    }
+	    return modelValue;
 	  };
 
 	  CollectionPicker.prototype.getSelectOptions = function() {
@@ -6096,7 +6058,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  CollectionPicker.prototype.hasInputValueChanged = function() {
-	    return this.getInputValue() !== this._getValue();
+	    return this.getInputValue() !== this.getModelValue();
 	  };
 
 	  CollectionPicker.prototype.getInputComponent = function() {
@@ -6190,12 +6152,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var filteredModels;
 	    filteredModels = _.filter(collection.models, (function(_this) {
 	      return function(model) {
-	        return Strhelp.weaklyHas(_this.getOptionDisplayValue(model), userInput);
+	        return Strhelp.weaklyHas(_this.getCollectionModelDisplayValue(model), userInput);
 	      };
 	    })(this));
 	    filteredModels = filteredModels.sort((function(_this) {
 	      return function(a, b) {
-	        return Strhelp.weaklyCompare(_this.getOptionDisplayValue(a), _this.getOptionDisplayValue(b));
+	        return Strhelp.weaklyCompare(_this.getCollectionModelDisplayValue(a), _this.getCollectionModelDisplayValue(b));
 	      };
 	    })(this));
 	    if (typeof callback === "function") {
@@ -6210,7 +6172,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    bottomHits = [];
 	    for (i = 0, len = models.length; i < len; i++) {
 	      model = models[i];
-	      if (Strhelp.weaklyStartsWith(this.getOptionDisplayValue(model), userInput)) {
+	      if (Strhelp.weaklyStartsWith(this.getCollectionModelDisplayValue(model), userInput)) {
 	        topHits.push(model);
 	      } else {
 	        bottomHits.push(model);

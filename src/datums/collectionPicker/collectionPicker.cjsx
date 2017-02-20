@@ -47,17 +47,12 @@ module.exports = class CollectionPicker extends Datum
     #  if not specified, model.toString() will be displayed
     displayAttr: React.PropTypes.string
     
-    #  attribute value from model in lookup collection to render in suggestions when 
-    #  in inputMode='edit'.  If not specified, @props.displayAttr is used and if that
-    #  is not specified, model.toString() is used
-    optionDisplayAttr: React.PropTypes.string
-
     #  attribute value from model in lookup collection to set as value on props.attr
     #  in props.model
     optionSaveAttr: React.PropTypes.string.isRequired
 
     # react component to render when in inputMode='readonly'. 
-    displayComponent: React.PropTypes.func
+    displayComponent: React.PropTypes.any
 
     # This is to be set if the loading need not happen asynchronously for every search.
     # External/collection fetch loading can happen for the first time.
@@ -139,20 +134,12 @@ module.exports = class CollectionPicker extends Datum
   subClassName: "collection-picker"
   selectRef: "reactSelect"
 
+
   initializeState: ->
     @state = {
-      value: @_getValue()
+      value: @getModelValue()
       errors: []
     }
-
-
-  componentWillReceiveProps: (nextProps) ->
-    newModelValue = if nextProps.multi then @getModelValues(nextProps) else @getModelValue(nextProps)
-    
-    if JSON.stringify(@state.value||{}) != JSON.stringify(newModelValue)
-      @setState({
-        value: newModelValue
-      })  
 
 
   render: ->
@@ -163,7 +150,7 @@ module.exports = class CollectionPicker extends Datum
   renderValueForDisplay: ->
     collection = @getCollection() 
     return if @props.multi
-      modelValues = @getModelValues()
+      modelValues = @getModelValue()
       modelValues.map (modelValue) =>
         @renderCollectionDisplayValue(modelValue, collection)
     else
@@ -196,25 +183,14 @@ module.exports = class CollectionPicker extends Datum
       <Select.Async {... @getSelectAsyncOptions()}/>
 
 
-  cancelEdit: () ->
-    @setState { 
-      errors: [], 
-      value: @_getValue()
-    }
-
-    
   getCollection: ->
     collection = @props.collection || @context.collection
-    throw @constructor.displayName + " requires a collection prop or context" unless collection?
+    throw new Error(@constructor.displayName + " requires a collection prop or context") unless collection?
     unless collection instanceof Backbone.Collection
       return new Backbone.Collection(collection)
     
     return collection
   
-
-  _getValue: (newProps = @props) ->
-    return (if newProps.multi then @getModelValues(newProps) else @getModelValue(newProps))
-
 
   _getCollectionModelById: (modelOrId) ->
     if _.isNumber(modelOrId) or _.isString(modelOrId)
@@ -227,40 +203,40 @@ module.exports = class CollectionPicker extends Datum
     return null unless modelId 
     model = @_getCollectionModelById(modelId)
       
-    if model? && !_.isFunction(model.toString) && !@props.displayAttr?
-      throw @constructor.displayName + ": You need to specify a displayAttr prop or model must have toString() method"
+    if model? 
+      if !_.isFunction(model.toString) && !@props.displayAttr?
+        throw new Error(@constructor.displayName + ": You need to specify a displayAttr prop or model must have toString() method")
+      
+      displayValue = if @props.displayAttr? 
+        model.get?(@props.displayAttr) ? model[@props.displayAttr] 
+      else 
+        model.toString?()
     
-    if @props.displayAttr? then model?.get(@props.displayAttr) else model.toString?()
+    else
+      displayValue = null
     
-
-  getOptionDisplayValue: (modelId, collection) ->
-    return null unless modelId
-    model = @_getCollectionModelById(modelId)
+    return displayValue
     
-    if model? && !_.isFunction(model.toString) && !@props.optionDisplayAttr?
-      throw @constructor.displayName + ": You need to specify an optionDisplayAttr prop or model must have toString() method"
-    
-    if @props.optionDisplayAttr? then model?.get(@props.optionDisplayAttr) else model.toString?()
-        
 
   getOptionSaveValue: (modelId, collection) ->
     model = @_getCollectionModelById(modelId)
-    if model? && !@props.optionsSaveAttr?
+    if model? && !@props.optionSaveAttr?
       return model.id 
     
-    return model?.get(@props.optionSaveAttr)
+    return model?.get(@props.optionSaveAttr) ? model?[@props.optionSaveAttr] ? model?.id
     
 
-  # used for multi mode. always returns an array
-  getModelValues: (newProps = @props) ->
-    modelValue = @getModelValue(newProps)
-    modelValues = switch 
-      when _.isString(modelValue) then modelValue.split(',')
-      when _.isArray(modelValue) then modelValue
-      else 
-        [modelValue]
-    
-    return modelValues
+  # extends Datum - if multi mode, always returns an array
+  getModelValue: (newProps = @props) ->
+    modelValue = super
+    if newProps.multi
+      modelValue = switch 
+        when _.isString(modelValue) then modelValue.split(',')
+        when _.isArray(modelValue) then modelValue
+        else 
+          [modelValue]
+      
+    return modelValue
 
 
   getSelectOptions: () ->
@@ -282,8 +258,9 @@ module.exports = class CollectionPicker extends Datum
       loadOptions: @onLoadOptions
 
 
+  # TODO : explain this override
   hasInputValueChanged: ->
-    @getInputValue() != @_getValue()
+    @getInputValue() != @getModelValue()
       
 
   getInputComponent: () =>
@@ -352,11 +329,11 @@ module.exports = class CollectionPicker extends Datum
   filterSuggestionModels: (collection, userInput, callback) =>
     # filter to just those with match anywhere
     filteredModels = _.filter collection.models, (model) => 
-      Strhelp.weaklyHas(@getOptionDisplayValue(model), userInput)
+      Strhelp.weaklyHas(@getCollectionModelDisplayValue(model), userInput)
 
     # sort all by display value alpha, case insensitive
     filteredModels = filteredModels.sort (a, b) =>
-      Strhelp.weaklyCompare(@getOptionDisplayValue(a), @getOptionDisplayValue(b))
+      Strhelp.weaklyCompare(@getCollectionModelDisplayValue(a), @getCollectionModelDisplayValue(b))
 
     callback?(filteredModels)
     return filteredModels
@@ -367,7 +344,7 @@ module.exports = class CollectionPicker extends Datum
     topHits = []
     bottomHits = []
     for model in models
-      if Strhelp.weaklyStartsWith(@getOptionDisplayValue(model), userInput)
+      if Strhelp.weaklyStartsWith(@getCollectionModelDisplayValue(model), userInput)
         topHits.push model
       else
         bottomHits.push model

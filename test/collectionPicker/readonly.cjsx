@@ -79,6 +79,20 @@ describe 'CollectionPicker inputMode=readonly as single select', ->
       names = renderComponentAndTestNames(model, {ellipsizeAt: false}, 1, 999)
       maxNameLength = Math.max.apply(null, _.map(names, (name) -> name.length))
       maxNameLength.should.equal nameCollection.get(23).get('name').length
+  
+
+  describe 'with displayComponent prop', ->
+    model = new Backbone.Model({nameId: 22})
+    displayComponent = React.createClass 
+      render: -> 
+        <h3>Hello</h3>
+        
+    component = Th.render <CollectionPicker attr='nameId' displayAttr='name'
+      model={model} collection={nameCollection} displayComponent={displayComponent}   />
+    domNode = Th.domNode(component)
+    
+    it 'should render displayComponent', -> 
+      $(domNode).find('.datum-display-value h3').text().should.equal('Hello')
       
       
       
@@ -121,7 +135,38 @@ describe 'CollectionPicker inputMode=readonly as multi select', ->
       names = renderComponentAndTestNames(_model, {multi: true, ellipsizeAt: false}, 4, 999)
       maxNameLength = Math.max.apply(null, _.map(names, (name) -> name.length))
       maxNameLength.should.equal nameCollection.get(23).get('name').length
+
+
+describe 'CollectionPicker inputMode=readonly without a collection', ->
+  model = new Backbone.Model({nameIds: [11, 22]})
+  it 'should throw an error', ->
+    fn = -> Th.render <CollectionPicker attr='nameIds' displayAttr='name' multi model={model}/>
+    expect(fn).to.throw(Error)
     
+    
+describe 'CollectionPicker inputMode=readonly without a displayAttr or model.toString', ->
+  model = new Backbone.Model({nameIds: [11, 22]})
+  fn = -> Th.render <CollectionPicker attr='nameIds' multi model={model} collection={nameCollection}/>
+  
+  it 'should throw an error', ->
+    expect(fn).to.throw(Error)
+    
+                
+describe 'CollectionPicker with array as collection', ->
+  model = new Backbone.Model({nameId: 22})
+  arrayOfObjects = [
+    {id: 11, name: "Mr. Cuddles" }
+    {id: 22, name: "Sebastian"}
+  ]
+  component = Th.render <CollectionPicker attr='nameId' displayAttr='name' model={model} collection={arrayOfObjects}/>
+  domNode = Th.domNode(component)
+  names = getRenderedNames(domNode)
+
+  it 'should have rendered display value', ->
+    names.length.should.equal 1
+    names[0].should.equal "Sebastian" 
+
+        
     
       
       

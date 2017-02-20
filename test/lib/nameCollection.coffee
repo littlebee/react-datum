@@ -12,20 +12,30 @@ module.exports = class NameCollection extends Backbone.Collection
     super [
       {
         id: 2
+        altId: 102
         name: "Foo Foo"
+        nickName: "the foo"
       },{ 
         id: 1
+        altId: 101
         name: "Fluffy"
+        nickName: "the fluff"
       },{
         id: 11
+        altId: 111
         name: "Mr. Cuddles"
+        nickName: "the cuddles"
       },{
         id: 22
+        altId: 122
         name: "Sebastian"
+        nickName: "the sebastian"
       },{
         id: 23
+        altId: 123
         #      1        10       20        30        40        50        60   
         name: "My cat's name is really really long and hard to pronounce"
+        nickName: 'the long name'
       }
     ]
     
