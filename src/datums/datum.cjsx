@@ -181,7 +181,7 @@ module.exports = class Datum extends React.Component
     document.addEventListener 'click', @onDocumentClick
     document.addEventListener 'keydown', @onDocumentKeydown
 
-
+  ### !pragma coverage-skip-next ###
   componentWillReceiveProps: (nextProps) ->
     prevModelValue = @getModelValue(@props)
     newModelValue = @getModelValue(nextProps)
@@ -192,6 +192,7 @@ module.exports = class Datum extends React.Component
       })
     
 
+  ### !pragma coverage-skip-next ###
   componentWillUnmount: ->
     @context?.form?.removeDatum?(@)
     
@@ -371,6 +372,7 @@ module.exports = class Datum extends React.Component
     extend and override to effect the standard popover treatment
   ###  
   renderWithPopover: (value, tooltip, popoverId, valueClass) ->
+    ### !pragma coverage-skip-block ###
     return value unless tooltip?
     
     # if available globally or user called ReactDatum.set('ReactBootstrap', someLib)
@@ -395,6 +397,7 @@ module.exports = class Datum extends React.Component
     Override this method to provide things like custom positioning of error popovers
   ###
   getRbOverlayProps: (value, popoverId) ->
+    ### !pragma coverage-skip-block ###
     return Options.get('RbOverlayProps')
     
   
