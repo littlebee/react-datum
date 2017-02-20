@@ -1,6 +1,7 @@
 
 React = require('react')
 Form = require('./form')
+_ = require('underscore')
 
 # see clickToEditForm.md
 module.exports = class ClickToEditForm extends Form
@@ -22,7 +23,7 @@ module.exports = class ClickToEditForm extends Form
     if @props.readonly
       return <span/>
     else
-      return <button key="edit" className="btn btn-primary" onClick={@onEditClick}>Edit</button>
+      return <button key="edit" ref="editButton" className="btn btn-primary" onClick={@onEditClick}>Edit</button>
 
 
   onEditClick: () =>

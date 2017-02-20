@@ -7,4 +7,5 @@ before_install:
   - npm install coffee-script
   - npm install grunt-cli
   - npm install -g webpack
-  
+
+after_success: 'npm run coveralls'

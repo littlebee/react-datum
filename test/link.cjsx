@@ -1,6 +1,7 @@
 React = require 'react'
 Backbone = require 'backbone'
 $ = require 'jquery'
+_ = require 'underscore'
 
 Th = require './lib/testHelpers'
 
