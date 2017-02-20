@@ -97,7 +97,7 @@ module.exports = class ContextualData extends React.Component
     #  
     # debounceMs is an undocumented prop because I'm not sure it's a good idea
     @debouncedUpdate = if @props.debouncedUpdate 
-      _.debounce((=>@update()), @props.debounceMs)
+      _.debounce @update, @props.debounceMs
     else
       @update
 
@@ -124,6 +124,7 @@ module.exports = class ContextualData extends React.Component
     return @props.placeholder
 
 
+  ### !pragma coverage-skip-next ###
   componentWillUnmount: ->
     @unbindEvents()
     
@@ -132,6 +133,7 @@ module.exports = class ContextualData extends React.Component
     @initializeCollectionOrModel()
     
   
+  ### !pragma coverage-skip-next ###
   componentWillReceiveProps: (newProps)->
     @props = newProps
     @initializeCollectionOrModel()

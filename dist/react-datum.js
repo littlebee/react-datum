@@ -755,6 +755,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return document.addEventListener('keydown', this.onDocumentKeydown);
 	  };
 
+
+	  /* !pragma coverage-skip-next */
+
 	  Datum.prototype.componentWillReceiveProps = function(nextProps) {
 	    var newModelValue, prevModelValue;
 	    prevModelValue = this.getModelValue(this.props);
@@ -765,6 +768,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      });
 	    }
 	  };
+
+
+	  /* !pragma coverage-skip-next */
 
 	  Datum.prototype.componentWillUnmount = function() {
 	    var ref, ref1;
@@ -966,6 +972,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.renderWithPopover = function(value, tooltip, popoverId, valueClass) {
+
+	    /* !pragma coverage-skip-block */
 	    var Rb, popover, rValue, rbOverlayProps;
 	    if (tooltip == null) {
 	      return value;
@@ -996,6 +1004,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.getRbOverlayProps = function(value, popoverId) {
+
+	    /* !pragma coverage-skip-block */
 	    return Options.get('RbOverlayProps');
 	  };
 
@@ -1738,11 +1748,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      lastUpdated: null,
 	      collectionOrModel: null
 	    };
-	    this.debouncedUpdate = this.props.debouncedUpdate ? _.debounce(((function(_this) {
-	      return function() {
-	        return _this.update();
-	      };
-	    })(this)), this.props.debounceMs) : this.update;
+	    this.debouncedUpdate = this.props.debouncedUpdate ? _.debounce(this.update, this.props.debounceMs) : this.update;
 	  }
 
 	  ContextualData.prototype.getChildContext = function() {
@@ -1870,6 +1876,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  ContextualData.prototype.update = function() {
+	    console.log('update method called');
 	    if (this.props.debug) {
 	      console.log("ContextualData: update on model", this.state.collectionOrModel);
 	    }
@@ -2374,6 +2381,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Model.childContextTypes = _.extend({}, ContextualData.childContextTypes, {
 	    model: Model.modelPropType
 	  });
+
+	  Model.prototype.update = function() {
+	    return Model.__super__.update.apply(this, arguments);
+	  };
 
 	  return Model;
 
