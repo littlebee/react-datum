@@ -61,7 +61,7 @@
     "babel-preset-react": "6.5.0",
     "babel-preset-stage-2": "6.17.0",
     "bumble-build": "0.6.6",
-    "bumble-docs": "0.5.2",
+    "bumble-docs": "0.5.3",
     "bumble-strings": "0.5.1",
     "bumble-test": "0.4.1",
     "chai-string": "^1.3.0",
