@@ -1777,6 +1777,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.props.placeholder;
 	  };
 
+
+	  /* !pragma coverage-skip-next */
+
 	  ContextualData.prototype.componentWillUnmount = function() {
 	    return this.unbindEvents();
 	  };
@@ -1784,6 +1787,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  ContextualData.prototype.componentWillMount = function() {
 	    return this.initializeCollectionOrModel();
 	  };
+
+
+	  /* !pragma coverage-skip-next */
 
 	  ContextualData.prototype.componentWillReceiveProps = function(newProps) {
 	    this.props = newProps;
@@ -1876,7 +1882,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  ContextualData.prototype.update = function() {
-	    console.log('update method called');
 	    if (this.props.debug) {
 	      console.log("ContextualData: update on model", this.state.collectionOrModel);
 	    }

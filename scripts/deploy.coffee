@@ -4,7 +4,7 @@ fs = require 'fs'
 path = require 'path'
 _ = require 'underscore'
 
-util = require '../src/lib/util'
+util = require 'bumble-util'
 
 ###
   This script is run from grunt as part of the build process.
