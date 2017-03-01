@@ -2855,7 +2855,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	    value = this.abbreviate(value, formats);
 	    value = this.addCommas(value, formats);
-	    value = this.monitize(value, formats);
+	    value = this.monetize(value, formats);
 	    if (indexOf.call(formats, 'percent') >= 0) {
 	      value += "%";
 	    }
@@ -2996,7 +2996,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return value;
 	  };
 
-	  Number.prototype.monitize = function(value, formats) {
+
+	  /*
+	    If props.formats includes 'money', this method prepends the value
+	    displayed with '$'
+	    
+	    Override this method to do things like create an internationalized
+	    display of money value for another currency.
+	   */
+
+	  Number.prototype.monetize = function(value, formats) {
 	    if (formats == null) {
 	      formats = this.getFormats();
 	    }

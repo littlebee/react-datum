@@ -125,7 +125,7 @@ module.exports = class Number extends Datum
     # all formatting that works on the text value goes after here
     value = @abbreviate(value, formats)
     value = @addCommas(value, formats)
-    value = @monitize(value, formats)
+    value = @monetize(value, formats)
 
     if 'percent' in formats
       value += "%"
@@ -231,8 +231,14 @@ module.exports = class Number extends Datum
 
     return value
 
-
-  monitize: (value, formats=@getFormats()) ->
+  ###
+    If props.formats includes 'money', this method prepends the value
+    displayed with '$'
+    
+    Override this method to do things like create an internationalized
+    display of money value for another currency. 
+  ###
+  monetize: (value, formats=@getFormats()) ->
     if 'money' in formats
       value = "$#{value}"
     return value
