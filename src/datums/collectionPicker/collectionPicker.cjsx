@@ -344,7 +344,8 @@ module.exports = class CollectionPicker extends Datum
     topHits = []
     bottomHits = []
     for model in models
-      if Strhelp.weaklyStartsWith(@getCollectionModelDisplayValue(model), userInput)
+      displayValue = @getCollectionModelDisplayValue(model)
+      if displayValue? && Strhelp.weaklyStartsWith(displayValue, userInput)
         topHits.push model
       else
         bottomHits.push model

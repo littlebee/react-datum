@@ -6192,12 +6192,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  CollectionPicker.prototype.groupSuggestionModels = function(userInput, models) {
-	    var bottomHits, i, len, model, topHits;
+	    var bottomHits, displayValue, i, len, model, topHits;
 	    topHits = [];
 	    bottomHits = [];
 	    for (i = 0, len = models.length; i < len; i++) {
 	      model = models[i];
-	      if (Strhelp.weaklyStartsWith(this.getCollectionModelDisplayValue(model), userInput)) {
+	      displayValue = this.getCollectionModelDisplayValue(model);
+	      if ((displayValue != null) && Strhelp.weaklyStartsWith(displayValue, userInput)) {
 	        topHits.push(model);
 	      } else {
 	        bottomHits.push(model);
