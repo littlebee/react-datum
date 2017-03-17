@@ -806,7 +806,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var wrapperProps;
 	    wrapperProps = {
 	      className: this.getFullClassName(),
-	      'data-zattr': this.props.attr,
+	      'data-zattr': this.getAttr(),
 	      style: this.props.style || {}
 	    };
 	    if (this.props.asDiv) {
@@ -1176,8 +1176,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!(model = this.getModel(newProps, newContext))) {
 	      return null;
 	    }
-	    value = _.isFunction(model.get) ? model.get(newProps.attr) : model[newProps.attr];
+	    value = _.isFunction(model.get) ? model.get(this.getAttr(newProps)) : model[this.getAttr(newProps)];
 	    return value;
+	  };
+
+
+	  /*
+	    When extending react datum, use this method to get the attribute name specified
+	    to the component as props.attr.  
+	    
+	    You can also override this method in an extension to dynamically select the attribute
+	    to get from the model.  For say an international price datum that selects a price
+	    attribute based on the local currency  (not a contrived example)
+	   */
+
+	  Datum.prototype.getAttr = function(props) {
+	    if (props == null) {
+	      props = this.props;
+	    }
+	    return props.attr;
 	  };
 
 
@@ -1189,7 +1206,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.setModelValue = function(value, options) {
-	    var model;
+	    var attr, model;
 	    if (options == null) {
 	      options = {};
 	    }
@@ -1200,11 +1217,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	    }
 	    model = this.getModel();
+	    attr = this.getAttr();
 	    if (model != null) {
 	      if (_.isFunction(model.set)) {
-	        model.set(this.props.attr, value, options);
+	        model.set(attr, value, options);
 	      } else {
-	        model[this.props.attr] = value;
+	        model[attr] = value;
 	      }
 	      if (this.props.saveOnSet) {
 	        this.saveModel();

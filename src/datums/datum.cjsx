@@ -220,7 +220,7 @@ module.exports = class Datum extends React.Component
   renderDatumWrapper: (contentFn)->
     wrapperProps =
       className: @getFullClassName()
-      'data-zattr': @props.attr
+      'data-zattr': @getAttr()
       style: @props.style || {}
       
     if @props.asDiv 
@@ -519,10 +519,24 @@ module.exports = class Datum extends React.Component
     return null unless model = @getModel(newProps, newContext)
     
     value = if _.isFunction(model.get)
-      model.get(newProps.attr) 
+      model.get(@getAttr(newProps)) 
     else 
-      model[newProps.attr]
+      model[@getAttr(newProps)]
     return value
+    
+    
+  ###
+    When extending react datum, use this method to get the attribute name specified
+    to the component as props.attr.  
+    
+    You can also override this method in an extension to dynamically select the attribute
+    to get from the model.  For say an international price datum that selects a price
+    attribute based on the local currency  (not a contrived example)
+    
+  ###
+  getAttr: (props = @props) ->
+    return props.attr
+    
 
 
   ###
@@ -539,11 +553,12 @@ module.exports = class Datum extends React.Component
       return if value == undefined  
     
     model = @getModel()
+    attr = @getAttr()
     if model? 
       if _.isFunction(model.set) 
-        model.set(@props.attr, value, options) 
+        model.set(attr, value, options) 
       else 
-        model[@props.attr] = value
+        model[attr] = value
         
       @saveModel() if @props.saveOnSet
         
