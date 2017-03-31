@@ -1224,7 +1224,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      } else {
 	        model[attr] = value;
 	      }
-	      if (this.props.saveOnSet) {
+	      if (this.props.saveOnSet || options.saveOnset) {
 	        this.saveModel();
 	      }
 	    }
@@ -1388,7 +1388,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.prototype.onModelSaveError = function(model, resp) {
 	    var errors, ref, ref1;
 	    errors = this.state.errors || [];
-	    errors.push((ref = (ref1 = "Unable to save value. Error: " + resp.responseText) != null ? ref1 : resp.statusText) != null ? ref : resp);
+	    errors.push("Unable to save value. Error: " + ((ref = (ref1 = resp.responseText) != null ? ref1 : resp.statusText) != null ? ref : resp));
 	    this.setState({
 	      saving: false,
 	      saved: false,
@@ -1478,7 +1478,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	    valid = this.validate(newValue);
 	    if (options.setModelValue) {
-	      this.setModelValue(newValue);
+	      this.setModelValue(newValue, options);
 	      this.setState({
 	        isDirty: false
 	      });
@@ -2843,9 +2843,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function Number(props) {
 	    this.validateMax = bind(this.validateMax, this);
 	    this.validateMin = bind(this.validateMin, this);
+	    this.validateNumeric = bind(this.validateNumeric, this);
 	    this.onChange = bind(this.onChange, this);
 	    Number.__super__.constructor.apply(this, arguments);
-	    this.addValidations([this.validateMin, this.validateMax]);
+	    this.addValidations([this.validateNumeric, this.validateMin, this.validateMax]);
 	  }
 
 	  Number.prototype.isAcceptableInput = function(value) {
@@ -2919,6 +2920,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (this.isAcceptableInput(inputValue)) {
 	      return Number.__super__.onChange.apply(this, arguments);
 	    }
+	  };
+
+	  Number.prototype.validateNumeric = function(value) {
+	    if (this.charactersMustMatch.test(value)) {
+	      return true;
+	    }
+	    if (value.length > 25) {
+	      value = value.slice(0, 25) + '...';
+	    }
+	    return "The value must be numeric. \"" + value + "\" is not valid";
 	  };
 
 	  Number.prototype.validateMin = function(value) {
@@ -4047,9 +4058,6 @@ return /******/ (function(modules) { // webpackBootstrap
 			//NOTE: update value in the callback to make sure the input value is empty so that there are no styling issues (Chrome had issue otherwise)
 			this.hasScrolledToOption = false;
 			if (this.props.multi) {
-				if (this.props.allowCreate) {
-					value = this.expandValue(value, this.props);
-				}
 				this.setState({
 					inputValue: '',
 					focusedIndex: null

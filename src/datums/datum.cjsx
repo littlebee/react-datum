@@ -560,7 +560,7 @@ module.exports = class Datum extends React.Component
       else 
         model[attr] = value
         
-      @saveModel() if @props.saveOnSet
+      @saveModel() if @props.saveOnSet || options.saveOnset
         
 
     # if we were provided a value in a prop and the datum allowed a change to it,
@@ -690,7 +690,7 @@ module.exports = class Datum extends React.Component
   
   onModelSaveError: (model, resp) =>
     errors = @state.errors || []
-    errors.push "Unable to save value. Error: " + resp.responseText ? resp.statusText ? resp
+    errors.push "Unable to save value. Error: " + (resp.responseText ? resp.statusText ? resp)
 
     @setState saving: false, saved: false, errors: errors
     # we also populate errors which will change this to an error icon
@@ -761,7 +761,7 @@ module.exports = class Datum extends React.Component
     valid = @validate(newValue)
 
     if options.setModelValue
-      @setModelValue(newValue)
+      @setModelValue(newValue, options)
       @setState({isDirty: false})
     else
       @setState({isDirty: true})

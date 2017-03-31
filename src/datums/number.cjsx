@@ -97,6 +97,9 @@ module.exports = class Number extends Datum
   constructor: (props) ->
     super
     @addValidations [
+      # even though we don't allow key entry of non numeric patterns, Datum exposes
+      # setValue() which can be called from outside to set the value of the datum
+      @validateNumeric
       @validateMin
       @validateMax
     ]
@@ -165,6 +168,13 @@ module.exports = class Number extends Datum
       super
 
 
+  validateNumeric: (value) =>
+    return true if @charactersMustMatch.test(value)
+    if value.length > 25
+      value = value.slice(0, 25) + '...'
+    return "The value must be numeric. \"#{value}\" is not valid"
+  
+  
   validateMin: (value) =>
     minValue = @getPropOrMetadata('minValue')
     return true unless minValue?
