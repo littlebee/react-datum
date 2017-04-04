@@ -49,6 +49,9 @@ describe 'CollectionPicker inputMode=readonly as single select', ->
     it 'should not have an input', -> 
       Th.findByTag(component, 'input').length.should.be.equal(0)
     
+    it 'should not have rendered "unknown"', ->
+      $(domNode).find('.datum-display-value').text().should.not.be.equal("unknown")
+    
     # default behavior when no nameAttr and no model.toString() is to render up the model
     it 'should render [object Object] without model.toString', -> 
       $(domNode).find('.datum-display-value').text().should.be.equal("[object Object]")

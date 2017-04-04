@@ -5950,7 +5950,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  CollectionPicker.defaultProps = _.extend({}, Datum.defaultProps, {
 	    ellipsizeAt: 35,
-	    optionSaveAttr: 'id',
 	    fetchUnknownModelsInCollection: true,
 	    loading: false,
 	    attr: 'value'
@@ -6059,12 +6058,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  CollectionPicker.prototype.getOptionSaveValue = function(modelId, collection) {
-	    var model, ref, ref1;
+	    var model, ref, ref1, ref2;
 	    model = this._getCollectionModelById(modelId);
 	    if ((model != null) && (this.props.optionSaveAttr == null)) {
 	      return model.id;
 	    }
-	    return (ref = (ref1 = model != null ? model.get(this.props.optionSaveAttr) : void 0) != null ? ref1 : model != null ? model[this.props.optionSaveAttr] : void 0) != null ? ref : model != null ? model.id : void 0;
+	    return (ref = (ref1 = (ref2 = model != null ? typeof model.get === "function" ? model.get(this.props.optionSaveAttr) : void 0 : void 0) != null ? ref2 : model != null ? model[this.props.optionSaveAttr] : void 0) != null ? ref1 : model != null ? model.id : void 0) != null ? ref : modelId;
 	  };
 
 	  CollectionPicker.prototype.getModelValue = function(newProps) {

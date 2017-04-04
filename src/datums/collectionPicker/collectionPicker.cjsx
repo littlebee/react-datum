@@ -117,7 +117,6 @@ module.exports = class CollectionPicker extends Datum
   @defaultProps: _.extend {}, Datum.defaultProps,
     # ellipsizeAt is defaulted to prevent really long strings from breaking layouts
     ellipsizeAt: 35
-    optionSaveAttr: 'id'
     fetchUnknownModelsInCollection: true
     loading: false
     # This is required as this is used to set the value to model which is shown on the picker.
@@ -223,7 +222,7 @@ module.exports = class CollectionPicker extends Datum
     if model? && !@props.optionSaveAttr?
       return model.id 
     
-    return model?.get(@props.optionSaveAttr) ? model?[@props.optionSaveAttr] ? model?.id
+    return model?.get?(@props.optionSaveAttr) ? model?[@props.optionSaveAttr] ? model?.id ? modelId
     
 
   # extends Datum - if multi mode, always returns an array
