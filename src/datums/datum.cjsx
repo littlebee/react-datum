@@ -64,8 +64,8 @@ module.exports = class Datum extends React.Component
     noPopover: React.PropTypes.bool
     
     # props for ReactBootstrap Overlay used for popovers if React Bootstrap is available.   
-    # The rbOverlayProps prop get deep extended into Options.rbOverlayProps such that 
-    # props.rbOverlayProps has precedence
+    # The rbOverlayProps prop has precedence over the 'rbOverlayProps' you can specify
+    # via global options
     rbOverlayProps: React.PropTypes.object 
     
     # set to true to set the model value on change. this defaults to true if inputMode = inlineEdit
@@ -403,7 +403,7 @@ module.exports = class Datum extends React.Component
   ###
   getRbOverlayProps: (value, popoverId) ->
     ### !pragma coverage-skip-block ###
-    return @props.rbOptions.get('RbOverlayProps')
+    return @props.rbOverlayProps ? Options.get('RbOverlayProps')
     
   
   ###

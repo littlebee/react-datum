@@ -1007,7 +1007,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.prototype.getRbOverlayProps = function(value, popoverId) {
 
 	    /* !pragma coverage-skip-block */
-	    return this.props.rbOptions.get('RbOverlayProps');
+	    var ref;
+	    return (ref = this.props.rbOverlayProps) != null ? ref : Options.get('RbOverlayProps');
 	  };
 
 
