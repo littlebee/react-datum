@@ -672,6 +672,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit']),
 	    getMetadata: React.PropTypes.func,
 	    noPopover: React.PropTypes.bool,
+	    rbOverlayProps: React.PropTypes.object,
 	    setOnChange: React.PropTypes.bool,
 	    setOnBlur: React.PropTypes.bool,
 	    saveOnSet: React.PropTypes.bool,
@@ -1006,7 +1007,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.prototype.getRbOverlayProps = function(value, popoverId) {
 
 	    /* !pragma coverage-skip-block */
-	    return Options.get('RbOverlayProps');
+	    return this.props.rbOptions.get('RbOverlayProps');
 	  };
 
 

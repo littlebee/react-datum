@@ -63,6 +63,11 @@ module.exports = class Datum extends React.Component
     # set to true to not render a popover on ellipsized values
     noPopover: React.PropTypes.bool
     
+    # props for ReactBootstrap Overlay used for popovers if React Bootstrap is available.   
+    # The rbOverlayProps prop get deep extended into Options.rbOverlayProps such that 
+    # props.rbOverlayProps has precedence
+    rbOverlayProps: React.PropTypes.object 
+    
     # set to true to set the model value on change. this defaults to true if inputMode = inlineEdit
     setOnChange: React.PropTypes.bool
     
@@ -398,7 +403,7 @@ module.exports = class Datum extends React.Component
   ###
   getRbOverlayProps: (value, popoverId) ->
     ### !pragma coverage-skip-block ###
-    return Options.get('RbOverlayProps')
+    return @props.rbOptions.get('RbOverlayProps')
     
   
   ###
