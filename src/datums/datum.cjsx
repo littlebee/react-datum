@@ -820,5 +820,12 @@ module.exports = class Datum extends React.Component
     return "This input is required"
 
 
+  ###
+    This method can be used to clear any validation or save errors manually
+  ###
+  clearErrors: ->
+    @setState errors: []
+    
+    
   
 

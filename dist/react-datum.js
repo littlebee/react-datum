@@ -1560,6 +1560,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return "This input is required";
 	  };
 
+
+	  /*
+	    This method can be used to clear any validation or save errors manually
+	   */
+
+	  Datum.prototype.clearErrors = function() {
+	    return this.setState({
+	      errors: []
+	    });
+	  };
+
 	  return Datum;
 
 	})(React.Component);
