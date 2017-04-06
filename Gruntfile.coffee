@@ -17,7 +17,7 @@ module.exports = (grunt) ->
   
   grunt.loadNpmTasks('grunt-coveralls');
   
-  return BumbleBuild.gruntConfig grunt,
+  baseConfig = BumbleBuild.gruntConfig grunt,
 
     # change where we get css files from so we don't pick up the docs dir
     cssmin:
@@ -33,3 +33,9 @@ module.exports = (grunt) ->
       
       upload:
         src: 'coverage/lcov.info'
+
+
+  grunt.registerTask 'build', ['shell:npmInstall', 'distrib']
+  return baseConfig
+  
+  
