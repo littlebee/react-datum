@@ -824,7 +824,9 @@ module.exports = class Datum extends React.Component
     This method can be used to clear any validation or save errors manually
   ###
   clearErrors: ->
-    @setState errors: []
+    # Only set the state if there were errors to begin with.
+    if _.isArray(@state.errors) and @state.errors.length > 0
+      @setState errors: []
     
     
   
