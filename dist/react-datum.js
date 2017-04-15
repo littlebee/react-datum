@@ -6091,6 +6091,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (newProps.multi) {
 	      modelValue = (function() {
 	        switch (false) {
+	          case !(modelValue == null):
+	            return [];
 	          case !_.isString(modelValue):
 	            return modelValue.split(',');
 	          case !_.isArray(modelValue):
@@ -6135,15 +6137,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return (ref = this.refs) != null ? ref[this.selectRef] : void 0;
 	  };
 
+	  CollectionPicker.prototype.getSelectedModels = function() {
+	    var ref;
+	    return (ref = this.getCollection()) != null ? ref.get(this.getInputValue()) : void 0;
+	  };
+
 	  CollectionPicker.prototype.focus = function() {
-	    if (this.getInputComponent() != null) {
-	      return this.getInputComponent().focus();
-	    }
+	    var ref;
+	    return (ref = this.getInputComponent()) != null ? typeof ref.focus === "function" ? ref.focus() : void 0 : void 0;
 	  };
 
 	  CollectionPicker.prototype.getOptionValuesForReactSelect = function(models) {
+	    var foundModel, i, len, model, ref, selectedModels;
 	    if (models == null) {
-	      return [];
+	      models = [];
+	    }
+	    if (this.props.multi) {
+	      selectedModels = (ref = this.getSelectedModels()) != null ? ref : [];
+	      for (i = 0, len = selectedModels.length; i < len; i++) {
+	        model = selectedModels[i];
+	        foundModel = _.find(models, (function(_this) {
+	          return function(m) {
+	            return _this.getOptionSaveValue(m) === _this.getOptionSaveValue(model);
+	          };
+	        })(this));
+	        if (foundModel == null) {
+	          models.push(model);
+	        }
+	      }
 	    }
 	    return _.map(models, (function(_this) {
 	      return function(m) {

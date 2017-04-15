@@ -101,19 +101,35 @@ describe 'CollectionPicker clear value should clear the value and set it to null
       expect(model.get('nameId')).to.equal null
 
 
-describe 'CollectionPicker should show label value when option selected and when model is not provided to collection picker', ->
+describe 'CollectionPicker as multi select when opened', ->
   model = new Backbone.Model({nameId: 11})
   component = Th.render <CollectionPicker 
     clearable={true} attr='nameId' displayAttr="name"
-    synchronousLoading={true} collection={nameCollection} inputMode='edit'/>
+    collection={nameCollection} inputMode='edit'
+    multi searchable
+  />
 
   domNode = Th.domNode(component)
 
-  describe 'when opened', ->
-    before ->
-      simulateClick(component)
-      Th.Simulate.mouseDown(domNode.querySelector('.Select-menu .Select-option:first-child'))
+  before ->
+    simulateClick(component)  # open the dropdown
 
-    it 'should initially show all values from collection when clicked', ->
-      $valueLabels = $(domNode).find('.Select-value-label')
-      $valueLabels.length.should.equal(1)
+  it 'should initially show all values from collection', ->
+    $optionElements = $(domNode).find('.Select-option')
+    $optionElements.length.should.equal(nameCollection.length)
+    
+
+  describe 'and then first option selected', ->
+    before ->
+      Th.Simulate.mouseDown(domNode.querySelector('.Select-menu .Select-option:first-child'))
+      simulateClick(component)  # open the dropdown
+
+    it 'should have selected one option', ->
+      # console.log $(domNode).html()
+      $optionElements = $(domNode).find('.Select-option.is-focused')
+      $optionElements.length.should.equal 1
+        
+      
+      
+      
+      

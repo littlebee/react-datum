@@ -230,6 +230,7 @@ module.exports = class CollectionPicker extends Datum
     modelValue = super
     if newProps.multi
       modelValue = switch 
+        when (not modelValue?) then []
         when _.isString(modelValue) then modelValue.split(',')
         when _.isArray(modelValue) then modelValue
         else 
@@ -265,15 +266,24 @@ module.exports = class CollectionPicker extends Datum
   getInputComponent: () =>
     @refs?[@selectRef]
 
+  
+  getSelectedModels: () ->
+    return @getCollection()?.get(@getInputValue())
+
 
   focus: () =>
-    if @getInputComponent()?
-      @getInputComponent().focus()
+    @getInputComponent()?.focus?()
 
 
-  getOptionValuesForReactSelect: (models) =>
-    return [] unless models?
-    _.map models, (m) => return {
+  getOptionValuesForReactSelect: (models = []) =>
+    if @props.multi
+      selectedModels = @getSelectedModels() ? []
+      for model in selectedModels 
+        # add any selectedModels that are not already in models
+        foundModel = _.find(models, (m) => @getOptionSaveValue(m) == @getOptionSaveValue(model))
+        models.push model unless foundModel? 
+          
+    return _.map models, (m) => return {
       label: @getCollectionModelDisplayValue(m) 
       value: @getOptionSaveValue(m)
       model: m # We need this data if we have optionRenderes or optionComponents
