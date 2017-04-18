@@ -2692,16 +2692,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, this._getTagContent());
 	  };
 
-	  Link.prototype.removeHttpForRendering = function() {
-	    var index, value;
-	    value = this.getModelValue();
-	    if (value.indexOf('://') >= 3) {
-	      index = value.indexOf('://') + 3;
-	      value = value.slice(index);
-	    }
-	    return value;
-	  };
-
 	  Link.prototype._getHref = function() {
 	    return this.getModelValue();
 	  };

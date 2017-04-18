@@ -39,8 +39,13 @@ describe 'Link datum', ->
     
     it 'should have rendered an <a> tag', -> $atag.length.should.equal(1)
     
-    it 'should have rendered url enclosed in <a> tag', ->
-      $atag.html().should.equal model.get('url')
+    it 'should have rendered url enclosed in <a> tag without https://', ->
+      value = model.get('url')
+      if value.indexOf('://') >= 3
+        index = value.indexOf('://')+3
+        value = value.slice(index)
+      $atag.html().should.equal value
+
 
 
   describe 'as display with nameAttr prop', ->
