@@ -44,6 +44,7 @@ module.exports = class Link extends Datum
 
   # override
   renderValueForDisplay: () ->
+
     <a href={@_getHref()} target={@props.target}>
       {@_getTagContent()}
     </a>
@@ -55,6 +56,14 @@ module.exports = class Link extends Datum
     @getModelValue()
     
 
+  _removeHttpForDisplay: ->
+      value = @getModelValue()
+      if value.indexOf('://') >= 3
+        index = value.indexOf('://')+3
+        value = value.slice(index)
+      return value
+    
+
   _getTagContent: ->
     if @props.nameAttr?
       contentValue = @getModel().get(@props.nameAttr)
@@ -64,4 +73,5 @@ module.exports = class Link extends Datum
     else if @props.children?
       return <span>{@props.children}</span>
     else
-      return @renderEllipsizedValue(@getModelValue())
+      value = @_removeHttpForDisplay()
+      return @renderEllipsizedValue(value)

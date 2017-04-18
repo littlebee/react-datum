@@ -2692,12 +2692,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, this._getTagContent());
 	  };
 
+	  Link.prototype.removeHttpForRendering = function() {
+	    var index, value;
+	    value = this.getModelValue();
+	    if (value.indexOf('://') >= 3) {
+	      index = value.indexOf('://') + 3;
+	      value = value.slice(index);
+	    }
+	    return value;
+	  };
+
 	  Link.prototype._getHref = function() {
 	    return this.getModelValue();
 	  };
 
+	  Link.prototype._removeHttpForDisplay = function() {
+	    var index, value;
+	    value = this.getModelValue();
+	    if (value.indexOf('://') >= 3) {
+	      index = value.indexOf('://') + 3;
+	      value = value.slice(index);
+	    }
+	    return value;
+	  };
+
 	  Link.prototype._getTagContent = function() {
-	    var contentValue;
+	    var contentValue, value;
 	    if (this.props.nameAttr != null) {
 	      contentValue = this.getModel().get(this.props.nameAttr);
 	      if (_.isArray(contentValue)) {
@@ -2709,7 +2729,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    } else if (this.props.children != null) {
 	      return React.createElement("span", null, this.props.children);
 	    } else {
-	      return this.renderEllipsizedValue(this.getModelValue());
+	      value = this._removeHttpForDisplay();
+	      return this.renderEllipsizedValue(value);
 	    }
 	  };
 
