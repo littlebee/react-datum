@@ -1,4 +1,22 @@
 
+## [0.13.1](https://github.com/zulily/react-datum.git/compare/0.13.0...0.13.1) (2017-04-15)
+Minor feature improvements and bug fixes.
+
+### New Features
+* [4509edf](https://github.com/zulily/react-datum.git/commit/4509edfd0903c85accec30ef3c402eaef8de780c)  add clearErrors() API call to manually reset the error state of any datum
+* [2b72f35](https://github.com/zulily/react-datum.git/commit/2b72f35cd9e2fc2325ad15b6ff8ee62a032a41d3)  add support for extensions dynamically determining the attribute for like an international price datum that dynamically selects an attribute based on the localcurrency
+
+### Other Commits
+* [d442f95](https://github.com/zulily/react-datum.git/commit/d442f95e7b85d9d5c00ba8a0712d0c728769e309) Added preliminary check to clearErrors method which is much more performant.
+* [02469aa](https://github.com/zulily/react-datum.git/commit/02469aaccce6a4b0d419fe3de152a0b63ed4007e) collection picker when multiselect should retain selectios as the user searches and adds more
+* [a13ae1e](https://github.com/zulily/react-datum.git/commit/a13ae1e1055c6f87f9b9c5135339de5a6a121f27) add support for specifying the rbOverlayProps as a prop to all Datum extensions
+* [a675d90](https://github.com/zulily/react-datum.git/commit/a675d9043546cfb2163a2731262f65c726e93a2c) default validation of Number value - must be numerical + onModelSaveError handler should not show 'Error: undefined' when resp is a string
+* [8570510](https://github.com/zulily/react-datum.git/commit/857051057093dc29b9402709eb658aafc3b1a95b) Update to the latest zulily react-select lib
+* [a44b9b8](https://github.com/zulily/react-datum.git/commit/a44b9b8c5a52fe2c90253d18eb7d213d212c2586) CollectionPicker: add guard for null or undefined displayAttr value when grouping suggestion models
+
+## [0.13.0](https://github.com/zulily/react-datum.git/compare/0.12.1...0.13.0) (2017-02-20)
+No new features added, but lot's of tests added to fill in coverage.  
+
 ## [0.12.1](https://github.com/zulily/react-datum.git/compare/0.12.0...0.12.1) (2017-01-29)
 
 

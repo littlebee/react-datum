@@ -16,7 +16,7 @@ renderComponent = (model, attr, extraProps) ->
 renderComponentAndTestValue = (model, attr, expectedValue, extraProps) ->
   domNode = renderComponent(model, attr, extraProps)
   $displayValue = $(domNode).find('.datum-display-value')
-  $displayValue.text().should.equal expectedValue
+  $displayValue.html().should.equal expectedValue
 
 renderComponentAndTestLength = (model, attr, expectedLength, extraProps) ->
   domNode = renderComponent(model, attr, extraProps)
@@ -33,6 +33,9 @@ describe 'Text datum', ->
     trueValue: true
     falseValue: false
     arrayOfNumbers: [1,1,2,3,5,8]
+    anObject: {someSubMember: true}
+    someHtml: "<span>hello</span>"
+    
       
   it 'should ellipsize to 35 by default', ->
     renderComponentAndTestLength model, 'longName', 35
@@ -54,7 +57,16 @@ describe 'Text datum', ->
     
   it 'should be able to handle simple array', ->
     renderComponentAndTestValue(model, 'arrayOfNumbers', "1, 1, 2, 3, 5, 8")
+    
+  it 'should strigify an object value', ->
+    renderComponentAndTestValue(model, 'anObject', '{"someSubMember":true}')
       
+  it 'should render html escaped by default', ->
+    renderComponentAndTestValue(model, 'someHtml', "&lt;span&gt;hello&lt;/span&gt;")
+      
+  it 'should render html as html if displayAsHtml={true}', ->
+    renderComponentAndTestValue(model, 'someHtml', "<span>hello</span>", displayAsHtml: true)
+    
   
     
     

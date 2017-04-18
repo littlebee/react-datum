@@ -13,12 +13,29 @@ fs.copySync 'node_modules/react-select/dist/react-select.css', 'css/react-select
 
 debugger
 
-module.exports = (grunt) -> BumbleBuild.gruntConfig grunt,
-  # change where we get css files from so we don't pick up the docs dir
-  cssmin:
-    distrib: 
-      files:    
-        "dist/react-datum.css": [
-          'css/react-datum/*.css'
-        ]
+module.exports = (grunt) -> 
+  
+  grunt.loadNpmTasks('grunt-coveralls');
+  
+  baseConfig = BumbleBuild.gruntConfig grunt,
+
+    # change where we get css files from so we don't pick up the docs dir
+    cssmin:
+      distrib: 
+        files:    
+          "dist/react-datum.css": [
+            'css/react-datum/*.css'
+          ]
+    
+    coveralls:
+      options:
+        force: true
       
+      upload:
+        src: 'coverage/lcov.info'
+
+
+  grunt.registerTask 'build', ['shell:npmInstall', 'distrib']
+  return baseConfig
+  
+  
