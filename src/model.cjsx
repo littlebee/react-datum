@@ -26,3 +26,7 @@ module.exports = class Model extends ContextualData
 
   @childContextTypes: _.extend {}, ContextualData.childContextTypes,
     model: @modelPropType
+
+
+  update: ->
+    super

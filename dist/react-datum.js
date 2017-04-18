@@ -122,7 +122,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ClickToEditForm, Form, React,
+	var ClickToEditForm, Form, React, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
@@ -130,6 +130,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	React = __webpack_require__(4);
 
 	Form = __webpack_require__(5);
+
+	_ = __webpack_require__(9);
 
 	module.exports = ClickToEditForm = (function(superClass) {
 	  extend(ClickToEditForm, superClass);
@@ -156,6 +158,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    } else {
 	      return React.createElement("button", {
 	        "key": "edit",
+	        "ref": "editButton",
 	        "className": "btn btn-primary",
 	        "onClick": this.onEditClick
 	      }, "Edit");
@@ -669,6 +672,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit']),
 	    getMetadata: React.PropTypes.func,
 	    noPopover: React.PropTypes.bool,
+	    rbOverlayProps: React.PropTypes.object,
 	    setOnChange: React.PropTypes.bool,
 	    setOnBlur: React.PropTypes.bool,
 	    saveOnSet: React.PropTypes.bool,
@@ -752,6 +756,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return document.addEventListener('keydown', this.onDocumentKeydown);
 	  };
 
+
+	  /* !pragma coverage-skip-next */
+
 	  Datum.prototype.componentWillReceiveProps = function(nextProps) {
 	    var newModelValue, prevModelValue;
 	    prevModelValue = this.getModelValue(this.props);
@@ -762,6 +769,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      });
 	    }
 	  };
+
+
+	  /* !pragma coverage-skip-next */
 
 	  Datum.prototype.componentWillUnmount = function() {
 	    var ref, ref1;
@@ -797,7 +807,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var wrapperProps;
 	    wrapperProps = {
 	      className: this.getFullClassName(),
-	      'data-zattr': this.props.attr,
+	      'data-zattr': this.getAttr(),
 	      style: this.props.style || {}
 	    };
 	    if (this.props.asDiv) {
@@ -963,6 +973,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.renderWithPopover = function(value, tooltip, popoverId, valueClass) {
+
+	    /* !pragma coverage-skip-block */
 	    var Rb, popover, rValue, rbOverlayProps;
 	    if (tooltip == null) {
 	      return value;
@@ -993,7 +1005,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.getRbOverlayProps = function(value, popoverId) {
-	    return Options.get('RbOverlayProps');
+
+	    /* !pragma coverage-skip-block */
+	    var ref;
+	    return (ref = this.props.rbOverlayProps) != null ? ref : Options.get('RbOverlayProps');
 	  };
 
 
@@ -1163,8 +1178,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!(model = this.getModel(newProps, newContext))) {
 	      return null;
 	    }
-	    value = _.isFunction(model.get) ? model.get(newProps.attr) : model[newProps.attr];
+	    value = _.isFunction(model.get) ? model.get(this.getAttr(newProps)) : model[this.getAttr(newProps)];
 	    return value;
+	  };
+
+
+	  /*
+	    When extending react datum, use this method to get the attribute name specified
+	    to the component as props.attr.  
+	    
+	    You can also override this method in an extension to dynamically select the attribute
+	    to get from the model.  For say an international price datum that selects a price
+	    attribute based on the local currency  (not a contrived example)
+	   */
+
+	  Datum.prototype.getAttr = function(props) {
+	    if (props == null) {
+	      props = this.props;
+	    }
+	    return props.attr;
 	  };
 
 
@@ -1176,7 +1208,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.setModelValue = function(value, options) {
-	    var model;
+	    var attr, model;
 	    if (options == null) {
 	      options = {};
 	    }
@@ -1187,13 +1219,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	    }
 	    model = this.getModel();
+	    attr = this.getAttr();
 	    if (model != null) {
 	      if (_.isFunction(model.set)) {
-	        model.set(this.props.attr, value, options);
+	        model.set(attr, value, options);
 	      } else {
-	        model[this.props.attr] = value;
+	        model[attr] = value;
 	      }
-	      if (this.props.saveOnSet) {
+	      if (this.props.saveOnSet || options.saveOnset) {
 	        this.saveModel();
 	      }
 	    }
@@ -1357,7 +1390,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Datum.prototype.onModelSaveError = function(model, resp) {
 	    var errors, ref, ref1;
 	    errors = this.state.errors || [];
-	    errors.push((ref = (ref1 = "Unable to save value. Error: " + resp.responseText) != null ? ref1 : resp.statusText) != null ? ref : resp);
+	    errors.push("Unable to save value. Error: " + ((ref = (ref1 = resp.responseText) != null ? ref1 : resp.statusText) != null ? ref : resp));
 	    this.setState({
 	      saving: false,
 	      saved: false,
@@ -1447,7 +1480,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	    valid = this.validate(newValue);
 	    if (options.setModelValue) {
-	      this.setModelValue(newValue);
+	      this.setModelValue(newValue, options);
 	      this.setState({
 	        isDirty: false
 	      });
@@ -1525,6 +1558,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return true;
 	    }
 	    return "This input is required";
+	  };
+
+
+	  /*
+	    This method can be used to clear any validation or save errors manually
+	   */
+
+	  Datum.prototype.clearErrors = function() {
+	    return this.setState({
+	      errors: []
+	    });
 	  };
 
 	  return Datum;
@@ -1735,11 +1779,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      lastUpdated: null,
 	      collectionOrModel: null
 	    };
-	    this.debouncedUpdate = this.props.debouncedUpdate ? _.debounce(((function(_this) {
-	      return function() {
-	        return _this.update();
-	      };
-	    })(this)), this.props.debounceMs) : this.update;
+	    this.debouncedUpdate = this.props.debouncedUpdate ? _.debounce(this.update, this.props.debounceMs) : this.update;
 	  }
 
 	  ContextualData.prototype.getChildContext = function() {
@@ -1768,6 +1808,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.props.placeholder;
 	  };
 
+
+	  /* !pragma coverage-skip-next */
+
 	  ContextualData.prototype.componentWillUnmount = function() {
 	    return this.unbindEvents();
 	  };
@@ -1775,6 +1818,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  ContextualData.prototype.componentWillMount = function() {
 	    return this.initializeCollectionOrModel();
 	  };
+
+
+	  /* !pragma coverage-skip-next */
 
 	  ContextualData.prototype.componentWillReceiveProps = function(newProps) {
 	    this.props = newProps;
@@ -2297,7 +2343,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  CollectionStats.prototype._renderSelected = function() {
-	    if (!this.collection.isSelectable) {
+	    if (!this.collection.hasSelectableCollection) {
 	      return null;
 	    }
 	    return React.createElement("span", {
@@ -2371,6 +2417,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Model.childContextTypes = _.extend({}, ContextualData.childContextTypes, {
 	    model: Model.modelPropType
 	  });
+
+	  Model.prototype.update = function() {
+	    return Model.__super__.update.apply(this, arguments);
+	  };
 
 	  return Model;
 
@@ -2817,9 +2867,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function Number(props) {
 	    this.validateMax = bind(this.validateMax, this);
 	    this.validateMin = bind(this.validateMin, this);
+	    this.validateNumeric = bind(this.validateNumeric, this);
 	    this.onChange = bind(this.onChange, this);
 	    Number.__super__.constructor.apply(this, arguments);
-	    this.addValidations([this.validateMin, this.validateMax]);
+	    this.addValidations([this.validateNumeric, this.validateMin, this.validateMax]);
 	  }
 
 	  Number.prototype.isAcceptableInput = function(value) {
@@ -2847,7 +2898,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	    value = this.abbreviate(value, formats);
 	    value = this.addCommas(value, formats);
-	    value = this.monitize(value, formats);
+	    value = this.monetize(value, formats);
 	    if (indexOf.call(formats, 'percent') >= 0) {
 	      value += "%";
 	    }
@@ -2893,6 +2944,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (this.isAcceptableInput(inputValue)) {
 	      return Number.__super__.onChange.apply(this, arguments);
 	    }
+	  };
+
+	  Number.prototype.validateNumeric = function(value) {
+	    if (this.charactersMustMatch.test(value)) {
+	      return true;
+	    }
+	    if (value.length > 25) {
+	      value = value.slice(0, 25) + '...';
+	    }
+	    return "The value must be numeric. \"" + value + "\" is not valid";
 	  };
 
 	  Number.prototype.validateMin = function(value) {
@@ -2988,7 +3049,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return value;
 	  };
 
-	  Number.prototype.monitize = function(value, formats) {
+
+	  /*
+	    If props.formats includes 'money', this method prepends the value
+	    displayed with '$'
+	    
+	    Override this method to do things like create an internationalized
+	    display of money value for another currency.
+	   */
+
+	  Number.prototype.monetize = function(value, formats) {
 	    if (formats == null) {
 	      formats = this.getFormats();
 	    }
@@ -4012,6 +4082,9 @@ return /******/ (function(modules) { // webpackBootstrap
 			//NOTE: update value in the callback to make sure the input value is empty so that there are no styling issues (Chrome had issue otherwise)
 			this.hasScrolledToOption = false;
 			if (this.props.multi) {
+				if (this.props.allowCreate) {
+					value = this.expandValue(value, this.props);
+				}
 				this.setState({
 					inputValue: '',
 					focusedIndex: null
@@ -5892,9 +5965,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    valueComponent: React.PropTypes.func,
 	    fetchUnknownModelsInCollection: React.PropTypes.bool,
 	    displayAttr: React.PropTypes.string,
-	    optionDisplayAttr: React.PropTypes.string,
 	    optionSaveAttr: React.PropTypes.string.isRequired,
-	    displayComponent: React.PropTypes.func,
+	    displayComponent: React.PropTypes.any,
 	    synchronousLoading: React.PropTypes.bool,
 	    isLoading: React.PropTypes.bool,
 	    asyncSuggestionCallback: React.PropTypes.func,
@@ -5905,7 +5977,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  CollectionPicker.defaultProps = _.extend({}, Datum.defaultProps, {
 	    ellipsizeAt: 35,
-	    optionSaveAttr: 'id',
 	    fetchUnknownModelsInCollection: true,
 	    loading: false,
 	    attr: 'value'
@@ -5921,19 +5992,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  CollectionPicker.prototype.initializeState = function() {
 	    return this.state = {
-	      value: this._getValue(),
+	      value: this.getModelValue(),
 	      errors: []
 	    };
-	  };
-
-	  CollectionPicker.prototype.componentWillReceiveProps = function(nextProps) {
-	    var newModelValue;
-	    newModelValue = nextProps.multi ? this.getModelValues(nextProps) : this.getModelValue(nextProps);
-	    if (JSON.stringify(this.state.value || {}) !== JSON.stringify(newModelValue)) {
-	      return this.setState({
-	        value: newModelValue
-	      });
-	    }
 	  };
 
 	  CollectionPicker.prototype.render = function() {
@@ -5944,7 +6005,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var collection, modelValues;
 	    collection = this.getCollection();
 	    if (this.props.multi) {
-	      modelValues = this.getModelValues();
+	      modelValues = this.getModelValue();
 	      return modelValues.map((function(_this) {
 	        return function(modelValue) {
 	          return _this.renderCollectionDisplayValue(modelValue, collection);
@@ -5983,30 +6044,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  };
 
-	  CollectionPicker.prototype.cancelEdit = function() {
-	    return this.setState({
-	      errors: [],
-	      value: this._getValue()
-	    });
-	  };
-
 	  CollectionPicker.prototype.getCollection = function() {
 	    var collection;
 	    collection = this.props.collection || this.context.collection;
 	    if (collection == null) {
-	      throw this.constructor.displayName + " requires a collection prop or context";
+	      throw new Error(this.constructor.displayName + " requires a collection prop or context");
 	    }
 	    if (!(collection instanceof Backbone.Collection)) {
 	      return new Backbone.Collection(collection);
 	    }
 	    return collection;
-	  };
-
-	  CollectionPicker.prototype._getValue = function(newProps) {
-	    if (newProps == null) {
-	      newProps = this.props;
-	    }
-	    return (newProps.multi ? this.getModelValues(newProps) : this.getModelValue(newProps));
 	  };
 
 	  CollectionPicker.prototype._getCollectionModelById = function(modelOrId) {
@@ -6021,63 +6068,52 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  CollectionPicker.prototype.getCollectionModelDisplayValue = function(modelId, collection) {
-	    var model;
+	    var displayValue, model, ref;
 	    if (!modelId) {
 	      return null;
 	    }
 	    model = this._getCollectionModelById(modelId);
-	    if ((model != null) && !_.isFunction(model.toString) && (this.props.displayAttr == null)) {
-	      throw this.constructor.displayName + ": You need to specify a displayAttr prop or model must have toString() method";
-	    }
-	    if (this.props.displayAttr != null) {
-	      return model != null ? model.get(this.props.displayAttr) : void 0;
+	    if (model != null) {
+	      if (!_.isFunction(model.toString) && (this.props.displayAttr == null)) {
+	        throw new Error(this.constructor.displayName + ": You need to specify a displayAttr prop or model must have toString() method");
+	      }
+	      displayValue = this.props.displayAttr != null ? (ref = typeof model.get === "function" ? model.get(this.props.displayAttr) : void 0) != null ? ref : model[this.props.displayAttr] : typeof model.toString === "function" ? model.toString() : void 0;
 	    } else {
-	      return typeof model.toString === "function" ? model.toString() : void 0;
+	      displayValue = null;
 	    }
-	  };
-
-	  CollectionPicker.prototype.getOptionDisplayValue = function(modelId, collection) {
-	    var model;
-	    if (!modelId) {
-	      return null;
-	    }
-	    model = this._getCollectionModelById(modelId);
-	    if ((model != null) && !_.isFunction(model.toString) && (this.props.optionDisplayAttr == null)) {
-	      throw this.constructor.displayName + ": You need to specify an optionDisplayAttr prop or model must have toString() method";
-	    }
-	    if (this.props.optionDisplayAttr != null) {
-	      return model != null ? model.get(this.props.optionDisplayAttr) : void 0;
-	    } else {
-	      return typeof model.toString === "function" ? model.toString() : void 0;
-	    }
+	    return displayValue;
 	  };
 
 	  CollectionPicker.prototype.getOptionSaveValue = function(modelId, collection) {
-	    var model;
+	    var model, ref, ref1, ref2;
 	    model = this._getCollectionModelById(modelId);
-	    if ((model != null) && (this.props.optionsSaveAttr == null)) {
+	    if ((model != null) && (this.props.optionSaveAttr == null)) {
 	      return model.id;
 	    }
-	    return model != null ? model.get(this.props.optionSaveAttr) : void 0;
+	    return (ref = (ref1 = (ref2 = model != null ? typeof model.get === "function" ? model.get(this.props.optionSaveAttr) : void 0 : void 0) != null ? ref2 : model != null ? model[this.props.optionSaveAttr] : void 0) != null ? ref1 : model != null ? model.id : void 0) != null ? ref : modelId;
 	  };
 
-	  CollectionPicker.prototype.getModelValues = function(newProps) {
-	    var modelValue, modelValues;
+	  CollectionPicker.prototype.getModelValue = function(newProps) {
+	    var modelValue;
 	    if (newProps == null) {
 	      newProps = this.props;
 	    }
-	    modelValue = this.getModelValue(newProps);
-	    modelValues = (function() {
-	      switch (false) {
-	        case !_.isString(modelValue):
-	          return modelValue.split(',');
-	        case !_.isArray(modelValue):
-	          return modelValue;
-	        default:
-	          return [modelValue];
-	      }
-	    })();
-	    return modelValues;
+	    modelValue = CollectionPicker.__super__.getModelValue.apply(this, arguments);
+	    if (newProps.multi) {
+	      modelValue = (function() {
+	        switch (false) {
+	          case !(modelValue == null):
+	            return [];
+	          case !_.isString(modelValue):
+	            return modelValue.split(',');
+	          case !_.isArray(modelValue):
+	            return modelValue;
+	          default:
+	            return [modelValue];
+	        }
+	      })();
+	    }
+	    return modelValue;
 	  };
 
 	  CollectionPicker.prototype.getSelectOptions = function() {
@@ -6104,7 +6140,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  CollectionPicker.prototype.hasInputValueChanged = function() {
-	    return this.getInputValue() !== this._getValue();
+	    return this.getInputValue() !== this.getModelValue();
 	  };
 
 	  CollectionPicker.prototype.getInputComponent = function() {
@@ -6112,15 +6148,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return (ref = this.refs) != null ? ref[this.selectRef] : void 0;
 	  };
 
+	  CollectionPicker.prototype.getSelectedModels = function() {
+	    var ref;
+	    return (ref = this.getCollection()) != null ? ref.get(this.getInputValue()) : void 0;
+	  };
+
 	  CollectionPicker.prototype.focus = function() {
-	    if (this.getInputComponent() != null) {
-	      return this.getInputComponent().focus();
-	    }
+	    var ref;
+	    return (ref = this.getInputComponent()) != null ? typeof ref.focus === "function" ? ref.focus() : void 0 : void 0;
 	  };
 
 	  CollectionPicker.prototype.getOptionValuesForReactSelect = function(models) {
+	    var foundModel, i, len, model, ref, selectedModels;
 	    if (models == null) {
-	      return [];
+	      models = [];
+	    }
+	    if (this.props.multi) {
+	      selectedModels = (ref = this.getSelectedModels()) != null ? ref : [];
+	      for (i = 0, len = selectedModels.length; i < len; i++) {
+	        model = selectedModels[i];
+	        foundModel = _.find(models, (function(_this) {
+	          return function(m) {
+	            return _this.getOptionSaveValue(m) === _this.getOptionSaveValue(model);
+	          };
+	        })(this));
+	        if (foundModel == null) {
+	          models.push(model);
+	        }
+	      }
 	    }
 	    return _.map(models, (function(_this) {
 	      return function(m) {
@@ -6198,12 +6253,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var filteredModels;
 	    filteredModels = _.filter(collection.models, (function(_this) {
 	      return function(model) {
-	        return Strhelp.weaklyHas(_this.getOptionDisplayValue(model), userInput);
+	        return Strhelp.weaklyHas(_this.getCollectionModelDisplayValue(model), userInput);
 	      };
 	    })(this));
 	    filteredModels = filteredModels.sort((function(_this) {
 	      return function(a, b) {
-	        return Strhelp.weaklyCompare(_this.getOptionDisplayValue(a), _this.getOptionDisplayValue(b));
+	        return Strhelp.weaklyCompare(_this.getCollectionModelDisplayValue(a), _this.getCollectionModelDisplayValue(b));
 	      };
 	    })(this));
 	    if (typeof callback === "function") {
@@ -6213,12 +6268,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  CollectionPicker.prototype.groupSuggestionModels = function(userInput, models) {
-	    var bottomHits, i, len, model, topHits;
+	    var bottomHits, displayValue, i, len, model, topHits;
 	    topHits = [];
 	    bottomHits = [];
 	    for (i = 0, len = models.length; i < len; i++) {
 	      model = models[i];
-	      if (Strhelp.weaklyStartsWith(this.getOptionDisplayValue(model), userInput)) {
+	      displayValue = this.getCollectionModelDisplayValue(model);
+	      if ((displayValue != null) && Strhelp.weaklyStartsWith(displayValue, userInput)) {
 	        topHits.push(model);
 	      } else {
 	        bottomHits.push(model);

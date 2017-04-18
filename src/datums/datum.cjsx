@@ -63,6 +63,11 @@ module.exports = class Datum extends React.Component
     # set to true to not render a popover on ellipsized values
     noPopover: React.PropTypes.bool
     
+    # props for ReactBootstrap Overlay used for popovers if React Bootstrap is available.   
+    # The rbOverlayProps prop has precedence over the 'rbOverlayProps' you can specify
+    # via global options
+    rbOverlayProps: React.PropTypes.object 
+    
     # set to true to set the model value on change. this defaults to true if inputMode = inlineEdit
     setOnChange: React.PropTypes.bool
     
@@ -181,7 +186,7 @@ module.exports = class Datum extends React.Component
     document.addEventListener 'click', @onDocumentClick
     document.addEventListener 'keydown', @onDocumentKeydown
 
-
+  ### !pragma coverage-skip-next ###
   componentWillReceiveProps: (nextProps) ->
     prevModelValue = @getModelValue(@props)
     newModelValue = @getModelValue(nextProps)
@@ -192,6 +197,7 @@ module.exports = class Datum extends React.Component
       })
     
 
+  ### !pragma coverage-skip-next ###
   componentWillUnmount: ->
     @context?.form?.removeDatum?(@)
     
@@ -219,7 +225,7 @@ module.exports = class Datum extends React.Component
   renderDatumWrapper: (contentFn)->
     wrapperProps =
       className: @getFullClassName()
-      'data-zattr': @props.attr
+      'data-zattr': @getAttr()
       style: @props.style || {}
       
     if @props.asDiv 
@@ -371,6 +377,7 @@ module.exports = class Datum extends React.Component
     extend and override to effect the standard popover treatment
   ###  
   renderWithPopover: (value, tooltip, popoverId, valueClass) ->
+    ### !pragma coverage-skip-block ###
     return value unless tooltip?
     
     # if available globally or user called ReactDatum.set('ReactBootstrap', someLib)
@@ -395,7 +402,8 @@ module.exports = class Datum extends React.Component
     Override this method to provide things like custom positioning of error popovers
   ###
   getRbOverlayProps: (value, popoverId) ->
-    return Options.get('RbOverlayProps')
+    ### !pragma coverage-skip-block ###
+    return @props.rbOverlayProps ? Options.get('RbOverlayProps')
     
   
   ###
@@ -516,10 +524,24 @@ module.exports = class Datum extends React.Component
     return null unless model = @getModel(newProps, newContext)
     
     value = if _.isFunction(model.get)
-      model.get(newProps.attr) 
+      model.get(@getAttr(newProps)) 
     else 
-      model[newProps.attr]
+      model[@getAttr(newProps)]
     return value
+    
+    
+  ###
+    When extending react datum, use this method to get the attribute name specified
+    to the component as props.attr.  
+    
+    You can also override this method in an extension to dynamically select the attribute
+    to get from the model.  For say an international price datum that selects a price
+    attribute based on the local currency  (not a contrived example)
+    
+  ###
+  getAttr: (props = @props) ->
+    return props.attr
+    
 
 
   ###
@@ -536,13 +558,14 @@ module.exports = class Datum extends React.Component
       return if value == undefined  
     
     model = @getModel()
+    attr = @getAttr()
     if model? 
       if _.isFunction(model.set) 
-        model.set(@props.attr, value, options) 
+        model.set(attr, value, options) 
       else 
-        model[@props.attr] = value
+        model[attr] = value
         
-      @saveModel() if @props.saveOnSet
+      @saveModel() if @props.saveOnSet || options.saveOnset
         
 
     # if we were provided a value in a prop and the datum allowed a change to it,
@@ -672,7 +695,7 @@ module.exports = class Datum extends React.Component
   
   onModelSaveError: (model, resp) =>
     errors = @state.errors || []
-    errors.push "Unable to save value. Error: " + resp.responseText ? resp.statusText ? resp
+    errors.push "Unable to save value. Error: " + (resp.responseText ? resp.statusText ? resp)
 
     @setState saving: false, saved: false, errors: errors
     # we also populate errors which will change this to an error icon
@@ -743,7 +766,7 @@ module.exports = class Datum extends React.Component
     valid = @validate(newValue)
 
     if options.setModelValue
-      @setModelValue(newValue)
+      @setModelValue(newValue, options)
       @setState({isDirty: false})
     else
       @setState({isDirty: true})
@@ -797,5 +820,14 @@ module.exports = class Datum extends React.Component
     return "This input is required"
 
 
+  ###
+    This method can be used to clear any validation or save errors manually
+  ###
+  clearErrors: ->
+    # Only set the state if there were errors to begin with.
+    if _.isArray(@state.errors) and @state.errors.length > 0
+      @setState errors: []
+    
+    
   
 

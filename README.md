@@ -2,8 +2,10 @@ react-datum
 ============
 
 A set of [React](https://facebook.github.io/react/) components for display and input of attributes from Backbone collections and models.
-[<img alt="Screenshot from doc/examples/model/model.html" src="https://travis-ci.org/zulily/react-datum.svg?branch=master"
-/>](https://travis-ci.org/zulily/react-datum)
+
+[![Build Status](https://travis-ci.org/zulily/react-datum.svg?branch=master)](https://travis-ci.org/zulily/react-datum)
+[![Coverage Status](https://coveralls.io/repos/github/zulily/react-datum/badge.svg?branch=master)](https://coveralls.io/github/zulily/react-datum?branch=master)
+
 
 ## Live Demo & Examples
 (http://zulily.github.io/react-datum/docs/examples/)

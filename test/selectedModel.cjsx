@@ -1,5 +1,8 @@
 React = require 'react'
+ReactTest = require 'react-addons-test-utils'
+
 Backbone = require 'backbone'
+$ = require 'jquery'
 _ = require 'underscore'
 sinon = require 'sinon'
 
@@ -9,25 +12,25 @@ Collection = require '../src/collection'
 SelectedModel = require '../src/selectedModel'
 Text = require '../src/datums/text'
 
-testCollection = new Backbone.Collection [
-  {id: 1, name: "Sam"}
-  {id: 2, name: "Miss Kitty"}
-  {id: 3, name: "Mitzy"}
-  {id: 4, name: "Bob"}
-  {id: 5, name: "Tommy"}
-]
-
-collectionComponent = Th.render(
-  <Collection collection={testCollection}>
-    <SelectedModel placeholder="Select a Model">
-      <Text attr="name"/>
-    </SelectedModel>
-  </Collection>
-)
-collectionNode = Th.domNode(collectionComponent)  
-
 describe "SelectedModel", ->
   
+  testCollection = new Backbone.Collection [
+    {id: 1, name: "Sam"}
+    {id: 2, name: "Miss Kitty"}
+    {id: 3, name: "Mitzy"}
+    {id: 4, name: "Bob"}
+    {id: 5, name: "Tommy"}
+  ]
+
+  collectionComponent = Th.render(
+    <Collection collection={testCollection}>
+      <SelectedModel placeholder="Select a Model">
+        <Text attr="name"/>
+      </SelectedModel>
+    </Collection>
+  )
+  collectionNode = Th.domNode(collectionComponent)  
+
   describe "without selected model", ->
 
     it "should be showing a placeholder", ->

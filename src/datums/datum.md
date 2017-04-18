@@ -67,7 +67,7 @@ var modelMetadata = {
 var UserModel = Backbone.Model.extend({
   
   getDatumMetadata: function(prop, datumInstance){
-    attrMetadata = modelMetadata[datumInstance.props.attr]
+    attrMetadata = modelMetadata[datumInstance.getAttr()]
     if( attrMetadata == null ){ 
       return null 
     } 

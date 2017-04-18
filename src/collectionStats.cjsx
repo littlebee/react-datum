@@ -56,7 +56,7 @@ module.exports = class CollectionStats extends React.Component
 
 
   _renderSelected: ->
-    return null unless @collection.isSelectable
+    return null unless @collection.hasSelectableCollection
     return(
       <span className="selected stats fade in">
         , {@_renderCount(@collection.getSelectedModels().length)} selected
