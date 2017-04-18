@@ -112,6 +112,9 @@ module.exports = class CollectionPicker extends Datum
     
     # if setAsString and multi, set the value of the model as a comma delimited string instead of array of values
     setAsString: React.PropTypes.bool
+    
+    # if true, displays the model value in when in display mode without collection lookup  
+    displayModelValue: React.PropTypes.bool
      
 
   @defaultProps: _.extend {}, Datum.defaultProps,
@@ -200,6 +203,8 @@ module.exports = class CollectionPicker extends Datum
   
   getCollectionModelDisplayValue: (modelId, collection) ->
     return null unless modelId 
+    return modelId.toString() if @props.displayModelValue
+    
     model = @_getCollectionModelById(modelId)
       
     if model? 
