@@ -40,6 +40,9 @@ describe 'Link datum', ->
     it 'should not have an input', -> Th.findByTag(component, 'input').length.should.equal(0)
     
     it 'should have rendered an <a> tag', -> $atag.length.should.equal(1)
+
+    it 'should have rendered url enclosed in <a> tag with https://', ->
+      $atag.html().should.equal 'http://www.zulily.com'
     
 
 
