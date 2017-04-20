@@ -49,7 +49,7 @@ module.exports = class Link extends Datum
   # override
   renderValueForDisplay: () ->
 
-    <a href={@_getHref()} target={@props.target}>
+    <a href={@_getHref()} target={@props.target} hideProtocol={@props.hideProtocol}>
       {@_getTagContent()}
     </a>
 

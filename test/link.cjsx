@@ -34,15 +34,13 @@ renderComponent = (props={}) ->
 describe 'Link datum', ->
 
   describe 'as display without props', ->
-    component = Th.render <Link attr='url' model={model}/>
+    component = Th.render <Link attr='url' model={model} />
     $atag = $(Th.domNode(component)).find('a')
     
     it 'should not have an input', -> Th.findByTag(component, 'input').length.should.equal(0)
     
     it 'should have rendered an <a> tag', -> $atag.length.should.equal(1)
     
-    # it 'should have rendered url enclosed in <a> tag without https://', ->
-    #   $atag.html().should.equal 'www.zulily.com'
 
 
 
@@ -122,6 +120,13 @@ describe 'Link datum', ->
       
     it 'should have rendered name from model in datum', ->  
       $datum.html().should.contain model.get('name')
+
+  describe 'as display with hideProtocol prop', ->
+    component = Th.render <Link attr='url' model={model} hideProtocol={true} />
+    $atag = $(Th.domNode(component)).find('a')
+
+    it 'should have rendered url enclosed in <a> tag without https://', ->
+      $atag.html().should.equal 'www.zulily.com'
   
   
 

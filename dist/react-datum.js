@@ -2734,7 +2734,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Link.defaultProps = _.extend({}, Datum.defaultProps, {
 	    ellipsizeAt: 35,
 	    target: '_blank',
-	    hideProtocol: 'false'
+	    hideProtocol: false
 	  });
 
 	  Link.prototype.subClassName = 'link';
@@ -2742,7 +2742,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Link.prototype.renderValueForDisplay = function() {
 	    return React.createElement("a", {
 	      "href": this._getHref(),
-	      "target": this.props.target
+	      "target": this.props.target,
+	      "hideProtocol": this.props.hideProtocol
 	    }, this._getTagContent());
 	  };
 

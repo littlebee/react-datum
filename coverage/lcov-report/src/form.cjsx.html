@@ -1,0 +1,1109 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/form.cjsx</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">src/</a> form.cjsx
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">86.57% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>116/134</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">65% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>26/40</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">97.3% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>36/37</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">88.24% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>90/102</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">27×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">24×</span>
+<span class="cline-any cline-yes">24×</span>
+<span class="cline-any cline-yes">24×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">120×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">&nbsp;
+React = require('react')
+ReactDom = require('react-dom')
+Datum = require('./datums/datum')
+Backbone = require('backbone')
+_ = require('underscore')
+&nbsp;
+# see ./form.md 
+module.exports = class Form extends React.Component
+  @displayName: "react-datum.Form"
+&nbsp;
+  # TODO : move this to somewhere reusable. most of the datums accept
+  # a model or plain js object
+  @modelOrObject: -&gt;
+    React.PropTypes.oneOfType([
+      React.PropTypes.instanceOf(Backbone.Model)
+      React.PropTypes.object
+    ])
+&nbsp;
+&nbsp;
+  @propTypes:
+    # can also accept model instance as context var. prop has precendence 
+    model: @modelOrObject()
+    
+    # you can specify any method on the model to call when save is clicked
+    # TODO : add ability to also pass in a func?  would need to accept model, attrs, options
+    modelSaveMethod: React.PropTypes.string
+    
+    #  no formMode like zform, but we have to support programatic readonly
+    #  see also ClickToEditForm component.   readonly should always take precendence
+    readonly: React.PropTypes.bool
+    
+    # you can style a buttonPossiton: 'top' to float left or right in css.
+    buttonPosition: React.PropTypes.oneOf(['top', 'bottom', 'none'])
+    
+    # specify className of form element
+    className: React.PropTypes.string
+    
+    # on save success this method, if specified, will be called with the standard
+    # Backbone success callback arguments (model, response, options)
+    # If you don't specify a saveSuccessCallback, a small success message will be rerendered
+    # below the form button after successfully saving the form
+    saveSuccessCallback: React.PropTypes.func
+    
+    # on save error this method, if specified, will be called with the standard
+    # Backbone error callback arguments (model, response, options)
+    # If you don't specify a saveErrorCallback, an error message will be rerendered
+    # below the form button after failing to save the form on user request
+    saveErrorCallback: React.PropTypes.func
+&nbsp;
+&nbsp;
+  @defaultProps:
+    readonly: false
+    buttonPosition: 'bottom'
+    className: 'form'
+    modelSaveMethod: 'save'
+&nbsp;
+&nbsp;
+  @contextTypes:
+    ### can also accept model instance as a prop.  prop has precendence ###
+    model: @modelOrObject()
+&nbsp;
+  
+  @childContextTypes:
+    # we pass along the model (make it contextually available) so you can
+    # say `&lt;Rz.Form model={this.ourModel}&gt;` and change the model context
+    # for all of the datums in this form
+    model: @modelOrObject()
+    # this is how we tell the datums in our children to render for input
+    inputMode: Datum.contextTypes.inputMode
+    # datums will register with us through the addDatum method when they mount
+    # and remove themselves when they unmount
+    form: React.PropTypes.object
+&nbsp;
+  # default input mode for all datums that don't have 'readonly' or 'inputMode props
+  datumInputMode:  'edit'
+&nbsp;
+&nbsp;
+  constructor: (props) -&gt;
+    @datums = [] # see addDatum() and removeDatum()
+    @state =
+      errorMessage: null
+      successMessage: null
+&nbsp;
+&nbsp;
+    super
+&nbsp;
+&nbsp;
+  getChildContext: -&gt;
+    return {
+      model: @getModel()
+      inputMode: @getDatumInputMode()
+      form: @
+    }
+&nbsp;
+  render: -&gt;
+    return null unless @getModel()?
+&nbsp;
+    @_saveModelStateAtRender()
+&nbsp;
+    &lt;div className={"form #{@datumInputMode} #{@props.className}"}&gt;
+      {@renderTopButtons()}
+      {@renderChildren()}
+      {@renderBottomButtons()}
+      {@renderMessages()}
+    &lt;/div&gt;
+&nbsp;
+&nbsp;
+  componentDidMount: -&gt;
+    @node = ReactDom.findDOMNode(this)
+&nbsp;
+&nbsp;
+  ###
+    Gives the first editable datum focus
+  ###
+  focus: -&gt;
+    firstEditable = _.find @datums, (d) -&gt; d.isEditable()
+    firstEditable?.focus()
+&nbsp;
+&nbsp;
+  renderChildren: -&gt;
+    &lt;div className="form-content"&gt;
+      {@props.children}
+    &lt;/div&gt;
+&nbsp;
+&nbsp;
+  renderTopButtons: -&gt;
+    return unless @props.buttonPosition == 'top'
+    @renderButtonContainer(addClass: "top")
+&nbsp;
+&nbsp;
+  renderBottomButtons: -&gt;
+    return unless @props.buttonPosition == 'bottom'
+    @renderButtonContainer(addClass: "bottom")
+&nbsp;
+&nbsp;
+  renderButtonContainer: (options={}) -&gt;
+    options = _.defaults options,
+      addClass: null
+&nbsp;
+    className = "form-buttons"
+    <span class="missing-if-branch" title="else path not taken" >E</span>className += " #{options.addClass}" if options.addClass?
+&nbsp;
+    &lt;div className={className}&gt;
+      {@renderButtons(options)}
+    &lt;/div&gt;
+&nbsp;
+&nbsp;
+  renderButtons: (options) -&gt;
+    return [
+      &lt;button key="save" ref="saveButton" className='btn btn-success' onClick={@onSaveClick}&gt;Save&lt;/button&gt;
+      &lt;button key="cancel" ref="cancelButton" className='btn' onClick={@onCancelClick}&gt;Cancel&lt;/button&gt;
+    ]
+&nbsp;
+&nbsp;
+  renderMessages: -&gt;
+    return [
+      @renderSuccessMessage()
+      @renderErrorMessage()
+    ]
+&nbsp;
+&nbsp;
+  renderErrorMessage: -&gt;
+    @renderMessage @state.errorMessage, 'error'
+&nbsp;
+&nbsp;
+  renderSuccessMessage: -&gt;
+    @renderMessage @state.successMessage, 'success'
+&nbsp;
+&nbsp;
+  renderMessage: (message, className) -&gt;
+    return null unless message?
+    fullClassName = "datum-form-message-#{className} #{className}"
+    &lt;div key={className} className={fullClassName}&gt;{message}&lt;/div&gt;
+&nbsp;
+&nbsp;
+  ###
+    Save the changes from datums on the form to the Backbone model. 
+    
+    Calls model.save after first attempting to validate() the model.  Handles 
+    inconsistencies in model.validate() between versions 0.9.2 - 1.2.2 of Backbone.
+    
+    The user clicking on the save button belonging to the Form will call this Method
+    
+    The options argument is passed on to Backbone model.save()
+  ###
+  save: (options={})-&gt;
+    options = _.defaults options,
+      validateDatums: true      # TODO : these should also be @props
+      validateModel: true
+      
+    @setState errorMessage: null, successMessage: null
+    model = @getModel()
+    
+    if options.validateDatums and not @validateDatums(options)
+      @onSaveError model, "Correct errors and try again."
+      return
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if options.validateModel and not @validateModel(options)
+<span class="cstat-no" title="statement not covered" >      @onSaveError model, model.validationError</span>
+<span class="cstat-no" title="statement not covered" >      return</span>
+&nbsp;
+    # saving the model triggers events that will rerender us
+    return @saveModel(options)
+&nbsp;
+&nbsp;
+  ###
+    Validate the datums on the form. 
+    
+    returns false if any are currently invalid
+  ###
+  validateDatums: (options={}) -&gt;
+    if @getInvalidDatums().length &gt; 0
+      @setState errorMessage: "Please correct errors and try again."
+      return false
+      
+    return true
+    
+  
+  ###
+    Calls Backbone model.validate and handles inconsistencies in model.validate() 
+    between versions 0.9.2 - 1.2.2 of Backbone.
+  ###    
+  validateModel: (options={}) -&gt;
+    model = @getModel()
+<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>return</span> unless model?
+&nbsp;
+    try
+      # Note that backbone 0.9.2 would call error callback on save if the model was
+      # invalid.  Somewhere around 1.1, that is no more.  Now the model returns false
+      # from save and you have to check a new model instance attribute called validationError
+      <span class="missing-if-branch" title="if path not taken" >I</span>unless model.isValid()
+<span class="cstat-no" title="statement not covered" >        if model.validationError?</span>
+<span class="cstat-no" title="statement not covered" >          return false</span>
+    catch 
+<span class="cstat-no" title="statement not covered" >      null</span>
+      # Backbone 0.9.2 isValid will exception if the model subject doesn't have a
+      #   validate() method
+      
+    # if model was not valid but there is no .validationError, then we are probably
+    # dealing with an earlier version of Backbone. Let it fall out through the
+    # error handler on save    
+    return true;
+    
+    
+  
+  # TODO : move this to somewhere utilitarian
+  preceedOriginalCallback: (obj, attr, newCallback) -&gt;
+    originalCallback = obj[attr]
+    obj[attr] = () -&gt;
+      newCallback.apply(this, arguments)
+      originalCallback?.apply(this, argumentsk)
+&nbsp;
+  ###  
+    calls Backbone model.save and calls success and error handlers. 
+    
+    You should probably call Form.save() above instead.  It will also validate the model 
+    and datums.  
+  ### 
+  saveModel: (options={}) -&gt;
+    model = @getModel() 
+<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>return</span> unless model?
+    
+    @preceedOriginalCallback(options, 'success', @onSaveSuccess)
+    @preceedOriginalCallback(options, 'error', @onSaveError)
+    saved = model[@props.modelSaveMethod]({}, options)
+      
+&nbsp;
+  onSaveClick: (evt) =&gt;
+    @save()
+&nbsp;
+&nbsp;
+  onSaveSuccess: (model, response, options={}) =&gt;
+    @_saveModelState()
+    <span class="missing-if-branch" title="if path not taken" >I</span>if @props.saveSuccessCallback? &amp;&amp; _.isFunction @props.saveSuccessCallback
+<span class="cstat-no" title="statement not covered" >      @props.saveSuccessCallback(model, response, options)</span>
+    else
+      @setState successMessage: "Successfully saved!", successAt: Date.now()
+&nbsp;
+&nbsp;
+  onSaveError: (model, response, options={}) =&gt;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if @props.saveErrorCallback? &amp;&amp; _.isFunction @props.saveErrorCallback
+<span class="cstat-no" title="statement not covered" >      @props.saveErrorCallback(model, response, options)</span>
+    else
+      response = <span class="missing-if-branch" title="else path not taken" >E</span>if !response? || _.isString(response) then response else <span class="cstat-no" title="statement not covered" >JSON.stringify(response)</span>
+      @setState errorMessage: "Unable to save. " + response || "Reason unknown."
+&nbsp;
+&nbsp;
+  onCancelClick: (evt) =&gt;
+    @setState errorMessage: null, successMessage: null
+    @_restoreModelState()
+    @_resetDatums()
+&nbsp;
+&nbsp;
+  getModel: -&gt;
+    @props.model || @context.model
+&nbsp;
+&nbsp;
+  getDatumInputMode: -&gt;
+    if @props.readonly then 'readonly' else @datumInputMode
+&nbsp;
+&nbsp;
+  getInvalidDatums: -&gt;
+    _.filter @datums, (d) -&gt; !d.validate()
+&nbsp;
+&nbsp;
+  ###
+    This method is called by the datum children when they mount
+  ###
+  addDatum: (datumComponent) -&gt;
+    <span class="missing-if-branch" title="else path not taken" >E</span>@datums.push datumComponent unless datumComponent in @datums
+&nbsp;
+&nbsp;
+  ###
+    This method is called by the datum children when they unmount
+  ###
+<span class="fstat-no" title="function not covered" >  removeDatum: (datumComponent) -&gt;</span>
+<span class="cstat-no" title="statement not covered" >    index = @datums.indexOf(datumComponent)</span>
+<span class="cstat-no" title="statement not covered" >    if index &lt; 0</span>
+<span class="cstat-no" title="statement not covered" >      console.error <span class="cstat-no" title="statement not covered" >"form.removeDatum called for datumComponent (#{<span class="cstat-no" title="statement not covered" >datumComponent</span>.constructor.displayName}) that we don't know about?"</span></span>
+<span class="cstat-no" title="statement not covered" >      return</span>
+<span class="cstat-no" title="statement not covered" >    @datums = @datums.slice(0, index).concat(@datums.slice(index + 1, @datums.length))</span>
+&nbsp;
+&nbsp;
+  _saveModelStateAtRender: -&gt;
+    model = @getModel()
+    return if model == @_savedModel
+    @_saveModelState()
+&nbsp;
+&nbsp;
+  # save the attributes at this point in time for later restoreModelState when called
+  # on cancel
+  _saveModelState: -&gt;
+    @_savedModel = @getModel()
+    @_savedAttrs = @_savedModel.toJSON()
+&nbsp;
+&nbsp;
+  _restoreModelState: -&gt;
+    model = @getModel()
+    # don't ever get confused and save one model's attributes on another
+<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>return</span> if model != @_savedModel
+    model.set(@_savedAttrs)
+    
+    
+&nbsp;
+&nbsp;
+  _resetDatums: -&gt;
+    datum.cancelEdit() for datum in @datums
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Apr 20 2017 09:39:41 GMT-0700 (PDT)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>
