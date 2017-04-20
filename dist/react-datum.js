@@ -5978,7 +5978,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    asyncSuggestionCallback: React.PropTypes.func,
 	    multi: React.PropTypes.bool,
 	    editPlaceholder: React.PropTypes.string,
-	    setAsString: React.PropTypes.bool
+	    setAsString: React.PropTypes.bool,
+	    displayModelValue: React.PropTypes.bool
 	  });
 
 	  CollectionPicker.defaultProps = _.extend({}, Datum.defaultProps, {
@@ -6077,6 +6078,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var displayValue, model, ref;
 	    if (!modelId) {
 	      return null;
+	    }
+	    if (this.props.displayModelValue) {
+	      return modelId.toString();
 	    }
 	    model = this._getCollectionModelById(modelId);
 	    if (model != null) {
