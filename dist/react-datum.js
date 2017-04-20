@@ -1566,9 +1566,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 
 	  Datum.prototype.clearErrors = function() {
-	    return this.setState({
-	      errors: []
-	    });
+	    if (_.isArray(this.state.errors) && this.state.errors.length > 0) {
+	      return this.setState({
+	        errors: []
+	      });
+	    }
 	  };
 
 	  return Datum;
@@ -2725,12 +2727,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    nameAttr: React.PropTypes.string,
 	    target: React.PropTypes.string,
 	    ellipsizeAt: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.bool]),
-	    reverseEllipsis: React.PropTypes.bool
+	    reverseEllipsis: React.PropTypes.bool,
+	    hideProtocol: React.PropTypes.bool
 	  });
 
 	  Link.defaultProps = _.extend({}, Datum.defaultProps, {
 	    ellipsizeAt: 35,
-	    target: '_blank'
+	    target: '_blank',
+	    hideProtocol: 'false'
 	  });
 
 	  Link.prototype.subClassName = 'link';
@@ -2769,7 +2773,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    } else if (this.props.children != null) {
 	      return React.createElement("span", null, this.props.children);
 	    } else {
-	      value = this._removeHttpForDisplay();
+	      if (this.props.hideProtocol) {
+	        value = this._removeHttpForDisplay();
+	      } else {
+	        value = this.getModelValue();
+	      }
 	      return this.renderEllipsizedValue(value);
 	    }
 	  };
@@ -4082,9 +4090,6 @@ return /******/ (function(modules) { // webpackBootstrap
 			//NOTE: update value in the callback to make sure the input value is empty so that there are no styling issues (Chrome had issue otherwise)
 			this.hasScrolledToOption = false;
 			if (this.props.multi) {
-				if (this.props.allowCreate) {
-					value = this.expandValue(value, this.props);
-				}
 				this.setState({
 					inputValue: '',
 					focusedIndex: null

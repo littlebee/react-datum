@@ -24,6 +24,7 @@ renderComponent = (props={}) ->
     attr: 'url'
     nameAttr: 'name'
     model: model
+    hideProtocol: true
 
   component = Th.render <Link {... props}/>
   $atag = $(Th.domNode(component)).find('a')
@@ -41,11 +42,7 @@ describe 'Link datum', ->
     it 'should have rendered an <a> tag', -> $atag.length.should.equal(1)
     
     it 'should have rendered url enclosed in <a> tag without https://', ->
-      value = model.get('url')
-      if value.indexOf('://') >= 3
-        index = value.indexOf('://')+3
-        value = value.slice(index)
-      $atag.html().should.equal value
+      $atag.html().should.equal 'www.zulily.com'
 
 
 
