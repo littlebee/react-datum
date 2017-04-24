@@ -1,0 +1,2568 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/datums/datum.cjsx</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">src/datums/</a> datum.cjsx
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">86.1% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>254/295</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">74.14% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>86/116</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">88.73% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>63/71</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">90.6% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>212/234</span>
+      </div>
+      <div class='fl pad1y'>
+        <span class="strong">19 statements, 2 functions, 5 branches</span>
+        <span class="quiet">Ignored</span>  &nbsp;&nbsp;&nbsp;&nbsp;
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493
+494
+495
+496
+497
+498
+499
+500
+501
+502
+503
+504
+505
+506
+507
+508
+509
+510
+511
+512
+513
+514
+515
+516
+517
+518
+519
+520
+521
+522
+523
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551
+552
+553
+554
+555
+556
+557
+558
+559
+560
+561
+562
+563
+564
+565
+566
+567
+568
+569
+570
+571
+572
+573
+574
+575
+576
+577
+578
+579
+580
+581
+582
+583
+584
+585
+586
+587
+588
+589
+590
+591
+592
+593
+594
+595
+596
+597
+598
+599
+600
+601
+602
+603
+604
+605
+606
+607
+608
+609
+610
+611
+612
+613
+614
+615
+616
+617
+618
+619
+620
+621
+622
+623
+624
+625
+626
+627
+628
+629
+630
+631
+632
+633
+634
+635
+636
+637
+638
+639
+640
+641
+642
+643
+644
+645
+646
+647
+648
+649
+650
+651
+652
+653
+654
+655
+656
+657
+658
+659
+660
+661
+662
+663
+664
+665
+666
+667
+668
+669
+670
+671
+672
+673
+674
+675
+676
+677
+678
+679
+680
+681
+682
+683
+684
+685
+686
+687
+688
+689
+690
+691
+692
+693
+694
+695
+696
+697
+698
+699
+700
+701
+702
+703
+704
+705
+706
+707
+708
+709
+710
+711
+712
+713
+714
+715
+716
+717
+718
+719
+720
+721
+722
+723
+724
+725
+726
+727
+728
+729
+730
+731
+732
+733
+734
+735
+736
+737
+738
+739
+740
+741
+742
+743
+744
+745
+746
+747
+748
+749
+750
+751
+752
+753
+754
+755
+756
+757
+758
+759
+760
+761
+762
+763
+764
+765
+766
+767
+768
+769
+770
+771
+772
+773
+774
+775
+776
+777
+778
+779
+780
+781
+782
+783
+784
+785
+786
+787
+788
+789
+790
+791
+792
+793
+794
+795
+796
+797
+798
+799
+800
+801
+802
+803
+804
+805
+806
+807
+808
+809
+810
+811
+812
+813
+814
+815
+816
+817
+818
+819
+820
+821
+822
+823
+824
+825
+826
+827
+828
+829
+830
+831
+832
+833
+834</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">129×</span>
+<span class="cline-any cline-yes">129×</span>
+<span class="cline-any cline-yes">129×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">220×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">129×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">127×</span>
+<span class="cline-any cline-yes">127×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">127×</span>
+<span class="cline-any cline-yes">127×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">254×</span>
+<span class="cline-any cline-yes">254×</span>
+<span class="cline-any cline-yes">120×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">134×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">254×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">254×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">253×</span>
+<span class="cline-any cline-yes">253×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">118×</span>
+<span class="cline-any cline-yes">118×</span>
+<span class="cline-any cline-yes">118×</span>
+<span class="cline-any cline-yes">116×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">238×</span>
+<span class="cline-any cline-yes">238×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">238×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">231×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">238×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">118×</span>
+<span class="cline-any cline-yes">114×</span>
+<span class="cline-any cline-yes">112×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">51×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">115×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">49×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">120×</span>
+<span class="cline-any cline-yes">120×</span>
+<span class="cline-any cline-yes">120×</span>
+<span class="cline-any cline-yes">120×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">113×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">236×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">278×</span>
+<span class="cline-any cline-yes">278×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">250×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">159×</span>
+<span class="cline-any cline-yes">159×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">535×</span>
+<span class="cline-any cline-yes">535×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">113×</span>
+<span class="cline-any cline-yes">113×</span>
+<span class="cline-any cline-yes">113×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">51×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">243×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">53×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1036×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">552×</span>
+<span class="cline-any cline-yes">51×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">501×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">501×</span>
+<span class="cline-any cline-yes">501×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">501×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">777×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">254×</span>
+<span class="cline-any cline-yes">254×</span>
+<span class="cline-any cline-yes">254×</span>
+<span class="cline-any cline-yes">254×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">254×</span>
+<span class="cline-any cline-yes">254×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">254×</span>
+<span class="cline-any cline-yes">254×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">688×</span>
+<span class="cline-any cline-yes">30×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">658×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">42×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">71×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">23×</span>
+<span class="cline-any cline-yes">23×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">23×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">23×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">51×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-yes">152×</span>
+<span class="cline-any cline-yes">152×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">&nbsp;
+React = require('react')
+ReactDOM = require('react-dom')
+Backbone = require('backbone')
+_ = require('underscore')
+&nbsp;
+Options = require '../options'
+&nbsp;
+# see ./datum.md
+module.exports = class Datum extends React.Component
+  @displayName: "react-datum.Datum"
+&nbsp;
+  @propTypes:
+    # additional css classes (space seperated) to add to wrapper div
+    className: React.PropTypes.string
+    
+    # can also accept model instance as context var. prop has precendence
+    model: React.PropTypes.oneOfType([
+      React.PropTypes.instanceOf(Backbone.Model)
+      React.PropTypes.object
+    ])
+    
+    # the backbone attribute on the model to get and set
+    attr: React.PropTypes.string
+    
+    # optional label to render before value or input.  text values get wrapped in &lt;label&gt;&lt;/label&gt;
+    # Can also be specified via metadata.
+    label: React.PropTypes.node
+    
+    # optional tooltip / help text to show on hover over datum label.  You can use this to display 
+    # a more wordy &amp; helpful description of this attribute.  Get's applied as the title attribute
+    # of our label element.  Can also be specified via metadata.  
+    #
+    # Ignored if props.label or metadata label does not exist or are both null.
+    # 
+    # Uses ReactBootstrap if provided.  See [ReactDatum.Options](#Options) below.
+    tooltip: React.PropTypes.string
+    
+    # optional value or component to display if model.get(attr) returns null or undefined
+    # Can also be specified via metadata
+    placeholder: React.PropTypes.node
+&nbsp;
+    # 'readonly' = render for display;
+    # 'edit' = render for input;
+    # 'inlineEdit' = datum will transition from readonly to edit on click
+    inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit'])
+    
+    # getMetadata is an optional function that will be called to retrieve the props above where
+    # metadata support is indicated.  The getMetadata method is passed the following 
+    # arguments:  
+    #     (prop, datumInstance) 
+    # where `prop` is the datum prop for which metadata is being requested.  `datumInstance` is a reference 
+    # to the datum component instance.  You can use the documented API methods on datumInstance, such
+    # as getModel() to get the model associated with datumInstance, add datumInstance.props.attr to 
+    # get the associated attr.
+    #
+    # In addition to this prop, which has first precedence, ReactDatum will also look for a 
+    # getDatumMetadata method on the model instance and, if found, call it with the same arguments
+    # to acquire the label, tooltip, placeholder and any other props supported by metadata. 
+    # See [discussion and example above on model driven metadata](#metadata).
+    getMetadata: React.PropTypes.func  
+    
+    # set to true to not render a popover on ellipsized values
+    noPopover: React.PropTypes.bool
+    
+    # props for ReactBootstrap Overlay used for popovers if React Bootstrap is available.   
+    # The rbOverlayProps prop has precedence over the 'rbOverlayProps' you can specify
+    # via global options
+    rbOverlayProps: React.PropTypes.object 
+    
+    # set to true to set the model value on change. this defaults to true if inputMode = inlineEdit
+    setOnChange: React.PropTypes.bool
+    
+    # set to true to set model value when the input is blurred
+    setOnBlur: React.PropTypes.bool
+    
+    # set to true to save the model whenever it's attribute value is set by this Datum
+    saveOnSet: React.PropTypes.bool
+    
+    # set to the name of the method on model to use to save (typically 'save', but could be 'patch')
+    # Note that the model save method is expected to accept (attributesToSet, options) in accordance
+    # with the Backbone Model.save arguments.  See also modelSaveOptions which allows you to 
+    # specify additional options passed as the second argument.  
+    #
+    # Requires saveOnSet={true}
+    modelSaveMethod: React.PropTypes.string 
+    
+    # this prop is passed to modelSaveMethod (eg. `model.save({}, modelSaveOptions)`) 
+    #
+    # Requires saveOnSet={true}
+    modelSaveOptions: React.PropTypes.object
+    
+    # (ms) set the length of time 'saved' css class stays on outer datum element after saving
+    savedIndicatorTimeout: React.PropTypes.number
+        
+    # make this input readonly regardless of context or inputMode prop
+    readonly: React.PropTypes.bool
+    
+    # make this input required and give it required class and invalid class when invalid
+    required: React.PropTypes.bool
+    
+    # style to apply to outer datum div
+    style: React.PropTypes.object
+    
+    # if true, renders a div as the component wrapper
+    asDiv: React.PropTypes.bool
+&nbsp;
+    # call back for when the datum changes
+    onChange: React.PropTypes.func
+    
+    # value to use instead of model attribute.  You can use this instead of a model and attr to manually set 
+    # the initial value of the component.   Model value is ignored for display, but still updated if in an
+    # editable state
+    value: React.PropTypes.node
+    
+    
+  @defaultProps:
+    # no default for inputMode because we can also get from context, see @getInputMode()
+    # inputMode: 'readonly'
+    setOnBlur: true
+    setOnChange: false
+    saveOnSet: false
+    modelSaveMethod: 'save'
+    savedIndicatorTimeout: 5000
+&nbsp;
+&nbsp;
+  @contextTypes:
+    # can also accept model instance as a prop.  prop has precendence
+    model: React.PropTypes.oneOfType([
+      React.PropTypes.instanceOf(Backbone.Model)
+      React.PropTypes.object
+    ])
+    
+    # note that the readonly prop takes precendence
+    inputMode: React.PropTypes.oneOf(['readonly', 'edit', 'inlineEdit'])
+    
+    # if there is a form context, we will register with it so that it can
+    # interact with us
+    form: React.PropTypes.object
+&nbsp;
+  # override this to give the sub component an additional class
+  subClassName: null
+&nbsp;
+  # don't override this unless you dont want the datum class on the wrapper div
+  className:  'datum'
+&nbsp;
+  # this get's set to the inline edit control that is currently in editmode.
+  # there can only be one inlineEdit type editing at a time per page
+  @inlineEditor: null
+&nbsp;
+  # see addValidations below
+  validations: []
+  
+&nbsp;
+  constructor: (props) -&gt;
+    super props
+    @initializeState()
+    @addValidations @validateRequired
+&nbsp;
+&nbsp;
+  initializeState: -&gt;
+    @state = {
+      # don't initialize state.value until our first on changed for 
+      # faster isDirty determination
+      #value: @getModelValue()
+      errors: []
+      isDirty: false
+      saving: false
+      saved: null
+    }
+&nbsp;
+  #..................................................React life cycle methods...........................................
+&nbsp;
+  componentWillMount: -&gt;
+    @initializeState()
+    
+&nbsp;
+  componentDidMount: -&gt;
+    # note that we don't need a form to work. this is for it's benefit, mostly
+    # so it can ask us if we are valid (via @validate() method) and tell us
+    # when the user cancels the update (via @reset() method)
+    @context?.form?.addDatum?(@)
+    modelValue = @getModelValue()
+&nbsp;
+    # for click off and esc to cancel inline edit
+    document.addEventListener 'click', @onDocumentClick
+    document.addEventListener 'keydown', @onDocumentKeydown
+&nbsp;
+  ### !pragma coverage-skip-next ###
+<span class="fstat-skip" title="function not covered" >  componentWillReceiveProps: (nextProps) -&gt;</span>
+<span class="cstat-skip" title="statement not covered" >    prevModelValue = @getModelValue(@props)</span>
+<span class="cstat-skip" title="statement not covered" >    newModelValue = @getModelValue(nextProps)</span>
+    
+<span class="cstat-skip" title="statement not covered" >    if JSON.stringify(prevModelValue) != JSON.stringify(newModelValue)</span>
+<span class="cstat-skip" title="statement not covered" >      @setState({</span>
+        value: newModelValue
+      })
+    
+&nbsp;
+  ### !pragma coverage-skip-next ###
+<span class="fstat-skip" title="function not covered" >  componentWillUnmount: -&gt;</span>
+<span class="cstat-skip" title="statement not covered" >    @context?.form?.removeDatum?(@)</span>
+    
+    # you can unmount without bluring save state value to 
+    # model if it exists
+<span class="cstat-skip" title="statement not covered" >    if @isDirty() &amp;&amp; @shouldSetOnBlur()</span>
+<span class="cstat-skip" title="statement not covered" >      @setValue(@state.value, setModelValue: true)</span>
+      
+    # for click off and esc to cancel inline edit
+<span class="cstat-skip" title="statement not covered" >    document.removeEventListener 'click', @onDocumentClick</span>
+<span class="cstat-skip" title="statement not covered" >    document.removeEventListener 'keydown', @onDocumentKeydown</span>
+    
+    
+      
+  #                           Rendering methods
+&nbsp;
+  render: -&gt;
+    @renderDatumWrapper =&gt;
+      if @isEditing()
+        @renderForInput()
+      else
+        @renderForDisplay()
+&nbsp;
+&nbsp;
+  renderDatumWrapper: (contentFn)-&gt;
+    wrapperProps =
+      className: @getFullClassName()
+      'data-zattr': @getAttr()
+      style: @props.style || {}
+      
+    if @props.asDiv 
+      &lt;div {... wrapperProps}&gt;
+        {contentFn()}
+      &lt;/div&gt;
+    else
+      &lt;span {... wrapperProps}&gt;
+        {contentFn()}
+      &lt;/span&gt;
+&nbsp;
+&nbsp;
+  renderForDisplay: -&gt;
+    &lt;span&gt;
+      {@renderLabel()}
+      {@renderValueOrPlaceholder()}
+      {@renderIcons()}
+    &lt;/span&gt;
+&nbsp;
+&nbsp;
+  renderLabel: -&gt;
+    labelProps = {}
+    tooltip = @getPropOrMetadata('tooltip')
+      
+    label = if @getPropOrMetadata('label')?
+      @renderWithPopover(&lt;label {... labelProps}&gt;{@getPropOrMetadata('label')}&lt;/label&gt;, tooltip, 'datumTooltip', 'datum-tooltip')
+    else
+      null
+    
+    return label
+&nbsp;
+  
+&nbsp;
+  ###
+    Override this method only if you need to not render the placeholder. 
+  ###
+  renderValueOrPlaceholder: -&gt;
+    if @getModelValue()?
+      displayValue = @renderValueForDisplay()
+      @renderWrappedDisplayValue(displayValue)
+    else
+      placeholderValue = @renderPlaceholder()
+      @renderWrappedDisplayValue(placeholderValue)
+&nbsp;
+&nbsp;
+  ###
+    In most cases, this is the method you want to override in a custom datum to 
+    alter the way the model attribute is displayed when inputMode='readonly'
+    
+    This method is only called if the model value is not null.  
+  ###
+  renderValueForDisplay: -&gt;
+    return @getValueForDisplay()
+&nbsp;
+&nbsp;
+  renderWrappedDisplayValue: (value)-&gt;
+    &lt;span className="datum-display-value" onClick={@onEditClick} style={@props.style}&gt;{value}&lt;/span&gt;
+&nbsp;
+&nbsp;
+  renderPlaceholder: -&gt;
+    placeholder = @getPropOrMetadata('placeholder')
+    return null unless placeholder?
+    &lt;span className="placeholder"&gt;{placeholder}&lt;/span&gt;
+&nbsp;
+&nbsp;
+  ###
+    Note that this method is not called by Datum directly.  It is 
+    provided here in the Datum base class so that any Datum extensions 
+    can ellipsize whatever part of their rendering neccessary and have 
+    a consistent prop and method for doing so.
+  ###
+  renderEllipsizedValue: (value, options={}) -&gt;
+<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>return value</span> unless value?
+    
+    ellipsizeAt = @getEllipsizeAt()
+&nbsp;
+    # don't try to ellipsize unless the value is a string,  subclass may have sent us
+    # a value that is a react component.  this still doesn't catch the case where
+    # a subclass component sent us HTML as a string.  Why would you?
+    if ( value &amp;&amp; _.isString(value) &amp;&amp; ellipsizeAt &amp;&amp; value.length &gt; ellipsizeAt )
+      # If the option is 'reverseEllipsis' then we need to add ... at the start.
+      <span class="missing-if-branch" title="if path not taken" >I</span>if @props.reverseEllipsis
+<span class="cstat-no" title="statement not covered" >        ellipsizedValue = '...' + value.slice(value.length-(<span class="cstat-no" title="statement not covered" >ellipsizeAt-3</span>), value.length - 1)</span>
+      else
+        ellipsizedValue = value.slice(0, ellipsizeAt-3) + '...'
+&nbsp;
+      return @renderWithPopover(ellipsizedValue, value, 'datumEllipsizedValue', 'datum-ellipsized')
+&nbsp;
+    return value  
+&nbsp;
+&nbsp;
+  renderForInput: -&gt;
+    &lt;span className="datum-input" data-value={@getValueForInput()}&gt;
+      {@renderLabel()}
+      {@renderInput()}
+      {@renderIcons()}
+    &lt;/span&gt;
+&nbsp;
+&nbsp;
+  ###
+    In most cases this is the method you want to override to alter the presentation of the datum when
+    inputMode='edit'.
+    
+    If you override this method, be sure to add @onBlur() and @onChange() to your input
+    component 
+  ###
+  renderInput: -&gt;
+    &lt;input {... @getInputComponentOptions()}/&gt;
+      
+&nbsp;
+  ###
+    Override / extend this method to add or alter icons presented after datum.
+    
+    Datum implementation renders the error icon if needed.
+  ###
+  renderIcons: -&gt;
+    return null unless @state.errors.length &gt; 0
+    
+    errors = []
+    className = "error validation"
+    
+    errorIconClass = Options.get('errorIconClass')
+    errorIcon = <span class="missing-if-branch" title="if path not taken" >I</span>if errorIconClass?
+<span class="cstat-no" title="statement not covered" >      &lt;i className={errorIconClass}/&gt;<span class="cstat-no" title="statement not covered" ></span></span>
+    else
+      '!'
+&nbsp;
+    errors = @renderErrors()
+    return @renderWithPopover(errorIcon, errors, 'datumInvalid', 'datum-invalid')
+&nbsp;
+&nbsp;
+  ###
+    Override / extend this method to control what is rendered in the error icon popup 
+  ###
+  renderErrors: -&gt;
+    errors = []
+    # multiple errors should be on their on line
+    # if we are using ReactBootstrap, format the error messages with HTML
+    <span class="missing-if-branch" title="if path not taken" >I</span>if @getReactBootstrap()? &amp;&amp; !@props.noPopover
+<span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" >      errors.push(&lt;div&gt;{error}&lt;/div&gt;) for error in @<span class="cstat-no" title="statement not covered" >state</span>.er</span>rors</span>
+    else
+      errors = @state.errors.join('\n')
+  
+    return errors
+&nbsp;
+&nbsp;
+  ###
+    You can use this to render a value with the standard popover treatment or 
+    extend and override to effect the standard popover treatment
+  ###  
+  renderWithPopover: (value, tooltip, popoverId, valueClass) -&gt;
+    ### !pragma coverage-skip-block ###
+    return value unless tooltip?
+    
+    # if available globally or user called ReactDatum.set('ReactBootstrap', someLib)
+    Rb = @getReactBootstrap()
+            
+    # if react-bootstrap is available use it
+    <span class="skip-if-branch" title="if path not taken" >I</span>if Rb? &amp;&amp; !@props.noPopover
+<span class="cstat-skip" title="statement not covered" >      popover = &lt;Rb.Popover id={popoverId}&gt;{tooltip}&lt;/Rb<span class="cstat-skip" title="statement not covered" >.Popover&gt;<span class="cstat-skip" title="statement not covered" ></span></span></span>
+<span class="cstat-skip" title="statement not covered" >      rbOverlayProps = @getRbOverlayProps(value, popoverId)</span>
+<span class="cstat-skip" title="statement not covered" >      rValue = (</span>
+<span class="cstat-skip" title="statement not covered" >        &lt;Rb.OverlayTrigger overlay={popover} {... rbOverlayProps} &gt;<span class="cstat-skip" title="statement not covered" ></span></span>
+          &lt;span className={valueClass}&gt;{value}&lt;/span&gt;<span class="cstat-skip" title="statement not covered" ><span class="cstat-skip" title="statement not covered" ></span></span>
+        &lt;/Rb.OverlayTrigger&gt;
+      )
+    else
+      rValue = &lt;span className={valueClass} title={tooltip}&gt;{value}&lt;/span&gt;
+    
+    return rValue
+&nbsp;
+&nbsp;
+  ###
+    Override this method to provide things like custom positioning of error popovers
+  ###
+<span class="fstat-no" title="function not covered" >  getRbOverlayProps: (value, popoverId) -&gt;</span>
+    ### !pragma coverage-skip-block ###
+<span class="cstat-skip" title="statement not covered" >    return @props.rbOverlayProps ? Options.get('RbOverlayProps')</span>
+    
+  
+  ###
+    This method can be overriden to provide custom determination of dirty state.
+    dirty meaning, has the input value changed.  The base implementation assumes
+    that the base behavior of setting state.value to null on model.set() happens.
+  ###
+  isDirty: () -&gt;
+    return @state.isDirty
+&nbsp;
+  ###
+    This method is called to determine if the inputMode (prop, context) is one
+    of the editable types.  ('edit' or 'inlineEdit')
+    
+    Note that a return of true does NOT indicate that the Datum is in its 
+    edit display.  If the component is an inputMode='inlineEdit', in may be
+    showing it's display presentation.  See also isEditing() 
+  ###
+  isEditable: -&gt;
+    inputMode = @getInputMode()
+    return true if inputMode in ["edit", "inlineEdit"]
+&nbsp;
+&nbsp;
+  ###
+    This method is called to determine if the Datum is displaying its input
+    presentation.  
+  ###
+  isEditing: -&gt;
+    inputMode = @getInputMode()
+    return inputMode == 'edit' || (@isInlineEdit() &amp;&amp; @constructor.inlineEditor == @)
+&nbsp;
+&nbsp;
+  isInlineEdit: -&gt;
+    @getInputMode() == 'inlineEdit'
+    
+&nbsp;
+  cancelEdit: () -&gt;
+    @setState { errors: [], value: @getModelValue() }
+&nbsp;
+  ###
+    When extending Datum, use @addValidations from constructor to add additional validations.
+    'required' validation is automatically added (only invalid if empty and has 'required' prop)
+    
+    For example, see [Number datum](#Number)
+    
+    You can add validations to an individual instance of any Datum extension.
+    
+    `validations` argument should be one or an array of methods that accept the (value) to
+    validate and return true if valid, false if not. 
+  ###
+  addValidations: (validations) =&gt;
+    validations = [validations] unless _.isArray(validations)
+    @validations = @validations.concat validations
+&nbsp;
+&nbsp;
+  getInputMode: () -&gt;
+<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>return "readonly"</span> if @props.readonly
+    return @props.inputMode || @context.inputMode || "readonly"
+    
+    
+  getInputComponentOptions: () -&gt;
+    placeholder = @getPropOrMetadata('placeholder') || ""
+    value = @getValueForInput()
+    return {
+      type: "text" 
+      placeholder: placeholder
+      value: value
+      onChange: @onChange
+      onBlur: @onBlur
+      onKeyDown: @onInputKeyDown
+      ref: @onInputRef
+    }
+&nbsp;
+  ### 
+    This method should return the value for display from the model. You 
+    can extend this method in a custom Datum to coerce or manipulate just
+    the value used for display.   
+    
+    In most cases, you'll probably want to extend the Datum.renderValueForDisplay() 
+    instead
+  ###
+  getValueForDisplay: () -&gt;
+    return @getModelValue()
+    
+&nbsp;
+  ###
+    Extend this method to coerce or intepret the value from the model
+    that is displayed when in input
+  ###
+  getValueForInput: () -&gt;
+    #console.log "Datum::getValueForInput", @state.value, @getModelValue(), JSON.stringify({value: @state.value})
+    return if @state.value? then @state.value else @getModelValue()
+    
+    
+  ###
+    this method returns the value in the input as seen by user
+  ###
+  getInputValue: () -&gt;
+    return @state.value
+    
+    
+  ###
+    returns the Backbone Model currently associated with the datum.
+  ###
+  getModel: (newProps = @props, newContext = @context)-&gt;
+    return newProps?.model || newContext?.model || new Backbone.Model()
+&nbsp;
+&nbsp;
+  ###
+    Returns the value set via value prop or the value currently set on the model
+    
+    warning: Do not override this method to return a component element or jsx; bad things will happen.
+  ###
+  getModelValue: (newProps = @props, newContext = @context)-&gt;
+    if newProps.value != undefined
+      return  @state.shadowValue || newProps.value
+      
+<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>return null</span> unless model = @getModel(newProps, newContext)
+    
+    value = <span class="missing-if-branch" title="else path not taken" >E</span>if _.isFunction(model.get)
+      model.get(@getAttr(newProps)) 
+    else 
+<span class="cstat-no" title="statement not covered" >      model</span>[@getAttr(newProps)]
+    return value
+    
+    
+  ###
+    When extending react datum, use this method to get the attribute name specified
+    to the component as props.attr.  
+    
+    You can also override this method in an extension to dynamically select the attribute
+    to get from the model.  For say an international price datum that selects a price
+    attribute based on the local currency  (not a contrived example)
+    
+  ###
+  getAttr: (props = @props) -&gt;
+    return props.attr
+    
+&nbsp;
+&nbsp;
+  ###
+    Extend this model to interpret the value prior to saving for example a Percent datum
+    that the user enters a value that is 100x what gets saved to model
+    
+    options pass through to model.set() 
+  ###
+  setModelValue: (value, options={}) -&gt;
+    # allow for null value
+    <span class="missing-if-branch" title="if path not taken" >I</span>if value == undefined   
+<span class="cstat-no" title="statement not covered" >      value = @getInputValue()</span>
+      # value == undefined means the user didn't change it
+<span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" >      return</span> if value == undefined  </span>
+    
+    model = @getModel()
+    attr = @getAttr()
+    <span class="missing-if-branch" title="else path not taken" >E</span>if model? 
+      <span class="missing-if-branch" title="else path not taken" >E</span>if _.isFunction(model.set) 
+        model.set(attr, value, options) 
+      else 
+<span class="cstat-no" title="statement not covered" >        model[attr] = value</span>
+        
+      @saveModel() if @props.saveOnSet || options.saveOnset
+        
+&nbsp;
+    # if we were provided a value in a prop and the datum allowed a change to it,
+    # then we need to return that value in getModelValue
+    if @props.value != undefined 
+      @setState shadowValue: value
+&nbsp;
+&nbsp;
+  saveModel: -&gt;
+    model = @getModel()
+<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>return</span> unless model?
+  
+    <span class="missing-if-branch" title="else path not taken" >E</span>if _.isFunction(model[@props.modelSaveMethod])
+      @setState saving: true, =&gt;
+        model[@props.modelSaveMethod]({}, @getModelSaveOptions())
+    else
+<span class="cstat-no" title="statement not covered" >      console.error <span class="cstat-no" title="statement not covered" >"Datum:setModelValue - saveOnSet true but modelSaveMethod (#{<span class="cstat-no" title="statement not covered" >@props</span>.modelSaveMethod}) is not a function on model"</span></span>
+    
+    
+  getModelSaveOptions: -&gt;
+    saveOptions = _.extend {}, @props.modelSaveOptions
+    
+    originalSuccess = saveOptions.success
+    originalError = saveOptions.error
+    
+    saveOptions.success = (model, resp)=&gt;
+      @onModelSaveSuccess(model, resp)
+      originalSuccess?(model, resp, @)
+      
+<span class="fstat-no" title="function not covered" >    saveOptions.error = (model, resp)=&gt;</span>
+<span class="cstat-no" title="statement not covered" >      @onModelSaveError(model, resp)</span>
+<span class="cstat-no" title="statement not covered" >      originalError?(model, resp, @)</span>
+      
+    return saveOptions
+      
+&nbsp;
+  getEllipsizeAt: -&gt;
+    return @props.ellipsizeAt
+&nbsp;
+&nbsp;
+  ###
+    Override / extend this method to add conditional css classes to the outer datum element
+  ###
+  getFullClassName: -&gt;
+    className = if @subClassName? then "#{@className} #{@subClassName}" else @className
+    className += " required" if @props.required
+    className += " invalid" if @state.errors.length &gt; 0
+    className += " saving" if @state.saving
+    # ignore null value in state.saved
+<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>className +=  " not-saved"</span> if @state.saved == false
+    className +=  " saved" if @state.saved == true
+    
+<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>className += <span class="cstat-no" title="statement not covered" >" #{<span class="cstat-no" title="statement not covered" >@props</span>.className}</span>"</span> if @props.className?
+    return className
+    
+&nbsp;
+  getPropOrMetadata: (prop) -&gt;
+    unless @props[prop] == undefined
+      return @props[prop] 
+    
+    return @props.getMetadata?(prop, @) || @getModel()?.getDatumMetadata?(prop, @) || undefined
+    
+    
+  getReactBootstrap: -&gt;
+    # if available globally or user called ReactDatum.set('ReactBootstrap', someLib)
+    return Options.get('ReactBootstrap') || window?.ReactBootstrap
+&nbsp;
+&nbsp;
+  shouldSetOnChange: -&gt;
+    @props.setOnChange == true || (@isInlineEdit() &amp;&amp; !@props.setOnChange == false)
+&nbsp;
+&nbsp;
+  shouldSetOnBlur: -&gt;
+    @props.setOnBlur == true &amp;&amp; !@shouldSetOnChange() &amp;&amp; !@props.multi
+&nbsp;
+&nbsp;
+  onEditClick: (synthEvent) =&gt;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if @inlineToEditMode()   # ...if it's an inlineEdit
+      synthEvent.stopPropagation()
+      synthEvent.nativeEvent?.stopImmediatePropagation?()
+&nbsp;
+&nbsp;
+  onChange: (event, options = {}) =&gt;
+    
+    options = _.defaults options,
+      silent: false
+      event: event    #options are passed through to props.onChange
+      # this can be set to another value to send to the @props.onChange handler
+      #   see CollectionPicker#onChange
+      propsOnChangeValue: null
+      
+    # NOTE: don't assume that event arg contains anything more than
+    #     target.value.  Some wrapped components like react-select don't
+    #     provide the synth event on change 
+    value = if event?.target?.value? then event?.target?.value else event
+    
+    @setValue(value, setModelValue: @shouldSetOnChange())
+      
+    if @shouldSetOnChange()
+      @inlineToDisplayMode()  # only happens if this is the inline editor
+&nbsp;
+    # it should be very rare that options.silent is used
+    <span class="missing-if-branch" title="if path not taken" >I</span>if @props.onChange? and !options.silent
+<span class="cstat-no" title="statement not covered" >      @props.onChange(options.propsOnChangeValue||value, @, options)</span>
+&nbsp;
+&nbsp;
+  # onChange above captures the value in state.  
+  # onBlur only sets the value on the model with the current state value, and
+  #   only if state value is not null 
+  onBlur: (event) =&gt;
+    value = @getInputValue()
+    return unless @hasInputValueChanged()
+    
+    @setValue(value, setModelValue: @shouldSetOnBlur())
+&nbsp;
+    # if inline edit should get back to display mode.
+    @inlineToDisplayMode()
+    
+  
+  onModelSaveSuccess: (model, resp) =&gt;
+    @setState saving: false, saved: true
+    # this can be styled to 'flash' the color or temporarily show the components
+    # as recently saved 
+    <span class="missing-if-branch" title="else path not taken" >E</span>if @props.savedIndicatorTimeout?
+      _.delay (<span class="fstat-no" title="function not covered" >=&gt;</span> <span class="cstat-no" title="statement not covered" >@setState saved: null</span>), @props.savedIndicatorTimeout
+  
+  
+<span class="fstat-no" title="function not covered" >  onModelSaveError: (model, resp) =&gt;</span>
+<span class="cstat-no" title="statement not covered" >    errors = @state.errors || []</span>
+<span class="cstat-no" title="statement not covered" >    errors.push "Unable to save value. Error: " + (<span class="cstat-no" title="statement not covered" >resp.responseText ? resp.statusText ? resp</span>)</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    @setState saving: false, saved: false, errors: errors</span>
+    # we also populate errors which will change this to an error icon
+<span class="cstat-no" title="statement not covered" >    if @props.savedIndicatorTimeout?</span>
+<span class="cstat-no" title="statement not covered" >      _.delay <span class="fstat-no" title="function not covered" >=&gt; </span></span>
+<span class="cstat-no" title="statement not covered" >        @setState saved: null</span>
+      , @props.savedIndicatorTimeout
+&nbsp;
+&nbsp;
+  onDocumentClick: (evt) =&gt;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if @isInlineEdit() &amp;&amp; @isEditing() &amp;&amp; !@isElementOrParentOf(evt.target, ReactDOM.findDOMNode(this))
+      @inlineToDisplayMode()
+&nbsp;
+&nbsp;
+<span class="fstat-no" title="function not covered" >  onDocumentKeydown: (evt) =&gt;</span>
+<span class="cstat-no" title="statement not covered" >    if evt.keyCode == 27 &amp;&amp; @isInlineEdit?() &amp;&amp; @isEditing?()          # escape to close edit</span>
+<span class="cstat-no" title="statement not covered" >      @inlineToDisplayMode()</span>
+      
+&nbsp;
+  isElementOrParentOf: (elementInQuestion, parentElement) -&gt;
+    el = elementInQuestion
+    while el? 
+<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>return true</span> if el == parentElement
+      el = el.parentElement
+    
+    return false
+&nbsp;
+&nbsp;
+  hasInputValueChanged: -&gt;    
+    inputValue = @getInputValue() 
+    # inputValue comes from state.value which is not set until the user makes a change
+    return inputValue != undefined &amp;&amp; inputValue != @getModelValue()
+&nbsp;
+&nbsp;
+  inlineToDisplayMode: () -&gt;
+    return false unless @isInlineEdit()
+    
+    <span class="missing-if-branch" title="else path not taken" >E</span>if @constructor.inlineEditor == @
+      @constructor.inlineEditor = null
+      @forceUpdate()
+    
+    return true
+&nbsp;
+    
+  inlineToEditMode: () -&gt;
+<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>return false</span> unless @isInlineEdit()
+    
+    if @constructor.inlineEditor?
+      @constructor.inlineEditor.inlineToDisplayMode()
+  
+    @constructor.inlineEditor = @
+    @forceUpdate()
+&nbsp;
+    _.defer =&gt; @focus()
+  
+    return true
+  
+<span class="fstat-no" title="function not covered" >  onInputKeyDown: (event) =&gt;</span>
+<span class="cstat-no" title="statement not covered" >    @props.onKeyDown?(event)</span>
+    
+  
+  # sets the value of the datum (display and input text)
+  setValue: (newValue, options={}) =&gt;
+    options = _.defaults options,
+      # causes the new value to be set on the model too
+      setModelValue: false
+      
+    valid = @validate(newValue)
+&nbsp;
+    if options.setModelValue
+      @setModelValue(newValue, options)
+      @setState({isDirty: false})
+    else
+      @setState({isDirty: true})
+&nbsp;
+    @setState({value: newValue})
+  
+&nbsp;
+  ###
+    This method can be used to get at the inner input component if one exists, only
+    while inputMode=='edit'
+  ###
+  getInputComponent: () =&gt;
+    @inputComponent
+&nbsp;
+&nbsp;
+  onInputRef: (input) =&gt;
+    @inputComponent = input
+&nbsp;
+&nbsp;
+  focus: () =&gt;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if @getInputComponent()?
+      node = ReactDOM.findDOMNode(@getInputComponent())
+      node.focus()
+      node.select()
+&nbsp;
+  ###
+    This method is called to validate the value in the input.
+    
+    Note that validations such as props.required also need to apply if the user 
+    hasn't changed the input, so the default value is the coalesce of state.value
+    or model value.  state.value (see getInputValue()) is null if the user has
+    not made changes. 
+  ###
+  validate: (value=@getValueForInput())-&gt;
+    @setState errors: []
+    errors = []
+    for validation in @validations
+      valid = validation(value)
+      unless valid == true
+        errors.push valid
+    @setState errors: errors
+    
+    return errors.length == 0
+&nbsp;
+&nbsp;
+  # Jut comment
+  validateRequired: (value) =&gt;
+    # Check for value only if the element is visible and has required class. If not return true
+    return true unless @props.required
+    return true if !(_.isNull(value) || _.isEmpty(value) || _.isUndefined(value))
+    return "This input is required"
+&nbsp;
+&nbsp;
+  ###
+    This method can be used to clear any validation or save errors manually
+  ###
+<span class="fstat-no" title="function not covered" >  clearErrors: -&gt;</span>
+    # Only set the state if there were errors to begin with.
+<span class="cstat-no" title="statement not covered" >    if _.isArray(@state.errors) and @state.errors.length &gt; 0</span>
+<span class="cstat-no" title="statement not covered" >      @setState errors: []</span>
+    
+    
+  
+&nbsp;
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Apr 20 2017 10:10:10 GMT-0700 (PDT)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

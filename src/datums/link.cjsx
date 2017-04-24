@@ -29,6 +29,9 @@ module.exports = class Link extends Datum
 
     # If we want the ellipsis to be like ...Long Name we need to make this true
     reverseEllipsis: React.PropTypes.bool
+
+    #If you would like to show the url without the http/https, pass this prop as true
+    hideProtocol: React.PropTypes.bool
     
     
     
@@ -36,6 +39,7 @@ module.exports = class Link extends Datum
     # ellipsizeAt is defaulted to prevent really long strings from breaking layouts
     ellipsizeAt: 35
     target: '_blank'
+    hideProtocol: false
     
 
   subClassName: 'link'
@@ -44,7 +48,8 @@ module.exports = class Link extends Datum
 
   # override
   renderValueForDisplay: () ->
-    <a href={@_getHref()} target={@props.target}>
+
+    <a href={@_getHref()} target={@props.target} hideProtocol={@props.hideProtocol}>
       {@_getTagContent()}
     </a>
 
@@ -53,6 +58,14 @@ module.exports = class Link extends Datum
 
   _getHref: ->
     @getModelValue()
+    
+
+  _removeHttpForDisplay: ->
+      value = @getModelValue()
+      if value.indexOf('://') >= 3
+        index = value.indexOf('://')+3
+        value = value.slice(index)
+      return value
     
 
   _getTagContent: ->
@@ -64,4 +77,8 @@ module.exports = class Link extends Datum
     else if @props.children?
       return <span>{@props.children}</span>
     else
-      return @renderEllipsizedValue(@getModelValue())
+      if @props.hideProtocol
+        value = @_removeHttpForDisplay()
+      else
+        value = @getModelValue()
+      return @renderEllipsizedValue(value)

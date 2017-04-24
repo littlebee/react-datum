@@ -2727,12 +2727,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    nameAttr: React.PropTypes.string,
 	    target: React.PropTypes.string,
 	    ellipsizeAt: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.bool]),
-	    reverseEllipsis: React.PropTypes.bool
+	    reverseEllipsis: React.PropTypes.bool,
+	    hideProtocol: React.PropTypes.bool
 	  });
 
 	  Link.defaultProps = _.extend({}, Datum.defaultProps, {
 	    ellipsizeAt: 35,
-	    target: '_blank'
+	    target: '_blank',
+	    hideProtocol: false
 	  });
 
 	  Link.prototype.subClassName = 'link';
@@ -2740,7 +2742,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Link.prototype.renderValueForDisplay = function() {
 	    return React.createElement("a", {
 	      "href": this._getHref(),
-	      "target": this.props.target
+	      "target": this.props.target,
+	      "hideProtocol": this.props.hideProtocol
 	    }, this._getTagContent());
 	  };
 
@@ -2748,8 +2751,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.getModelValue();
 	  };
 
+	  Link.prototype._removeHttpForDisplay = function() {
+	    var index, value;
+	    value = this.getModelValue();
+	    if (value.indexOf('://') >= 3) {
+	      index = value.indexOf('://') + 3;
+	      value = value.slice(index);
+	    }
+	    return value;
+	  };
+
 	  Link.prototype._getTagContent = function() {
-	    var contentValue;
+	    var contentValue, value;
 	    if (this.props.nameAttr != null) {
 	      contentValue = this.getModel().get(this.props.nameAttr);
 	      if (_.isArray(contentValue)) {
@@ -2761,7 +2774,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    } else if (this.props.children != null) {
 	      return React.createElement("span", null, this.props.children);
 	    } else {
-	      return this.renderEllipsizedValue(this.getModelValue());
+	      if (this.props.hideProtocol) {
+	        value = this._removeHttpForDisplay();
+	      } else {
+	        value = this.getModelValue();
+	      }
+	      return this.renderEllipsizedValue(value);
 	    }
 	  };
 
@@ -4073,9 +4091,6 @@ return /******/ (function(modules) { // webpackBootstrap
 			//NOTE: update value in the callback to make sure the input value is empty so that there are no styling issues (Chrome had issue otherwise)
 			this.hasScrolledToOption = false;
 			if (this.props.multi) {
-				if (this.props.allowCreate) {
-					value = this.expandValue(value, this.props);
-				}
 				this.setState({
 					inputValue: '',
 					focusedIndex: null

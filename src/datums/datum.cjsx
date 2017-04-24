@@ -314,7 +314,7 @@ module.exports = class Datum extends React.Component
 
       return @renderWithPopover(ellipsizedValue, value, 'datumEllipsizedValue', 'datum-ellipsized')
 
-    return value
+    return value  
 
 
   renderForInput: ->
