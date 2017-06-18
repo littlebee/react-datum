@@ -1,4 +1,10 @@
 
+## [0.14.1](https://github.com/zulily/react-datum.git/compare/0.14.0...0.14.1) (2017-06-18)
+
+
+### Other Commits
+* [47d0113](https://github.com/zulily/react-datum.git/commit/47d0113a94175d494b8fdfd2415035b0294669da) add .npmignore
+
 ## [0.14.0](https://github.com/zulily/react-datum.git/compare/0.13.1...0.14.0) (2017-06-18)
 In addition to the few new features, this version of react-datum includes better support for UMD and commonjs usage without any additional transpile required!
 
