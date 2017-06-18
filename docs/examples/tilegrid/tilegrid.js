@@ -8,10 +8,10 @@ var KittenModel = Backbone.Model.extend({
     options.success(this);
     return true;
   }
-});
+}
 // KITTEN_DATA is a static array of data from petfinder api
 //    that gets loaded via script tag for the examples
-var KittenCollection = Backbone.Collection.extend({
+);var KittenCollection = Backbone.Collection.extend({
   model: KittenModel
 });
 
