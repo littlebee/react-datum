@@ -1,4 +1,15 @@
 
+## [0.14.0](https://github.com/zulily/react-datum.git/compare/0.13.1...0.14.0) (2017-06-18)
+In addition to the few new features, this version of react-datum includes better support for UMD and commonjs usage without any additional transpile required!
+
+### New Features
+* [5a794a0](https://github.com/zulily/react-datum.git/commit/5a794a053af9efdfa3fdea0252f9b639d3686de2)  add displayModelValue prop to CollectionPicker
+
+### Other Commits
+* [afa43e6](https://github.com/zulily/react-datum.git/commit/afa43e6d2f81a55be7a44691d2b7d4907ec5a04b) Merge pull request #4 from jkarlovich/feature/linkUpdate
+* [aa45b2c](https://github.com/zulily/react-datum.git/commit/aa45b2c40a4debd231b9ae5e4fc022b2e271481e) made an option to hide the protocol in the link datum by passing a prop of true to hideProtocol, wrote a test to test it
+* [89eba68](https://github.com/zulily/react-datum.git/commit/89eba680389c745b4c5fc69bee5fbf8652a032f1) changed hideProtocol as a prop
+
 ## [0.13.1](https://github.com/zulily/react-datum.git/compare/0.13.0...0.13.1) (2017-04-15)
 Minor feature improvements and bug fixes.
 
