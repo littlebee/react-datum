@@ -1,4 +1,10 @@
 
+## [0.14.2](https://github.com/zulily/react-datum.git/compare/0.14.1...0.14.2) (2017-06-18)
+
+
+### Other Commits
+* [6ab030e](https://github.com/zulily/react-datum.git/commit/6ab030e8aa4ddca66dca9e27670fb16c19d65951) upgrade selectable-collection to 0.3.1
+
 ## [0.14.1](https://github.com/zulily/react-datum.git/compare/0.14.0...0.14.1) (2017-06-18)
 
 
