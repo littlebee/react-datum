@@ -41,6 +41,17 @@ module.exports = (grunt) ->
     clean:
       distrib: ["dist/#{pkg.name}.*"]
       
+    cjsx:
+      build:
+        files: [
+          expand: true
+          cwd: 'src'
+          src: ['**/*.cjsx']
+          dest: 'lib'
+          ext: '.js'
+        ]
+      
+      
     cssmin:
       options:
         shorthandCompacting: false,
@@ -73,10 +84,11 @@ module.exports = (grunt) ->
         command: 'node_modules/bumble-test/bin/testRunner.coffee'
         execOptions:
           env: {NODE_ENV: 'test'}
-        
       coverage:
         command: 'node_modules/.bin/istanbul report text-summary lcov'
     
+    # end shell
+
     coveralls:
       options:
         force: true
@@ -113,5 +125,5 @@ module.exports = (grunt) ->
   grunt.registerTask 'test', ["shell:test", "shell:coverage"]
   grunt.registerTask 'distrib', ['cssmin:distrib', 'webpack:distrib', 'webpack:optimize','shell:deploy']
   grunt.registerTask 'docs',  ['shell:buildDocIndex', 'shell:buildApiDocs', 'shell:buildExamples']
-  grunt.registerTask 'build', ['shell:npmInstall', 'distrib']
+  grunt.registerTask 'build', ['shell:npmInstall', 'newer:cjsx:build', 'distrib']
   grunt.registerTask 'default', ['availabletasks']
