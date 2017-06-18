@@ -27,7 +27,7 @@ var ReactDatum = {
   
   // TODO : i think this and react-select will eventually go to a separate 
   //    npm package so that the core doesn't have dependency on react-select
-  CollectionPicker:  require('./lib/datums/collectionPicker/collectionPicker')
+  CollectionPicker:  require('./lib/datums/collectionPicker/collectionPicker'),
   // react-select 
   ReactSelect:       require('react-select'),
   SelectOption:      require('react-select/lib/Option.js'),
