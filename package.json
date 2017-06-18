@@ -43,7 +43,7 @@
     "react-bootstrap": "~0.27.3",
     "react-dom": "~0.14.1",
     "react-select": "git+https://github.com/zulily/react-select.git",
-    "selectable-collection": "0.2.1",
+    "selectable-collection": "0.3.1",
     "underscore": "1.8.3"
   },
   "peerDependencies": {
