@@ -1,4 +1,10 @@
 
+## [0.14.3](https://github.com/zulily/react-datum.git/compare/0.14.2...0.14.3) (2017-07-12)
+
+
+### Other Commits
+* [4088b88](https://github.com/zulily/react-datum.git/commit/4088b8822277ac70c946ed806ba4b5a8bc7cbc35) use proper es export syntax :/ so webpack doesnt get confused and add each component class to the global space
+
 ## [0.14.2](https://github.com/zulily/react-datum.git/compare/0.14.1...0.14.2) (2017-06-18)
 
 
