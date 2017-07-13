@@ -1,4 +1,10 @@
 
+## [0.14.5](https://github.com/zulily/react-datum.git/compare/0.14.4...0.14.5) (2017-07-13)
+
+
+### Other Commits
+* [59d5442](https://github.com/zulily/react-datum.git/commit/59d544268436307dd1cf545027258b4daafe55f6) fix regression bug in last commmit. LazyPhoto should call super on componentWillMount
+
 ## [0.14.4](https://github.com/zulily/react-datum.git/compare/0.14.3...0.14.4) (2017-07-13)
 
 
