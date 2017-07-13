@@ -1,4 +1,13 @@
 
+## [0.14.4](https://github.com/zulily/react-datum.git/compare/0.14.3...0.14.4) (2017-07-13)
+
+
+### Bugs Fixed in this Release
+* [f726368](https://github.com/zulily/react-datum.git/commit/f7263689d04708ad44b970a62c52290adc435924)  fix LazyPhoto sporatically fails to load image in React 16.
+
+### Other Commits
+* [94d3812](https://github.com/zulily/react-datum.git/commit/94d3812ef6d92842b72f25b313ce613776e8940c) upgrade peer dependencies to reflect current known working peer versions
+
 ## [0.14.3](https://github.com/zulily/react-datum.git/compare/0.14.2...0.14.3) (2017-07-12)
 
 
