@@ -24,10 +24,14 @@ module.exports = class LazyPhoto extends Datum
 
   initialLoadComplete: false
   
+  
   componentWillMount: () ->
+    super
     @setState notFound: false
+    
   
   isEditable: -> false
+  
   
   # override
   renderForDisplay: () ->
