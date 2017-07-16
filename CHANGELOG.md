@@ -1,4 +1,10 @@
 
+## [0.14.6](https://github.com/zulily/react-datum.git/compare/0.14.5...0.14.6) (2017-07-16)
+
+
+### Bugs Fixed in this Release
+* [a169b08](https://github.com/zulily/react-datum.git/commit/a169b081c93045c4ab769bb805de4e7c57ffdbfa)  should not stack when collection picker collection model is missing display value. + move react deps to dev
+
 ## [0.14.5](https://github.com/zulily/react-datum.git/compare/0.14.4...0.14.5) (2017-07-13)
 
 
