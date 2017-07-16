@@ -343,7 +343,8 @@ module.exports = class CollectionPicker extends Datum
   filterSuggestionModels: (collection, userInput, callback) =>
     # filter to just those with match anywhere
     filteredModels = _.filter collection.models, (model) => 
-      Strhelp.weaklyHas(@getCollectionModelDisplayValue(model), userInput)
+      displayValue = @getCollectionModelDisplayValue(model)
+      displayValue? && Strhelp.weaklyHas(displayValue, userInput)
 
     # sort all by display value alpha, case insensitive
     filteredModels = filteredModels.sort (a, b) =>
