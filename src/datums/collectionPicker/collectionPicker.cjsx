@@ -81,11 +81,12 @@ module.exports = class CollectionPicker extends Datum
     #  
     #  *Where do they all come from?*  
     #  
-    #  We will use the returned filtered set of models from the following chain (in order):
+    #  We will use the returned filtered set of models from the first of following chain (in order) 
+    #  to exist:
+    #    **props.asyncSuggestionCallback** - this prop
     #    **Collection.filterForPicker()**  - if we find a method on the collection called 
     #      'filterForPicker' - it will be called with `(userInput, doneCallback, asyncOptions)`
     #      and should return an array of models to render suggestions from 
-    #    **props.asyncSuggestionCallback** - this prop
     #    **Internal filter** (this.filterOptions(userInput, doneCallback)) seaches through the 
     #      props.optionDisplayAttr of models currently in the collection to find suggestions based on 
     #      userInput and groups results
@@ -309,7 +310,7 @@ module.exports = class CollectionPicker extends Datum
       super values, propsOnChangeValue: optionsSelected
     else
       value = if optionsSelected == null then null else optionsSelected?.value
-      super value, propsOnChangeValue: optionsSelected
+      super value
       
     
 
@@ -332,8 +333,8 @@ module.exports = class CollectionPicker extends Datum
       @lastAsyncCallback(null, {options: optionsForReactSelect})
   
     switch
-      when collection.filterForPicker? then collection.filterForPicker(userInput, chainedCallback, @props.asyncOptions)
-      when @props.asyncSuggestionCallback? then @props.asyncSuggestionCallback(collection, userInput, chainedCallback, @props.asyncOptions)
+      when @props.asyncSuggestionCallback? then @props.asyncSuggestionCallback.call(@, collection, userInput, chainedCallback, @props.asyncOptions)
+      when collection.filterForPicker? then collection.filterForPicker.call(@, userInput, chainedCallback, @props.asyncOptions)
       else @filterSuggestionModels(collection, userInput, chainedCallback, @props.asyncOptions)
     
     return null   # ReactSelect Async expects this to be a promise or null
