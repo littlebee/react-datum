@@ -158,7 +158,7 @@ module.exports = class CollectionPicker extends Datum
     return if @props.multi
       modelValues = @getModelValue()
       if @props.csvDisplay
-        collectionValues = modelValues.map (modelValue) => @getCollectionModelDisplayValue(modelId, collection)
+        collectionValues = modelValues.map (modelId) => @getCollectionModelDisplayValue(modelId, collection)
         @renderEllipsizedValue(collectionValues.join(', ')) 
       else
         modelValues.map (modelValue) =>
@@ -204,10 +204,20 @@ module.exports = class CollectionPicker extends Datum
 
   _getCollectionModelById: (modelOrId) ->
     if _.isNumber(modelOrId) or _.isString(modelOrId)
-      model = @getCollection()?.get(modelOrId, add: @props.fetchUnknownModelsInCollection)
-    else
-      model = modelOrId    
+      collectionModel = @getCollection()?.get modelOrId, add: @props.fetchUnknownModelsInCollection
+      onSync = =>
+        @_onFirstCollectionModelSync(collectionModel)
+        collectionModel?.off?('sync', onSync)
+        
+      collectionModel?.on?('sync', onSync)
+      return collectionModel
+      
+    return modelOrId
+    
   
+  _onFirstCollectionModelSync: (collectionModel) =>
+    @getModel()?.trigger?('invalidate')
+    
   
   getCollectionModelDisplayValue: (modelId, collection) ->
     return null unless modelId 
