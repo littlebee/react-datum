@@ -155,18 +155,17 @@ module.exports = class CollectionPicker extends Datum
   #override - if multi, returns an array of values that renderEllipsizeValue wraps in spans
   renderValueForDisplay: ->
     collection = @getCollection() 
-    return if @props.multi
-      modelValues = @getModelValue()
-      if @props.csvDisplay
-        collectionValues = modelValues.map (modelId) => @getCollectionModelDisplayValue(modelId, collection)
-        @renderEllipsizedValue(collectionValues.join(', ')) 
-      else
-        modelValues.map (modelValue) =>
-          @renderCollectionDisplayValue(modelValue, collection)
+    modelValues = @getModelValue()
+    modelValues = [modelValues] unless _.isArray modelValues
+    modelValues = _.compact(_.unique(_.flatten(modelValues)))
+    if @props.csvDisplay
+      collectionValues = modelValues.map (modelId) => @getCollectionModelDisplayValue(modelId, collection)
+      @renderEllipsizedValue(collectionValues.join(', ')) 
     else
-      @renderCollectionDisplayValue(@getModelValue(), collection)
-    
-
+      modelValues.map (modelValue) =>
+        @renderCollectionDisplayValue(modelValue, collection)
+  
+  
   renderCollectionDisplayValue: (modelId, collection=@getCollection()) ->
     modelValue = @getCollectionModelDisplayValue(modelId, collection)
     modelValue = @renderEllipsizedValue(modelValue) if modelValue
