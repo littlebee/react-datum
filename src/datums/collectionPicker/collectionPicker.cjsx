@@ -106,6 +106,9 @@ module.exports = class CollectionPicker extends Datum
     #  value of our @props.model.get(@props.attr) returns the IDs either as an
     #  array or comma separated value.  
     multi: React.PropTypes.bool
+    
+    # Ignored unless multi==true, display value as comma separated values instead of tags when inputMode='readonly'
+    csvDisplay: React.PropTypes.bool
 
     # editPlaceholder will be useful in inlineEdit mode when you want to display a 
     # placeholder text which is different from the placeholder which you display before the select editor is displayed
@@ -154,8 +157,12 @@ module.exports = class CollectionPicker extends Datum
     collection = @getCollection() 
     return if @props.multi
       modelValues = @getModelValue()
-      modelValues.map (modelValue) =>
-        @renderCollectionDisplayValue(modelValue, collection)
+      if @props.csvDisplay
+        collectionValues = modelValues.map (modelValue) => @getCollectionModelDisplayValue(modelId, collection)
+        @renderEllipsizedValue(collectionValues.join(', ')) 
+      else
+        modelValues.map (modelValue) =>
+          @renderCollectionDisplayValue(modelValue, collection)
     else
       @renderCollectionDisplayValue(@getModelValue(), collection)
     
@@ -242,6 +249,8 @@ module.exports = class CollectionPicker extends Datum
         else 
           [modelValue]
       
+      modelValue = _.compact(_.unique(_.flatten(modelValue)))
+    
     return modelValue
 
 
