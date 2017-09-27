@@ -48,7 +48,7 @@ module.exports = class CollectionPicker extends Datum
     displayAttr: React.PropTypes.string
     
     #  attribute value from model in lookup collection to set as value on props.attr
-    #  in props.model
+    #  in props.model. If not specified, displayAttr is used
     optionSaveAttr: React.PropTypes.string.isRequired
 
     # react component to render when in inputMode='readonly'. 
@@ -194,7 +194,7 @@ module.exports = class CollectionPicker extends Datum
 
   getCollection: ->
     collection = @props.collection || @context.collection
-    throw new Error(@constructor.displayName + " requires a collection prop or context") unless collection?
+    console.warn(@constructor.displayName + " requires a collection prop or context. attr=#{@props.attr}") unless collection?
     unless collection instanceof Backbone.Collection
       return new Backbone.Collection(collection)
     
