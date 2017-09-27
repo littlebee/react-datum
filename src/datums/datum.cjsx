@@ -660,7 +660,7 @@ module.exports = class Datum extends React.Component
     # NOTE: don't assume that event arg contains anything more than
     #     target.value.  Some wrapped components like react-select don't
     #     provide the synth event on change 
-    value = if event?.target?.value? then event?.target?.value else event
+    value = event?.target?.value ? event?.value ? event
     
     @setValue(value, setModelValue: @shouldSetOnChange())
       

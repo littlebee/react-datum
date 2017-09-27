@@ -328,7 +328,7 @@ module.exports = class CollectionPicker extends Datum
       super values, propsOnChangeValue: optionsSelected
     else
       value = if optionsSelected == null then null else optionsSelected?.value
-      super value
+      super value, propsOnChangeValue: optionsSelected
       
     
 
