@@ -278,7 +278,11 @@ module.exports = class CollectionPicker extends Datum
 
   getSelectAsyncOptions: () ->
     collection = @getCollection()
-    return _.extend _.omit(@getSelectOptions(), 'options'),
+    selectOptions = @getSelectOptions()
+    if @props.asyncSuggestionCallback?
+      delete selectOptions.options
+      
+    return _.extend selectOptions,
       loadOptions: @onLoadOptions
 
 
