@@ -204,7 +204,9 @@ module.exports = class CollectionPicker extends Datum
     
     return collection
   
-
+  ###
+    TODO: make this method public.  useful for extensions and used by some
+  ###
   _getCollectionModelById: (modelOrId) ->
     if _.isNumber(modelOrId) or _.isString(modelOrId)
       collectionModel = @getCollection()?.get modelOrId, add: @props.fetchUnknownModelsInCollection

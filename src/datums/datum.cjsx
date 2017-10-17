@@ -519,7 +519,7 @@ module.exports = class Datum extends React.Component
   ###
   getModelValue: (newProps = @props, newContext = @context)->
     if newProps.value != undefined
-      return  @state.shadowValue || newProps.value
+      return  @state?.shadowValue ? newProps.value
       
     return null unless model = @getModel(newProps, newContext)
     
@@ -545,7 +545,7 @@ module.exports = class Datum extends React.Component
 
 
   ###
-    Extend this model to interpret the value prior to saving for example a Percent datum
+    Extend this method to interpret the value prior to saving for example a Percent datum
     that the user enters a value that is 100x what gets saved to model
     
     options pass through to model.set() 
