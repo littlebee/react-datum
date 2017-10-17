@@ -141,6 +141,10 @@ module.exports = class CollectionPicker extends Datum
   selectRef: "reactSelect"
 
 
+  constructor: ->
+    super
+    
+
   initializeState: ->
     @state = {
       value: @getModelValue()
@@ -193,7 +197,17 @@ module.exports = class CollectionPicker extends Datum
     if @props.synchronousLoading
       <Select {... @getSelectOptions()}/>
     else
-      <Select.Async {... @getSelectAsyncOptions()}/>
+      <Select.Async {... @getSelectAsyncOptions()}>
+        {
+          (props) => 
+            collection = @getCollection()
+            # if the user provided a filter method don't allow react-select to filter
+            props.filterOptions = null if collection.filterForPicker? || @props.asyncLoadCallback? 
+            # prevent react-select from blanking the value while the user types
+            props.value = @getInputValue()  
+            return <Select {... props}/>
+        }
+      </Select.Async>
 
 
   getCollection: ->
@@ -310,13 +324,6 @@ module.exports = class CollectionPicker extends Datum
 
 
   getOptionValuesForReactSelect: (models = []) =>
-    if @props.multi
-      selectedModels = @getSelectedModels() ? []
-      for model in selectedModels 
-        # add any selectedModels that are not already in models
-        foundModel = _.find(models, (m) => @getOptionSaveValue(m) == @getOptionSaveValue(model))
-        models.push model unless foundModel? 
-          
     return _.map models, (m) => return {
       label: @getCollectionModelDisplayValue(m) 
       value: @getOptionSaveValue(m)
@@ -334,6 +341,11 @@ module.exports = class CollectionPicker extends Datum
   onChange: (optionsSelected) =>
     if @props.multi
       values = _.pluck(optionsSelected, 'value')
+      # this works around an issue in react-select where when searching with already
+      # selected values react-select would blank out the selections and leave with nothing
+      if values.length == 1 && @state.value.length > 0 && values[0] not in @state.value
+        values = @state.value.concat values
+        optionsSelected = @getOptionValuesForReactSelect(@getSelectedModels())
       values = values.join(',') if @props.setAsString
       super values, propsOnChangeValue: optionsSelected
     else
@@ -345,6 +357,7 @@ module.exports = class CollectionPicker extends Datum
   # async callback for react-select      
   onLoadOptions: (userInput, callback) =>
     collection = @getCollection()
+    selectedModels = @getSelectedModels() ? []
     
     # TODO : consider debouncing in here 
     # we may be debounce in the filtering methods below or they may take longer than 
@@ -357,6 +370,9 @@ module.exports = class CollectionPicker extends Datum
         models = error
         error = false
       models = @groupSuggestionModels(userInput, models)
+      if @props.multi
+        models = models.concat(selectedModels) 
+        collection.add selectedModels   # make sure they are still in the collection too
       optionsForReactSelect = @getOptionValuesForReactSelect(models)
       @lastAsyncCallback(null, {options: optionsForReactSelect})
   
