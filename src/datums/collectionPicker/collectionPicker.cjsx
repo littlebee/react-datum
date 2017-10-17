@@ -205,6 +205,7 @@ module.exports = class CollectionPicker extends Datum
             props.filterOptions = null if collection.filterForPicker? || @props.asyncLoadCallback? 
             # prevent react-select from blanking the value while the user types
             props.value = @getInputValue()  
+            props.ref = 'select'
             return <Select {... props}/>
         }
       </Select.Async>
