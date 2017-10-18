@@ -237,6 +237,7 @@ module.exports = class CollectionPicker extends Datum
   
   _onFirstCollectionModelSync: (collectionModel) =>
     @getModel()?.trigger?('invalidate')
+    @forceUpdate()
     
   
   getCollectionModelDisplayValue: (modelId, collection) ->
