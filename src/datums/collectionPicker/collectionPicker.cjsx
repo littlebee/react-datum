@@ -226,7 +226,7 @@ module.exports = class CollectionPicker extends Datum
     if _.isNumber(modelOrId) or _.isString(modelOrId)
       collectionModel = @getCollection()?.get modelOrId, add: @props.fetchUnknownModelsInCollection
       onSync = =>
-        @_onFirstCollectionModelSync(collectionModel)
+        _.defer => @_onFirstCollectionModelSync(collectionModel)
         collectionModel?.off?('sync', onSync)
         
       collectionModel?.on?('sync', onSync)
