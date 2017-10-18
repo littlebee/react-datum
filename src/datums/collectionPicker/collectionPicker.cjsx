@@ -358,7 +358,7 @@ module.exports = class CollectionPicker extends Datum
   # async callback for react-select      
   onLoadOptions: (userInput, callback) =>
     collection = @getCollection()
-    selectedModels = @getSelectedModels() ? []
+    selectedModels = _.compact(@getSelectedModels() ? [])
     
     # TODO : consider debouncing in here 
     # we may be debounce in the filtering methods below or they may take longer than 

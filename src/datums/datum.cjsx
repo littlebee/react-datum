@@ -180,7 +180,7 @@ module.exports = class Datum extends React.Component
     # so it can ask us if we are valid (via @validate() method) and tell us
     # when the user cancels the update (via @reset() method)
     @context?.form?.addDatum?(@)
-    modelValue = @getModelValue()
+    @prevModelValue = @getModelValue()
 
     # for click off and esc to cancel inline edit
     document.addEventListener 'click', @onDocumentClick
@@ -188,10 +188,10 @@ module.exports = class Datum extends React.Component
 
   ### !pragma coverage-skip-next ###
   componentWillReceiveProps: (nextProps) ->
-    prevModelValue = @getModelValue(@props)
     newModelValue = @getModelValue(nextProps)
     
-    if JSON.stringify(prevModelValue) != JSON.stringify(newModelValue)
+    if JSON.stringify(@prevModelValue) != JSON.stringify(newModelValue)
+      @prevModelValue = newModelValue
       @setState({
         value: newModelValue
       })
