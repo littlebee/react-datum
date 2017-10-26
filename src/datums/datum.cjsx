@@ -186,11 +186,19 @@ module.exports = class Datum extends React.Component
     document.addEventListener 'click', @onDocumentClick
     document.addEventListener 'keydown', @onDocumentKeydown
 
+
   ### !pragma coverage-skip-next ###
   componentWillReceiveProps: (nextProps) ->
     newModelValue = @getModelValue(nextProps)
+    prevModelValue = @getModelValue(@props)
     
-    if JSON.stringify(@prevModelValue) != JSON.stringify(newModelValue)
+    # for some reason, this change made the slicer selector not work correctly on filter panes
+    # TODO: rethink what went wrong and how to test for it 
+    # if JSON.stringify(@prevModelValue) != JSON.stringify(newModelValue)
+    
+    # doing it the old way now which will only pick up on model value changes here if 
+    # the model prop itself is changed :/ 
+    if JSON.stringify(prevModelValue) != JSON.stringify(newModelValue)    
       @prevModelValue = newModelValue
       @onModelValueChange()
     
