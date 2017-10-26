@@ -192,9 +192,7 @@ module.exports = class Datum extends React.Component
     
     if JSON.stringify(@prevModelValue) != JSON.stringify(newModelValue)
       @prevModelValue = newModelValue
-      @setState({
-        value: newModelValue
-      })
+      @onModelValueChange()
     
 
   ### !pragma coverage-skip-next ###
@@ -703,6 +701,16 @@ module.exports = class Datum extends React.Component
       _.delay => 
         @setState saved: null
       , @props.savedIndicatorTimeout
+      
+      
+  ###
+    Extend this method to run code when the model value change is detected
+    when props are changed 
+  ###
+  onModelValueChange: (oldModelValue, newModelValue) ->
+    @setState({
+      value: newModelValue
+    })
 
 
   onDocumentClick: (evt) =>

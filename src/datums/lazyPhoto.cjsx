@@ -56,4 +56,10 @@ module.exports = class LazyPhoto extends Datum
   onError: (evt) =>
     return if @state.notFound   
     @setState notFound: true
+    
+    
+  onModelValueChange: () ->
+    # force img tag to retry and find file
+    @setState notFound: false
+    super
 
