@@ -160,14 +160,16 @@ module.exports = class CollectionPicker extends Datum
   renderValueForDisplay: ->
     collection = @getCollection() 
     modelValues = @getModelValue()
-    # A CSV model value return is also accepted
+    # A CSV model value return is also accepted.
+    # TODO : consider expanding this to include non numeric 
     if _.isString(modelValues) and modelValues.match(/\d+\,\s*\d+/)
       modelValues = modelValues.split(/\,\s?/)
       
     modelValues = [modelValues] unless _.isArray modelValues
     modelValues = _.compact(_.unique(_.flatten(modelValues)))
     if @props.csvDisplay
-      collectionValues = modelValues.map (modelId) => @getCollectionModelDisplayValue(modelId, collection)
+      collectionValues = modelValues.map (modelId) => 
+        @getCollectionModelDisplayValue(modelId, collection) ? modelId
       @renderEllipsizedValue(collectionValues.join(', ')) 
     else
       modelValues.map (modelValue) =>
