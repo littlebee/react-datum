@@ -347,7 +347,7 @@ module.exports = class CollectionPicker extends Datum
       values = _.pluck(optionsSelected, 'value')
       # this works around an issue in react-select where when searching with already
       # selected values react-select would blank out the selections and leave with nothing
-      if values.length == 1 && @state.value.length > 0 && values[0] not in @state.value
+      if values.length == 1 && @state.value?.length > 0 && values[0] not in @state.value
         values = @state.value.concat values
         optionsSelected = @getOptionValuesForReactSelect(@getSelectedModels())
       values = values.join(',') if @props.setAsString
