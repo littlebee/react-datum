@@ -180,27 +180,21 @@ module.exports = class Datum extends React.Component
     # so it can ask us if we are valid (via @validate() method) and tell us
     # when the user cancels the update (via @reset() method)
     @context?.form?.addDatum?(@)
-    @prevModelValue = @getModelValue()
+    modelValue = @getModelValue()
 
     # for click off and esc to cancel inline edit
     document.addEventListener 'click', @onDocumentClick
     document.addEventListener 'keydown', @onDocumentKeydown
 
-
   ### !pragma coverage-skip-next ###
   componentWillReceiveProps: (nextProps) ->
-    newModelValue = @getModelValue(nextProps)
     prevModelValue = @getModelValue(@props)
+    newModelValue = @getModelValue(nextProps)
     
-    # for some reason, this change made the slicer selector not work correctly on filter panes
-    # TODO: rethink what went wrong and how to test for it 
-    # if JSON.stringify(@prevModelValue) != JSON.stringify(newModelValue)
-    
-    # doing it the old way now which will only pick up on model value changes here if 
-    # the model prop itself is changed :/ 
-    if JSON.stringify(prevModelValue) != JSON.stringify(newModelValue)    
-      @prevModelValue = newModelValue
-      @onModelValueChange()
+    if JSON.stringify(prevModelValue) != JSON.stringify(newModelValue)
+      @setState({
+        value: newModelValue
+      })
     
 
   ### !pragma coverage-skip-next ###
