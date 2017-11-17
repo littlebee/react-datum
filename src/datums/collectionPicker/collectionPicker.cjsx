@@ -206,7 +206,7 @@ module.exports = class CollectionPicker extends Datum
             # if the user provided a filter method don't allow react-select to filter
             props.filterOptions = null if collection.filterForPicker? || @props.asyncLoadCallback? 
             # prevent react-select from blanking the value while the user types
-            props.value = @getInputValue()  
+            props.value = @getValueForInput()  
             props.ref = 'select'
             return <Select {... props}/>
         }
@@ -291,7 +291,7 @@ module.exports = class CollectionPicker extends Datum
     collection = @getCollection()
     return _.extend {}, @props,
       placeholder: @props.editPlaceholder || @getPropOrMetadata('placeholder') || @renderPlaceholder()
-      value: @state.value
+      value: @getValueForInput()
       onChange: @onChange
       onBlur: @onBlur
       options: @getOptionValuesForReactSelect(collection.models)

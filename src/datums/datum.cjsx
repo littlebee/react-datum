@@ -113,6 +113,10 @@ module.exports = class Datum extends React.Component
     # editable state
     value: React.PropTypes.node
     
+    # set stateless:true to have the input and display always reflect the `value` prop or model value. 
+    # Combined with value to make any datum a fully controlled component
+    stateless: React.PropTypes.bool
+    
     
   @defaultProps:
     # no default for inputMode because we can also get from context, see @getInputMode()
@@ -495,7 +499,7 @@ module.exports = class Datum extends React.Component
   ###
   getValueForInput: () ->
     #console.log "Datum::getValueForInput", @state.value, @getModelValue(), JSON.stringify({value: @state.value})
-    return if @state.value? then @state.value else @getModelValue()
+    return if !@props.stateless && @state.value? then @state.value else @getModelValue()
     
     
   ###
