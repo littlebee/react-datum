@@ -503,10 +503,22 @@ module.exports = class Datum extends React.Component
     
     
   ###
-    this method returns the value in the input as seen by user
+    DEPRECATED (use getValueForInput): this method returns the value in the input as seen by user
   ###
   getInputValue: () ->
     return @state.value
+    
+    
+  ###
+    Extend this method to change how to get the input element's value from a 
+    change event.   The base class impl get's the value from event.target.value
+    by default.
+  ###
+  getValueFromInput: (event) ->
+    # NOTE: don't assume that event arg contains anything more than
+    #     target.value.  Some wrapped components like react-select don't
+    #     provide the synth event on change 
+    return event?.target?.value ? event?.value ? event
     
     
   ###
@@ -664,7 +676,7 @@ module.exports = class Datum extends React.Component
     # NOTE: don't assume that event arg contains anything more than
     #     target.value.  Some wrapped components like react-select don't
     #     provide the synth event on change 
-    value = event?.target?.value ? event?.value ? event
+    value = @getValueFromInput(event) 
     
     @setValue(value, setModelValue: @shouldSetOnChange())
       
