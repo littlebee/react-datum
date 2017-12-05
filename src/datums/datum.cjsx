@@ -499,7 +499,7 @@ module.exports = class Datum extends React.Component
   ###
   getValueForInput: () ->
     #console.log "Datum::getValueForInput", @state.value, @getModelValue(), JSON.stringify({value: @state.value})
-    return if !@props.stateless && @state.value? then @state.value else @getModelValue()
+    return if !@props.stateless && @state.value != undefined then @state.value else @getModelValue()
     
     
   ###
