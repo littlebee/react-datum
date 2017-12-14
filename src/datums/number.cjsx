@@ -169,7 +169,7 @@ module.exports = class Number extends Datum
 
 
   validateNumeric: (value) =>
-    return true if @charactersMustMatch.test(value)
+    return true if _.isNumber(value)
     if value.length > 25
       value = value.slice(0, 25) + '...'
     return "The value must be numeric. \"#{value}\" is not valid"
@@ -254,8 +254,5 @@ module.exports = class Number extends Datum
     return value
     
     
-  
-
-    
-  
-    
+  getInputValue: ->
+    return parseFloat(@state.value)
