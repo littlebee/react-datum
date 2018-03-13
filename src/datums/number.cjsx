@@ -170,8 +170,6 @@ module.exports = class Number extends Datum
 
   validateNumeric: (value) =>
     return true if _.isNumber(value)
-    return true if @charactersMustMatch.test(value)
-    
     if value.length > 25
       value = value.slice(0, 25) + '...'
     return "The value must be numeric. \"#{value}\" is not valid"
@@ -179,15 +177,15 @@ module.exports = class Number extends Datum
   
   validateMin: (value) =>
     minValue = @getPropOrMetadata('minValue')
-    return true unless value? && minValue?
-    return true if parseFloat(value) >= parseFloat(minValue)
+    return true unless minValue?
+    return true if value >= minValue
     return "The value must be greater than or equal to #{minValue}"
 
 
   validateMax: (value) =>
     maxValue = @getPropOrMetadata('maxValue')
-    return true unless value? && maxValue?
-    return true if parseFloat(value) <= parseFloat(maxValue)
+    return true unless maxValue?
+    return true if value <= maxValue
     return "The value must be less than or equal to #{maxValue}"
     
     
