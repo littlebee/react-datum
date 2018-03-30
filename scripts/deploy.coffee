@@ -42,4 +42,6 @@ zkLocalDir = path.join(zkSrcDir, zkRelativeDir)
 zkRemoteDir = "#{vps}:#{path.join(zkRemoteRoot, zkRelativeDir)}"
 
 util.systemCmd "cp -f #{srcs} #{zkLocalDir}"
-util.systemCmd "scp #{srcs} #{vps}:/var/www/htdocs/zulily-event-management/app/webroot/js/lib"
+
+#  uncomment to deploy to legacy VPS system
+#  util.systemCmd "scp #{srcs} #{vps}:/var/www/htdocs/zulily-event-management/app/webroot/js/lib"
