@@ -13,7 +13,6 @@ Path = require("path")
 Glob = require("glob")
 Webpack = require("webpack")
 Inflection = require('inflection')
-HappyPack = require('happypack')
 StatsWriterPlugin = require("webpack-stats-plugin").StatsWriterPlugin;
 HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
