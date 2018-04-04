@@ -38,13 +38,14 @@ describe 'Datum Metadata', ->
     
     testTooltip = "Note that some people dont have last names"
     
-    Component = React.createClass
+    class Component extends React.Component
       render: ->
         <Model model={testModel}>
           <Text attr="firstName" label={null}/>
           <Text attr="lastName" tooltip={testTooltip}/>
           <Number attr="age" ref="number" inputMode='edit'/>
         </Model>
+        
     component = Th.render(<Component/>)
     testDom = Th.domNode(component)
     $test = $(testDom)

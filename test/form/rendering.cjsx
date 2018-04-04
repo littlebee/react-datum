@@ -1,7 +1,7 @@
 
 React = require 'react'
 ReactDOM = require 'react-dom'
-ReactTest = require 'react-addons-test-utils'
+
 Backbone = require 'backbone'
 _ = require 'underscore'
 $ = require('jquery')

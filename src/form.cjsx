@@ -1,5 +1,5 @@
 
-React = require('react')
+React = require('./lib/reactLegacy')
 ReactDom = require('react-dom')
 Datum = require('./datums/datum')
 Backbone = require('backbone')

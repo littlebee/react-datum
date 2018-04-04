@@ -6,19 +6,20 @@ Bstr = require 'bumble-strings'
 
 Th = require '../lib/testHelpers'
 
-Select = require('react-select/src/Select')
-Select.Async = require('react-select/src/Async')
+Select = require('react-select/lib/Select')
+Select.Async = require('react-select/lib/Async')
 
 CollectionPicker = require '../../src/datums/collectionPicker/collectionPicker'
 
 NameCollection = require('../lib/nameCollection')
 nameCollection = new NameCollection()
 
+
 simulateClick = (component) ->
   domNode = Th.domNode(component)
-  Th.Simulate.focus(domNode.querySelector('.Select-input input'))
-  Th.Simulate.mouseDown(domNode.querySelector('.Select-control'))
-
+  selectArrow = domNode.querySelector('.Select-arrow');
+  Th.Simulate.mouseDown(selectArrow, { button: 0 });
+  
 testBasicCollectionPickerRender = (component, model, expectedValues, expectedSuggestions) ->
   domNode = Th.domNode(component)
   reactSelect = component.refs.reactSelect
@@ -41,7 +42,7 @@ testBasicCollectionPickerRender = (component, model, expectedValues, expectedSug
   
   
   describe 'when clicked', ->
-    before ->
+    before () ->
       simulateClick(component)
       #Th.dumpHtml(component)
     
@@ -91,7 +92,7 @@ describe 'CollectionPicker clear value should clear the value and set it to null
 
   describe 'when cleared', ->
     before ->
-      Th.Simulate.mouseDown(domNode.querySelector('.Select-clear-zone'))
+      Th.Simulate.mouseDown(domNode.querySelector('.Select-clear'), { button: 0 })
 
     it 'should show no label values', ->
       $valueLabels = $(domNode).find('.Select-value-label')

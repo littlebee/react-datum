@@ -6,7 +6,7 @@ _ = require 'underscore'
 
 React = require 'react'
 ReactDOM = require 'react-dom'
-ReactTest = require 'react-addons-test-utils'
+ReactTest = require('react-dom/test-utils'); 
 
 $ = require 'jquery'
 

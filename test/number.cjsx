@@ -1,5 +1,5 @@
 React = require 'react'
-ReactTest = require 'react-addons-test-utils'
+
 
 Backbone = require 'backbone'
 $ = require 'jquery'

@@ -1,5 +1,5 @@
 
-React = require('react')
+React = require('../lib/reactLegacy')
 Number = require('./number')
 
 ###

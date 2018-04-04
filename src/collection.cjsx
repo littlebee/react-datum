@@ -1,5 +1,5 @@
 
-React = require('react')
+React = require('./lib/reactLegacy')
 Backbone = require('backbone')
 _ = require('underscore')
 SelectableCollection = require('selectable-collection')

@@ -1,5 +1,5 @@
 
-React = require('react')
+React = require('../lib/reactLegacy')
 _ = require('underscore')
 
 Text = require('./text')

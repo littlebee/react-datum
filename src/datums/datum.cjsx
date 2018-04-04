@@ -1,5 +1,5 @@
 
-React = require('react')
+React = require('../lib/reactLegacy')
 ReactDOM = require('react-dom')
 Backbone = require('backbone')
 _ = require('underscore')
@@ -163,10 +163,8 @@ module.exports = class Datum extends React.Component
 
 
   initializeState: ->
-    @state = {
-      # don't initialize state.value until our first on changed for 
-      # faster isDirty determination
-      #value: @getModelValue()
+    @state = _.extend @state ? {}, {
+      value: @getModelValue()
       errors: []
       isDirty: false
       saving: false
@@ -176,7 +174,7 @@ module.exports = class Datum extends React.Component
   #..................................................React life cycle methods...........................................
 
   componentWillMount: ->
-    @initializeState()
+    # Nothing to do here.  Use to initialize state
     
 
   componentDidMount: ->

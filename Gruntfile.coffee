@@ -14,6 +14,7 @@
 
 Path = require('path')
 _ = require('lodash')
+Util = require('bumble-util')
 
 CSS_FILES_TO_DISTRIB = [
   'css/**/*.css'
@@ -77,9 +78,6 @@ module.exports = (grunt) ->
           failOnError: false
         command: 'coffee ./scripts/deploy.coffee'
       
-      npmInstall:
-        command: 'npm install'
-      
       test:
         command: 'node_modules/bumble-test/bin/testRunner.coffee'
         execOptions:
@@ -125,5 +123,10 @@ module.exports = (grunt) ->
   grunt.registerTask 'test', ["shell:test", "shell:coverage"]
   grunt.registerTask 'distrib', ['cssmin:distrib', 'webpack:distrib', 'webpack:optimize','shell:deploy']
   grunt.registerTask 'docs',  ['shell:buildDocIndex', 'shell:buildApiDocs', 'shell:buildExamples']
-  grunt.registerTask 'build', ['shell:npmInstall', 'newer:cjsx:build', 'distrib']
+  grunt.registerTask 'build', ['npmInstall', 'newer:cjsx:build', 'distrib']
   grunt.registerTask 'default', ['availabletasks']
+
+
+  LAST_NPM_INSTALL_FILE = './.lastNpmInstall'
+  grunt.registerTask 'npmInstall', 'runs npm install if node_modules not up to date with package.json', ->
+    Util.npmInstall()

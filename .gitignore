@@ -1,6 +1,6 @@
 .idea
 dist/
-lib/
+/lib/
 node_modules/
 coverage/
 assets
@@ -10,4 +10,6 @@ build
 watch.pid
 coffee.log
 tags
+.cache-loader
+.lastNpmInstall
 

@@ -86,9 +86,8 @@ describe 'CollectionPicker inputMode=readonly as single select', ->
 
   describe 'with displayComponent prop', ->
     model = new Backbone.Model({nameId: 22})
-    displayComponent = React.createClass 
-      render: -> 
-        <h3>Hello</h3>
+    displayComponent = -> 
+      <h3>Hello</h3>
         
     component = Th.render <CollectionPicker attr='nameId' displayAttr='name'
       model={model} collection={nameCollection} displayComponent={displayComponent}   />

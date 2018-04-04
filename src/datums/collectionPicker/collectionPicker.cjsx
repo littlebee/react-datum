@@ -1,4 +1,4 @@
-React = require('react')
+React = require('../../lib/reactLegacy')
 Backbone = require('backbone')
 _ = require('underscore')
 Strhelp = require('bumble-strings')
@@ -49,7 +49,7 @@ module.exports = class CollectionPicker extends Datum
     
     #  attribute value from model in lookup collection to set as value on props.attr
     #  in props.model. If not specified, displayAttr is used
-    optionSaveAttr: React.PropTypes.string.isRequired
+    optionSaveAttr: React.PropTypes.string
 
     # react component to render when in inputMode='readonly'. 
     displayComponent: React.PropTypes.any
@@ -145,13 +145,6 @@ module.exports = class CollectionPicker extends Datum
     super
     
 
-  initializeState: ->
-    @state = {
-      value: @getModelValue()
-      errors: []
-    }
-
-
   render: ->
     super
     
@@ -197,7 +190,7 @@ module.exports = class CollectionPicker extends Datum
   #override
   renderInput: ->
     if @props.synchronousLoading
-      <Select {... @getSelectOptions()}/>
+      <Select.default {... @getSelectOptions()}/>
     else
       <Select.Async {... @getSelectAsyncOptions()}>
         {
@@ -208,7 +201,7 @@ module.exports = class CollectionPicker extends Datum
             # prevent react-select from blanking the value while the user types
             props.value = @getValueForInput()  
             props.ref = 'select'
-            return <Select {... props}/>
+            return <Select.default {... props}/>
         }
       </Select.Async>
 

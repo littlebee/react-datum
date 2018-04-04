@@ -1,6 +1,6 @@
 React = require 'react'
 ReactDOM = require 'react-dom'
-ReactTest = require 'react-addons-test-utils'
+
 $ = require 'jquery'
 
 Th = require '../lib/testHelpers'

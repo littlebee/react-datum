@@ -1,6 +1,6 @@
 React = require 'react'
 ReactDOM = require 'react-dom'
-ReactTest = require 'react-addons-test-utils'
+
 $ = require 'jquery'
 
 Th = require '../lib/testHelpers'
@@ -10,7 +10,7 @@ Text = require '../../src/datums/text'
 
 KittenModel = require('../lib/kittenModel')
 
-TestForm = React.createClass 
+class TestForm extends React.Component
   render: ->
     <Form {... @props} ref='form'>
       <Text attr='name' ref='datum'/>
