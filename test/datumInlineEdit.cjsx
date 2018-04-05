@@ -16,12 +16,13 @@ TEST_LABEL = 'something different'
 TEST_PLACEHOLDER_TEXT = "more different then display test placeholder text"
 TEST_VALUE = "something different every day"
 
-TestForm = ->
-  <Model {... arguments}>
-    <Label ref='label'>This is a non editable element such as the user might click on</Label>
-    <Datum attr="name" ref='datum' inputMode="inlineEdit"/>
-    <Datum attr="description" ref='otherDatum' inputMode="inlineEdit"/>
-  </Model>
+class TestForm extends React.Component
+  render: ->
+    <Model model={@props.model}>
+      <Label ref='label'>This is a non editable element such as the user might click on</Label>
+      <Datum attr="name" ref='datum' inputMode="inlineEdit"/>
+      <Datum attr="description" ref='otherDatum' inputMode="inlineEdit"/>
+    </Model>
 
 
 describe 'Datum inlineEdit', ->          
