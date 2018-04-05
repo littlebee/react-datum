@@ -42,6 +42,22 @@ module.exports = (grunt) ->
     clean:
       distrib: ["dist/#{pkg.name}.*"]
       
+    
+    copy:
+      docVendorLibs: 
+        files: [
+          # bumble-docs will pick these up and script tag them in to the examples.  It doesn't matter what the 
+          #  destination file name is, it just has to be in docs/vendor
+          { src: "node_modules/backbone/backbone-min.js",                 dest: "docs/vendor/backbone.js"}
+          { src: "node_modules/jquery/dist/jquery.min.js",                dest: "docs/vendor/jquery.js"}
+          { src: "node_modules/react/umd/react.development.js",           dest: "docs/vendor/react.js"}
+          { src: "node_modules/react-dom/umd/react-dom.development.js",   dest: "docs/vendor/react-dom.js"}
+          { src: "node_modules/tilegrid/dist/tilegrid.js",                dest: "docs/vendor/tilegrid.js"}
+          { src: "node_modules/underscore/underscore-min.js",             dest: "docs/vendor/underscrore.js"}
+          { src: "dist/react-datum.js",                                   dest: "docs/vendor/react-datum.js"}
+        ]
+      
+      
     cjsx:
       build:
         files: [
@@ -122,7 +138,7 @@ module.exports = (grunt) ->
   # tasks
   grunt.registerTask 'test', ["shell:test", "shell:coverage"]
   grunt.registerTask 'distrib', ['cssmin:distrib', 'webpack:distrib', 'webpack:optimize','shell:deploy']
-  grunt.registerTask 'docs',  ['shell:buildDocIndex', 'shell:buildApiDocs', 'shell:buildExamples']
+  grunt.registerTask 'docs',  ['copy:docVendorLibs', 'shell:buildDocIndex', 'shell:buildApiDocs', 'shell:buildExamples']
   grunt.registerTask 'build', ['npmInstall', 'newer:cjsx:build', 'distrib']
   grunt.registerTask 'default', ['availabletasks']
 
@@ -130,3 +146,5 @@ module.exports = (grunt) ->
   LAST_NPM_INSTALL_FILE = './.lastNpmInstall'
   grunt.registerTask 'npmInstall', 'runs npm install if node_modules not up to date with package.json', ->
     Util.npmInstall()
+    
+
