@@ -81,8 +81,8 @@ describe 'Datum Display', ->
     datumNode = Th.domNode(datum)
     
     it 'should have applied styles', ->
-      datumNode.innerHTML.should.contain("width:9989px")
-      datumNode.innerHTML.should.contain("display:inline-block")
+      datumNode.innerHTML.should.contain("width: 9989px")
+      datumNode.innerHTML.should.contain("display: inline-block")
       
       
   describe 'when rendered asDiv', ->
