@@ -80,16 +80,6 @@ module.exports =
     },{
       test: /\.(coffee|cjsx)$/,
       loaders: [
-        'cache-loader', 
-        {
-          loader: 'babel-loader',
-          # query: {
-          #   # NamespaceTransform converts the requires in legacy zukeeper code calls to 
-          #   #  App.namespace() to commonJs requires 
-          #   plugins: [NamespaceTransform],            
-          # }
-        },
-        'coffee-loader', 
         'cjsx-loader',
       ]        
     },{
@@ -118,8 +108,8 @@ module.exports =
         return JSON.stringify(stats, null, 2)
     }),
     
-    # for faster build
-    new HardSourceWebpackPlugin(),
+    # # for faster build
+    # new HardSourceWebpackPlugin(),
 
   ]
 

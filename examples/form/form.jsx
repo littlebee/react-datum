@@ -24,9 +24,10 @@ kittenModel.save = function(attrs, options) {
 
 // To make it into a form, just add the <Rd.Form>
 
-var KittenForm = React.createClass({
-  displayName:"KittenCard",
-  render: function(){
+class KittenForm extends React.component {
+  static displayName = "KittenCard"
+  
+  render(){
     return (
       <div className='kitten-card'>
         <Rd.Model model={kittenModel}>
@@ -45,6 +46,6 @@ var KittenForm = React.createClass({
       </div>
     )
   }
-})
+}
 
 window.Demo = KittenForm

@@ -23,9 +23,10 @@ var kittenCollection = new KittenCollection(KITTEN_DATA)
 // Below is really most of what you need for a basic list
 // left, form right type view.  All in 30 lines of code!
 
-var TilegridDisplay = React.createClass({
-  displayName:"TilegridDisplay",
-  render: function(){
+class TilegridDisplay extends React.Component {
+  static displayName = "TilegridDisplay"
+  
+  render(){
     return (
       <Rd.Collection collection={kittenCollection}>
         <div className="grid">
@@ -54,6 +55,6 @@ var TilegridDisplay = React.createClass({
       </Rd.Collection>
     )
   }
-})
+}
 
 window.Demo = TilegridDisplay

@@ -22,7 +22,7 @@ _.extend global,
   KITTEN_DATA: KITTEN_DATA
 
 
-describe 'All examples (requires rebuild)', ->
+describe 'All examples (requires running grunt build:docs)', ->
   testExamples.testAllExamples()
   
     

@@ -41,7 +41,9 @@ module.exports = (grunt) ->
     # args to initConfig method are the tasks
     clean:
       distrib: ["dist/#{pkg.name}.*"]
-      
+      lib: ["lib/*"]
+      docsVendorLibs: ["docs/vendor/*"]
+    
     
     copy:
       docVendorLibs: 
