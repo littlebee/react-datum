@@ -6,9 +6,10 @@ $ = require 'jquery'
 _ = require 'underscore'
 
 Th = require '../lib/testHelpers'
-
 TestExamples = require('bumble-test/testExamples')
-testExamples = new TestExamples(addScripts: ['docs/vendor/tilegrid.min.js'])
+
+addScripts = ['docs/vendor/tilegrid.js']
+testExamples = new TestExamples(addScripts)
 
 KITTEN_DATA = require '../lib/kittenData'
 # the examples expect these to be script tagged in and be available globally
@@ -22,7 +23,7 @@ _.extend global,
   KITTEN_DATA: KITTEN_DATA
 
 
-describe 'All examples (requires running grunt build:docs)', ->
+describe 'All examples (requires grunt build:docs)', ->
   testExamples.testAllExamples()
   
     

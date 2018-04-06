@@ -8,3 +8,5 @@ build
 watch.pid
 coffee.log
 tags
+/src/
+/docs/

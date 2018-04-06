@@ -12,4 +12,4 @@ coffee.log
 tags
 .cache-loader
 .lastNpmInstall
-
+/docs/
