@@ -24,7 +24,7 @@ kittenModel.save = function(attrs, options) {
 
 // To make it into a form, just add the <Rd.Form>
 
-class KittenForm extends React.component {
+class KittenForm extends React.Component {
   static displayName = "KittenCard"
   
   render(){
