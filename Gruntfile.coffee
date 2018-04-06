@@ -15,6 +15,7 @@
 Path = require('path')
 _ = require('lodash')
 Util = require('bumble-util')
+GitStatusUtils = require('git-status-utils')
 
 CSS_FILES_TO_DISTRIB = [
   'css/**/*.css'
@@ -122,7 +123,8 @@ module.exports = (grunt) ->
             build: "Builds everything except docs & examples"
             test: "Run tests in /test directory"
             watch: "Watch for changing files and calls build."
-            docs: "Build the docs. To publish to github.io, you must pull master into gh-pages and run 'grunt build docs' in the gh-pages branch"
+            docs: "Build the docs. To publish to github.io, use 'grunt build ghpages'"
+            "gh-pages": "Publish the build docs to github.io"
             clean: "Remove all compiled files. Use `grunt clean build` to rebuild everything from scratch"
 
 
@@ -141,12 +143,30 @@ module.exports = (grunt) ->
   grunt.registerTask 'test', ["shell:test", "shell:coverage"]
   grunt.registerTask 'distrib', ['cssmin:distrib', 'webpack:distrib', 'webpack:optimize','shell:deploy']
   grunt.registerTask 'docs',  ['copy:docVendorLibs', 'shell:buildDocIndex', 'shell:buildApiDocs', 'shell:buildExamples']
-  grunt.registerTask 'build', ['npmInstall', 'newer:cjsx:build', 'distrib']
+  grunt.registerTask 'build', ['npmInstall', 'newer:cjsx:build', 'docs', 'distrib']
+  
   grunt.registerTask 'default', ['availabletasks']
 
 
   LAST_NPM_INSTALL_FILE = './.lastNpmInstall'
   grunt.registerTask 'npmInstall', 'runs npm install if node_modules not up to date with package.json', ->
     Util.npmInstall()
+    
+  grunt.registerTask 'gh-pages', 'publishes complied docs to github.io', ->
+    @gitStatus = GitStatusUtils.getStatus '.'
+    if @gitStatus.stagedChanges.length > 0 || @gitStatus.unstagedChanges.length > 0
+      console.log "Cowardly refusing to publish to gh-pages.  Uncommitted changes exist on current branch"
+      return false
+    if @gitStatus.branch != 'master'
+      console.log "Cowardly refusing to publish to gh-pages from branch (#{@gitStatus.branch}) other than master"
+      return false
+    Util.systemCmd 'git co gh-pages'
+    Util.systemCmd 'git pull . master'
+    Util.systemCmd 'grunt build'
+    Util.systemCmd 'git add docs'
+    Util.systemCmd 'git push origin gh-pages'
+    Util.systemCmd 'git co master'
+    
+    
     
 
