@@ -143,7 +143,7 @@ module.exports = (grunt) ->
       console.log "Cowardly refusing to publish to gh-pages.  Uncommitted changes exist on current branch"
       return false
     if @gitStatus.branch != 'master'
-      console.log "Cowardly refusing to publish to gh-pages.  Uncommitted changes exist on current branch"
+      console.log "Cowardly refusing to publish to gh-pages from branch (#{@gitStatus.branch}) other than master"
       return false
     Util.systemCmd 'git co gh-pages'
     Util.systemCmd 'git pull master'
