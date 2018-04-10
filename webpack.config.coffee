@@ -23,7 +23,7 @@ userPackage = JSON.parse(fs.readFileSync('package.json'))
 outputDir = Path.resolve(__dirname, 'dist/')
 
 module.exports = 
-  name: "react-datum"
+  name: userPackage.name
   entry: [
     # "webpack-dev-server/client?http://localhost:3000", # WebpackDevServer host and port
     # "webpack/hot/only-dev-server",
@@ -37,16 +37,9 @@ module.exports =
     publicPath: "dist/"
   },
   resolveLoader: {
-    # only look for libs in v7/node_modules
     modules: [Path.resolve(__dirname, './node_modules')],
   },
   externals: {
-    'jquery': {
-      root: 'jQuery'
-      commonjs2: 'jquery',
-      commonjs: 'jquery',
-      amd: 'jquery'
-    }
     'react': {
       root: 'React',
       commonjs2: 'react',
@@ -80,6 +73,7 @@ module.exports =
     },{
       test: /\.(coffee|cjsx)$/,
       loaders: [
+        'coffee-loader'
         'cjsx-loader',
       ]        
     },{

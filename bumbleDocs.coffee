@@ -13,9 +13,11 @@ module.exports =
     media: "screen"
   }]
 
-  scripts: [{
-    path: "/test/lib/kittenData.js"
-  }]
+  scripts: [
+    # the vendor script are copied from our node_modules dir by Gruntfile.coffee
+    { path: "docs/vendor/react-datum.js"}  
+    { path: "/test/lib/kittenData.js" }
+  ]
   
   apiDocs: {
     sections: [{

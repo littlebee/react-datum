@@ -13,7 +13,6 @@
 ###
 
 Path = require('path')
-_ = require('lodash')
 Util = require('bumble-util')
 GitStatusUtils = require('git-status-utils')
 
@@ -49,14 +48,6 @@ module.exports = (grunt) ->
     copy:
       docVendorLibs: 
         files: [
-          # bumble-docs will pick these up and script tag them in to the examples.  It doesn't matter what the 
-          #  destination file name is, it just has to be in docs/vendor
-          { src: "node_modules/backbone/backbone-min.js",                 dest: "docs/vendor/backbone.js"}
-          { src: "node_modules/jquery/dist/jquery.min.js",                dest: "docs/vendor/jquery.js"}
-          { src: "node_modules/react/umd/react.development.js",           dest: "docs/vendor/react.js"}
-          { src: "node_modules/react-dom/umd/react-dom.development.js",   dest: "docs/vendor/react-dom.js"}
-          { src: "node_modules/tilegrid/dist/tilegrid.js",                dest: "docs/vendor/tilegrid.js"}
-          { src: "node_modules/underscore/underscore-min.js",             dest: "docs/vendor/underscrore.js"}
           { src: "dist/react-datum.js",                                   dest: "docs/vendor/react-datum.js"}
         ]
       
@@ -143,7 +134,7 @@ module.exports = (grunt) ->
   grunt.registerTask 'test', ["shell:test", "shell:coverage"]
   grunt.registerTask 'distrib', ['cssmin:distrib', 'webpack:distrib', 'webpack:optimize','shell:deploy']
   grunt.registerTask 'docs',  ['copy:docVendorLibs', 'shell:buildDocIndex', 'shell:buildApiDocs', 'shell:buildExamples']
-  grunt.registerTask 'build', ['npmInstall', 'newer:cjsx:build', 'docs', 'distrib']
+  grunt.registerTask 'build', ['npmInstall', 'newer:cjsx:build', 'distrib', 'docs']
   
   grunt.registerTask 'default', ['availabletasks']
 
@@ -163,6 +154,8 @@ module.exports = (grunt) ->
     Util.systemCmd 'git co gh-pages'
     Util.systemCmd 'git pull . master'
     Util.systemCmd 'grunt build'
+    # /docs dir is normally ignored by git via .gitignore, but in the gh-pages
+    #  branch /docs needs to be checked in
     Util.systemCmd 'git add docs'
     Util.systemCmd 'git push origin gh-pages'
     Util.systemCmd 'git co master'
