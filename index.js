@@ -34,38 +34,35 @@ const _ReactDatum = {
   
 
 }
-if window?
+if(window)
   window.ReactDatum = _ReactDatum
 
-if module.exports?
-  module.exports = _ReactDatum
-else
-  export const {
-    
-    // Contextual components
-    ClickToEditForm,   
-    ContextualData,    
-    Collection,        
-    CollectionPicker,  
-    CollectionStats,   
-    Form,              
-    Model,             
-    SelectedModel,     
-    // Datums
-    Datum,             
-    Email,             
-    LazyPhoto,         
-    Link,              
-    Number,            
-    Percent,           
-    Text,              
-    Label,             
-    WholeNumber,       
-    // Global options
-    Options,           
-    // react-select 
-    ReactSelect,       
-    SelectOption    
-     
-  } = _ReactDatum
-    
+export const {
+  
+  // Contextual components
+  ClickToEditForm,   
+  ContextualData,    
+  Collection,        
+  CollectionPicker,  
+  CollectionStats,   
+  Form,              
+  Model,             
+  SelectedModel,     
+  // Datums
+  Datum,             
+  Email,             
+  LazyPhoto,         
+  Link,              
+  Number,            
+  Percent,           
+  Text,              
+  Label,             
+  WholeNumber,       
+  // Global options
+  Options,           
+  // react-select 
+  ReactSelect,       
+  SelectOption    
+   
+} = _ReactDatum
+  
