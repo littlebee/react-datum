@@ -1,6 +1,6 @@
 
 
-const _ReactDatum = {
+var _ReactDatum = {
   // contextual components
   ClickToEditForm:   require('./lib/clickToEditForm'),
   ContextualData:    require('./lib/contextualData'),
@@ -34,35 +34,9 @@ const _ReactDatum = {
   
 
 }
-if(window)
+if(window){
   window.ReactDatum = _ReactDatum
-
-export const {
-  
-  // Contextual components
-  ClickToEditForm,   
-  ContextualData,    
-  Collection,        
-  CollectionPicker,  
-  CollectionStats,   
-  Form,              
-  Model,             
-  SelectedModel,     
-  // Datums
-  Datum,             
-  Email,             
-  LazyPhoto,         
-  Link,              
-  Number,            
-  Percent,           
-  Text,              
-  Label,             
-  WholeNumber,       
-  // Global options
-  Options,           
-  // react-select 
-  ReactSelect,       
-  SelectOption    
-   
-} = _ReactDatum
-  
+}
+if(module){
+  module.exports = _ReactDatum
+}
