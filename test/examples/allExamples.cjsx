@@ -1,5 +1,7 @@
 React = require 'react'
 ReactDOM = require 'react-dom'
+Tilegrid = require 'tilegrid'
+PropTypes = require 'prop-types'
 
 Backbone = require 'backbone'
 $ = require 'jquery'
@@ -17,6 +19,8 @@ _.extend global,
   React: React
   ReactDOM: ReactDOM
   Backbone: Backbone
+  Tilegrid: Tilegrid
+  PropTypes: PropTypes
   '_': _
   '$': $
   'jQuery': $
