@@ -755,12 +755,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
      */
 
     Datum.prototype.getFullClassName = function () {
-      var className;
+      var className, ref;
       className = this.subClassName != null ? this.className + " " + this.subClassName : this.className;
       if (this.props.required) {
         className += " required";
       }
-      if (this.state.errors.length > 0) {
+      if (((ref = this.state.errors) != null ? ref.length : void 0) > 0) {
         className += " invalid";
       }
       if (this.state.saving) {

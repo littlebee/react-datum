@@ -533,6 +533,7 @@ module.exports = class Datum extends React.Component
   ###
   getModelValue: (newProps = @props, newContext = @context)->
     if newProps.value != undefined
+      # TODO : I think this is unneccessary.  See where state.shadowValue is set
       return  @state?.shadowValue ? newProps.value
       
     return null unless model = @getModel(newProps, newContext)
@@ -626,7 +627,7 @@ module.exports = class Datum extends React.Component
   getFullClassName: ->
     className = if @subClassName? then "#{@className} #{@subClassName}" else @className
     className += " required" if @props.required
-    className += " invalid" if @state.errors.length > 0
+    className += " invalid" if @state.errors?.length > 0
     className += " saving" if @state.saving
     # ignore null value in state.saved
     className +=  " not-saved" if @state.saved == false
