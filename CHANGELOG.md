@@ -1,4 +1,72 @@
 
+## [1.0.0-beta1.1](https://github.com/zulily/react-datum.git/compare/0.14.6...1.0.0-beta1.1) (2018-04-25)
+
+
+### Bugs Fixed in this Release
+* [ee1d903](https://github.com/zulily/react-datum.git/commit/ee1d9038be2af53316c6e8e9c797643d2ba37720)  stateless support should allow null values to be set
+* [be6feab](https://github.com/zulily/react-datum.git/commit/be6feabcb61c950c634bcaf9948dd98b589c1c70)  (unreleased) collection picker should not assume value in state
+* [c3de249](https://github.com/zulily/react-datum.git/commit/c3de2492a740540e218e1130286f45171c9873d8)  LazyPhoto should reset it's notFound state on model value / prop changes
+* [0b290b8](https://github.com/zulily/react-datum.git/commit/0b290b8e292a48496b267a14c3f79511dffbf350)  fixes long standing issue where when ever you search for a new thing it would wipe the previous selected things.   NO MORE!
+* [85fa364](https://github.com/zulily/react-datum.git/commit/85fa364dc894cb8a0f144329cae3790ad3b3616f)  datums should allow zero entry
+* [37649df](https://github.com/zulily/react-datum.git/commit/37649dfe795ba99ca7ad2bedc385565d962fb497)  collection picker when handling async lookups, should trigger sync on the datum model when collection model syncs
+
+### New Features
+* [e79a506](https://github.com/zulily/react-datum.git/commit/e79a506122bcf6190ddf68f6423e74cdb00d57d8)  adds extendable method to get value from input component
+* [cccae00](https://github.com/zulily/react-datum.git/commit/cccae003ca0182fab77e4e3adbcb74832a9f05dd)  add support for stateless prop on all datums to support fully controlled components
+* [36e3155](https://github.com/zulily/react-datum.git/commit/36e3155e258954610d4c07b1bfee65779feb337e)  CollectionPicker: add support for CSV model values
+* [f636c96](https://github.com/zulily/react-datum.git/commit/f636c960fbd6b2ff4af9ff989d22dde7d93d219d)  collection picker should be able to display multiple values even when input is multi:false
+* [14b146e](https://github.com/zulily/react-datum.git/commit/14b146e426051e72968563a1da180fac030c1320)  add csvDisplay prop to CollectionPicker.
+
+### Other Commits
+* [6ff63a3](https://github.com/zulily/react-datum.git/commit/6ff63a33ec07a34daf8085fe0c1409943ce1cea2) add script to reliably build and publish gh-pages (stolen from react-datum-datagrid)
+* [6943cca](https://github.com/zulily/react-datum.git/commit/6943cca599150ffcd0d36353231e435282e41de8) add guard against state.errors not being set
+* [6e6e04a](https://github.com/zulily/react-datum.git/commit/6e6e04aef745b6bf35cb790493d60aebc5b27578) fix version of babel-preset-env to 1.6.1
+* [29215de](https://github.com/zulily/react-datum.git/commit/29215ded97bcdaed16c18684d73861beb8f525f5) react-datum now runs on react 16. all tests passing, all examples working
+* [e62b8b9](https://github.com/zulily/react-datum.git/commit/e62b8b9d5be6c00f1c902716907fb8173f1bdc45) lib folder must not be gitignored if intending to support npm package.json git reference
+* [8b1bb7d](https://github.com/zulily/react-datum.git/commit/8b1bb7d34659a88aedf3cafd0d0a2e563cb915c6) clean out docVendorLibs on each docs build
+* [bb386f9](https://github.com/zulily/react-datum.git/commit/bb386f935a226e267ad7e338343bf8a53b84ebbc) use more compat form for exports from Rd
+* [24015ba](https://github.com/zulily/react-datum.git/commit/24015ba7d7e116d0f37f7f8935649fc43ff3efc2) back to the webpack way
+* [ff2bd60](https://github.com/zulily/react-datum.git/commit/ff2bd60ea044597eb7aa34aa048f522c359046c9) don't use export keyword in index.js if we are running on node'
+* [b402377](https://github.com/zulily/react-datum.git/commit/b4023772d198f1bc1dae6c9ebe3f8170bdd90994) add dist folder back to git
+* [154aa4d](https://github.com/zulily/react-datum.git/commit/154aa4db8e8df4a7308c4039b3351505c1f37897) cleanup dependencies, stop publishing extra copies of stuff from dev dependencies
+* [6bc80ad](https://github.com/zulily/react-datum.git/commit/6bc80ade0fed5b078e9eeca0d3107855f3a0afe1) fix typo in form example
+* [f7231c8](https://github.com/zulily/react-datum.git/commit/f7231c8245cf50b0e62cfd75a26c2d634f3358bf) merge from master
+* [7184d8c](https://github.com/zulily/react-datum.git/commit/7184d8ce45cfe686e2689a65596424af62f6f358) fix git pull command in grunt gh-pages task
+* [3188514](https://github.com/zulily/react-datum.git/commit/3188514863dc104d65eb020aa838a3b03113bd7e) fix messaging when trying to grunt gh-pages from branch other than master
+* [b9662fd](https://github.com/zulily/react-datum.git/commit/b9662fd6d483253e751cf28242b3317d650f9033) WIP: add grunt task to update gh-pages
+* [dfed816](https://github.com/zulily/react-datum.git/commit/dfed8167ff7d40fc1b3cd439ff1de9fa26bf4d5d) remove unused happypack module
+* [5accf11](https://github.com/zulily/react-datum.git/commit/5accf118cbae20e7a9efd1f3c075445dbcd4c288) remove docs dir from master branch and add to gitignore and npmignore
+* [b5d96f4](https://github.com/zulily/react-datum.git/commit/b5d96f46d84e77f168e42e9ca5b0bddd884581d8) update bumble-docs to 0.7.0 to eliminate extra vendor libs shipping with package
+* [8d25df0](https://github.com/zulily/react-datum.git/commit/8d25df091bea69eb8f9842731be3715052d67733) port examples to ES6 + React 16 - all examples working with and all but two tests passing
+* [601bec7](https://github.com/zulily/react-datum.git/commit/601bec72b77d559e3e50c38150f2ec0820691d95) copy docs/vendor libs from node_modules on build instead of statically adding and updating them
+* [8979e07](https://github.com/zulily/react-datum.git/commit/8979e07964b96fc8d34538ab7702a55ba0e4383b) upgrade to latest bumble-docs for react 16 support
+* [b9188ce](https://github.com/zulily/react-datum.git/commit/b9188ce9bc32fa5d0a3e5410dac3e7ff03989fe1) fix test failing because test component was a functional component that no longer support regs
+* [3b90a1c](https://github.com/zulily/react-datum.git/commit/3b90a1c7c45ee62ee5b3c0c817de257d015e72ce) fix failing test due to new react attribute rendering
+* [c498205](https://github.com/zulily/react-datum.git/commit/c498205973f09604b5841a156121aa629f56b972) fix warning about hideProtocol not a supported DOM attribute
+* [8beb435](https://github.com/zulily/react-datum.git/commit/8beb4357ede62dd56a78de0081ef4d5c24f31506) update all coffee-react and coffee-react-transform usages to at least 4.0.0 to fix issue with code generating React.__spread
+* [f0fe0ce](https://github.com/zulily/react-datum.git/commit/f0fe0ceae139d130874b62febdefca9080c29a42) WIP upgrade to React 16; new react-select; spreads in CJSX are failing. thinking about replacing or upgrading coffeescript
+* [0da4c85](https://github.com/zulily/react-datum.git/commit/0da4c85d20d044cbec34ab86c115d40e83d9d357) remove unused happypack module
+* [d29c75e](https://github.com/zulily/react-datum.git/commit/d29c75e8842db600f261ba679133f7ec613d90d7) update build system to webpack 3.4.1
+* [d42b883](https://github.com/zulily/react-datum.git/commit/d42b883fd8b8fe1fa96aea274f84c3cd197d2e76) reverted package.json to point to zulily.react-select
+* [af85642](https://github.com/zulily/react-datum.git/commit/af856422b479aec9db88aace3b1e624ec7e013dd) Revert 'Revert 'fix validators on numbers to handle numeric values in addition to string''
+* [4ea3447](https://github.com/zulily/react-datum.git/commit/4ea34472b8b2bc31a34b0bbd373b1322be7109fd) Revert 'fix validators on numbers to handle numeric values in addition to string'
+* [621b062](https://github.com/zulily/react-datum.git/commit/621b0628814739474a632c70a3ea43cf5f31b441) added my react-select to dependencies
+* [dc29c63](https://github.com/zulily/react-datum.git/commit/dc29c63f62b1d6ff5821b40506f2167e5e197c23) fix validators on numbers to handle numeric values in addition to string
+* [3e046bb](https://github.com/zulily/react-datum.git/commit/3e046bb5e6f7d3efce1407ffee33d28b0ae6bb23) Merge pull request #8 from kamsci/kc/numberDatum/getValueAsNumber
+* [3259012](https://github.com/zulily/react-datum.git/commit/3259012625a3202e949e87abb6eb68cb298debc4) Return value as number when in Number or WholeNumber datum
+* [578ad4d](https://github.com/zulily/react-datum.git/commit/578ad4d37348ebfb8a909bb24b788172959ef767) revert change to more accurately tell when the model value has changed. fixes regress on curation filters
+* [f98328c](https://github.com/zulily/react-datum.git/commit/f98328c77f21949c9031030b99c6edf4a097e8d7) collection picker should display raw model value when can't find model for id in collection
+* [d2ff258](https://github.com/zulily/react-datum.git/commit/d2ff258bd9cc780dcfa2eebe738d74fe95dba209) revert earlier change to more aggressively watch for model value changes
+* [499a139](https://github.com/zulily/react-datum.git/commit/499a1399ef195eb59db4a9b8c6395903f6efc662) CollectionPicker should rerender on first model sync after collection.get for datums not wrapped in <Model> context
+* [4345175](https://github.com/zulily/react-datum.git/commit/4345175d0f2596c393eabadc5227d328268193c5) CollectionPicker: defer triggering invalidate on first model sync. fixes issue when used in react-datagrid
+* [2e99f25](https://github.com/zulily/react-datum.git/commit/2e99f251f92219250ed8ef46e90cf0abbe72d316) fixes issue where datum doesn't pick up new model changes when in input mode
+* [3199278](https://github.com/zulily/react-datum.git/commit/3199278046149f0d6fcf2350553822664abe6d91) add ref to higher order function that renders the react-select component
+* [5e70960](https://github.com/zulily/react-datum.git/commit/5e70960ae112fecb8279f5664d7200d15506ff5d) only remove initial selectOptions.options if props.asyncSuggestionCallback
+* [a517997](https://github.com/zulily/react-datum.git/commit/a517997dc2a9e897e8d405e24f9e3bc87324d7cc) fix for unreleased regression. commit 1ebc8a49c1e9e140974e338eefc1a4ebfab5b1e8
+* [3d5d8bb](https://github.com/zulily/react-datum.git/commit/3d5d8bb06a46b63c30d2498927fd6eee18a3f07d) don't throw an error when collection picker isn't given a collection prop
+* [7b14d3f](https://github.com/zulily/react-datum.git/commit/7b14d3fc196fb5d39f4987d338d3fef3a7329ca3) collection picker should not pass options array to react-select if not loading synchonously.  Passing an options array causes react-select to present all options and not go through the async callback to get the full option list when you clear the input
+* [1ebc8a4](https://github.com/zulily/react-datum.git/commit/1ebc8a49c1e9e140974e338eefc1a4ebfab5b1e8) props.asyncSuggestionCallback should have precedence over collection filter for picker
+
 ## [0.14.6](https://github.com/zulily/react-datum.git/compare/0.14.5...0.14.6) (2017-07-16)
 
 
