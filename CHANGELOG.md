@@ -67,6 +67,12 @@
 * [7b14d3f](https://github.com/zulily/react-datum.git/commit/7b14d3fc196fb5d39f4987d338d3fef3a7329ca3) collection picker should not pass options array to react-select if not loading synchonously.  Passing an options array causes react-select to present all options and not go through the async callback to get the full option list when you clear the input
 * [1ebc8a4](https://github.com/zulily/react-datum.git/commit/1ebc8a49c1e9e140974e338eefc1a4ebfab5b1e8) props.asyncSuggestionCallback should have precedence over collection filter for picker
 
+## [1.0.0-beta1.2](https://github.com/zulily/react-datum.git/compare/0.14.6...1.0.0-beta1.2) (2018-04-26)
+
+
+### Other Commits
+* [db939e0](https://github.com/zulily/react-datum.git/commit/db939e05d8729c559d22b4a1fa2ff7fb6f87789e) fix for issue when focusing the collectionPicker
+
 ## [0.14.6](https://github.com/zulily/react-datum.git/compare/0.14.5...0.14.6) (2017-07-16)
 
 
