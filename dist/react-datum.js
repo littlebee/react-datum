@@ -7909,8 +7909,7 @@ module.exports = __webpack_require__(29)
     };
 
     CollectionPicker.prototype.getInputComponent = function () {
-      var ref;
-      return (ref = this.refs) != null ? ref[this.selectRef] : void 0;
+      return ReactDOM.findDOMNode(this).querySelector('input');
     };
 
     CollectionPicker.prototype.getSelectedModels = function () {

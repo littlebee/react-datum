@@ -309,7 +309,7 @@ module.exports = class CollectionPicker extends Datum
       
 
   getInputComponent: () =>
-    @refs?[@selectRef]
+    ReactDOM.findDOMNode(this).querySelector('input')
 
   
   getSelectedModels: () ->
