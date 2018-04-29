@@ -73,6 +73,12 @@
 ### Other Commits
 * [db939e0](https://github.com/zulily/react-datum.git/commit/db939e05d8729c559d22b4a1fa2ff7fb6f87789e) fix for issue when focusing the collectionPicker
 
+## [1.0.0-beta1.3](https://github.com/zulily/react-datum.git/compare/0.14.6...1.0.0-beta1.3) (2018-04-29)
+
+
+### Other Commits
+* [715bb8c](https://github.com/zulily/react-datum.git/commit/715bb8c2d8bfea58af88be2038fae233f81ffff9) new build with update to bundled react-select to pass through the full values array to the value component
+
 ## [0.14.6](https://github.com/zulily/react-datum.git/compare/0.14.5...0.14.6) (2017-07-16)
 
 
