@@ -85,6 +85,12 @@
 ### Other Commits
 * [9fb2701](https://github.com/zulily/react-datum.git/commit/9fb2701323fca02e8e7c8366ce541f4ef6d02411) update to latest zulily/react-select for single value multi select fix (I hope)
 
+## [1.0.0-beta1.4](https://github.com/zulily/react-datum.git/compare/0.14.6...1.0.0-beta1.4) (2018-04-29)
+
+
+### Other Commits
+* [9fb2701](https://github.com/zulily/react-datum.git/commit/9fb2701323fca02e8e7c8366ce541f4ef6d02411) update to latest zulily/react-select for single value multi select fix (I hope)
+
 ## [0.14.6](https://github.com/zulily/react-datum.git/compare/0.14.5...0.14.6) (2017-07-16)
 
 
