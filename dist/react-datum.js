@@ -4262,35 +4262,47 @@ var Select$1 = function (_React$Component) {
 			}
 			var onClick = this.props.onValueClick ? this.handleValueClick : null;
 			if (this.props.multi) {
-				var valuesToMap = this.props.singleValue ? [valueArray[0]] : valueArray;
-				return valuesToMap.map(function (value, i) {
+				if (this.props.singleValue) {
 					return __WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
 						ValueComponent,
 						{
-							disabled: _this5.props.disabled || value.clearableValue === false,
-							disabledOptions: _this5.props.disabledOptions || [],
-							id: _this5._instancePrefix + '-value-' + i,
-							instancePrefix: _this5._instancePrefix,
-							key: 'value-' + i + '-' + value[_this5.props.valueKey],
+							disabled: this.props.disabled,
 							onClick: onClick,
-							onRemove: _this5.removeValue,
-							placeholder: _this5.props.placeholder,
-							value: value,
-							values: valueArray
+							onRemove: this.removeValue,
+							values: valueArray,
+							disabledOptions: this.props.disabledOptions || []
 						},
-						renderLabel(value, i),
-						__WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
-							'span',
-							{ className: 'Select-aria-only' },
-							'\xA0'
-						)
+						valueArray.length
 					);
-				});
+				} else {
+					return valueArray.map(function (value, i) {
+						return __WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
+							ValueComponent,
+							{
+								id: _this5._instancePrefix + '-value-' + i,
+								instancePrefix: _this5._instancePrefix,
+								disabled: _this5.props.disabled || value.clearableValue === false,
+								key: 'value-' + i + '-' + value[_this5.props.valueKey],
+								onClick: onClick,
+								onRemove: _this5.removeValue,
+								value: value,
+								values: valueArray,
+								disabledOptions: _this5.props.disabledOptions || []
+							},
+							renderLabel(value, i),
+							__WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
+								'span',
+								{ className: 'Select-aria-only' },
+								'\xA0'
+							)
+						);
+					});
+				}
 			} else if (shouldShowValue(this.state, this.props)) {
 				if (isOpen) onClick = null;
 				return __WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
 					ValueComponent,
-					{
+					defineProperty({
 						disabled: this.props.disabled,
 						disabledOptions: this.props.disabledOptions || [],
 						id: this._instancePrefix + '-value-item',
@@ -4299,7 +4311,7 @@ var Select$1 = function (_React$Component) {
 						placeholder: this.props.placeholder,
 						value: valueArray[0],
 						values: valueArray
-					},
+					}, 'disabledOptions', this.props.disabledOptions || []),
 					renderLabel(valueArray[0])
 				);
 			}
