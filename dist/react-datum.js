@@ -4277,7 +4277,8 @@ var Select$1 = function (_React$Component) {
 							onClick: onClick,
 							onRemove: _this5.removeValue,
 							placeholder: _this5.props.placeholder,
-							value: value
+							value: value,
+							values: valueArray
 						},
 						renderLabel(value, i),
 						__WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
@@ -4298,6 +4299,7 @@ var Select$1 = function (_React$Component) {
 						onClick: onClick,
 						placeholder: this.props.placeholder,
 						value: valueArray[0],
+						values: valueArray,
 						disabledOptions: this.props.disabledOptions || []
 					},
 					renderLabel(valueArray[0])
