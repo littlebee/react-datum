@@ -79,6 +79,12 @@
 ### Other Commits
 * [715bb8c](https://github.com/zulily/react-datum.git/commit/715bb8c2d8bfea58af88be2038fae233f81ffff9) new build with update to bundled react-select to pass through the full values array to the value component
 
+## [1.0.0-beta1.3](https://github.com/zulily/react-datum.git/compare/0.14.6...1.0.0-beta1.3) (2018-04-29)
+
+
+### Other Commits
+* [9fb2701](https://github.com/zulily/react-datum.git/commit/9fb2701323fca02e8e7c8366ce541f4ef6d02411) update to latest zulily/react-select for single value multi select fix (I hope)
+
 ## [0.14.6](https://github.com/zulily/react-datum.git/compare/0.14.5...0.14.6) (2017-07-16)
 
 
