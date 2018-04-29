@@ -132,7 +132,7 @@ module.exports = (grunt) ->
 
   # tasks
   grunt.registerTask 'test', ["shell:test", "shell:coverage"]
-  grunt.registerTask 'distrib', ['cssmin:distrib', 'webpack:distrib', 'webpack:optimize','shell:deploy']
+  grunt.registerTask 'distrib', ['cssmin:distrib', 'webpack:distrib', 'webpack:optimize']
   grunt.registerTask 'docs',  ['clean:docsVendorLibs', 'copy:docVendorLibs', 'shell:buildDocIndex', 'shell:buildApiDocs', 'shell:buildExamples']
   grunt.registerTask 'build', ['npmInstall', 'newer:cjsx:build', 'distrib', 'docs']
   
