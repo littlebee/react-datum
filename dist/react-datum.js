@@ -4262,10 +4262,8 @@ var Select$1 = function (_React$Component) {
 			}
 			var onClick = this.props.onValueClick ? this.handleValueClick : null;
 			if (this.props.multi) {
-				if (this.props.singleValue) {
-					valueArray = [valueArray[0]];
-				}
-				return valueArray.map(function (value, i) {
+				var valuesToMap = this.props.singleValue ? [valueArray[0]] : valueArray;
+				return valuesToMap.map(function (value, i) {
 					return __WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
 						ValueComponent,
 						{
@@ -4294,13 +4292,13 @@ var Select$1 = function (_React$Component) {
 					ValueComponent,
 					{
 						disabled: this.props.disabled,
+						disabledOptions: this.props.disabledOptions || [],
 						id: this._instancePrefix + '-value-item',
 						instancePrefix: this._instancePrefix,
 						onClick: onClick,
 						placeholder: this.props.placeholder,
 						value: valueArray[0],
-						values: valueArray,
-						disabledOptions: this.props.disabledOptions || []
+						values: valueArray
 					},
 					renderLabel(valueArray[0])
 				);
